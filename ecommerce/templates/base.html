@@ -1,0 +1,41 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" type="">
+        <link rel="stylesheet" href="{% static 'font-awesome.min.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'nice-select.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'owl.carousel.min.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'magnific-popup.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'slicknav.min.css' %}" type="text/css">
+        <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
+    
+        <title>{% block title %}{% endblock %}</title>
+    </head>
+    <body>
+        {% include "components/preloader.html" %}
+
+        <!-- HEADER -->
+        {% include "navs/header.html" %}
+
+        <main>
+            {% block main %}{% endblock %}
+        </main>
+
+        {% include "navs/footer.html" %}
+
+        <script src="{% static 'jquery-3.3.1.min.js' %}"></script>
+        <script src="{% static 'bootstrap.min.js' %}"></script>
+        <script src="{% static 'jquery.magnific-popup.min.js' %}"></script>
+        <script src="{% static 'jquery.slicknav.js' %}"></script>
+        <script src="{% static 'owl.carousel.min.js' %}"></script>
+        <script src="{% static 'jquery.nice-select.min.js' %}"></script>
+        <script src="{% static 'mixitup.min.js' %}"></script>
+        <script src="{% static 'main.js' %}"></script>
+    </body>
+</html>
