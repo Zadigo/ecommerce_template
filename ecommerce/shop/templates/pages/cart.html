@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block container %}
+    <div class="row wow fadeIn">
+        <div class="col-md-12 mb-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <tbody>
+                                {% for product in products %}
+                                    <tr>
+                                        <td>
+                                            <div class="cart-image">
+                                                <img class="img-fluid" src="{{ product.url }}" alt="{{ product.slug }}">
+                                            </div>
+                                        </td>
+                                        <td>{{ product.name }}</td>
+                                        <td>
+                                            <i class="fa fa-minus"></i>
+                                            {{ product.quantity }}
+                                            <i class="fa fa-plus"></i>
+                                        </td>
+                                        <td>{{ product.price_ht }}</td>
+                                        <td><i class="fa fa-trash"></i></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row wow fadeIn">
+        <div class="col-md-12 mb-12">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'shipment' %}" class="btn btn-large blue">Proceed</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

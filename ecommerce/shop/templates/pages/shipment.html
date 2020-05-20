@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block container %}
+<div class="row">
+  <div class="col-md-8 mb-4">
+    <div class="card">
+      <form class="card-body">
+        <div class="row">
+
+          <div class="col-md-6 mb-2">
+            <div class="md-form ">
+              <input type="text" id="firstName" class="form-control" placeholder="Nom">
+            </div>
+          </div>
+
+          <div class="col-md-6 mb-2">
+            <div class="md-form">
+              <input type="text" id="lastname" class="form-control" placeholder="Prénom">
+            </div>
+          </div>
+        </div>
+
+        <div class="md-form mb-5">
+          <input type="text" id="email" class="form-control" placeholder="youremail@example.com">
+        </div>
+
+        <div class="md-form mb-5">
+          <input type="text" id="address" class="form-control" placeholder="1234 Main St">
+        </div>
+
+        <div class="md-form mb-5">
+          <input type="text" id="address-2" class="form-control" placeholder="Apartment or suite">
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-12 mb-4">
+            <label for="country">Country</label>
+            <select class="custom-select d-block w-100" id="country" required>
+              <option value="">Choose...</option>
+              <option>United States</option>
+            </select>
+            <div class="invalid-feedback">
+              Please select a valid country.
+            </div>
+
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <label for="state">State</label>
+            <select class="custom-select d-block w-100" id="state" required>
+              <option value="">Choose...</option>
+              <option>California</option>
+            </select>
+            <div class="invalid-feedback">
+              Please provide a valid state.
+            </div>
+
+          </div>
+
+          <div class="col-lg-4 col-md-6 mb-4">
+            <label for="zip">Zip</label>
+            <input type="text" class="form-control" id="zip" placeholder="" required>
+            <div class="invalid-feedback">
+              Zip code required.
+            </div>
+
+          </div>
+        </div>
+
+        <hr class="mb-4">
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+      </form>
+
+      <a href="{% url 'payment' %}" class="btn btn-danger btn-lg btn-block">Continue to payment</a>
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-4">
+    <!-- Heading -->
+    {% include "../components/cart/heading.html" %}
+
+    <!-- SIDE CART -->
+    {% include "../components/cart/side.html" %}
+  </div>
+</div>
+{% endblock %}

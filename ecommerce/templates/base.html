@@ -1,41 +1,130 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" type="">
-        <link rel="stylesheet" href="{% static 'font-awesome.min.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'nice-select.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'owl.carousel.min.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'magnific-popup.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'slicknav.min.css' %}" type="text/css">
-        <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
-    
-        <title>{% block title %}{% endblock %}</title>
+        <title>Material Design Bootstrap</title>
+
+        <!-- FONT AWESOME -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+
+        <!-- BOOTSTRAP -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- MATEERIAL DESIGN BOOTSTRAP -->
+        <link href="{% static 'mdb.css' %}" rel="stylesheet">
+
+        <!-- MATERIALIZE -->
+        <link href="{% static 'style.css' %}" rel="stylesheet">
+
+        <!-- CUSTOM -->
+        <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
     </head>
+
     <body>
-        {% include "components/preloader.html" %}
 
-        <!-- HEADER -->
-        {% include "navs/header.html" %}
+        <!-- Navbar -->
+        {% include "navs/nav.html" %}
 
-        <main>
-            {% block main %}{% endblock %}
+        <!--Main layout-->
+        <main class="mt-5 pt-4">
+            {% block hero %}
+                <div class="container dark-grey-text mt-5">
+                    {% block container %}{% endblock %}
+                </div>
+            {% endblock %}
         </main>
 
-        {% include "navs/footer.html" %}
+        <footer class="page-footer text-center font-small mt-4 wow fadeIn">
 
-        <script src="{% static 'jquery-3.3.1.min.js' %}"></script>
-        <script src="{% static 'bootstrap.min.js' %}"></script>
-        <script src="{% static 'jquery.magnific-popup.min.js' %}"></script>
-        <script src="{% static 'jquery.slicknav.js' %}"></script>
-        <script src="{% static 'owl.carousel.min.js' %}"></script>
-        <script src="{% static 'jquery.nice-select.min.js' %}"></script>
-        <script src="{% static 'mixitup.min.js' %}"></script>
-        <script src="{% static 'main.js' %}"></script>
+            <!--Call to action-->
+            <div class="pt-4">
+                <a class="btn btn-outline-white" href="https://mdbootstrap.com/docs/jquery/getting-started/download/"
+                    target="_blank" role="button">Download MDB
+                    <i class="fas fa-download ml-2"></i>
+                </a>
+                <a class="btn btn-outline-white" href="https://mdbootstrap.com/education/bootstrap/" target="_blank"
+                    role="button">Start
+                    free tutorial
+                    <i class="fas fa-graduation-cap ml-2"></i>
+                </a>
+            </div>
+            <!--/.Call to action-->
+
+            <hr class="my-4">
+
+            <!-- Social icons -->
+            <div class="pb-4">
+                <a href="https://www.facebook.com/mdbootstrap" target="_blank">
+                    <i class="fab fa-facebook-f mr-3"></i>
+                </a>
+
+                <a href="https://twitter.com/MDBootstrap" target="_blank">
+                    <i class="fab fa-twitter mr-3"></i>
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
+                    <i class="fab fa-youtube mr-3"></i>
+                </a>
+
+                <a href="https://plus.google.com/u/0/b/107863090883699620484" target="_blank">
+                    <i class="fab fa-google-plus-g mr-3"></i>
+                </a>
+
+                <a href="https://dribbble.com/mdbootstrap" target="_blank">
+                    <i class="fab fa-dribbble mr-3"></i>
+                </a>
+
+                <a href="https://pinterest.com/mdbootstrap" target="_blank">
+                    <i class="fab fa-pinterest mr-3"></i>
+                </a>
+
+                <a href="https://github.com/mdbootstrap/bootstrap-material-design" target="_blank">
+                    <i class="fab fa-github mr-3"></i>
+                </a>
+
+                <a href="http://codepen.io/mdbootstrap/" target="_blank">
+                    <i class="fab fa-codepen mr-3"></i>
+                </a>
+            </div>
+            <!-- Social icons -->
+
+            <!--Copyright-->
+            <div class="footer-copyright py-3">
+                © 2019 Copyright:
+                <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
+            </div>
+            <!--/.Copyright-->
+
+        </footer>
+
+        <!-- JQUERY -->
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+        <!-- Bootstrap tooltips -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+
+        <!-- Bootstrap core JavaScript -->
+        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+        <!-- MDB core JavaScript -->
+        <script type="text/javascript" src="{% static 'mdb.js' %}"></script>
+        <script type="text/javascript">
+            // Animations initialization
+            new WOW().init();
+
+        </script>
+
+        <!-- LODASH -->
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+        <!-- VUEJS -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        {% block vuejs_scripts %}{% endblock %}
     </body>
 </html>
