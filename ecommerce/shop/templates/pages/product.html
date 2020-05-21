@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static price_tags %}
 
 {% block container %}
     <div id="vue_app">
@@ -18,7 +18,7 @@
                         <span class="mr-1">
                             <del>$200</del>
                         </span>
-                        <span>$100</span>
+                        <span>{{ product.price_ht|price_to_text }}</span>
                     </p>
 
                     <p class="lead font-weight-bold">Description</p>
@@ -34,6 +34,7 @@
                     <div class="cart-button">
                         <cartbutton />
                     </div>
+                    <div class="csrf">{% csrf_token %}</div>
                 </div>
             </div>
         </div>
@@ -78,6 +79,19 @@
                 addtocart: function() {
                     var formdata = new FormData()
                     formdata.append("quantity", this.$data.quantity)
+                    formdata.append("csrfmiddlewaretoken", $(".csrf input").val())
+
+                    var promise = new Promise((resolve, reject) => {
+                        var xhr = new XMLHttpRequest()
+                        xhr.onloadend = function() {
+                            resolve(xhr.response)
+                        }
+                        xhr.open("POST", window.location.href)
+                        xhr.send(formdata)
+                    })
+                    promise.then(response => {
+                        // DO SOMETHING
+                    })
                 }
             }
         }

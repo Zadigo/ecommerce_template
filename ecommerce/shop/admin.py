@@ -24,7 +24,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['cart_id']
+    list_display = ['cart_id', 'get_product_total']
     # search_fields = ['product__name']
     # filter_horizontal = []
     # filter_vertical = []

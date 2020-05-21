@@ -11,6 +11,11 @@ class Image(models.Model):
     objects = models.Manager()
     image_manager = managers.ImageManager.as_manager()
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['url']),
+        ]
+
     def __str__(self):
         return self.name
 
@@ -19,6 +24,7 @@ class Collection(models.Model):
 
     objects = models.Manager()
     collection_manager = managers.CollectionManager.as_manager()
+    forms_manager = managers.FormsManager.as_manager()
 
     def __str__(self):
         return self.name
@@ -33,6 +39,11 @@ class Product(models.Model):
 
     objects = models.Manager()
     product_manager = managers.ProductManager.as_manager()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['collection']),
+        ]
 
     def __str__(self):
         return self.collection.name
@@ -49,6 +60,7 @@ class Product(models.Model):
 class AbstractCart(models.Model):
     """Customer's cart"""
     product     = models.ManyToManyField(Product, blank=True)
+    price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
     quantity    = models.IntegerField(default=1)
     cart_id         = models.CharField(max_length=20)
     anonymous   = models.BooleanField(default=False)
@@ -63,8 +75,17 @@ class Cart(AbstractCart):
     """Cart for registered users"""
     # cart_manager = managers.CartsManager.as_manager()
 
+    class Meta:
+        indexes = [
+            models.Index(fields=['price_ht', 'quantity']),
+        ]
+
     def __str__(self):
         return self.cart_id
+
+    @property
+    def get_product_total(self):
+        return self.price_ht * self.quantity
 
 class CustomerOrder(models.Model):
     """Customer order's"""

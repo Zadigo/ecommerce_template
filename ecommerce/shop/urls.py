@@ -3,6 +3,8 @@ from django.conf.urls import url
 from shop import views
 
 urlpatterns = [
+    # url(r'^cart/(?P<cart>(\d+\_)+\dw+)/delete-single$', views.delete_single_item, name='delete_single'),
+
     url(r'^cart/success$', views.CartSuccessView.as_view(), name='success'),
     url(r'^cart/payment$', views.PaymentView.as_view(), name='payment'),
     url(r'^cart/shipment$', views.ShipmentView.as_view(), name='shipment'),

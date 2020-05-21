@@ -9,6 +9,7 @@ from ecommerce.views import HeroView
 urlpatterns = [
     url(r'^$', HeroView.as_view(), name='home'),
     path('shop/', include('shop.urls'), name='shop'),
+    path('dashboard/', include('dashboard.urls')),
     path('admin/', admin.site.urls),
 ]
 

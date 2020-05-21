@@ -30,17 +30,10 @@
             <!-- RIGHT -->
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'checkout' %}" class="nav-link waves-effect">
-                            <span class="badge red z-depth-1 mr-1"> 1 </span>
-                            <i class="fas fa-shopping-cart"></i>
-                        </a>
-                    {% else %}
-                        <a href="{% url 'anonymous_checkout' %}" class="nav-link waves-effect">
-                            <span class="badge red z-depth-1 mr-1"> 1 </span>
-                            <i class="fas fa-shopping-cart"></i>
-                        </a>                        
-                    {% endif %}
+                    <a href="{% url 'checkout' %}" class="nav-link waves-effect">
+                        <span class="badge red z-depth-1 mr-1">1</span>
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="/admin/" target="_blank" class="nav-link waves-effect">
@@ -48,7 +41,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" target="_blank" class="nav-link waves-effect">
+                    <a href="{% url 'index' %}" target="_blank" class="nav-link waves-effect">
                         <i class="fas fa-admin"></i>Dashboard
                     </a>
                 </li>

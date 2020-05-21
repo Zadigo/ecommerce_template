@@ -1,0 +1,16 @@
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% for field in form %}
+        <div class="input-field">
+            {{ field }}
+        </div>
+    {% endfor %}
+
+    {% if not final_step %}
+        <button type="submit">Next</button>
+    {% else %}
+        <button type="submit">Créer sans activer</button>
+        <button type="submit">Créer et activer</button>
+    {% endif %}
+</form>

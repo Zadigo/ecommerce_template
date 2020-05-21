@@ -1,0 +1,6 @@
+{% for header in headers %}
+    <th>{{ header }}</th>
+    {% if colspan > 0 and forloop.last %}
+        <th colspan="{{ colspan }}"></th>
+    {% endif %}
+{% endfor %}

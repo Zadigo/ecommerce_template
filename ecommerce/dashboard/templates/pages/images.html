@@ -1,0 +1,70 @@
+{% extends "../index.html" %}
+
+{% block content %}
+<div id="images_app">
+    <div class="row d-none">
+        <div class="col-md-6 mb-6">
+            <div class="card">
+                <filtercomponent />
+            </div>
+        </div>
+    </div>
+    
+    <div class="row wow fadin">
+        {% comment %}
+            {% for image in images %}
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <img class="card-img-top" src="{{ image.image_url|default:'https://via.placeholder.com/800' }}" alt="image">
+                    </div>
+                </div>
+            {% endfor %}
+        {% endcomment %}
+        <imagescomponent v-bind:images="images" />
+    </div>
+</div>
+
+
+<div class="row wow fadeIn">
+    <div class="col-md-12 mb-12">
+        {% include "../components/navs/pagination.html" with href="manage_images" %}
+    </div>
+</div>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    {{ vue_images|json_script:"vue_images" }}
+    <script>
+        var filtercomponent = {
+            template: "\
+            <select name='' id=''>\
+                <option value='something'>Something</option>\
+            </select>\
+            "
+        }
+
+        var imagescomponent = {
+            props: ["images"],
+            template: "\
+            <div class='row'>\
+                <div v-for='image in images' :key='image.slug' class='col-md-3 mb-3'>\
+                    <div class='card'>\
+                        <img class='card-img-top' :src='image.image_url' :alt='image.slug'>\
+                    </div>\
+                </div>\
+            </div>\
+            "
+        }
+
+        var imagesapp = new Vue({
+            el: "#images_app",
+            components: {imagescomponent, filtercomponent},
+            delimiters: ["[[", "]]"],
+            data() {
+                return {
+                    images: JSON.parse($("#vue_images").text())
+                }
+            }
+        })
+    </script>
+{% endblock %}

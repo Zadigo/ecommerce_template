@@ -1,0 +1,28 @@
+{% load table_header_tag dates_tags %}
+
+<table class="table table-hover">
+    <thead class="blue-grey lighten-4">
+        <tr>
+            {% header_tags 'products' 2 %}
+        </tr>
+    </thead>
+
+    <!-- Table body -->
+    <tbody>
+        {% for item in items %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>
+                    <a href="{% url 'dashboard_product' item.id %}">{{ item.cart_id }}</a>
+                </td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.created_on|in_cart_since }}</td>
+                <td><a href="{% url 'delete_item' 'carts' item.id %}">delete</a></td>
+            </tr>
+        {% empty %}
+            <tr scope="row">
+                <td colspan="5">Vous n'avez pas de célébrité</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

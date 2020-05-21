@@ -1,0 +1,29 @@
+{% load table_header_tag %}
+
+<table class="table table-hover">
+    <thead class="blue-grey lighten-4">
+        <tr>
+            {% header_tags 'products' 2 %}
+        </tr>
+    </thead>
+
+    <!-- Table body -->
+    <tbody>
+        {% for item in items %}
+            <tr>
+                <th scope="row">{{ item.id }}</th>
+                <td>
+                    <a href="{% url 'dashboard_product' item.id %}">{{ item.name }}</a>
+                </td>
+                <td>{{ item.get_price }}</td>
+                <td>{{ item.active }}</td>
+                <td><a href="{% url 'update' item.id %}">update</a></td>
+                <td><a href="{% url 'delete_item' 'products' item.id %}">delete</a></td>
+            </tr>
+        {% empty %}
+            <tr scope="row">
+                <td colspan="5">Vous n'avez pas de célébrité</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

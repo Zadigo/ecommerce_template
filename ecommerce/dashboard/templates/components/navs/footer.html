@@ -1,0 +1,22 @@
+{% load current_date_tag social_links_tag %}
+
+<!--Footer-->
+<footer class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
+  {% comment %}
+    <hr class="my-4">
+
+    <div class="pb-4">
+      {% footer_social_link 'facebook' 'mdbootstrap' %}
+
+      {% footer_social_link 'twitter' 'mdbootstrap' %}
+
+      {% footer_social_link 'instagram' 'mdbootstrap' %}
+    </div>
+  {% endcomment %}
+  
+  <!--Copyright-->
+  <div class="footer-copyright py-3">
+    © {{ current_date|date:"Y" }} Copyright:
+    <a href="#" target="_blank">My Business</a>
+  </div>
+</footer>

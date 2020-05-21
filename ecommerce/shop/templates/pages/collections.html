@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static price_tags %}
 
 {% block container %}
 <div id="vue_app">
@@ -36,13 +36,13 @@
     
                         <h5>
                             <strong>
-                                <a href="" class="dark-grey-text">Denim shirt
+                                <a href="" class="dark-grey-text">{{ product.name }}
                                 <span class="badge badge-pill danger-color">NEW</span>
                                 </a>
                             </strong>
                         </h5>
     
-                        <h4 class="font-weight-bold blue-text"><strong>120$</strong></h4>
+                        <h4 class="font-weight-bold blue-text"><strong>{{ product.price_ht|price_to_text }}</strong></h4>
                     </div>
                 </div>
             {% endfor %}

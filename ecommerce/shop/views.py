@@ -51,9 +51,9 @@ class ProductView(generic.DetailView):
     template_name = 'pages/product.html'
     context_object_name = 'product'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **kwargs):
         product = super().get_object()
-        serialiazed_product = core_serializers.serialize('json', product)
+        models.Cart.cart_manager.add_to_cart(request, product)
         return http.JsonResponse(data={'success': 'success'})
 
     def get_context_data(self, **kwargs):
@@ -66,10 +66,19 @@ class ProductView(generic.DetailView):
 class CheckoutView(generic.ListView):
     model = models.Cart
     template_name = 'pages/cart.html'
-    context_object_name = 'products'
+    context_object_name = 'constructed_products'
+
+    def post(self, request, **kwargs):
+        return http.JsonResponse({'success': 'success'})
     
     def get_queryset(self, **kwargs):
-        return models.Cart.cart_manager.cart_products('eino')
+        cart_id = self.request.session.get('cart_id')
+        return models.Cart.cart_manager.cart_products(cart_id)
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['vue_products'] = self.get_queryset()
+        return context    
 
 class CartSuccessView(generic.TemplateView):
     template_name = 'pages/success.html'
@@ -83,13 +92,15 @@ class ShipmentView(generic.ListView):
     context_object_name = 'products'
 
     def get_queryset(self, **kwargs):
-        return models.Cart.cart_manager.cart_products('eino')
+        cart_id = self.request.session.get('cart_id')
+        return models.Cart.cart_manager.cart_products(cart_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cart_total'] = self.model.cart_manager.cart_total('zef')['product__price_ht__sum']
+        cart_id = self.request.session.get('cart_id')
+        context['cart_id'] = cart_id
+        context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
         return context
-
 
 class PaymentView(generic.ListView):
     model = models.Cart
@@ -97,12 +108,19 @@ class PaymentView(generic.ListView):
     context_object_name = 'products'
 
     def get_queryset(self, **kwargs):
-        return models.Cart.cart_manager.cart_products('eino')
+        cart_id = self.request.session.get('cart_id')
+        return models.Cart.cart_manager.cart_products(cart_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cart_total'] = self.model.cart_manager.cart_total('zef')['product__price_ht__sum']
+        cart_id = self.request.session.get('cart_id')
+        context['cart_id'] = cart_id
+        context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
+        # context['number_of_products'] = self.model.cart_manager.number_of_products(cart_id)
         return context
 
 class EmptyCartView(generic.TemplateView):
     template_name = 'pages/no_cart.html'
+
+def delete_single_item(request, **kwargs):
+    pass
