@@ -11,6 +11,11 @@ class CollectionManager(QuerySet):
     pass
 
 class ProductManager(QuerySet):
+    def product_colors(self, product_id):
+        """Gets the available colors for a product"""
+        colors = self.get(id=product_id).images.values_list('variant', flat=True)
+        return list(set(colors))
+
     def count_products_by_collection(self):
         """Returns the count of products by collection"""
         products = models.Product.objects.values('collection__name')
@@ -57,6 +62,8 @@ class CartManager(QuerySet):
     def add_to_cart(self, request, current_product):
         cart_id = request.session.get('cart_id')
         quantity = request.POST.get('quantity')
+        color = request.POST.get('color')
+        size = request.POST.get('size')
 
         if not cart_id:
             pass
@@ -72,6 +79,8 @@ class CartManager(QuerySet):
             details = {
                 'cart_id': cart_id,
                 'price_ht': current_product.price_ht,
+                'size': size,
+                'color': color,
                 'quantity': int(quantity),
                 'anonymous': True
             }
@@ -91,6 +100,8 @@ class CartManager(QuerySet):
                 details = {
                     'cart_id': cart_id,
                     'price_ht': current_product.price_ht,
+                    'size': size,
+                    'color': color,
                     'quantity': int(quantity),
                     'anonymous': True
                 }
@@ -100,6 +111,8 @@ class CartManager(QuerySet):
             else:
                 cart.price = current_product.price_ht
                 cart.product.add(current_product)
+                cart.color = color
+                cart.size = size
                 cart.quantity = F('price_ht') + int(quantity)
                 cart.anonymous = True
                 cart.save()

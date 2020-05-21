@@ -21,28 +21,28 @@
     <section class="text-center mb-4">
         <div class="row wow fadeIn">
             {% for product in products %}
-                <div class="col-lg-3 col-md-6 mb-4">
+                <div class="col-lg-4 col-md-6 mb-4">
                     <div class="card">
                         <div class="view overlay">
-                            <img src="{{ product.get_main_image_url }}" class="card-img-top" alt="">
+                            <img src="{{ product.get_main_image_url }}" class="card-img-top" alt="{{ product.slug }}">
                             <a><div class="mask rgba-white-slight"></div></a>
                         </div>
     
                         <div class="card-body text-center">
-    
-                        <a href="{{ product.get_absolute_url }}" class="grey-text">
-                            <h5>{{ product.name }}</h5>
-                        </a>
-    
-                        <h5>
-                            <strong>
-                                <a href="" class="dark-grey-text">{{ product.name }}
-                                <span class="badge badge-pill danger-color">NEW</span>
-                                </a>
-                            </strong>
-                        </h5>
-    
-                        <h4 class="font-weight-bold blue-text"><strong>{{ product.price_ht|price_to_text }}</strong></h4>
+                            <a href="{{ product.get_absolute_url }}" class="grey-text">
+                                <h5>{{ product.name }}</h5>
+                            </a>
+                            <h5>
+                                <strong>
+                                    <a href="" class="dark-grey-text">{{ product.name }}
+                                        {% if product.is_novelty %}
+                                            <span class="badge badge-pill danger-color">NEW</span>                                            
+                                        {% endif %}
+                                    </a>
+                                </strong>
+                            </h5>
+                            <h4 class="font-weight-bold blue-text"><strong>{{ product.price_ht|price_to_text }}</strong></h4>
+                        </div>
                     </div>
                 </div>
             {% endfor %}

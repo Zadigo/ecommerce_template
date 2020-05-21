@@ -49,3 +49,10 @@ class PromotionalCodeAdmin(admin.ModelAdmin):
     # search_fields = []
     # filter_horizontal = []
     # filter_vertical = []
+
+@admin.register(models.ClotheSize)
+class ClotheSizeAdmin(admin.ModelAdmin):
+    list_display = ['name', 'verbose_name', 'centimeters']
+    # search_fields = []
+    # filter_horizontal = []
+    # filter_vertical = []

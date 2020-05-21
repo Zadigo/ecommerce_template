@@ -13,7 +13,6 @@
                     {# {% include "../components/product/badges.html" %} #}
 
                     <h3>{{ product.name }}</h3>
-
                     <p class="lead">
                         <span class="mr-1">
                             <del>$200</del>
@@ -22,17 +21,19 @@
                     </p>
 
                     <p class="lead font-weight-bold">Description</p>
+                    <p>{{ product.description }}</p>
 
-                    <p>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                        Et dolor suscipit libero eos atque quia ipsa
-                        sint voluptatibus!
-                        Beatae sit assumenda asperiores iure at maxime atque 
-                        repellendus maiores quia sapiente.
-                    </p>
+                    <div class="color-selection">
+                        <div>
+                            <colorcomponent @selectcolor="doselection" v-bind:initvalue="details.color" v-bind:colors="colors" />
+                        </div>
+                        <div>
+                            <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
+                        </div>
+                    </div>
 
                     <div class="cart-button">
-                        <cartbutton />
+                        <cartbutton v-bind:details="details" v-bind:product="product" />
                     </div>
                     <div class="csrf">{% csrf_token %}</div>
                 </div>
@@ -49,12 +50,63 @@
 {% block vuejs_scripts %}
     {{ vue_product|json_script:"vue_product" }}
     <script>
+        
         var imagescomponent = {
             props: ["images"],
         }
 
+        var sizecomponent = {
+            props: ["sizes", "initvalue"],
+            delimiters: ["[[", "]]"],
+            template: "\
+            <select @change='selectcolor' class='custom-select custom-select-md mb-3' v-model='selectedsize' name='size' id='size'>\
+                <option v-for='size in sizes' :key='size.id' :value='size.name'>\
+                    [[ size.name ]]\
+                </option>\
+            </select>\
+            ",
+            data() {
+                return {
+                    selectedsize: ""
+                }
+            },
+            beforeMount() {
+                this.$data.selectedsize = this.$props.initvalue
+            },
+            methods: {
+                selectcolor: function() {
+                    this.$emit("selectcolor", "size", this.$data.selectedsize)
+                }
+            }
+        }
+
+        var colorcomponent = {
+            props: ["colors", "initvalue"],
+            delimiters: ["[[", "]]"],
+            template: "\
+            <select @change='selectcolor' v-model='selectedcolor' class='custom-select custom-select-md mb-3' name='colors' id='colors'>\
+                <option v-for='color in colors' :key='color.name' :value='color.value'>\
+                    [[ color.name ]]\
+                </option>\
+            </select>\
+            ",
+            data() {
+                return {
+                    selectedcolor: ""
+                }
+            },
+            mounted() {
+                this.$data.selectedcolor = this.$props.initvalue
+            },
+            methods: {
+                selectcolor: function() {
+                    this.$emit("selectcolor", "color", this.$data.selectedcolor)
+                }
+            }
+        }
+
         var cartbutton = {
-            props: ["product"],
+            props: ["product", "details"],
             template: "\
             <form @submit.prevent='addtocart' class='d-flex justify-content-left'>\
                 <input v-model='quantity' type='number' aria-label='Search' \
@@ -81,6 +133,10 @@
                     formdata.append("quantity", this.$data.quantity)
                     formdata.append("csrfmiddlewaretoken", $(".csrf input").val())
 
+                    _.forEach(Object.keys(this.$props.details), (key) => {
+                        formdata.append(key, this.$props.details[key])
+                    })
+
                     var promise = new Promise((resolve, reject) => {
                         var xhr = new XMLHttpRequest()
                         xhr.onloadend = function() {
@@ -95,16 +151,37 @@
                 }
             }
         }
+        
         var productapp = new Vue({
             el: "#vue_app",
-            components: {cartbutton, imagescomponent},
+            components: {cartbutton, colorcomponent, imagescomponent, sizecomponent},
             data() {
                 return {
-                    product: undefined
+                    product: {},
+                    colors: [],
+                    sizes: [],
+                    details: {}
                 }
             },
             beforeMount() {
-                return this.$data.product = JSON.parse($("#vue_product").text())
+                var product = JSON.parse($("#vue_product").text())
+                
+                _.forEach(product.images, (image) => {
+                    this.$data.colors.push({name: image.variant, value: image.variant})
+                })
+                this.$data.details["color"] = product.images[0].variant
+
+                _.forEach(product.clothe_size, (size, index) => {
+                    this.$data.sizes.push({id: index, name: size.name})
+                })
+                this.$data.details["size"] = product.clothe_size[0].name
+
+                this.$data.product = product
+            },
+            methods: {
+                doselection: function(method, item) {
+                    this.$data.details[method] = item
+                }
             }
         })
     </script>

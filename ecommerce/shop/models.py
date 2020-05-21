@@ -7,6 +7,7 @@ import datetime
 class Image(models.Model):
     name    = models.CharField(max_length=50)
     url     = models.URLField(blank=True, null=True)
+    variant = models.CharField(max_length=30, default='black')
 
     objects = models.Manager()
     image_manager = managers.ImageManager.as_manager()
@@ -21,6 +22,7 @@ class Image(models.Model):
 
 class Collection(models.Model):
     name      = models.CharField(max_length=50)
+    presentation = models.TextField(max_length=300)
 
     objects = models.Manager()
     collection_manager = managers.CollectionManager.as_manager()
@@ -29,13 +31,29 @@ class Collection(models.Model):
     def __str__(self):
         return self.name
 
+class ClotheSize(models.Model):
+    name = models.CharField(max_length=3)
+    verbose_name = models.CharField(max_length=20)
+    centimeters    = models.PositiveIntegerField()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['name'])
+        ]
+
+    def __str__(self):
+        return self.verbose_name
+
 class Product(models.Model):
     """Model for products"""
     collection      = models.ForeignKey(Collection, on_delete=models.DO_NOTHING)
     images          = models.ManyToManyField(Image)
+    clothe_size        = models.ManyToManyField(ClotheSize, null=True)
     name          = models.CharField(max_length=50, blank=True, null=True)
+    description   = models.TextField(max_length=280, blank=True, null=True)
     price_ht    = models.DecimalField(max_digits=3, decimal_places=2)
     slug        = models.SlugField()
+    create_on = models.DateField(auto_now_add=True)
 
     objects = models.Manager()
     product_manager = managers.ProductManager.as_manager()
@@ -57,23 +75,26 @@ class Product(models.Model):
     def get_main_image_url(self):
         return self.images.all().first().url
 
-class AbstractCart(models.Model):
-    """Customer's cart"""
+    @property
+    def is_novelty(self):
+        """Tells if the product was created less than 7 days ago"""
+        current_date = datetime.datetime.now().date()
+        date_fifteen_days_ago = self.create_on - datetime.timedelta(days=7)
+        return all([self.create_on >= date_fifteen_days_ago, \
+                                    self.create_on <= current_date])
+
+class Cart(models.Model):
+    """Cart for registered users"""
     product     = models.ManyToManyField(Product, blank=True)
     price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
+    color       = models.CharField(max_length=50)
+    size       = models.CharField(max_length=20, blank=True, null=True)
     quantity    = models.IntegerField(default=1)
     cart_id         = models.CharField(max_length=20)
     anonymous   = models.BooleanField(default=False)
 
     objects = models.Manager()
     cart_manager = managers.CartManager.as_manager()
-
-    class Meta:
-        abstract = True
-
-class Cart(AbstractCart):
-    """Cart for registered users"""
-    # cart_manager = managers.CartsManager.as_manager()
 
     class Meta:
         indexes = [
