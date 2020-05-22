@@ -7,9 +7,11 @@ from django.urls import include, path
 from ecommerce.views import HeroView
 
 urlpatterns = [
-    url(r'^$', HeroView.as_view(), name='home'),
-    path('shop/', include('shop.urls'), name='shop'),
     path('dashboard/', include('dashboard.urls')),
+    path('shop/', include('shop.urls'), name='shop'),
+
+    url(r'^$', HeroView.as_view(), name='home'),
+
     path('admin/', admin.site.urls),
 ]
 

@@ -18,17 +18,17 @@
                     <div class="col-3">
                         <p></p>
                         <p class="text-center">
-                            <i class="fas fa-shopping-cart fa-4x"></i>
+                            <i class="fas fa-trash fa-4x"></i>
                         </p>
                     </div>
 
                     <div class="col-9">
                         <p>
                             Vous êtes sur le point de supprimer le 
-                            produit suivant: {{ product.name }}. Confimer ?
+                            produit suivant:
                         </p>
                         <h2>
-                            <span class="badge">{{ product.reference }}</span>
+                            <span class="badge grey z-depth-0">{{ product.reference|default:product.name }}</span>
                         </h2>
                     </div>
                 </div>
@@ -36,8 +36,7 @@
 
             <div class="modal-footer justify-content-center">
                 <a href="{% url 'delete_product' product.id %}" role="button" class="btn btn-danger">
-                    Supprimer
-                    <i class="far fa-gem ml-1"></i>
+                    Confirmer
                 </a>
                 <a role="button" class="btn btn-outline-danger waves-effect" data-dismiss="modal">
                     Abandonner

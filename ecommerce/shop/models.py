@@ -1,8 +1,10 @@
-from django.db import models
-from shop import managers
-from django.shortcuts import reverse
-from shop import validators
 import datetime
+
+from django.db import models
+from django.shortcuts import reverse
+
+from shop import managers, validators
+
 
 class Image(models.Model):
     name    = models.CharField(max_length=50)
@@ -10,7 +12,7 @@ class Image(models.Model):
     variant = models.CharField(max_length=30, default='black')
 
     objects = models.Manager()
-    image_manager = managers.ImageManager.as_manager()
+    # image_manager = managers.ImageManager.as_manager()
 
     class Meta:
         indexes = [
@@ -20,9 +22,11 @@ class Image(models.Model):
     def __str__(self):
         return self.name
 
-class Collection(models.Model):
+class ProductCollection(models.Model):
     name      = models.CharField(max_length=50)
-    presentation = models.TextField(max_length=300)
+    view_name   = models.CharField(max_length=50)
+    image       = models.URLField(blank=True, null=True)
+    presentation_text = models.TextField(max_length=300, blank=True, null=True)
 
     objects = models.Manager()
     collection_manager = managers.CollectionManager.as_manager()
@@ -30,6 +34,10 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.name:
+            self.view_name = self.name.lower()
 
 class ClotheSize(models.Model):
     name = models.CharField(max_length=3)
@@ -46,14 +54,14 @@ class ClotheSize(models.Model):
 
 class Product(models.Model):
     """Model for products"""
-    collection      = models.ForeignKey(Collection, on_delete=models.DO_NOTHING)
-    images          = models.ManyToManyField(Image)
-    clothe_size        = models.ManyToManyField(ClotheSize, null=True)
     name          = models.CharField(max_length=50, blank=True, null=True)
+    images          = models.ManyToManyField(Image)
+    collection      = models.ForeignKey(ProductCollection, on_delete=models.DO_NOTHING)
+    clothe_size        = models.ManyToManyField(ClotheSize, blank=True)
     description   = models.TextField(max_length=280, blank=True, null=True)
     price_ht    = models.DecimalField(max_digits=3, decimal_places=2)
     slug        = models.SlugField()
-    create_on = models.DateField(auto_now_add=True)
+    created_on = models.DateField(auto_now_add=True)
 
     objects = models.Manager()
     product_manager = managers.ProductManager.as_manager()
@@ -64,9 +72,8 @@ class Product(models.Model):
         ]
 
     def __str__(self):
-        return self.collection.name
+        return self.name
 
-    @property
     def get_absolute_url(self):
         collection_name = self.collection.name.lower()
         return reverse('product', args=['femme', collection_name, self.pk, self.slug])
@@ -79,18 +86,19 @@ class Product(models.Model):
     def is_novelty(self):
         """Tells if the product was created less than 7 days ago"""
         current_date = datetime.datetime.now().date()
-        date_fifteen_days_ago = self.create_on - datetime.timedelta(days=7)
-        return all([self.create_on >= date_fifteen_days_ago, \
-                                    self.create_on <= current_date])
+        date_fifteen_days_ago = self.created_on - datetime.timedelta(days=7)
+        return all([self.created_on >= date_fifteen_days_ago, \
+                                    self.created_on <= current_date])
 
 class Cart(models.Model):
     """Cart for registered users"""
+    cart_id         = models.CharField(max_length=80)
     product     = models.ManyToManyField(Product, blank=True)
     price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
     color       = models.CharField(max_length=50)
-    size       = models.CharField(max_length=20, blank=True, null=True)
-    quantity    = models.IntegerField(default=1)
-    cart_id         = models.CharField(max_length=20)
+    size       = models.CharField(max_length=30, blank=True, null=True, \
+                                    validators=[validators.size_validator])
+    quantity    = models.IntegerField(default=1, validators=[validators.quantity_validator])
     anonymous   = models.BooleanField(default=False)
 
     objects = models.Manager()
@@ -107,6 +115,12 @@ class Cart(models.Model):
     @property
     def get_product_total(self):
         return self.price_ht * self.quantity
+
+    def get_increase_quantity_url(self):
+        return reverse('alter_quantity', args=['add'])
+
+    def get_decrease_quantity_url(self):
+        return reverse('alter_quantity', args=['reduce'])
 
 class CustomerOrder(models.Model):
     """Customer order's"""
@@ -133,7 +147,7 @@ class PromotionalCode(models.Model):
     """Model for promotion codes"""
     code = models.CharField(max_length=4, default='')
     product = models.ManyToManyField(Product, blank=True)
-    collection = models.ManyToManyField(Collection, blank=True)
+    collection = models.ManyToManyField(ProductCollection, blank=True)
     end_date = models.DateField()
 
     def __str__(self):

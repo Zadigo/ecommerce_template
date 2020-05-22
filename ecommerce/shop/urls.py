@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.urls import include, path, re_path
 
 from shop import views
 
@@ -6,8 +7,11 @@ urlpatterns = [
     # url(r'^cart/(?P<cart>(\d+\_)+\dw+)/delete-single$', views.delete_single_item, name='delete_single'),
 
     url(r'^cart/success$', views.CartSuccessView.as_view(), name='success'),
+    url(r'^cart/payment/process$', views.payment_process, name='payment_process'),
     url(r'^cart/payment$', views.PaymentView.as_view(), name='payment'),
     url(r'^cart/shipment$', views.ShipmentView.as_view(), name='shipment'),
+    url(r'^cart/alter/(?P<method>(add|reduce))$', views.alter_item_quantity, name='alter_quantity'),
+    url(r'^cart/delete$', views.delete_product_from_cart, name='delete_from_cart'),
     url(r'^cart$', views.CheckoutView.as_view(), name='checkout'),
     url(r'^no-cart/$', views.EmptyCartView.as_view(), name='no_cart'),
 

@@ -1,8 +1,30 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static card_sizes %}
 
 {% block container %}
-    <div class="card">
-        <a href="{% url 'collection' 'femme' 'sacs' %}">Sacs</a>
-    </div>
+    <section class="collections">
+        <div class="row wow fadeIn">
+            {% for collection in collections %}
+                <div class="col col-lg-{{ forloop.counter0|size_in_row }}">
+                    <div class="card">
+                        <a href="{% url 'collection' 'femme' collection.view_name %}">
+                            <img src="{{ collection.image }}" alt="shop" class="img-fluid">
+                        </a>
+                        <!-- <a href="{% url 'collection' 'femme' 'sweats' %}">Sacs</a> -->
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col col-lg-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/13.jpg" alt="shop" class="img-fluid">
+                            <h4>
+                                There are no collections available yet.
+                            </4>
+                        </div>
+                    </div>
+                </div>                
+            {% endfor %}
+        </div>
+    </section>
 {% endblock %}

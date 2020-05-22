@@ -6,7 +6,7 @@ from shop import utilities, models
 class CreateForm1(forms.Form):
     name = fields.CharField(max_length=50, widget=widgets.TextInput(attrs={'placeholder': 'Nom du produit'}))
     price_ht = fields.IntegerField(min_value=0, widget=widgets.NumberInput(attrs={'placeholder': 'Prix HT'}))
-    collection = fields.ChoiceField(choices=models.Collection.forms_manager.for_forms())
+    # collection = fields.ChoiceField(choices=models.ProductCollection.forms_manager.for_forms())
     reference = fields.CharField(initial=utilities.create_product_reference(), disabled=True)
 
 class CreateForm2(forms.Form):
@@ -125,7 +125,7 @@ class CreateFormLogic:
                 #         # Now replace the raw data by the instance in the
                 #         # cleaned data form fields
                 #         form_is_valid.cleaned_data[field] = item
-                form_is_valid.cleaned_data['collection'] = models.Collection.\
+                form_is_valid.cleaned_data['collection'] = models.ProductCollection.\
                             objects.get(name=form_is_valid.cleaned_data['collection'])
                 product = model.objects.create(**form_is_valid.cleaned_data)
                 self.request.session['created_product_id'] = product.id

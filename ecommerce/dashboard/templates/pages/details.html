@@ -1,34 +1,48 @@
 {% extends "../index.html" %}
 
 {% block content %}
-    <div class="row wow fadeIn">
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                {% with image=product.get_main_image.image_url %}
-                    <img class="card-img-top" src="{{ image|default:'https://via.placeholder.com/800' }}" alt="main_image">                      
-                {% endwith %}
-                <div class="card-body">
-                    <p class="card-text">
-                        {{ product.description|default:"No description" }}
-                    </p>
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                        data-target="#fluidModalBottomDangerDemo">Pictures</button>
+    <section class="section" id="product">
+        <div class="row wow fadeIn">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% with image=product.get_main_image.image_url %}
+                        <img class="card-img-top" src="{{ image|default:'https://via.placeholder.com/800' }}" alt="main_image">                      
+                    {% endwith %}
+                    <div class="card-body">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                            data-target="#fluidModalBottomDangerDemo">Pictures</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 mb-4">
+                <div class="card">
+                    <div class="card-header blue">
+                        <h4>{{ product.collection.name }} / {{ product.name }}</h4>
+                    </div>
+                    <div class="card-body">
+                        <p>Crée le : {{ product.created_on }}</p>
+                    </div>
+                </div>
+    
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h4>Description</h4>
+                        <p class="card-text">
+                            {{ product.description|default:"No description" }}
+                        </p>
+                    </div>
+                </div>
+    
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <a href="{% url 'product_orders' product.id %}" class="btn blue">Orders</a>
+                        <a href="{% url 'update' product.id %}" class="btn blue">Update</a>
+                        <a class="btn btn-danger" data-toggle="modal" data-target="#sideModalBRDangerDemo">Delete</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-8 mb-4">
-            <div class="card">
-                <div class="card-header blue">
-                    <h4>{{ product.name }}</h4>
-                </div>
-                <div class="card-body">
-                    <a href="{% url 'product_orders' product.id %}" class="btn blue">Orders</a>
-                    <a href="{% url 'update' product.id %}" class="btn blue">Update</a>
-                    <a class="btn btn-danger" data-toggle="modal" data-target="#sideModalBRDangerDemo">Delete</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 
     {% include "../components/others/modals/bottom_right.html" %}
 

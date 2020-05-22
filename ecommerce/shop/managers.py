@@ -2,6 +2,7 @@ from django.db.models import Count, F, QuerySet, Sum
 from django.core import exceptions
 from shop import utilities
 from django.db.models import fields
+from django import http
 
 
 class ImageManager(QuerySet):
@@ -61,14 +62,23 @@ class CartManager(QuerySet):
 
     def add_to_cart(self, request, current_product):
         cart_id = request.session.get('cart_id')
+
+        products_without_size = ['sacs']
+
         quantity = request.POST.get('quantity')
         color = request.POST.get('color')
         size = request.POST.get('size')
 
-        if not cart_id:
-            pass
+        if color is None:
+            # If this variant is empty,
+            # just raise an error by refusing
+            # the request to the database
+            return False
 
-        if not quantity:
+        if size is None:
+            size = ''
+
+        if quantity is None:
             quantity = 1
 
         if not cart_id:
@@ -107,13 +117,15 @@ class CartManager(QuerySet):
                 }
                 new_cart = self.create(**details)
                 new_cart.product.add(current_product)
+                new_cart.anonymous = True
+                new_cart.save()
                 return new_cart
             else:
                 cart.price = current_product.price_ht
                 cart.product.add(current_product)
                 cart.color = color
                 cart.size = size
-                cart.quantity = F('price_ht') + int(quantity)
+                cart.quantity = F('quantity') + int(quantity)
                 cart.anonymous = True
                 cart.save()
                 return cart

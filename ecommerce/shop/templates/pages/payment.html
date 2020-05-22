@@ -1,88 +1,93 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block body_color %}grey lighten-5{% endblock %}
+
+{% block extra_css %}
+	<link rel="stylesheet" href="{% static 'stripe.css' %}">
+{% endblock %}
+
+{% block navbar %}
+	{% include "navs/nav.html" with display=False %}        
+{% endblock %}
+
 {% block container %}
-<div class="row">
-  <div class="col-md-8 mb-4">
-    <div class="card">
-      <form class="card-body">
-        <hr>
-
-        <div class="custom-control custom-checkbox">
-          <input type="checkbox" class="custom-control-input" id="same-address">
-          <label class="custom-control-label" for="same-address">Shipping address is the same as my billing
-            address</label>
-        </div>
-        <div class="custom-control custom-checkbox">
-          <input type="checkbox" class="custom-control-input" id="save-info">
-          <label class="custom-control-label" for="save-info">Save this information for next time</label>
-        </div>
-
-        <hr>
-
-        <div class="d-block my-3">
-          <div class="custom-control custom-radio">
-            <input id="credit" name="paymentMethod" type="radio" class="custom-control-input" checked required>
-            <label class="custom-control-label" for="credit">Credit card</label>
-          </div>
-          <div class="custom-control custom-radio">
-            <input id="debit" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="debit">Debit card</label>
-          </div>
-          <div class="custom-control custom-radio">
-            <input id="paypal" name="paymentMethod" type="radio" class="custom-control-input" required>
-            <label class="custom-control-label" for="paypal">Paypal</label>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="cc-name">Name on card</label>
-            <input type="text" class="form-control" id="cc-name" placeholder="" required>
-            <small class="text-muted">Full name as displayed on card</small>
-            <div class="invalid-feedback">
-              Name on card is required
-            </div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="cc-number">Credit card number</label>
-            <input type="text" class="form-control" id="cc-number" placeholder="" required>
-            <div class="invalid-feedback">
-              Credit card number is required
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3 mb-3">
-            <label for="cc-expiration">Expiration</label>
-            <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
-            <div class="invalid-feedback">
-              Expiration date required
-            </div>
-          </div>
-          <div class="col-md-3 mb-3">
-            <label for="cc-expiration">CVV</label>
-            <input type="text" class="form-control" id="cc-cvv" placeholder="" required>
-            <div class="invalid-feedback">
-              Security code required
-            </div>
-          </div>
-        </div>
-        <hr class="mb-4">
-        <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
-      </form>
-    </div>
-  </div>
-
-  <div class="col-md-4 mb-4">
-    <!-- Heading -->
-    {% include "../components/cart/heading.html" %}
-
-    <!-- SIDE -->
-    {% include "../components/cart/side.html" %}
-
-    <!-- PROMO CODE -->
-    {% include "../components/cart/promo.html" %}
-  </div>
+<div class="row wow fadeIn mb-5">
+	<div class="col-3 col-md-3 offset-md-2">
+		<h2 class="text-uppercase font-weight-bold">
+			<a class="text-muted" href="{% url 'home' %}">Homepage</a>
+		</h2>
+	</div>
+	<div class="col-4 col-md-4">
+		<a href="https://stripe.com">
+			<img src="{% static 'logos/stripe.png' %}" alt="stripe">
+		</a>
+	</div>
 </div>
+
+<div class="row wow fadeIn">
+	<div class="col-md-5 offset-md-2">
+		<div class="card">
+			<form method="POST" class="card-body stripe stripe-styling" id="payment_form">	
+				{% csrf_token %}
+				
+				<div class="alert alert-danger d-none" role="alert" id="card-errors"></div>
+				
+				<div class="row wow fadeIn">
+					<div id="card_element"></div>
+				</div>
+				
+				<button type="submit" class="btn btn-primary btn-lg btn-block mt-4" id="btn-payment">
+					<div class='spinner-grow d-none' role='status'></div>
+					Commander
+				</button>
+			</form>
+			<div class="card-footer">
+				<div class="d-flex flex-row justify-content-between">
+					<p class="text-uppercase font-weight-bold mb-0">Nous acceptons</p>
+					<div class="payments">
+						<i class="fab fa-cc-mastercard fa-1x"></i>
+						<i class="fab fa-cc-visa fa-1x"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card mt-3 text-muted">
+			<div class="card-body">
+				<p class="mb-0">
+					En passant votre commande, vous acceptez nos Modalités, ainsi que nos politiques 
+					de confidentialité et de retour. Vous consentez à ce que certaines de vos données, 
+					qui seront utilisées pour améliorer le processus d'achats, soient enregistrées par MYWEBSITE.
+				</p>
+			</div>
+		</div>
+
+		<div class="card mt-1 z-depth-0 grey lighten-5">
+			<div class="card-body pl-0 text-muted">
+				<p><a href="#">Assistance</a></p>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4 mb-4">
+		<!-- Heading -->
+		{# {% include "../components/cart/heading.html" %} #}
+
+		<!-- SIDE -->
+		{% include "../components/cart/side.html" %}
+
+		<!-- PROMO CODE -->
+		{# {% include "../components/cart/promo.html" %} #}
+	</div>
+
+</div>
+{% endblock %}
+
+{% block footer %}
+	{% include "navs/nav.html" with display=False %}        
+{% endblock %}a
+
+{% block extra_scripts %}
+	{% include "../components/cart/stripejs.html" %}
 {% endblock %}

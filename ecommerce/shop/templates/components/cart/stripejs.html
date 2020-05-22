@@ -1,0 +1,76 @@
+<!-- STRIPE -->
+<script src="https://js.stripe.com/v3/"></script>
+{{ user_infos|json_script:"user_infos" }}
+<script>
+    (function() {
+        var publisheablekey = "pk_test_eo8zzqww6iuVFzWmLQEJ4F7K"
+        var paymentform = document.getElementById("payment_form")
+        var stripe = Stripe(publisheablekey)
+        var elements = stripe.elements()
+        var style = {
+            base: {
+                fontWeight: 500,
+                fontFamily: "Roboto, Raleway, Open Sans",
+                fontSize: "16px",
+                fontSmoothing: 'antialiased',
+                iconColor: '#c4f0ff',
+
+                // ':-webkit-autofill': {
+                //     color: '#fce883',
+                // },
+
+                // '::placeholder': {
+                //     color: '#87BBFD',
+                // },
+            }
+        }
+
+        var card = elements.create("card", {style: style})
+
+        $("#payment_form").on("submit", (e) => {
+            e.preventDefault()
+            var form = $("#payment_form")
+            var csrf = form.find("input[type='hidden']").val()
+            var button = form.find("button[type='submit']")
+            var processurl = "/shop/payment/process/"
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    var messagecard = $("#card-errors")
+                    messagecard.removeClass("d-none")
+                    messagecard.text(result.error.message)
+                } else {
+                    var formdata = new FormData()
+
+                    formdata.append("csrfmiddlewaretoken", csrf)
+                    Object.keys(result.card).forEach(key => {
+                        formdata.append(key, result.data[key])
+                    })
+
+                    var xhr = new XMLHttpRequest()
+
+                    xhr.onloadstart = function() {
+                        button.find("div.spinner-grow").removeClass("d-none")
+                        button.addClass("disabled")
+                    }
+
+                    xhr.onloadend = function() {
+                        if (xhr.status === 200 && xhr.response.status === "success") {
+                            setTimeout(() => {
+                                console.log("After 4s...")
+                                console.log(xhr.response)                                
+                            }, 4000);
+                        }
+
+                        if (xhr.status === 200 && xhr.response.status === "failed") {
+                            console.error(xhr.response)
+                        }
+                    }
+
+                    xhr.open("POST", processurl)
+                    xhr.send(formdata)
+                }
+            })
+        })
+    })()
+</script>

@@ -10,7 +10,7 @@ class ImageAdmin(admin.ModelAdmin):
     # filter_horizontal = []
     # filter_vertical = []
 
-@admin.register(models.Collection)
+@admin.register(models.ProductCollection)
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ['name']
     # search_fields = ['name']

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static price_tags %}
 
 {% block container %}
     <div class="row wow fadeIn">
@@ -11,37 +11,37 @@
                             <thead>
                                 <th colspan="1"></th>
                                 <th>Nom</th>
-                                <tbody>
                                 <th>Quantité</th>
                                 <th colspan="1">Total</th>
                             </thead>
+                            </tbody>
+                                {% for product in constructed_products %}
+                                    <tr>
+                                        <td>
+                                            <div class="cart-image">
+                                                <img class="img-fluid" src="{{ product.url }}" alt="{{ product.slug }}">
+                                            </div>
+                                        </td>
+                                        <td>{{ product.name }}</td>
+                                        <td>
+                                            <a href="{% url 'alter_quantity' 'reduce' %}"><i class="fa fa-minus"></i></a>
+                                            {{ product.quantity }}
+                                            <a href="{% url 'alter_quantity' 'add' %}"><i class="fa fa-plus"></i></a>
+                                        </td>
+                                        <td>{{ product.total|price_to_text }}</td>
+                                        <td><a href="{% url 'delete_from_cart' %}"><i class="fa fa-trash fa-1x"></i></a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+
                             {% comment %}
-                                </tbody>
-                                    {% for product in constructed_products %}
-                                        <tr>
-                                            <td>
-                                                <div class="cart-image">
-                                                    <img class="img-fluid" src="{{ product.url }}" alt="{{ product.slug }}">
-                                                </div>
-                                            </td>
-                                            <td>{{ product.name }}</td>
-                                            <td>
-                                                <i class="fa fa-minus"></i>
-                                                {{ product.quantity }}
-                                                <i class="fa fa-plus"></i>
-                                            </td>
-                                            <td>{{ product.total|price_to_text }}</td>
-                                            <td><i class="fa fa-trash"></i></td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            {% endcomment %}
-                            
                             <tbody>
                                 <div id="vue_app">
                                     <listcomponent @mathoperation="hideproduct" v-bind:products="products" />
                                 </div>
                             </tbody>
+                            {% endcomment %}
+                            
                         </table>
                         <div class="csrf">{% csrf_token %}</div>
                     </div>
@@ -50,7 +50,7 @@
         </div>
     </div>
 
-    <div class="row wow fadeIn">
+    <div class="row wow fadeIn mt-3">
         <div class="col-md-12 mb-12">
             <div class="card">
                 <div class="card-body">
