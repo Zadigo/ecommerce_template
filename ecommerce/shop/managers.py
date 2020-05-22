@@ -1,6 +1,6 @@
 from django import http
 from django.core import exceptions
-from django.db.models import Case, Count, F, QuerySet, Sum, When, fields, Q
+from django.db.models import Case, Count, F, Q, QuerySet, Sum, When, fields
 
 from shop import utilities
 
@@ -50,6 +50,13 @@ class CartManager(QuerySet):
         condition = When(product__discounted_price__gt=0, then='product__discounted_price')
         annotated_cart = cart.annotate(true_price=Case(condition, default='product__price_ht'))
 
+        try:
+            coupon_value = annotated_cart.first().coupon.value
+            coupon_code = annotated_cart.first().coupon.code
+        except:
+            coupon_value = 0
+            coupon_code = ''
+
         for product in annotated_cart:
             # Product that is related to the cart
             # in the Product model
@@ -66,7 +73,8 @@ class CartManager(QuerySet):
                     'is_discounted': related_product.is_discounted()
                 }
             )        
-        return constructed_products
+        return {'constructed_products': constructed_products,
+                        'coupon_value': coupon_value, 'coupon_code': coupon_code}
 
     def cart_total(self, cart_id):
         """Total of a customer's cart"""
@@ -77,7 +85,7 @@ class CartManager(QuerySet):
         price_ht_times_quantity = F('product__price_ht') * F('quantity')
         
         first_case = When(product__discounted_price__gt=0, then=discounted_price_times_quantity)
-        case = Case(first_case, default=price_ht_times_quantity, output_field=DecimalField())
+        case = Case(first_case, default=price_ht_times_quantity, output_field=fields.DecimalField())
         true_price_queryset = cart.annotate(true_price=case)
 
         return true_price_queryset.aggregate(cart_total=Sum('true_price'))

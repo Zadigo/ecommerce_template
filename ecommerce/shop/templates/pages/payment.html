@@ -28,18 +28,19 @@
 <div class="row wow fadeIn">
 	<div class="col-md-5 offset-md-2">
 		<div class="card">
-			<form method="POST" class="card-body stripe stripe-styling" id="payment_form">	
+			<form method="POST" class="card-body stripe stripe-styling" id="payment-form">	
 				{% csrf_token %}
 				
 				<div class="alert alert-danger d-none" role="alert" id="card-errors"></div>
 				
 				<div class="row wow fadeIn">
-					<div id="card_element"></div>
+					<div id="card-element"></div>
 				</div>
 				
 				<button type="submit" class="btn btn-primary btn-lg btn-block mt-4" id="btn-payment">
-					<div class='spinner-grow d-none' role='status'></div>
-					Commander
+					<i class="fa fa-lock d-none"></i>
+					<div class="spinner-grow d-none" role="status"></div>
+					Paiement
 				</button>
 			</form>
 			<div class="card-footer">
@@ -76,9 +77,6 @@
 
 		<!-- SIDE -->
 		{% include "../components/cart/side.html" %}
-
-		<!-- PROMO CODE -->
-		{# {% include "../components/cart/promo.html" %} #}
 	</div>
 
 </div>

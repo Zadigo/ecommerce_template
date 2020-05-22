@@ -1,10 +1,10 @@
-<!-- STRIPE -->
-<script src="https://js.stripe.com/v3/"></script>
 {{ user_infos|json_script:"user_infos" }}
 <script>
     (function() {
+        var paymentform = $("#payment-form")
+
+        // var publisheablekey = "pk_test_TYooMQauvdEDq54NiTphI7jx"
         var publisheablekey = "pk_test_eo8zzqww6iuVFzWmLQEJ4F7K"
-        var paymentform = document.getElementById("payment_form")
         var stripe = Stripe(publisheablekey)
         var elements = stripe.elements()
         var style = {
@@ -26,47 +26,47 @@
         }
 
         var card = elements.create("card", {style: style})
+        card.mount("#card-element")
 
-        $("#payment_form").on("submit", (e) => {
+        paymentform.on("submit", (e) => {
             e.preventDefault()
-            var form = $("#payment_form")
-            var csrf = form.find("input[type='hidden']").val()
-            var button = form.find("button[type='submit']")
-            var processurl = "/shop/payment/process/"
 
-            stripe.createToken(card).then(function(result) {
+            var processurl = "/shop/cart/payment/process"
+            var csrf = paymentform.find("input[type='hidden']").val()
+            var button = paymentform.find("button[type='submit']")
+            var messagecard = $("#card-errors")
+            
+            stripe.createToken(card).then((result) => {
                 if (result.error) {
-                    var messagecard = $("#card-errors")
                     messagecard.removeClass("d-none")
                     messagecard.text(result.error.message)
                 } else {
                     var formdata = new FormData()
-
                     formdata.append("csrfmiddlewaretoken", csrf)
-                    Object.keys(result.card).forEach(key => {
-                        formdata.append(key, result.data[key])
-                    })
+                    formdata.append("token", result.token.id)
 
                     var xhr = new XMLHttpRequest()
 
+                    xhr.responseType = "json"
                     xhr.onloadstart = function() {
                         button.find("div.spinner-grow").removeClass("d-none")
                         button.addClass("disabled")
                     }
 
                     xhr.onloadend = function() {
-                        if (xhr.status === 200 && xhr.response.status === "success") {
+                        var response = xhr.response
+                        if (response.status == true) {
                             setTimeout(() => {
-                                console.log("After 4s...")
-                                console.log(xhr.response)                                
-                            }, 4000);
-                        }
-
-                        if (xhr.status === 200 && xhr.response.status === "failed") {
-                            console.error(xhr.response)
+                                window.location.href = response.redirect_url
+                            }, 3000);
+                        } else {
+                            messagecard.removeClass("d-none")
+                            messagecard.text("Payment was not successful")
+                            button.find("div.spinner-grow").addClass("d-none")
+                            button.removeClass("disabled")
                         }
                     }
-
+                    
                     xhr.open("POST", processurl)
                     xhr.send(formdata)
                 }

@@ -7,6 +7,7 @@
 """
 
 from django import http, shortcuts
+from django.contrib import messages
 from django.core import paginator
 from django.core import serializers as core_serializers
 from django.shortcuts import redirect, render, reverse
@@ -15,7 +16,7 @@ from django.views import generic
 from django.views.decorators import http as http_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-from shop import models, payment_logic, serializers
+from shop import forms, models, payment_logic, serializers
 
 
 def no_cart_router(request, current_path, debug=False):
@@ -96,12 +97,6 @@ class CheckoutView(generic.ListView):
         context['vue_products'] = self.get_queryset()
         return context    
 
-class CartSuccessView(generic.TemplateView):
-    template_name = 'pages/success.html'
-
-    def get(self, request, *args, **kwargs):
-        return no_cart_router(request, reverse('success'), debug=True)(request, self.template_name)
-
 class ShipmentView(generic.ListView):
     model = models.Cart
     template_name = 'pages/shipment.html'
@@ -115,6 +110,8 @@ class ShipmentView(generic.ListView):
         context = super().get_context_data(**kwargs)
         cart_id = self.request.session.get('cart_id')
         context['cart_id'] = cart_id
+        context['coupon_form'] = forms.CouponForm
+        # context['has_coupon'] = self.get_queryset().first().coupon.has_coupon
         context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
         return context
 
@@ -137,15 +134,40 @@ class PaymentView(generic.ListView):
     def post(self, request, **kwargs):
         user_infos = payment_logic.UserInfosHelper(request)
         context = self.get_context_data(object_list=self.get_queryset(), **kwargs)
-        context.update({'user_infos': user_infos.get_user_infos})
+        user_infos = user_infos.get_user_infos
+        context.update({'user_infos': user_infos})
+        request.session['user_infos'] = user_infos
         return render(request, self.template_name, context)
 
-@http_decorator.require_http_methods(['POST'])
-def payment_process(request, **kwargs):
-    stripe_token = request.POST.get('token')
-    user_infos = {}
-    logic = payment_logic.ProcessPayment(request, stripe_token, user_infos)
-    return logic.payment_processor(payment_debug_mode=True)
+class ProcessPayment(generic.View):
+    def post(self, request, **kwargs):
+        import ast
+        stripe_token = request.POST.get('token')
+        user_infos = request.session.get("user_infos")
+        user_infos = ast.literal_eval(user_infos)
+
+        logic = payment_logic.ProcessPayment(request, stripe_token, user_infos)
+        logic.cart_model = models.Cart
+        logic.order_model = models.CustomerOrder
+
+        completed = logic.payment_processor()
+
+        return http.JsonResponse(data={'status': completed, 'redirect_url': logic.final_url})
+
+class CartSuccessView(generic.TemplateView):
+    template_name = 'pages/success.html'
+
+    def get(self, request, *args, **kwargs):
+        reference = request.GET.get('reference')
+        transaction = request.GET.get('transaction')
+
+        if reference and transaction:
+            customer_order = models.CustomerOrder.objects.get(order=order)
+            if customer_order:
+                pass
+            return render(request, 'pages/success.html')
+        else:
+            return redirect('no_cart')
 
 class EmptyCartView(generic.TemplateView):
     template_name = 'pages/no_cart.html'
@@ -196,3 +218,21 @@ def alter_item_quantity(request, **kwargs):
             cart.save()
         return redirect('checkout')
     return redirect('checkout')
+
+@http_decorator.require_http_methods(['POST'])
+def apply_coupon(request, **kwargs):
+    coupon = request.POST.get('coupon')
+
+    form = forms.CouponForm(request.POST)
+    if form.is_valid():
+        try:
+            coupon = models.PromotionalCode.objects.get(code=coupon)
+        except:
+            return redirect('shipment')
+        else:
+            cart_id = request.session.get('cart_id')
+            cart = models.Cart.objects.filter(cart_id=cart_id)
+            cart.update(coupon=coupon)
+            return redirect('shipment')
+    else:
+        return redirect('shipment')

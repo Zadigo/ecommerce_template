@@ -108,6 +108,11 @@
 
 		<!-- SIDE CART -->
 		{% include "../components/cart/side.html" %}
+		
+		{% if coupon_value > 0 %}
+			<!-- PROMO FORM -->
+		{% endif %}
+		{% include "../components/cart/promo.html" %}			
 	</div>
 </div>
 {% endblock %}

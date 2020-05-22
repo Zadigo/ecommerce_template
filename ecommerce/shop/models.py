@@ -118,11 +118,33 @@ class Product(models.Model):
         """Says whether the product is discounted or not"""
         return self.discount_pct > 0
 
+class PromotionalCode(models.Model):
+    code        = models.CharField(max_length=4)
+    value       = models.IntegerField(default=5)
+    product     = models.ManyToManyField(Product, blank=True)
+    collection = models.ManyToManyField(ProductCollection, blank=True)
+    end_date    = models.DateField()
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.code
+
+    @property
+    def is_valid(self):
+        current_date = datetime.datetime.now().date()
+        if self.end_date >= current_date:
+            return False
+        return True
+
 class Cart(models.Model):
     cart_id         = models.CharField(max_length=80)
     product     = models.ManyToManyField(Product, blank=True)
+    coupon      = models.ForeignKey(PromotionalCode, on_delete=models.SET_NULL, blank=True, null=True)
+    
     price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
     price_ttc   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    
     color       = models.CharField(max_length=50)
     size       = models.CharField(max_length=30, blank=True, null=True, \
                                     validators=[validators.size_validator])
@@ -156,40 +178,30 @@ class Cart(models.Model):
     def get_decrease_quantity_url(self):
         return reverse('alter_quantity', args=['reduce'])
 
+    def has_coupon(self):
+        return self.coupon is not None
+
 class CustomerOrder(models.Model):
     cart             = models.ForeignKey(Cart, blank=True, null=True, on_delete=models.CASCADE)
-    customer_order_id = models.CharField(max_length=20)
+    reference  = models.CharField(max_length=50)
+    transaction   = models.CharField(max_length=200, default=utilities.create_transaction_token())
+    payment           = models.DecimalField(max_digits=5, decimal_places=3, default=0)
+    created_on      = models.DateField(auto_now_add=True)
 
     objects = models.Manager()
     order_manager = managers.OrdersManager.as_manager()
 
     def __str__(self):
-        return self.customer_order_id
+        return self.transaction_id
 
 class Shipment(models.Model):
     """Tracking orders that are shipped"""
     customer_order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE)
+    tracking_number = models.CharField(max_length=100, blank=True, null=True)
+    completed       = models.BooleanField(default=False)
 
     objects = models.Manager()
     shipment_manager = managers.ShipmentManager.as_manager()
 
     def __str__(self):
-        return self.customer_order.customer_order_id
-
-class PromotionalCode(models.Model):
-    code = models.CharField(max_length=4, default='')
-    product = models.ManyToManyField(Product, blank=True)
-    collection = models.ManyToManyField(ProductCollection, blank=True)
-    end_date = models.DateField()
-
-    def __str__(self):
-        return self.code
-
-    @property
-    def is_valid(self):
-        if not self.end_date:
-            return False
-        current_date = datetime.datetime.now()
-        if self.end_date > current_date:
-            return False
-        return True
+        return self.customer_order.transaction_id
