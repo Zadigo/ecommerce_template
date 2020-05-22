@@ -37,7 +37,6 @@ class IndexView(generic.View):
 
 class ProductsView(generic.ListView):
     model = models.ProductCollection
-    # queryset = models.Product.objects.all()
     template_name = 'pages/collections.html'
     context_object_name = 'products'
     paginate_by = 10
@@ -108,10 +107,6 @@ class ShipmentView(generic.ListView):
     template_name = 'pages/shipment.html'
     context_object_name = 'products'
 
-    def get(self, request, *args, **kwargs):
-        data = super().get()
-        return data
-
     def get_queryset(self, **kwargs):
         cart_id = self.request.session.get('cart_id')
         return models.Cart.cart_manager.cart_products(cart_id)
@@ -137,7 +132,6 @@ class PaymentView(generic.ListView):
         cart_id = self.request.session.get('cart_id')
         context['cart_id'] = cart_id
         context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
-        # context['number_of_products'] = self.model.cart_manager.number_of_products(cart_id)
         return context
 
     def post(self, request, **kwargs):
@@ -151,9 +145,6 @@ def payment_process(request, **kwargs):
     stripe_token = request.POST.get('token')
     user_infos = {}
     logic = payment_logic.ProcessPayment(request, stripe_token, user_infos)
-    # return logic.payment_processor_with_model_update(models.CustomerOrder, 'cart_id', 'cart_id')
-    # return logic.fake_payment_response(redirect=False)
-    # return logic.classic_http_response()('/shop/cart/success')
     return logic.payment_processor(payment_debug_mode=True)
 
 class EmptyCartView(generic.TemplateView):
@@ -163,7 +154,7 @@ class EmptyCartView(generic.TemplateView):
 def delete_product_from_cart(request, **kwargs):
     cart_id = request.session.get('cart_id')
     if cart_id:
-        product = shortcuts.get_object_or_404(models.Cart, cart_id=cart_id)
+        product = shortcuts.get_object_or_404(models.Cart, cart_id=cart_id, pk=kwargs['pk'])
         if product:
             product.delete()
             try:
@@ -183,7 +174,7 @@ def alter_item_quantity(request, **kwargs):
 
     cart_id = request.session.get('cart_id')
     if cart_id:
-        cart = shortcuts.get_object_or_404(models.Cart, cart_id=cart_id)
+        cart = shortcuts.get_object_or_404(models.Cart, cart_id=cart_id, pk=kwargs['pk'])
         if cart:
             quantity = cart.quantity
 
@@ -205,5 +196,3 @@ def alter_item_quantity(request, **kwargs):
             cart.save()
         return redirect('checkout')
     return redirect('checkout')
-
-

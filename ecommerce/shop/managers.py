@@ -1,15 +1,22 @@
-from django.db.models import Count, F, QuerySet, Sum
-from django.core import exceptions
-from shop import utilities
-from django.db.models import fields
 from django import http
+from django.core import exceptions
+from django.db.models import Case, Count, F, QuerySet, Sum, When, fields, Q
+
+from shop import utilities
 
 
 class ImageManager(QuerySet):
     pass
 
 class CollectionManager(QuerySet):
-    pass
+    def active_products(self, collection_name):
+        collection = self.get(name__iexact=collection_name)
+        return collection.product_set.filter(active=True)
+
+    def products_between_price(self, collection_name, a, b):
+        products = self.active_products(collection_name)
+        price_between_a_and_b = Q(price_ht__gt=a) & Q(price_ht__lt=b)
+        return products.filter(price_between_a_and_b)
 
 class ProductManager(QuerySet):
     def product_colors(self, product_id):
@@ -31,36 +38,56 @@ class ProductManager(QuerySet):
 
 class CartManager(QuerySet):
     def my_cart(self, cart_id):
+        """Returns a cart"""
         return self.filter(cart_id__exact=cart_id)
 
     def cart_products(self, cart_id):
+        """Returns all the products within a customer's cart"""
         constructed_products = []
-        products = self.my_cart(cart_id)
-        for product in products:
-            related_products = product.product.all()
-            for related_product in related_products:
-                constructed_products.append({
-                    'id': related_product.id,
+
+        cart = self.my_cart(cart_id=cart_id).prefetch_related('product')
+        # Get the real prices of the product
+        condition = When(product__discounted_price__gt=0, then='product__discounted_price')
+        annotated_cart = cart.annotate(true_price=Case(condition, default='product__price_ht'))
+
+        for product in annotated_cart:
+            # Product that is related to the cart
+            # in the Product model
+            related_product = product.product.get()
+            constructed_products.append(
+                {
+                    'cart_id': product.id,
+                    'product_id': related_product.id,
                     'name': related_product.name,
-                    # 'description': related_product
-                    'price_ht': product.price_ht,
-                    'total': product.price_ht * product.quantity,
+                    'price_ht': product.true_price,
+                    'total': product.true_price * product.quantity,
                     'quantity': product.quantity,
-                    'url': related_product.get_main_image_url
-                })
+                    'url': related_product.images.all().first().url,
+                    'is_discounted': related_product.is_discounted()
+                }
+            )        
         return constructed_products
 
     def cart_total(self, cart_id):
-        """Returns the total of the cart"""
+        """Total of a customer's cart"""
         cart = self.my_cart(cart_id)
-        combined_expression = F('price_ht') * F('quantity')
-        # {cart_total: ...}
-        return cart.aggregate(cart_total=Sum(combined_expression, output_field=fields.DecimalField()))
+        # Since we have two different prices (price_ht, discounted_price),
+        # determine which price to use when computing the total
+        discounted_price_times_quantity = F('product__discounted_price') * F('quantity')
+        price_ht_times_quantity = F('product__price_ht') * F('quantity')
+        
+        first_case = When(product__discounted_price__gt=0, then=discounted_price_times_quantity)
+        case = Case(first_case, default=price_ht_times_quantity, output_field=DecimalField())
+        true_price_queryset = cart.annotate(true_price=case)
 
+        return true_price_queryset.aggregate(cart_total=Sum('true_price'))
+    
     def number_of_products(self, cart_id):
+        """Number of products in a cart"""
         return self.my_cart(cart_id).aggregate(Sum(F('quantity')))
 
     def add_to_cart(self, request, current_product):
+        """Add or increase the amount of products in a given cart"""
         cart_id = request.session.get('cart_id')
 
         products_without_size = ['sacs']
@@ -143,3 +170,11 @@ class FormsManager(QuerySet):
         for name in queryset:
             choices.append([name, name])
         return choices
+
+class CollectionStatisticsManager(QuerySet):
+    """For dashboard"""
+    pass
+
+class ProductStatisticsManger(QuerySet):
+    """For dashboard"""
+    pass

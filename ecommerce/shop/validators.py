@@ -2,6 +2,11 @@ from django.core.exceptions import ValidationError
 import datetime
 import re
 
+def discount_pct_validator(pct):
+    if pct < 0 or pct > 70:
+        raise ValidationError('Discount should be between 0 and 70%')
+    return pct
+
 def price_validator(price):
     if price < 0:
         raise ValidationError('Price should not be below 0')

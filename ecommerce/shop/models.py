@@ -3,7 +3,7 @@ import datetime
 from django.db import models
 from django.shortcuts import reverse
 
-from shop import managers, validators
+from shop import managers, validators, utilities
 
 
 class Image(models.Model):
@@ -12,7 +12,7 @@ class Image(models.Model):
     variant = models.CharField(max_length=30, default='black')
 
     objects = models.Manager()
-    # image_manager = managers.ImageManager.as_manager()
+    image_manager = managers.ImageManager.as_manager()
 
     class Meta:
         indexes = [
@@ -40,7 +40,7 @@ class ProductCollection(models.Model):
             self.view_name = self.name.lower()
 
 class ClotheSize(models.Model):
-    name = models.CharField(max_length=3)
+    name = models.CharField(max_length=3, validators=[validators.size_validator])
     verbose_name = models.CharField(max_length=20)
     centimeters    = models.PositiveIntegerField()
 
@@ -53,13 +53,20 @@ class ClotheSize(models.Model):
         return self.verbose_name
 
 class Product(models.Model):
-    """Model for products"""
     name          = models.CharField(max_length=50, blank=True, null=True)
+
     images          = models.ManyToManyField(Image)
     collection      = models.ForeignKey(ProductCollection, on_delete=models.DO_NOTHING)
     clothe_size        = models.ManyToManyField(ClotheSize, blank=True)
     description   = models.TextField(max_length=280, blank=True, null=True)
+
     price_ht    = models.DecimalField(max_digits=3, decimal_places=2)
+    discount_pct    = models.IntegerField(default=0, validators=[validators.discount_pct_validator])
+    discounted_price   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    
+    in_stock     = models.BooleanField(default=True)
+    active      = models.BooleanField(default=True)
+
     slug        = models.SlugField()
     created_on = models.DateField(auto_now_add=True)
 
@@ -67,12 +74,18 @@ class Product(models.Model):
     product_manager = managers.ProductManager.as_manager()
 
     class Meta:
+        ordering = ['-created_on']
         indexes = [
             models.Index(fields=['collection']),
         ]
 
     def __str__(self):
         return self.name
+
+    def clean(self):
+        if self.discount_pct > 0:
+            self.discounted_price = utilities.\
+                    calculate_discount(self.price_ht, self.discount_pct)
 
     def get_absolute_url(self):
         collection_name = self.collection.name.lower()
@@ -90,11 +103,26 @@ class Product(models.Model):
         return all([self.created_on >= date_fifteen_days_ago, \
                                     self.created_on <= current_date])
 
+    def get_price(self):
+        """Returns the normal price if there
+        is no discount"""
+        if self.discounted_price is None:
+            return self.price_ht
+
+        if self.discounted_price > 0:
+            return self.discounted_price
+            
+        return self.price_ht
+
+    def is_discounted(self):
+        """Says whether the product is discounted or not"""
+        return self.discount_pct > 0
+
 class Cart(models.Model):
-    """Cart for registered users"""
     cart_id         = models.CharField(max_length=80)
     product     = models.ManyToManyField(Product, blank=True)
     price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
+    price_ttc   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     color       = models.CharField(max_length=50)
     size       = models.CharField(max_length=30, blank=True, null=True, \
                                     validators=[validators.size_validator])
@@ -105,12 +133,18 @@ class Cart(models.Model):
     cart_manager = managers.CartManager.as_manager()
 
     class Meta:
+        ordering = ['-product__name']
         indexes = [
             models.Index(fields=['price_ht', 'quantity']),
         ]
 
     def __str__(self):
         return self.cart_id
+
+    def clean(self):
+        if self.price_ht > 0:
+            self.price_ttc = utilities\
+                    .calculate_tva(self.price_ht, tva=20)
 
     @property
     def get_product_total(self):
@@ -123,7 +157,6 @@ class Cart(models.Model):
         return reverse('alter_quantity', args=['reduce'])
 
 class CustomerOrder(models.Model):
-    """Customer order's"""
     cart             = models.ForeignKey(Cart, blank=True, null=True, on_delete=models.CASCADE)
     customer_order_id = models.CharField(max_length=20)
 
@@ -144,7 +177,6 @@ class Shipment(models.Model):
         return self.customer_order.customer_order_id
 
 class PromotionalCode(models.Model):
-    """Model for promotion codes"""
     code = models.CharField(max_length=4, default='')
     product = models.ManyToManyField(Product, blank=True)
     collection = models.ManyToManyField(ProductCollection, blank=True)

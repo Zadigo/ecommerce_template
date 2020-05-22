@@ -17,7 +17,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'collection', 'price_ht']
+    list_display = ['name', 'collection', 'get_price', 'is_discounted']
     # search_fields = []
     # filter_horizontal = []
     # filter_vertical = []

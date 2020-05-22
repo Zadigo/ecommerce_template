@@ -24,12 +24,12 @@
                                         </td>
                                         <td>{{ product.name }}</td>
                                         <td>
-                                            <a href="{% url 'alter_quantity' 'reduce' %}"><i class="fa fa-minus"></i></a>
+                                            <a href="{% url 'alter_quantity' product.cart_id 'reduce' %}"><i class="fa fa-minus"></i></a>
                                             {{ product.quantity }}
-                                            <a href="{% url 'alter_quantity' 'add' %}"><i class="fa fa-plus"></i></a>
+                                            <a href="{% url 'alter_quantity' product.cart_id 'add' %}"><i class="fa fa-plus"></i></a>
                                         </td>
-                                        <td>{{ product.total|price_to_text }}</td>
-                                        <td><a href="{% url 'delete_from_cart' %}"><i class="fa fa-trash fa-1x"></i></a></td>
+                                        <td class="{% if product.is_discounted %}red-text lighten-2{% endif %}">{{ product.total|price_to_text }}</td>
+                                        <td><a href="{% url 'delete_from_cart' product.cart_id %}"><i class="fa fa-trash fa-1x"></i></a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
