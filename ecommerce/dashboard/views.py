@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail, send_mass_mail
 from django.core.paginator import Paginator
-from django.db.models.expressions import Q
+from django.db.models.expressions import Q, F
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
@@ -11,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django import http
 
 from dashboard import forms
 from shop import models, serializers, utilities
@@ -73,14 +75,35 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
     template_name = 'pages/details.html'
     context_object_name = 'product'
 
-    def get_context_data(self, **kwargs):
+    def post(self, request, **kwargs):
+        method = request.POST.get('method')
+        if not method:
+            return http.JsonResponse(data={'status': 'Ok.'}, status=202)
+        
         product = super().get_object()
-        # We have to pass the user profile here
-        # in order to get extra details on the user
+        if method == 'state':
+            current_state = product.active
+            if current_state == True:
+                product.active = False
+            else:
+                product.active = True
+            product.save()
+
+        return http.JsonResponse({'status': 'Done'})
+
+class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
+    """All the orders made by customers for a specific company
+    """
+    model   = models.CustomerOrder
+    queryset = models.CustomerOrder.objects.all()
+    context_object_name = 'orders'
+    template_name = 'pages/orders.html'
+
+    def get_context_data(self):
         context = super().get_context_data()
         return context
 
-class SingleProductOrdersView(LoginRequiredMixin, generic.ListView):
+class ProductOrdersView(LoginRequiredMixin, generic.ListView):
     """Orders for one single product
     """
     model   = models.CustomerOrder
@@ -93,17 +116,21 @@ class SingleProductOrdersView(LoginRequiredMixin, generic.ListView):
         queryset = queryset.filter(reference=product.reference)
         return queryset
 
-class ProductOrdersView(LoginRequiredMixin, generic.ListView):
-    """All the orders made by customers for a specific company
+class CustomerOrderView(LoginRequiredMixin, generic.DetailView):
+    """Orders for one single product
     """
     model   = models.CustomerOrder
-    queryset = models.CustomerOrder.objects.all()
-    context_object_name = 'orders'
-    template_name = 'pages/orders.html'
+    context_object_name = 'order'
+    template_name = 'pages/order.html'
 
-    def get_context_data(self):
-        context = super().get_context_data()
-        return context
+    def post(self, request, **kwargs):
+        customerorder = super().get_object()
+        if customerorder.completed:
+            customerorder.completed = False
+        else:
+            customerorder.completed = True
+        customerorder.save()
+        return http.JsonResponse(data={'success': True})
 
 class CreateProductView(LoginRequiredMixin, generic.View):
     max_number_of_steps = 3
@@ -118,14 +145,58 @@ class CreateProductView(LoginRequiredMixin, generic.View):
         url = create_form_logic.validate_form_and_update_model(models.Product, viewname='dashboard_create')
         return redirect(url)
 
-class UpdateProductView(LoginRequiredMixin, generic.TemplateView):
-    template_name = 'pages/update.html'
-    
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(**kwargs)
-        product = get_object_or_404(models.Product, id=kwargs['pk'])
-        context.update({'product': {'name': product.name}})
-        return context
+class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
+    model = models.Product
+    template_name = 'pages/update/step1.html'
+    form_class = forms.UpdateForm1
+    context_object_name = 'product'
+
+    def post(self, request, *args, **kwargs):
+        request = super().post(request, *args, **kwargs)
+        print(self.request.POST)
+        # This section deals with the final
+        # step of the update process by
+        # redirecting to the correct view
+        method = self.request.GET.get('step')
+        if method == "2":
+            return redirect('dashboard_products')
+        return request
+
+    def get_success_url(self):
+        product = super().get_object()
+        
+        method = self.request.GET.get('step')
+
+        if method is None:
+            method = 0
+        
+        new_success_url = f'{reverse("update", args=[product.id])}?step={int(method) + 1}'
+
+        if method != "2":
+            return new_success_url
+
+    def get_form_class(self):
+        method = self.request.GET.get('step')
+        if method is None:
+            return self.form_class
+        
+        if method == "1":
+            return forms.UpdateForm2
+        return self.form_class
+
+    def get_template_names(self):
+        templates = super().get_template_names()
+        method = self.request.GET.get('step')
+        
+        if method is None:
+            return templates
+        
+        if method == "1":
+            return ['pages/update/step2.html']
+        elif method == "2":
+            return ['pages/update/step3.html']
+
+        return ['pages/list.html']
 
 class CartsView(LoginRequiredMixin, generic.ListView):
     model = models.Cart
@@ -169,6 +240,16 @@ class Settings(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         return render(request, 'settings.htm', {})
 
+@login_required
+def send_email(request, **kwargs):
+    sender = None
+    receiver = None
+    message = None
+
+    status = send_email(request, sender=sender, \
+                receiver=receiver, message=message)
+
+    return http.JsonResponse(data={})
 
 # CHARTS VIEWS
 

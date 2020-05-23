@@ -179,3 +179,26 @@ class CreateFormLogic:
     def next_to_product(self, viewname, pk):
         from django.shortcuts import reverse
         return reverse('dashboard_product', args=[pk])
+
+
+
+
+class UpdateForm1(forms.ModelForm):
+    class Meta:
+        model = models.Product
+        fields = ['name', 'collection', \
+                    'price_ht', 'discount_pct']
+        widgets = {
+            'name': forms.widgets.TextInput(attrs={'class': 'form-control'}),
+            'collection': forms.widgets.Select(attrs={'class': 'form-control'}),
+            'price_ht': forms.widgets.NumberInput(attrs={'class': 'form-control'}),
+            'discount_pct': forms.widgets.NumberInput(attrs={'class': 'form-control'})
+        }
+
+class UpdateForm2(forms.ModelForm):
+    class Meta:
+        model = models.Product
+        fields = ['description']
+        widgets = {
+            'description': forms.widgets.Textarea(attrs={'class': 'form-control'}),
+        }

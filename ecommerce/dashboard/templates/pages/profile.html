@@ -17,7 +17,7 @@
                         <tbody>
                             <tr>
                                 <td class="font-weight-bold">Nom</td>
-                                <td>{{ user.nom }}</td>
+                                <td>{{ user.name }}</td>
                             </tr>
                             <tr>
                                 <td class="font-weight-bold">Email</td>
@@ -146,4 +146,12 @@
         console.error(reason);
         });
     </script>
+{% endblock %}
+
+{% block vue_scripts %}
+<script>
+    var profileapp = new Vue({
+        el: "#app"
+    })
+</script>
 {% endblock %}

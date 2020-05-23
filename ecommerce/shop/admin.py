@@ -20,6 +20,7 @@ class ProductAdmin(admin.ModelAdmin):
     filter_horizontal = ['images', 'clothe_size']
     sortable_by = ['name']
     date_hierarchy = 'created_on'
+    prepopulated_fields = {'slug': ['name']}
 
 @admin.register(models.Cart)
 class CartAdmin(admin.ModelAdmin):

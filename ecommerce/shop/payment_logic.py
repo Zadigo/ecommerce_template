@@ -362,16 +362,20 @@ class ProcessPayment:
                 # to the success page
                 self.final_url = f'{self.cart_success}?{parameters}'
 
+                # if self.order_model:
+                    # Here we create the order in the Order model
+                    # that was provided -- there should have a field
+                    # reference and transaction
+                    # self.update_order_model(total_of_products_to_buy, charge['id'])
+
                 self.request.session.pop('cart_id')
 
         else:
             self.errors.append('There was no total to charge to Stripe')
             return False
 
-        if self.order_model:
-           self.update_order_model()
-
-        return True
+        return {'reference': self.order_reference, 'status': True, \
+                    'transaction': charge['id'], 'total': amount}
 
     def json_response(self):
         """Get a valid response for Django view in relation
@@ -482,32 +486,19 @@ class ProcessPayment:
 
         return user_infos
 
-    def update_order_model(self, **fields):
+    def update_order_model(self, payment, charge_id, **fields):
         """Updates a given model which would most probably be
         your Orders model"""
-        try:
-            customer_order = self.order_model\
-                    .objecs.create(reference=self.order_reference, transaction=charge['id'])
-        except:
-            self.errors.append('Could not create order')
-            return False
-        else:
-            if customer_order:
-                return customer_order
-
-class FinalStepPayment:
-    model_to_update = None
-
-    def __init__(self, order=None, transaction=None):
-        pass
-
-    def create_customer(self, **infos):
-        params = {}
-        stripe.Customer.create(**params)
-
-    def clean_session(self, request, **keys):
-        for key in keys:
-            try:
-                request.session.pop(key)
-            except:
-                pass
+        # try:
+        #     customer_order = self.order_model\
+        #             .objecs.create(reference=self.order_reference, \
+        #                                 transaction=charge_id, payment=payment)
+        # except:
+        #     self.errors.append('Could not create order')
+        #     return False
+        # else:
+        #     if customer_order:
+        #         return customer_order
+        customer_order = self.order_model\
+                    .objecs.create(reference=self.order_reference, \
+                                        transaction=charge_id, payment=payment)

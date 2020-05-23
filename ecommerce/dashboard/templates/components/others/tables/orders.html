@@ -13,7 +13,7 @@
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>
-                    <a href="{% url 'dashboard_product' item.id %}">{{ item.cart.product.name }}</a>
+                    <a href="{% url 'customer_order' item.id %}">{{ item.cart.product.name }}</a>
                 </td>
                 <td>{{ item.reference }}</td>
                 <td>{{ item.cart.quantity }}</td>

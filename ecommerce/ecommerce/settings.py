@@ -56,6 +56,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            # 'libraries': {
+            #     'current_date_tag': 'dashboard.templatetags.current_date_tag',
+            # },
         },
     },
 ]

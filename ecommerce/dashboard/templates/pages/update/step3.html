@@ -1,0 +1,29 @@
+{% extends "../../index.html" %}
+
+{% block content %}
+<div class="row wow fadeIn">
+    <div class="col-md-4 mb-12">
+        <div class="card">
+            <div class="card-body">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8 mb-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                
+                
+                    <button class="btn btn-primary btn-large" type="submit">Finalize</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    
+{% endblock %}

@@ -2,9 +2,24 @@
 {% load static %}
 
 {% block container %}
-    <div class="card">
-        <div class="card-body">
-            
+    <div class="card z-depth-1">
+        <div class="card-body text-center">
+            <h3 class="text-muted text-uppercase font-weight-bold">Commande enregistrée</h3>
+            <hr class="mt-3 mb-3">
+            <p class="mt-4 mb-4">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+                Quas excepturi explicabo, asperiores ab architecto rem molestias 
+                consequuntur enim blanditiis aliquid hic possimus corporis aperiam voluptas nemo 
+                ullam, at nam veniam!
+            </p>
+
+            <hr class="mt-3 mb-3">
+            <h3 class="font-weight-bold text-uppercase">{{ reference }}</h3>
+
+            <a class="btn btn-primary btn-large waves-effect waves-light" href="{% url 'shop' %}">
+                <i class="fa fa-shopping pull-left"></i>
+                Retourner à la boutique
+            </a>
         </div>
     </div>
 {% endblock %}

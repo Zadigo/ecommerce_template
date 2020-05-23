@@ -44,7 +44,7 @@ class ProductsView(generic.ListView):
 
     def get_queryset(self, **kwargs):
         collection_name = self.kwargs['collection']
-        products = models.ProductCollection.objects.get(view_name__exact=collection_name).product_set.all()
+        products = models.ProductCollection.objects.get(view_name__exact=collection_name).product_set.filter(active=True)
         return products
 
     def get_context_data(self, **kwargs):
@@ -148,11 +148,14 @@ class ProcessPayment(generic.View):
 
         logic = payment_logic.ProcessPayment(request, stripe_token, user_infos)
         logic.cart_model = models.Cart
-        logic.order_model = models.CustomerOrder
-
         completed = logic.payment_processor()
-
-        return http.JsonResponse(data={'status': completed, 'redirect_url': logic.final_url})
+        print(logic.errors)
+        if completed:
+            new_order = models.CustomerOrder\
+                .objects.create(reference=completed['reference'], transaction=completed['transaction'],\
+                        payment=completed['total'])
+            return http.JsonResponse(data={'status': completed['status'], 'redirect_url': logic.final_url})
+        return http.JsonResponse(data={'status': False, 'redirect_url': '/shop/cart/payment'})
 
 class CartSuccessView(generic.TemplateView):
     template_name = 'pages/success.html'
@@ -162,10 +165,10 @@ class CartSuccessView(generic.TemplateView):
         transaction = request.GET.get('transaction')
 
         if reference and transaction:
-            customer_order = models.CustomerOrder.objects.get(order=order)
+            customer_order = models.CustomerOrder.objects.get(reference=reference)
             if customer_order:
                 pass
-            return render(request, 'pages/success.html')
+            return render(request, 'pages/success.html', context={'reference': reference})
         else:
             return redirect('no_cart')
 

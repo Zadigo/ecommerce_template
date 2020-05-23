@@ -3,13 +3,17 @@ from dashboard import views
 
 urlpatterns = [
     url(r'^settings/$', views.Settings.as_view(), name='settings'),
+
+    url(r'^products/new$', views.CreateProductView.as_view(), name='dashboard_create'),
     url(r'^products/(?P<pk>\d+)/update$', views.UpdateProductView.as_view(), name='update'),
-    url(r'^products/(?P<pk>\d+)/orders$', views.SingleProductOrdersView.as_view(), name='product_orders'),
+    url(r'^products/(?P<pk>\d+)/orders$', views.ProductOrdersView.as_view(), name='product_orders'),
     url(r'^products/(?P<method>(products|carts))/(?P<pk>\d+)/delete$', views.deleteview, name='delete_item'),
     url(r'^products/(?P<pk>\d+)/delete$', views.deleteview, name='delete_product'),
     url(r'^products/(?P<pk>\d+)$', views.ProductView.as_view(), name='dashboard_product'),
-    url(r'^orders$', views.ProductOrdersView.as_view(), name='customer_orders'),
-    url(r'^products/new$', views.CreateProductView.as_view(), name='dashboard_create'),
+
+    url(r'^orders/(?P<pk>\d+)$', views.CustomerOrderView.as_view(), name='customer_order'),
+    url(r'^orders$', views.CustomerOrdersView.as_view(), name='customer_orders'),
+
     url(r'^users/(?P<pk>\d+)$', views.UserView.as_view(), name='dashboard_user'),
     url(r'^users/$', views.UsersView.as_view(), name='dashboard_users'),
     url(r'^carts/$', views.CartsView.as_view(), name='dashboard_carts'),

@@ -18,7 +18,13 @@
                 </td>
                 <td>{{ item.collection.name }}</td>
                 <td>{{ item.price_ht }}</td>
-                <td>{{ item.active }}</td>
+                <td>
+                    {% if item.active %}
+                        <span class="badge badge-success badge-pill pull-right">actif</span>										
+                    {% else %}
+                        <span class="badge badge-danger badge-pill pull-right">inactif</span>										
+                    {% endif %}
+                </td>
                 <td><a href="{% url 'update' item.id %}">update</a></td>
                 <td><a href="{% url 'delete_item' 'products' item.id %}">delete</a></td>
             </tr>
