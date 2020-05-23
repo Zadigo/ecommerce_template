@@ -1,33 +1,32 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.db.models.expressions import Q
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.views import generic
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import (DetailView, ListView, TemplateView,
-                                  UpdateView, View)
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from dashboard import forms
 from shop import models, serializers, utilities
-from django.db.models.expressions import Q
-from django.contrib.auth import get_user_model
 
 MYUSER = get_user_model()
 
 
 class IndexView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
-        products = models.Product.objects.all()
-        orders = models.CustomerOrder.objects.all()
         context = {
-            'products': products,
-            'orders': orders,
-            'products_count': products.count(),
-            'line_chart': [products, orders]
+            'carts_count': models.Cart.statistics.total_count(),
+            'orders_count': models.CustomerOrder.statistics.total_count(),
+            'latest_orders': models.CustomerOrder.statistics.latest_orders(),
+            'revenue': models.CustomerOrder.statistics.revenue()
         }
-        return render(request, 'index.html', context)
+        return render(request, 'pages/home.html', context)
 
 class ProductsView(LoginRequiredMixin, generic.ListView):
     model = models.Product
@@ -42,6 +41,12 @@ class UsersView(LoginRequiredMixin, generic.ListView):
     template_name = 'pages/users.html'
     context_object_name = 'users'
     paginate_by = 10
+
+class UserView(LoginRequiredMixin, generic.DetailView):
+    model = MYUSER
+    queryset = MYUSER.objects.all()
+    template_name = 'pages/profile.html'
+    context_object_name = 'user'
 
 class SearchView(LoginRequiredMixin, generic.ListView):
     model = models.Product
@@ -60,7 +65,7 @@ class SearchView(LoginRequiredMixin, generic.ListView):
 
         return items
 
-class ProductView(LoginRequiredMixin, DetailView):
+class ProductView(LoginRequiredMixin, generic.DetailView):
     """The details of a specific product
     """
     model = models.Product
@@ -75,7 +80,7 @@ class ProductView(LoginRequiredMixin, DetailView):
         context = super().get_context_data()
         return context
 
-class SingleProductOrdersView(LoginRequiredMixin, ListView):
+class SingleProductOrdersView(LoginRequiredMixin, generic.ListView):
     """Orders for one single product
     """
     model   = models.CustomerOrder
@@ -88,7 +93,7 @@ class SingleProductOrdersView(LoginRequiredMixin, ListView):
         queryset = queryset.filter(reference=product.reference)
         return queryset
 
-class ProductOrdersView(LoginRequiredMixin, ListView):
+class ProductOrdersView(LoginRequiredMixin, generic.ListView):
     """All the orders made by customers for a specific company
     """
     model   = models.CustomerOrder
@@ -113,7 +118,7 @@ class CreateProductView(LoginRequiredMixin, generic.View):
         url = create_form_logic.validate_form_and_update_model(models.Product, viewname='dashboard_create')
         return redirect(url)
 
-class UpdateProductView(LoginRequiredMixin, TemplateView):
+class UpdateProductView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'pages/update.html'
     
     def get_context_data(self, *args, **kwargs):
@@ -160,6 +165,29 @@ def deleteview(request, **kwargs):
     url = f'dashboard_{method}'
     return redirect(reverse(url))
 
-class Settings(View, LoginRequiredMixin):
+class Settings(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         return render(request, 'settings.htm', {})
+
+
+# CHARTS VIEWS
+
+
+class BaseAPIView(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+class ChartsView(BaseAPIView):
+    def get(self, format=None, **kwargs):
+        payments_by_month = models.CustomerOrder\
+                            .statistics.payments_by_month()
+        print(payments_by_month)
+        data = {
+            "myChart": {
+                'labels': payments_by_month[0],
+                # 'labels': ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"]
+                # 'data': [4, 5, 15, 34, 12, 98]
+                'data': payments_by_month[1]
+            }
+        }
+        return Response(data=data[kwargs['name']])

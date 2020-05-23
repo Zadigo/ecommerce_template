@@ -1,3 +1,5 @@
+{% load price_tags %}
+
 <div class="list-group list-group-flush">
     <a class="list-group-item list-group-item-action waves-effect">Sales
         <span class="badge badge-success badge-pill pull-right">22%
@@ -9,13 +11,13 @@
             <i class="fas fa-arrow-down ml-1"></i>
         </span>
     </a>
-    <a class="list-group-item list-group-item-action waves-effect">Products
-        <span class="badge badge-primary badge-pill pull-right">{{ products_count }}</span>
+    <a class="list-group-item list-group-item-action waves-effect">Carts
+        <span class="badge badge-primary badge-pill pull-right">{{ carts_count }}</span>
     </a>
-    <a class="list-group-item list-group-item-action waves-effect">Issues
-        <span class="badge badge-primary badge-pill pull-right">123</span>
+    <a class="list-group-item list-group-item-action waves-effect">Orders
+        <span class="badge badge-primary badge-pill pull-right">{{ orders_count }}</span>
     </a>
-    <a class="list-group-item list-group-item-action waves-effect">Messages
-        <span class="badge badge-primary badge-pill pull-right">8</span>
+    <a class="list-group-item list-group-item-action waves-effect">Revenue
+        <span class="badge badge-primary badge-pill pull-right">{{ revenue.revenue__sum|price_to_text }}</span>
     </a>
 </div>

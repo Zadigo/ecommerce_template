@@ -1,7 +1,8 @@
 from django import http
 from django.core import exceptions
 from django.db.models import Case, Count, F, Q, QuerySet, Sum, When, fields
-
+from django.db.models.functions import TruncMonth
+import datetime
 from shop import utilities
 
 
@@ -179,10 +180,47 @@ class FormsManager(QuerySet):
             choices.append([name, name])
         return choices
 
+
+
 class CollectionStatisticsManager(QuerySet):
     """For dashboard"""
     pass
 
-class ProductStatisticsManger(QuerySet):
+class ProductStatisticsManager(QuerySet):
     """For dashboard"""
+    def total_count(self):
+        return self.all().count()
+
+
+# For Dashboard
+
+class BaseStatistics(QuerySet):
+    def total_count(self):
+        return self.all().count()
+
+class CartsStatisticsManager(BaseStatistics):
     pass
+
+class OrdersStatisticsManager(BaseStatistics):
+    def total_payments(self):
+        return self.aggregate(total_payments=Sum('payment'))
+
+    def payments_by_month(self):
+        queryset = self.annotate(month=TruncMonth('created_on'))
+        values = queryset.values('month').annotate(quantity=Count('id'))
+                    
+        labels = []
+        data = []
+        for item in values:
+            labels.append(item['month'])
+            data.append(item['quantity'])
+        return [labels, data]
+
+    def latest_orders(self):
+        difference = F('created_on') - datetime.timedelta(days=7)
+        return self.filter(created_on__gt=difference)
+
+    def revenue(self):
+        carts = self.select_related('cart')
+        cart_total = Sum(F('cart__price_ht')*F('cart__quantity'), output_field=fields.DecimalField())
+        return carts.annotate(revenue=cart_total).aggregate(Sum('revenue'))

@@ -10,10 +10,15 @@ urlpatterns = [
     url(r'^products/(?P<pk>\d+)$', views.ProductView.as_view(), name='dashboard_product'),
     url(r'^orders$', views.ProductOrdersView.as_view(), name='customer_orders'),
     url(r'^products/new$', views.CreateProductView.as_view(), name='dashboard_create'),
+    url(r'^users/(?P<pk>\d+)$', views.UserView.as_view(), name='dashboard_user'),
     url(r'^users/$', views.UsersView.as_view(), name='dashboard_users'),
     url(r'^carts/$', views.CartsView.as_view(), name='dashboard_carts'),
     url(r'^images/$', views.ImagesView.as_view(), name='manage_images'),
     url(r'^search/$', views.SearchView.as_view(), name='dashboard_search'),
     url(r'^products/$', views.ProductsView.as_view(), name='dashboard_products'),
     url(r'^$', views.IndexView.as_view(), name='index')
+]
+
+urlpatterns += [
+    url(r'^api/charts/(?P<name>[a-zA-Z]+)$', views.ChartsView.as_view(), name='charts_endpoint')
 ]

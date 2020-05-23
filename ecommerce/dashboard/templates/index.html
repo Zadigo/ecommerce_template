@@ -2,440 +2,91 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-  <title>Material Design Bootstrap</title>
-
-  <!-- FONT AWESOME -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
-
-  <!-- BOOTSTRAP -->
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-
-  <!-- MATEERIAL DESIGN BOOTSTRAP -->
-  <link href="{% static 'dashboard.css' %}" rel="stylesheet">
-
-  <!-- MATERIALIZE -->
-  <link href="{% static 'dashboard_style.css' %}" rel="stylesheet">
-
-  <style>
-    .map-container {
-      overflow: hidden;
-      padding-bottom: 56.25%;
-      position: relative;
-      height: 0;
-    }
-
-    .map-container iframe {
-      left: 0;
-      top: 0;
-      height: 100%;
-      width: 100%;
-      position: absolute;
-    }
-  </style>
-</head>
-
-<body class="grey lighten-3">
-
-  <!--Main Navigation-->
-  <header>
-    <!-- NAVBAR -->
-    {% include "./components/navs/navbar.html" %}
-
-    <!-- SIDEBAR -->
-    {% include "./components/navs/sidebar.html" %}
-  </header>
-
-  <!--Main layout-->
-  <main class="pt-5 mx-lg-5">
-    <div class="container-fluid mt-5">
-      {% block content %}
-
-      {% include "./components/navs/heading.html" %}
-
-      <!--Grid row-->
-      <div class="row wow fadeIn">
-
-        <!--Grid column-->
-        <div class="col-md-9 mb-4">
-
-          <!--Card-->
-          {% include "./components/charts/bar.html" %}
-          <!-- <div class="card">
-            <div class="card-body">
-              <canvas id="myChart"></canvas>
-            </div>
-          </div> -->
-        </div>
-
-        <!--Grid column-->
-        <div class="col-md-3 mb-4">
-
-          <!--Card-->
-          <div class="card mb-4">
-
-            <!-- Card header -->
-            <div class="card-header text-center">
-              Pie chart
-            </div>
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <canvas id="pieChart"></canvas>
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-          <!--Card-->
-          <div class="card mb-4">
-
-            <!--Card content-->
-            <div class="card-body">
-              {% include "./components/others/stats_card.html" %}
-              <!-- List group links -->
-              <!-- <div class="list-group list-group-flush">
-                <a class="list-group-item list-group-item-action waves-effect">Sales
-                  <span class="badge badge-success badge-pill pull-right">22%
-                    <i class="fas fa-arrow-up ml-1"></i>
-                  </span>
-                </a>
-                <a class="list-group-item list-group-item-action waves-effect">Traffic
-                  <span class="badge badge-danger badge-pill pull-right">5%
-                    <i class="fas fa-arrow-down ml-1"></i>
-                  </span>
-                </a>
-                <a class="list-group-item list-group-item-action waves-effect">Orders
-                  <span class="badge badge-primary badge-pill pull-right">14</span>
-                </a>
-                <a class="list-group-item list-group-item-action waves-effect">Issues
-                  <span class="badge badge-primary badge-pill pull-right">123</span>
-                </a>
-                <a class="list-group-item list-group-item-action waves-effect">Messages
-                  <span class="badge badge-primary badge-pill pull-right">8</span>
-                </a>
-              </div> -->
-              <!-- List group links -->
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-      </div>
-      <!--Grid row-->
-
-      <!--Grid row-->
-      <div class="row wow fadeIn">
-
-        <!--Grid column-->
-        <div class="col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <!-- Table  -->
-              <table class="table table-hover">
-                <!-- Table head -->
-                <thead class="blue-grey lighten-4">
-                  <tr>
-                    <th>#</th>
-                    <th>Lorem</th>
-                    <th>Ipsum</th>
-                    <th>Dolor</th>
-                  </tr>
-                </thead>
-                <!-- Table head -->
-
-                <!-- Table body -->
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                    <td>Cell 6</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                </tbody>
-                <!-- Table body -->
-              </table>
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <!-- Table  -->
-              <table class="table table-hover">
-                <!-- Table head -->
-                <thead class="blue lighten-4">
-                  <tr>
-                    <th>#</th>
-                    <th>Lorem</th>
-                    <th>Ipsum</th>
-                    <th>Dolor</th>
-                  </tr>
-                </thead>
-                <!-- Table head -->
-
-                <!-- Table body -->
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Cell 1</td>
-                    <td>Cell 2</td>
-                    <td>Cell 3</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Cell 4</td>
-                    <td>Cell 5</td>
-                    <td>Cell 6</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Cell 7</td>
-                    <td>Cell 8</td>
-                    <td>Cell 9</td>
-                  </tr>
-                </tbody>
-                <!-- Table body -->
-              </table>
-              <!-- Table  -->
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-      </div>
-      <!--Grid row-->
-
-      <!--Grid row-->
-      <div class="row wow fadeIn">
-
-        <!--Grid column-->
-        <div class="col-lg-6 col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!-- Card header -->
-            <div class="card-header">Line chart</div>
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <canvas id="lineChart"></canvas>
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-lg-6 col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!-- Card header -->
-            <div class="card-header">Radar Chart</div>
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <canvas id="radarChart"></canvas>
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-lg-6 col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!-- Card header -->
-            <div class="card-header">Doughnut Chart</div>
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <canvas id="doughnutChart"></canvas>
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-lg-6 col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!-- Card header -->
-            <div class="card-header">Horizontal Bar Chart</div>
-
-            <!--Card content-->
-            <div class="card-body">
-
-              <canvas id="horizontalBar"></canvas>
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-      </div>
-      <!--Grid row-->
-
-      <!--Grid row-->
-      <div class="row wow fadeIn">
-
-        <!--Grid column-->
-        <div class="col-md-6 mb-4">
-
-          <!--Card-->
-          <div class="card">
-
-            <!-- Card header -->
-            <div class="card-header">Google map</div>
-
-            <!--Card content-->
-            <div class="card-body">
-              <!--Google map-->
-              <div id="map-container-google-2" class="z-depth-1-half map-container" style="height: 500px">
-                <iframe src="https://maps.google.com/maps?q=chicago&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0"
-                  style="border:0" allowfullscreen></iframe>
-              </div>
-
-              <!--Google Maps-->
-
-            </div>
-
-          </div>
-          <!--/.Card-->
-
-        </div>
-        <!--Grid column-->
-
-        {% include "./components/others/modals/modals.html" %}
-      </div>
-      <!--Grid row-->
-
-      {% endblock %}
-    </div>
-  </main>
-
-  <!-- FOOTER -->
-  {% include "./components/navs/footer.html" %}
-
-  <!-- JQUERY -->
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-
-  <!-- Bootstrap tooltips -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-
-  <!-- Bootstrap core JavaScript -->
-  <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-
-  <!-- MDB core JavaScript -->
-  <script type="text/javascript" src="{% static 'mdb.js' %}"></script>
-
-  <!-- Initializations -->
-  <script type="text/javascript">
-    new WOW().init();
-  </script>
-
-  <!-- LODASH -->
-  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
-
-  <!-- VUEJS -->
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-
-  {% block vuejs_scripts %}{% endblock %}
-
-  <!-- Charts -->
-  {% block chart_scripts %}
-    {% include "./components/charts/scripts.html" %}
-  {% endblock %}
-
-  <!--Google Maps-->
-  <script src="https://maps.google.com/maps/api/js"></script>
-  <script>
-    // Regular map
-    function regular_map() {
-      var var_location = new google.maps.LatLng(40.725118, -73.997699);
-
-      var var_mapoptions = {
-        center: var_location,
-        zoom: 14
-      };
-
-      var var_map = new google.maps.Map(document.getElementById("map-container"),
-        var_mapoptions);
-
-      var var_marker = new google.maps.Marker({
-        position: var_location,
-        map: var_map,
-        title: "New York"
-      });
-    }
-  </script>
-</body>
-
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+		<title>Material Design Bootstrap</title>
+
+		<!-- FONT AWESOME -->
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+
+		<!-- BOOTSTRAP -->
+		<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- MATEERIAL DESIGN BOOTSTRAP -->
+		<link href="{% static 'dashboard.css' %}" rel="stylesheet">
+
+		<!-- MATERIALIZE -->
+		<link href="{% static 'dashboard_style.css' %}" rel="stylesheet">
+
+		<style>
+			.map-container {
+				overflow: hidden;
+				padding-bottom: 56.25%;
+				position: relative;
+				height: 0;
+			}
+
+			.map-container iframe {
+				left: 0;
+				top: 0;
+				height: 100%;
+				width: 100%;
+				position: absolute;
+			}
+		</style>
+	</head>
+
+	<body class="grey lighten-3">
+		<header>
+			<!-- NAVBAR -->
+			{% include "./components/navs/navbar.html" %}
+
+			<!-- SIDEBAR -->
+			{% include "./components/navs/sidebar.html" %}
+		</header>
+
+		<main class="pt-5 mx-lg-5">
+			<div class="container-fluid mt-5">
+				<!-- HEADING -->
+				{% block heading %}{% endblock %}
+				<!-- CONTENT -->
+				{% block content %}{% endblock %}
+			</div>
+		</main>
+
+		<!-- FOOTER -->
+		{% include "./components/navs/footer.html" %}
+
+		<!-- JQUERY -->
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+		<!-- Bootstrap tooltips -->
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+
+		<!-- Bootstrap core JavaScript -->
+		<script type="text/javascript"
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+		<!-- MDB core JavaScript -->
+		<script type="text/javascript" src="{% static 'mdb.js' %}"></script>
+
+		<!-- Initializations -->
+		<script type="text/javascript">
+			new WOW().init();
+		</script>
+
+		<!-- LODASH -->
+		<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+		<!-- VUEJS -->
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+		{% block vuejs_scripts %}{% endblock %}
+
+		<!-- CHARTS -->
+		{% block chart_scripts %}{% endblock %}
+	</body>
 </html>

@@ -1,12 +1,16 @@
 {% extends "../index.html" %}
 
+{% block heading %}
+    {% include "../components/navs/heading.html" with title="Produits" %}
+{% endblock %}
+
 {% block content %}
 <!--Grid column-->
 <div class="row wow fadeIn">
     <div class="col-md-12 mb-4">
-        <div class="card z-depth-0">
+        <div class="card">
             <div class="card-body">
-                <a href="{% url 'dashboard_create' %}" class="btn blue">Nouveau</a>
+                <a href="{% url 'dashboard_create' %}" class="btn btn-primary float-right">Nouveau</a>
             </div>
         </div>
     </div>

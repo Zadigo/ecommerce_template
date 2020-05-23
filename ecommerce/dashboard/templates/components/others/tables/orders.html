@@ -3,7 +3,7 @@
 <table class="table table-hover">
     <thead class="blue-grey lighten-4">
         <tr>
-            {% header_tags 'products' 2 %}
+            {% create_table_header "ID" "Produit" "Référence" "Quantité" "Paiement" "Statut" %}
         </tr>
     </thead>
 
@@ -13,12 +13,18 @@
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>
-                    <a href="{% url 'product' item.id %}">{{ item.reference }}</a>
+                    <a href="{% url 'dashboard_product' item.id %}">{{ item.cart.product.name }}</a>
                 </td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.active }}</td>
-                <td><a href="{% url 'update' item.id %}">update</a></td>
-                <td><a href="{ url 'delete' item.id }">delete</a></td>
+                <td>{{ item.reference }}</td>
+                <td>{{ item.cart.quantity }}</td>
+                <td>{{ item.payment }}</td>
+                <td>
+                    {% if order.completed %}
+                        <span class="badge badge-success badge-pill pull-right">Terminer</span>										
+                    {% else %}
+                        <span class="badge badge-danger badge-pill pull-right">En attente</span>										
+                    {% endif %}
+                </td>
             </tr>
         {% empty %}
             <tr scope="row">

@@ -5,7 +5,7 @@ import secrets
 import string
 import hashlib
 
-def create_transaction_token(n=5, salt='nawoka'):
+def create_transaction_token(n=1, salt='nawoka'):
     """Create a payment token for Google enhanced ecommerce"""
     tokens = [secrets.token_hex(2) for _ in range(0, n)]
     # Append the salt that allows us to identify

@@ -153,6 +153,7 @@ class Cart(models.Model):
 
     objects = models.Manager()
     cart_manager = managers.CartManager.as_manager()
+    statistics  = managers.CartsStatisticsManager.as_manager()
 
     class Meta:
         ordering = ['-product__name']
@@ -186,13 +187,21 @@ class CustomerOrder(models.Model):
     reference  = models.CharField(max_length=50)
     transaction   = models.CharField(max_length=200, default=utilities.create_transaction_token())
     payment           = models.DecimalField(max_digits=5, decimal_places=3, default=0)
+    completed       = models.BooleanField(default=False)
     created_on      = models.DateField(auto_now_add=True)
 
     objects = models.Manager()
     order_manager = managers.OrdersManager.as_manager()
+    statistics  = managers.OrdersStatisticsManager.as_manager()
+
+    class Meta:
+        ordering = ['-created_on']
+        indexes = [
+            models.Index(fields=['payment'])
+        ]
 
     def __str__(self):
-        return self.transaction_id
+        return self.transaction
 
 class Shipment(models.Model):
     """Tracking orders that are shipped"""
