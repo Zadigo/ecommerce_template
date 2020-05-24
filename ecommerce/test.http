@@ -1,8 +1,0 @@
-POST http://127.0.0.1:8000/shop/products/femme/sweats/1/sac-de-daim HTTP/1.1
-Content-Type: application/json
-
-{
-    "color": [
-        "something"
-    ]
-}

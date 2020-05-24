@@ -207,3 +207,8 @@ def split_colors(colors):
     if "," in colors:
         return colors.split(",")
     return [colors]
+
+def get_image_name(image):
+    if '.' in image:
+        items = image.split('.')
+    return items[0]

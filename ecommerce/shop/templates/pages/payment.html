@@ -28,7 +28,7 @@
 <div class="row wow fadeIn">
 	<div class="col-md-5 offset-md-2">
 		<div class="card">
-			<form method="POST" class="card-body stripe stripe-styling" id="payment-form">	
+			<form method="POST" class="card-body stripe stripe-styling" id="form_payment">	
 				{% csrf_token %}
 				
 				<div class="alert alert-danger d-none" role="alert" id="card-errors"></div>
@@ -37,12 +37,14 @@
 					<div id="card-element"></div>
 				</div>
 				
-				<button type="submit" class="btn btn-primary btn-lg btn-block mt-4" id="btn-payment">
+				<button type="submit" class="btn btn-primary 
+							btn-lg btn-block mt-4" id="btn_payment">
 					<i class="fa fa-lock d-none"></i>
 					<div class="spinner-grow d-none" role="status"></div>
 					Paiement
 				</button>
 			</form>
+
 			<div class="card-footer">
 				<div class="d-flex flex-row justify-content-between">
 					<p class="text-uppercase font-weight-bold mb-0">Nous acceptons</p>

@@ -79,8 +79,22 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
         method = request.POST.get('method')
         if not method:
             return http.JsonResponse(data={'status': 'Ok.'}, status=202)
-        
+
         product = super().get_object()
+
+        if method == "images":
+            uploaded_files = request.FILES['images']
+            filename = uploaded_files.name
+            true_name = utilities.get_image_name(filename)
+            # data = uploaded_files.read()
+
+            fake_url = 'https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/17.jpg'
+            image = models.Image.objects.create(url=fake_url)
+            product.name = true_name
+            product.save()
+            product.images.add(image)
+            return http.JsonResponse({'status': 'Images updated'})
+        
         if method == 'state':
             current_state = product.active
             if current_state == True:
@@ -210,6 +224,18 @@ class ImagesView(LoginRequiredMixin, generic.ListView):
     template_name = 'pages/images.html'
     context_object_name = 'images'
     paginate_by = 8
+
+    def post(self, request, **kwargs):
+        image_id = request.POST.get('image_id')
+        # print(image_id)
+        if not image_id:
+            return http.JsonResponse(data={'status': 'Ok.'})
+        image = self.queryset.get(id=int(image_id))
+        if image_id:
+            image.delete()
+            return http.JsonResponse(data={'status': 'Success'})
+        return http.JsonResponse(data={'status': 'No image'})
+        
 
     def get_context_data(self, **kwargs):
         queryset = super().get_queryset()

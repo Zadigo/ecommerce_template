@@ -3,9 +3,10 @@
 
 {% block container %}
 <div class="row">
-	<div class="col-md-8 mb-4">
+	<div class="col-md-6 mb-4 offset-md-1">
 		<div class="card">
-			<form method="POST" action="{% url 'payment' %}" class="card-body">
+			<form method="POST" action="{% url 'payment' %}" 
+							class="card-body" id="form_shipping">
 				{% csrf_token %}
 
 				<div class="row">
@@ -95,9 +96,6 @@
 				<button type="submit" class="btn btn-primary btn-lg btn-block" id="btn_shipping">
 					Continue to checkout
 				</button>
-				{% comment %}
-				<a href="{% url 'payment' %}" class="btn btn-danger btn-lg btn-block">Continue to payment</a>
-				{% endcomment %}
 			</form>
 		</div>
 	</div>
@@ -111,8 +109,8 @@
 		
 		{% if coupon_value > 0 %}
 			<!-- PROMO FORM -->
+			{% include "../components/cart/promo.html" %}			
 		{% endif %}
-		{% include "../components/cart/promo.html" %}			
 	</div>
 </div>
 {% endblock %}

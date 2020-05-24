@@ -20,9 +20,9 @@
                 <td>{{ item.price_ht }}</td>
                 <td>
                     {% if item.active %}
-                        <span class="badge badge-success badge-pill pull-right">actif</span>										
+                        {% include "../badge.html" with type="success" badge_name="actif" %}								
                     {% else %}
-                        <span class="badge badge-danger badge-pill pull-right">inactif</span>										
+                        {% include "../badge.html" with type="danger" badge_name="inactif" %}								
                     {% endif %}
                 </td>
                 <td><a href="{% url 'update' item.id %}">update</a></td>

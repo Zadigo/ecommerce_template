@@ -9,7 +9,8 @@
     <div class="col-md-12 mb-4">
         <div class="card">
             <div class="card-body">
-                <a href="{% url 'dashboard_create' %}" class="btn btn-primary float-right">Nouveau</a>
+                <!-- <a href="{% url 'dashboard_create' %}" class="btn btn-primary float-right">Nouveau</a> -->
+                {% include "../components/others/link.html" with href="dashboard_create" position="float-right" btn_name="Nouveau"  %}
             </div>
         </div>
     </div>

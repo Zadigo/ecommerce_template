@@ -20,9 +20,9 @@
                 <td>{{ item.payment }}</td>
                 <td>
                     {% if order.completed %}
-                        <span class="badge badge-success badge-pill pull-right">Terminer</span>										
+                        {% include "../badge.html" with type="success" badge_name="Terminer" %}
                     {% else %}
-                        <span class="badge badge-danger badge-pill pull-right">En attente</span>										
+                        {% include "../badge.html" with type="danger" badge_name="En attente" %}										
                     {% endif %}
                 </td>
             </tr>

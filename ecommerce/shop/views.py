@@ -85,6 +85,22 @@ class CheckoutView(generic.ListView):
     template_name = 'pages/cart.html'
     context_object_name = 'constructed_products'
 
+    def get(self, request, **kwargs):
+        # TODO: Make sure when the customer
+        # reduces the cart and it goes to
+        # zero to delete the cart ID from
+        # his session
+        get_request = super().get(request)
+
+        cart_id = self.request.session.get('cart_id')
+        if cart_id is None:
+            return redirect('no_cart')
+
+        queryset = super().get_queryset().filter(cart_id=cart_id)
+        if not queryset.exists():
+            return redirect('no_cart')
+        return get_request
+
     def post(self, request, **kwargs):
         return http.JsonResponse({'success': 'success'})
     
@@ -101,6 +117,18 @@ class ShipmentView(generic.ListView):
     model = models.Cart
     template_name = 'pages/shipment.html'
     context_object_name = 'products'
+
+    def get(self, request, **kwargs):
+        get_request = super().get(request)
+
+        cart_id = self.request.session.get('cart_id')
+        if cart_id is None:
+            return redirect('no_cart')
+            
+        queryset = super().get_queryset().filter(cart_id=cart_id)
+        if not queryset.exists():
+            return redirect('no_cart')
+        return get_request
 
     def get_queryset(self, **kwargs):
         cart_id = self.request.session.get('cart_id')
@@ -119,6 +147,18 @@ class PaymentView(generic.ListView):
     model = models.Cart
     template_name = 'pages/payment.html'
     context_object_name = 'products'
+
+    def get(self, request, **kwargs):
+        get_request = super().get(request)
+
+        cart_id = self.request.session.get('cart_id')
+        if cart_id is None:
+            return redirect('no_cart')
+            
+        queryset = super().get_queryset().filter(cart_id=cart_id)
+        if not queryset.exists():
+            return redirect('no_cart')
+        return get_request
 
     def get_queryset(self, **kwargs):
         cart_id = self.request.session.get('cart_id')

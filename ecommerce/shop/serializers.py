@@ -7,6 +7,7 @@ class ClotheSizeSerializer(Serializer):
     centimeters = fields.IntegerField()
 
 class ImageSerializer(Serializer):
+    pk      = fields.IntegerField()
     name    = fields.CharField()
     url     = fields.URLField()
     variant = fields.CharField()

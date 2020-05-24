@@ -95,6 +95,9 @@ class Product(models.Model):
     def get_main_image_url(self):
         return self.images.all().first().url
 
+    def get_product_images(self):
+        return self.images.all()
+
     @property
     def is_novelty(self):
         """Tells if the product was created less than 7 days ago"""

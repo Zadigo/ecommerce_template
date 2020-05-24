@@ -22,6 +22,7 @@
         {% endcomment %}
         <imagescomponent v-bind:images="images" />
     </div>
+    <div class="csrf">{% csrf_token %}</div>
 </div>
 
 
@@ -35,6 +36,7 @@
 {% block vuejs_scripts %}
     {{ vue_images|json_script:"vue_images" }}
     <script>
+        var csrf = $(".csrf input").val()
         var filtercomponent = {
             template: "\
             <select name='' id=''>\
@@ -47,13 +49,27 @@
             props: ["images"],
             template: "\
             <div class='row'>\
-                <div v-for='image in images' :key='image.slug' class='col-md-3 mb-3'>\
+                <div v-if='!image.deleted' v-for='image in images' :key='image.slug' class='col-md-3 mb-3'>\
                     <div class='card'>\
-                        <img class='card-img-top' :src='image.image_url' :alt='image.slug'>\
+                        <img class='card-img-top' :src='image.url' :alt='image.slug'>\
+                        <i @click='deleteimage(image)' class='fa fa-trash'></i>\
                     </div>\
                 </div>\
             </div>\
-            "
+            ",
+            methods: {
+                deleteimage: function(image) {
+                    var self = this
+                    var formdata = new FormData()
+                    formdata.append("csrfmiddlewaretoken", csrf)
+                    formdata.append("image_id", image.pk)
+
+                    var xhr = new XMLHttpRequest()
+                    xhr.onloadend = function() {image.deleted = true}
+                    xhr.open("POST", window.location.href)
+                    xhr.send(formdata)
+                }
+            }
         }
 
         var imagesapp = new Vue({
@@ -62,8 +78,15 @@
             delimiters: ["[[", "]]"],
             data() {
                 return {
-                    images: JSON.parse($("#vue_images").text())
+                    images: []
                 }
+            },
+            beforeMount() {
+                var images = JSON.parse($("#vue_images").text())
+                images.forEach(image => {
+                    image["deleted"] = false
+                })
+                this.$data.images = images
             }
         })
     </script>

@@ -4,8 +4,6 @@ from django.urls import include, path, re_path
 from shop import views
 
 urlpatterns = [
-    # url(r'^cart/(?P<cart>(\d+\_)+\dw+)/delete-single$', views.delete_single_item, name='delete_single'),
-
     url(r'^cart/success$', views.CartSuccessView.as_view(), name='success'),
     url(r'^cart/payment/process$', views.ProcessPayment.as_view(), name='payment_process'),
     url(r'^cart/payment$', views.PaymentView.as_view(), name='payment'),
