@@ -65,6 +65,7 @@ class Product(models.Model):
     discounted_price   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     
     in_stock     = models.BooleanField(default=True)
+    discounted  = models.BooleanField(default=False)
     active      = models.BooleanField(default=True)
 
     slug        = models.SlugField()
@@ -107,19 +108,17 @@ class Product(models.Model):
                                     self.created_on <= current_date])
 
     def get_price(self):
-        """Returns the normal price if there
-        is no discount"""
-        if self.discounted_price is None:
-            return self.price_ht
-
-        if self.discounted_price > 0:
-            return self.discounted_price
-            
+        """Chooses between the price ht and the
+        discounted price if there is a discount
+        """
+        if self.discounted:
+            if self.discounted_price > 0:
+                return self.discounted_price
         return self.price_ht
 
     def is_discounted(self):
         """Says whether the product is discounted or not"""
-        return self.discount_pct > 0
+        return self.discounted
 
 class PromotionalCode(models.Model):
     code        = models.CharField(max_length=4)

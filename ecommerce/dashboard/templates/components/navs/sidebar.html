@@ -4,41 +4,17 @@
 	</a>
 
 	<div class="list-group list-group-flush">
-		{% include "./sidenav_link.html" with href="index" active=True icon="fa-chart-pie" title="Dashboard" %}
+		{% include "./sidenav_link.html" with href="index" active=False icon="fa-chart-pie" title="Dashboard" %}
 
 		{% include "./sidenav_link.html" with href="dashboard_products" active=False icon="fa-table" title="Products" %}
 
 		{% include "./sidenav_link.html" with href="customer_orders" active=False icon="fa-table" title="Orders" %}
+		
+		{% include "./sidenav_link.html" with href="dashboard_carts" active=False icon="fa-table" title="Carts" %}
 
 		{% include "./sidenav_link.html" with href="manage_images" active=False icon="fa-image" title="Images" %}
 
 		{% include "./sidenav_link.html" with href="dashboard_users" active=False icon="fa-user" title="Users" %}
 
-		{% include "./sidenav_link.html" with href="dashboard_carts" active=False icon="fa-table" title="Carts" %}
 	</div>
 </div>
-
-<!-- <a href="{% url 'index' %}" class="list-group-item active waves-effect">
-	<i class="fas fa-chart-pie mr-3"></i>Dashboard
-	</a> -->
-	<!-- <a href="{% url 'dashboard_products' %}" class="list-group-item list-group-item-action waves-effect">
-	<i class="fas fa-table mr-3"></i>Products
-	</a> -->
-	<!-- <a href="{% url 'customer_orders' %}" class="list-group-item list-group-item-action waves-effect">
-	<i class="fas fa-table mr-3"></i>Orders
-	</a> -->
-	<!-- <a href="{% url 'manage_images' %}" class="list-group-item list-group-item-action waves-effect">
-	<i class="fas fa-image mr-3"></i>Images
-	</a> -->
-	<!-- <a href="{% url 'dashboard_carts' %}" class="list-group-item list-group-item-action waves-effect">
-	<i class="fas fa-table mr-3"></i>Carts
-	</a> -->
-	<!-- <a href="{% url 'dashboard_users' %}" class="list-group-item list-group-item-action waves-effect">
-	<i class="fas fa-user mr-3"></i>Users
-	</a> -->
-	<!-- <a href="#" class="list-group-item list-group-item-action waves-effect d-none">
-	<i class="fas fa-map mr-3"></i>Maps
-	</a>
-	<a href="#" class="list-group-item list-group-item-action waves-effect d-none">
-	<i class="fas fa-money-bill-alt mr-3"></i>Orders
-	</a> -->

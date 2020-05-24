@@ -30,7 +30,16 @@
                 </div>
                 <div class="card-body">
                     <p><a href="{{ product.get_absolute_url }}" target="_blank">Voir sur le site</a></p>
-                    <span id="switches_app"><switchcomponent @doaction="performaction" /></span>
+                    <span id="switches_app">
+                        <div class="row">
+                            <div class="col-auto">
+                                <switchcomponent2 @doaction="performaction" />
+                            </div>
+                            <div class="col-6">
+                                <switchcomponent @doaction="performaction" />
+                            </div>
+                        </div>
+                    </span>
                     <p>Crée le : {{ product.created_on }}</p>
                 </div>
             </div>
@@ -65,6 +74,43 @@
 {% block vuejs_scripts %}
     <script>
         var csrf = $(".csrf input").val()
+        var switchcomponent2 = {
+            template: "\
+            <div class='custom-control custom-switch'>\
+                <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch2'>\
+                <label class='custom-control-label' for='customSwitch2'>[[ displaytext ]]</label>\
+            </div>\
+            ",
+            delimiters: ["[[", "]]"],
+            data() {
+                return {
+                    selected: false
+                }
+            },
+            beforeMount() {
+                var isdiscounted = "{{ product.discounted }}"
+                if (isdiscounted === "True") {
+                    this.$data.selected = true
+                } else {
+                    this.$data.selected = false
+                }
+            },
+            computed: {
+                displaytext() {
+                    if (this.$data.selected) {
+                        return "Enlever la réduction"
+                    } else {
+                        return "Appliquer une réduction"
+                    }
+                }
+            },
+            methods: {
+                doaction: function() {
+                    this.$emit("doaction", "reduction")
+                }
+            }
+        }
+
         var switchcomponent = {
             template: "\
             <div class='custom-control custom-switch'>\
@@ -97,28 +143,33 @@
             },
             methods: {
                 doaction: function() {
-                    this.$emit("doaction")
+                    this.$emit("doaction", "state")
                 }
             }
         }
 
         var switchesapp = new Vue({
             el: "#switches_app",
-            components: {switchcomponent},
+            components: {switchcomponent, switchcomponent2},
             methods: {
-                performaction: function() {
+                performaction: function(name) {
                     var formdata = new FormData()
                     formdata.append("csrfmiddlewaretoken", csrf)
-                    formdata.append("method", "state")
+
+                    if (name === "state") {
+                        formdata.append("method", "state")
+                    } else if (name === "reduction") {
+                        formdata.append("method", "reduction")
+                    }
 
                     var xhr = new XMLHttpRequest()
-                    xhr.onloadend = function() {
-                        $("#messages").fadeIn(2000).removeClass("d-none")
+                    // xhr.onloadend = function() {
+                    //     $("#messages").fadeIn(2000).removeClass("d-none")
 
-                        setTimeout(() => {
-                            $("#messages").fadeOut(2000).addClass("d-none")
-                        }, 8000);
-                    }
+                    //     setTimeout(() => {
+                    //         $("#messages").fadeOut(2000).addClass("d-none")
+                    //     }, 8000);
+                    // }
                     xhr.open("POST", window.location.href)
                     xhr.send(formdata)
                 }
@@ -129,10 +180,94 @@
             STATUS_SAVING = 1, 
             STATUS_SUCCESS = 2, 
             STATUS_FAILED = 3
+
+        var tabbedcomponent = {
+            delimiters: ["[[", "]]"],
+            template: "\
+            <div class='row'>\
+                <div class='col-12'>\
+                    <ul class='nav nav-pills mb-3' id='pills-tab' role='tablist'>\
+                        <li v-for='(link, index) in links' :key='link.name' class='nav-item'>\
+                            <a @click='updateactive(index)' class='nav-link' :class='{\"active\": setfirstactive(index)}' \
+                                :id='link.id' data-toggle='pill' :href='link.href' role='tab'>\
+                                    [[ link.name ]]\
+                            </a>\
+                        </li>\
+                    </ul>\
+                </div>\
+                <div class='row'>\
+                    <div class='tab-content' id='nav-tabContent'>\
+                        <div @click='updateactive(index)' class='tab-pane fade' :class='{\"show active\": firstactive}' id='nav-home' \
+                            role='tabpanel'>Great</div>\
+                            \
+                        <div @click='updateactive(index)' class='tab-pane fade' :class='{\"show active\": secondactive}' id='nav-profile' \
+                            role='tabpanel'>No</div>\
+                            \
+                        <div @click='updateactive(index)' class='tab-pane fade' :class='{\"show active\": thirdactive}' id='nav-contact' \
+                            role='tabpanel'>Yes</div>\
+                    </div>\
+                </div>\
+            </div>\
+            ",
+            data() {
+                return {
+                    links: [
+                        {name: "Sélectionnées", id: "pill-home-tab", href: "#pills-home", selected: true},
+                        {name: "Disponibles", id: "pill-second-tab", href: "#pills-second", selected: false}
+                    ],
+                    currentindex: 0
+                }
+            },
+            computed: {
+                thirdactive() {
+                    if (this.$data.currentindex === 2) {
+                        return true
+                    } else {
+                        return false
+                    }
+                },
+                secondactive() {
+                    if (this.$data.currentindex === 1) {
+                        return true
+                    } else {
+                        return false
+                    }
+                },
+                firstactive() {
+                    if (this.$data.currentindex === 0) {
+                        return true
+                    } else {
+                        return false
+                    }
+                }
+            },
+            methods: {
+                setfirstactive: function(index) {
+                    if (index === 0) {
+                        return true
+                    }
+                    return false
+                },
+                updateactive: function(index) {
+                    this.$data.currentindex = index
+                }
+            }
+        }
+
+        var additionalimages = {
+            template: "\
+            <div class='col-md-2'>\
+                <div v-for='image in vue_images' class='card'>\
+                    <img src='{{ image.url }}' alt='' class='card-img-top'>\
+                </div>\
+            </div>\
+            "
+        }
+
         var inputfilecomponent = {
             template: "\
             <div class='card-body grey'>\
-                <input v-if='isinitial | isuccess' @change='getfiles($event.target.name, $event.target.files)' type='file' name='new-image' id='new-image'>\
+                <input v-if='isinitial | issuccess' @change='getfiles($event.target.name, $event.target.files)' type='file' name='new-image' id='new-image'>\
                 <div v-if='issaving' class='spinner-border' role='status'>\
                     <span class='sr-only'>Loading...</span>\
                 </div>\
@@ -186,7 +321,7 @@
 
         var bottommodalapp = new Vue({
             el: "#pictures_modal_app",
-            components: {inputfilecomponent}
+            components: {inputfilecomponent, additionalimages, tabbedcomponent}
         })
     </script>
 {% endblock %}

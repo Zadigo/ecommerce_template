@@ -16,7 +16,8 @@
                     {% csrf_token %}
                 
                 
-                    <button class="btn btn-primary btn-large" type="submit">Finalize</button>
+                    {% include "../../components/others/form_button.html" with type="danger" btn_name="Finaliser" position="float-right" %}
+                    {% include "../../components/others/form_button.html" with type="danger" btn_name="Finaliser et activer" position="float-right" %}
                 </form>
             </div>
         </div>

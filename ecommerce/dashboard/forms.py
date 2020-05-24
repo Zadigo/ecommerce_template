@@ -187,13 +187,27 @@ class UpdateForm1(forms.ModelForm):
     class Meta:
         model = models.Product
         fields = ['name', 'collection', \
-                    'price_ht', 'discount_pct']
+                    'price_ht', 'discount_pct', 'clothe_size']
         widgets = {
-            'name': forms.widgets.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du produit'}),
             'collection': forms.widgets.Select(attrs={'class': 'form-control'}),
-            'price_ht': forms.widgets.NumberInput(attrs={'class': 'form-control'}),
-            'discount_pct': forms.widgets.NumberInput(attrs={'class': 'form-control'})
+            'price_ht': forms.widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Prix Hors Taxe', 'min': 0}),
+            'discount_pct': forms.widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Réduction (%)', 'min': 0, 'max': 100}),
+            'clothe_size': forms.widgets.SelectMultiple(attrs={'class': 'custom-select'})
         }
+
+    def clean(self):
+        if 'price_ht' in self.cleaned_data or \
+                'discount_pct' in self.cleaned_data:
+            price_ht = self.cleaned_data['price_ht']
+            discount_pct = self.cleaned_data['discount_pct']
+
+            if price_ht < 0:
+                raise forms.ValidationError('Price cannot be under 0')
+
+            if discount_pct < 0 or discount_pct > 75:
+                raise forms.ValidationError('Discount percentage cannot be below 0 and over 75%')
+        return self.cleaned_data
 
 class UpdateForm2(forms.ModelForm):
     class Meta:

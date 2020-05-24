@@ -14,28 +14,38 @@
 
                     <h3>{{ product.name }}</h3>
                     <p class="lead">
-                        <span class="mr-1">
-                            <del>$200</del>
-                        </span>
-                        <span>{{ product.price_ht|price_to_text }}</span>
+                        {% if product.discounted %}
+                            <span class="mr-1">
+                                <del>{{ product.price_ht|price_to_text }}</del>
+                            </span>                            
+                        {% endif %}
+                        <span>{{ product.get_price|price_to_text }}</span>
                     </p>
 
                     <p class="lead font-weight-bold">Description</p>
                     <p>{{ product.description }}</p>
-
-                    <div class="color-selection">
-                        <div>
-                            <colorcomponent @selectcolor="doselection" v-bind:initvalue="details.color" v-bind:colors="colors" />
+                    
+                    {% if product.active %}
+                        <div class="color-selection">
+                            <div>
+                                <colorcomponent @selectcolor="doselection" v-bind:initvalue="details.color" v-bind:colors="colors" />
+                            </div>
+                            <div>
+                                <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
+                            </div>
                         </div>
-                        <div>
-                            <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
-                        </div>
-                    </div>
 
-                    <div class="cart-button">
-                        <cartbutton v-bind:details="details" v-bind:product="product" />
-                    </div>
-                    <div class="csrf">{% csrf_token %}</div>
+                        <div class="cart-button">
+                            <cartbutton v-bind:details="details" v-bind:product="product" />
+                        </div>
+                        <div class="csrf">{% csrf_token %}</div>
+                    {% else %}
+                        <div class="card">
+                            <div class="card-body red lighten-1 text-white text-center font-weight-bold">
+                                This product is not active
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

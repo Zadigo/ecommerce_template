@@ -103,7 +103,21 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
                 product.active = True
             product.save()
 
+        if method == 'reduction':
+            current_state = product.discounted
+            if current_state == True:
+                product.discounted = False
+            else:
+                product.discounted = True
+            product.save()
+
         return http.JsonResponse({'status': 'Done'})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = super().get_object()
+        context['additional_images'] = product.images.filter()
+        return context
 
 class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
     """All the orders made by customers for a specific company
@@ -112,6 +126,7 @@ class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
     queryset = models.CustomerOrder.objects.all()
     context_object_name = 'orders'
     template_name = 'pages/orders.html'
+    paginate_by = 10
 
     def get_context_data(self):
         context = super().get_context_data()
@@ -217,6 +232,7 @@ class CartsView(LoginRequiredMixin, generic.ListView):
     queryset = models.Cart.objects.all()
     template_name = 'pages/carts.html'
     context_object_name = 'products'
+    paginate_by = 5
 
 class ImagesView(LoginRequiredMixin, generic.ListView):
     model = models.Image
