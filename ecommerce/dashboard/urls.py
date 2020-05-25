@@ -4,6 +4,9 @@ from dashboard import views
 urlpatterns = [
     url(r'^settings/$', views.Settings.as_view(), name='settings'),
 
+    url(r'^coupons/new$', views.CreateCouponsView.as_view(), name='dashboard_coupons_new'),
+    url(r'^coupons$', views.CouponsView.as_view(), name='dashboard_coupons'),
+
     url(r'^products/new$', views.CreateProductView.as_view(), name='dashboard_create'),
     url(r'^products/(?P<pk>\d+)/update$', views.UpdateProductView.as_view(), name='update'),
     url(r'^products/(?P<pk>\d+)/orders$', views.ProductOrdersView.as_view(), name='product_orders'),

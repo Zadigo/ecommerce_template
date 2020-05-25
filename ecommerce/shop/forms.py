@@ -11,3 +11,9 @@ class CouponForm(forms.Form):
         if coupon == 'AWST':
             raise forms.ValidationError('The coupon is not valid')
         return self.cleaned_data
+
+class NewCouponForm(forms.Form):
+    code        = fields.CharField()
+    value       = fields.IntegerField()
+    product     = fields.Select()
+    collection = fields.SelectMultiple()

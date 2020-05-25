@@ -7,7 +7,9 @@ from shop import utilities
 
 
 class ImageManager(QuerySet):
-    pass
+    def images_for_forms(self):
+        images = self.values_list('name', flat=True)
+        return [(image, image) for image in images]
 
 class CollectionManager(QuerySet):
     def active_products(self, collection_name):
@@ -36,6 +38,10 @@ class ProductManager(QuerySet):
         products = models.Product.objects.values('collection__name')
         return products.order_by('collection__name')\
                         .annotate(average_price=Count('price_ht'))
+
+    def names_for_forms(self):
+        queryset = self.values_list('name', flat=True)
+        return [(name, name) for name in queryset]
 
 class CartManager(QuerySet):
     def my_cart(self, cart_id):

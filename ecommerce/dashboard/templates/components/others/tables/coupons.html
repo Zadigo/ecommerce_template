@@ -1,0 +1,33 @@
+{% load table_header_tag %}
+
+<table class="table table-hover">
+    <thead class="blue-grey lighten-4">
+        <tr>
+            {% create_table_header "ID" "Code" "Valeur" "Date de fin" %}
+            <th colspan="3"></th>
+        </tr>
+    </thead>
+
+    {% comment %}
+    <tbody>
+        {% for item in items %}
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ item.code }}</td>
+                <td>{{ item.value }}</td>
+                <td>{{ item.end_date }}</td>
+            </tr>
+        {% empty %}
+            <tr scope="row">
+                <td colspan="5">Vous n'avez pas de coupons</td>
+            </tr>
+        {% endfor %}
+    </tbody>        
+    {% endcomment %}
+
+    <tbody>
+        <div id="table_app">
+            <tablebodycomponent v-bind:coupons="coupons" />
+        </div>
+    </tbody>
+</table>

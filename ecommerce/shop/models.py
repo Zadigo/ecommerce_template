@@ -66,7 +66,7 @@ class Product(models.Model):
     
     in_stock     = models.BooleanField(default=True)
     discounted  = models.BooleanField(default=False)
-    active      = models.BooleanField(default=True)
+    active      = models.BooleanField(default=False)
 
     slug        = models.SlugField()
     created_on = models.DateField(auto_now_add=True)
@@ -88,13 +88,19 @@ class Product(models.Model):
             self.discounted_price = utilities.\
                     calculate_discount(self.price_ht, self.discount_pct)
 
+        if self.name:
+            self.slug = utilities.create_slug(self.name)
+
     def get_absolute_url(self):
         collection_name = self.collection.name.lower()
         return reverse('product', args=['femme', collection_name, self.pk, self.slug])
 
     @property
     def get_main_image_url(self):
-        return self.images.all().first().url
+        images = self.images.all()
+        if images.exists():
+            return images.first().url
+        return []
 
     def get_product_images(self):
         return self.images.all()
@@ -125,6 +131,7 @@ class PromotionalCode(models.Model):
     value       = models.IntegerField(default=5)
     product     = models.ManyToManyField(Product, blank=True)
     collection = models.ManyToManyField(ProductCollection, blank=True)
+    # active      = models.BooleanField(default=False)
     end_date    = models.DateField()
 
     objects = models.Manager()

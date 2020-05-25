@@ -1,9 +1,10 @@
+from django import http
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail, send_mass_mail
 from django.core.paginator import Paginator
-from django.db.models.expressions import Q, F
+from django.db.models.expressions import F, Q
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
@@ -12,7 +13,6 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django import http
 
 from dashboard import forms
 from shop import models, serializers, utilities
@@ -33,46 +33,16 @@ class IndexView(LoginRequiredMixin, generic.View):
 class ProductsView(LoginRequiredMixin, generic.ListView):
     model = models.Product
     queryset = models.Product.objects.all()
-    template_name = 'pages/list.html'
+    template_name = 'pages/lists/list.html'
     context_object_name = 'products'
     paginate_by = 10
-
-class UsersView(LoginRequiredMixin, generic.ListView):
-    model = MYUSER
-    queryset = MYUSER.objects.all()
-    template_name = 'pages/users.html'
-    context_object_name = 'users'
-    paginate_by = 10
-
-class UserView(LoginRequiredMixin, generic.DetailView):
-    model = MYUSER
-    queryset = MYUSER.objects.all()
-    template_name = 'pages/profile.html'
-    context_object_name = 'user'
-
-class SearchView(LoginRequiredMixin, generic.ListView):
-    model = models.Product
-    template_name = 'pages/search/products.html'
-    context_object_name = 'products'
-    paginate_by = 10
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        searched_item = self.request.GET.get('s')
-
-        items = queryset.filter(Q(name__icontains=searched_item) 
-            | Q(reference__icontains=searched_item) 
-            | Q(collection__collection_name__icontains=searched_item)
-        )
-
-        return items
 
 class ProductView(LoginRequiredMixin, generic.DetailView):
     """The details of a specific product
     """
     model = models.Product
     queryset = models.Product.objects.all()
-    template_name = 'pages/details.html'
+    template_name = 'pages/details/product.html'
     context_object_name = 'product'
 
     def post(self, request, **kwargs):
@@ -111,13 +81,71 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
                 product.discounted = True
             product.save()
 
+        if method == 'stock':
+            current_state = product.in_stock
+            if current_state == True:
+                product.in_stock = False
+            else:
+                product.in_stock = True
+            product.save()
+
+        if method == 'association':
+            product = super().get_object()
+            images = request.POST.get('images')
+            # When one value is selected, transform
+            # the string into an array to simplify
+            # the code
+            print(images)
+            if isinstance(images, str):
+                images = [images]
+            database_images = models.Image.objects.filter(name__in=images)
+            print(database_images)
+            if database_images:
+                # product.images.set(database_images)
+                product.images.clear()
+                for image in database_images:
+                    product.images.add(image)
+            return redirect(reverse('dashboard_product', args=[product.id]))
+
         return http.JsonResponse({'status': 'Done'})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = super().get_object()
         context['additional_images'] = product.images.filter()
+        context['images_form'] = forms.ImageAssociationForm(initial={'images': list(product.images.values_list('name', flat=True))})
         return context
+
+
+class UsersView(LoginRequiredMixin, generic.ListView):
+    model = MYUSER
+    queryset = MYUSER.objects.all()
+    template_name = 'pages/lists/users.html'
+    context_object_name = 'users'
+    paginate_by = 10
+
+class UserView(LoginRequiredMixin, generic.DetailView):
+    model = MYUSER
+    queryset = MYUSER.objects.all()
+    template_name = 'pages/details/profile.html'
+    context_object_name = 'user'
+
+class SearchView(LoginRequiredMixin, generic.ListView):
+    model = models.Product
+    template_name = 'pages/search/products.html'
+    context_object_name = 'products'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        searched_item = self.request.GET.get('s')
+
+        items = queryset.filter(Q(name__icontains=searched_item) 
+            | Q(reference__icontains=searched_item) 
+            | Q(collection__collection_name__icontains=searched_item)
+        )
+
+        return items
 
 class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
     """All the orders made by customers for a specific company
@@ -125,7 +153,7 @@ class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
     model   = models.CustomerOrder
     queryset = models.CustomerOrder.objects.all()
     context_object_name = 'orders'
-    template_name = 'pages/orders.html'
+    template_name = 'pages/lists/orders.html'
     paginate_by = 10
 
     def get_context_data(self):
@@ -137,20 +165,19 @@ class ProductOrdersView(LoginRequiredMixin, generic.ListView):
     """
     model   = models.CustomerOrder
     context_object_name = 'orders'
-    template_name = 'pages/orders.html'
+    template_name = 'pages/lists/orders.html'
 
     def get_queryset(self):
-        queryset = super().get_queryset()
         product = get_object_or_404(models.Product, id=self.kwargs['pk'])
-        queryset = queryset.filter(reference=product.reference)
+        queryset = product.cart.product.all()
         return queryset
 
 class CustomerOrderView(LoginRequiredMixin, generic.DetailView):
     """Orders for one single product
     """
     model   = models.CustomerOrder
+    template_name = 'pages/details/order.html'
     context_object_name = 'order'
-    template_name = 'pages/order.html'
 
     def post(self, request, **kwargs):
         customerorder = super().get_object()
@@ -161,18 +188,35 @@ class CustomerOrderView(LoginRequiredMixin, generic.DetailView):
         customerorder.save()
         return http.JsonResponse(data={'success': True})
 
-class CreateProductView(LoginRequiredMixin, generic.View):
-    max_number_of_steps = 3
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        order = super().get_object()
+        products = order.cart.product.all()
+        if products.exists():
+            context['products'] = products 
+        return context
 
-    def get(self, request, *args, **kwargs):
-        create_form_logic = forms.CreateFormLogic(request)
-        return render(request, 'pages/create.html', create_form_logic.context)
+class CreateProductView(LoginRequiredMixin, generic.CreateView):
+    model = models.Product
+    form_class = forms.UpdateForm1
+    template_name = 'pages/create/step1.html'
+    context_object_name = 'product'
 
-    def post(self, request, **kwargs):
-        create_form_logic = forms.CreateFormLogic(request)
-        create_form_logic.instances = [['collection', 'collection_name', models.Collection]]
-        url = create_form_logic.validate_form_and_update_model(models.Product, viewname='dashboard_create')
-        return redirect(url)
+    def get_success_url(self):
+        return reverse('dashboard_products')
+
+
+    # max_number_of_steps = 3
+
+    # def get(self, request, *args, **kwargs):
+    #     create_form_logic = forms.CreateFormLogic(request)
+    #     return render(request, 'pages/create.html', create_form_logic.context)
+
+    # def post(self, request, **kwargs):
+    #     create_form_logic = forms.CreateFormLogic(request)
+    #     create_form_logic.instances = [['collection', 'collection_name', models.Collection]]
+    #     url = create_form_logic.validate_form_and_update_model(models.Product, viewname='dashboard_create')
+    #     return redirect(url)
 
 class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
     model = models.Product
@@ -182,7 +226,7 @@ class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
 
     def post(self, request, *args, **kwargs):
         request = super().post(request, *args, **kwargs)
-        print(self.request.POST)
+        # print(self.request.POST)
         # This section deals with the final
         # step of the update process by
         # redirecting to the correct view
@@ -230,26 +274,46 @@ class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
 class CartsView(LoginRequiredMixin, generic.ListView):
     model = models.Cart
     queryset = models.Cart.objects.all()
-    template_name = 'pages/carts.html'
+    template_name = 'pages/lists/carts.html'
     context_object_name = 'products'
     paginate_by = 5
 
 class ImagesView(LoginRequiredMixin, generic.ListView):
     model = models.Image
     queryset = models.Image.objects.all()
-    template_name = 'pages/images.html'
+    template_name = 'pages/lists/images.html'
     context_object_name = 'images'
     paginate_by = 8
 
     def post(self, request, **kwargs):
-        image_id = request.POST.get('image_id')
-        # print(image_id)
-        if not image_id:
-            return http.JsonResponse(data={'status': 'Ok.'})
-        image = self.queryset.get(id=int(image_id))
-        if image_id:
-            image.delete()
-            return http.JsonResponse(data={'status': 'Success'})
+        method = request.POST.get('method')
+        if not method:
+            return http.JsonResponse(data={'status': 'Understood'}, code=202)
+
+        if method == 'delete':
+            image_id = request.POST.get('image_id')
+            if not image_id:
+                return http.JsonResponse(data={'status': 'Ok.'}, code=202)
+            image = self.queryset.get(id=int(image_id))
+            if image_id:
+                image.delete()
+                return http.JsonResponse(data={'status': 'Success'})
+
+        if method == 'imageurl':
+            name = request.POST.get('name')
+            variant = request.POST.get('variant')
+            url = request.POST.get('url')
+            self.model.objects.create(name=name, variant=variant, url=url)
+
+        if method == 'association':
+            name = request.POST.get('product')
+            image_id = request.POST.get('image_id')
+            database_product = get_object_or_404(models.Product, name__iexact=name)
+            if database_product:
+                image = self.queryset.get(id=int(image_id))
+                database_product.images.add(image)
+                return redirect('manage_images')
+
         return http.JsonResponse(data={'status': 'No image'})
         
 
@@ -263,6 +327,7 @@ class ImagesView(LoginRequiredMixin, generic.ListView):
         images = paginator.get_page(page)
         images = serializers.ImageSerializer(instance=images.object_list, many=True)
         context['vue_images'] = images.data
+        context['product_form'] = forms.ImagesForm()
         return context
 
 @login_required
@@ -293,8 +358,26 @@ def send_email(request, **kwargs):
 
     return http.JsonResponse(data={})
 
-# CHARTS VIEWS
+class CouponsView(LoginRequiredMixin, generic.ListView):
+    model = models.PromotionalCode
+    queryset = models.PromotionalCode.objects.all()
+    template_name = 'pages/lists/coupons.html'
+    context_object_name = 'coupons'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        queryset = super().get_queryset()
+        serialized_coupons = serializers.PromotionalCodeSerializer(queryset, many=True)
+        context['vue_coupons'] = serialized_coupons.data
+        return context
+
+class CreateCouponsView(LoginRequiredMixin, generic.CreateView):
+    model = models.PromotionalCode
+    template_name = 'pages/create_coupons.html'
+    context_object_name = 'coupon'
+  
+
+# CHARTS VIEWS
 
 class BaseAPIView(APIView):
     authentication_classes = []
@@ -304,7 +387,7 @@ class ChartsView(BaseAPIView):
     def get(self, format=None, **kwargs):
         payments_by_month = models.CustomerOrder\
                             .statistics.payments_by_month()
-        print(payments_by_month)
+        # print(payments_by_month)
         data = {
             "myChart": {
                 'labels': payments_by_month[0],

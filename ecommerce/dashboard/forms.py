@@ -196,18 +196,18 @@ class UpdateForm1(forms.ModelForm):
             'clothe_size': forms.widgets.SelectMultiple(attrs={'class': 'custom-select'})
         }
 
-    def clean(self):
-        if 'price_ht' in self.cleaned_data or \
-                'discount_pct' in self.cleaned_data:
-            price_ht = self.cleaned_data['price_ht']
-            discount_pct = self.cleaned_data['discount_pct']
+    # def clean(self):
+    #     if 'price_ht' in self.cleaned_data or \
+    #             'discount_pct' in self.cleaned_data:
+    #         price_ht = self.cleaned_data['price_ht']
+    #         discount_pct = self.cleaned_data['discount_pct']
 
-            if price_ht < 0:
-                raise forms.ValidationError('Price cannot be under 0')
+    #         if price_ht < 0:
+    #             raise forms.ValidationError('Price cannot be under 0')
 
-            if discount_pct < 0 or discount_pct > 75:
-                raise forms.ValidationError('Discount percentage cannot be below 0 and over 75%')
-        return self.cleaned_data
+    #         if discount_pct < 0 or discount_pct > 75:
+    #             raise forms.ValidationError('Discount percentage cannot be below 0 and over 75%')
+    #     return self.cleaned_data
 
 class UpdateForm2(forms.ModelForm):
     class Meta:
@@ -216,3 +216,9 @@ class UpdateForm2(forms.ModelForm):
         widgets = {
             'description': forms.widgets.Textarea(attrs={'class': 'form-control'}),
         }
+
+class ImagesForm(forms.Form):
+    product = fields.CharField(widget=fields.Select(attrs={'class': 'form-control'}, choices=models.Product.product_manager.names_for_forms()))
+
+class ImageAssociationForm(forms.Form):
+    images = fields.CharField(widget=fields.SelectMultiple(attrs={'class': 'form-control'}, choices=models.Image.image_manager.images_for_forms()))

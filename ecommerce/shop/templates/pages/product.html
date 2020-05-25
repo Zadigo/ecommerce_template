@@ -34,7 +34,7 @@
                                 <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
                             </div>
                         </div>
-
+                        
                         <div class="cart-button">
                             <cartbutton v-bind:details="details" v-bind:product="product" />
                         </div>
@@ -94,7 +94,8 @@
             props: ["colors", "initvalue"],
             delimiters: ["[[", "]]"],
             template: "\
-            <select @change='selectcolor' v-model='selectedcolor' class='custom-select custom-select-md mb-3' name='colors' id='colors'>\
+            <select @change='selectcolor' v-model='selectedcolor' \
+                     class='custom-select custom-select-md mb-3' name='colors' id='colors'>\
                 <option v-for='color in colors' :key='color.name' :value='color.value'>\
                     [[ color.name ]]\
                 </option>\
@@ -108,6 +109,11 @@
             mounted() {
                 this.$data.selectedcolor = this.$props.initvalue
             },
+            computed: {
+                showselector() {
+                    return this.$props.colors.length > 0
+                }
+            },
             methods: {
                 selectcolor: function() {
                     this.$emit("selectcolor", "color", this.$data.selectedcolor)
@@ -117,12 +123,13 @@
 
         var cartbutton = {
             props: ["product", "details"],
+            delimiters: ["[[", "]]"],
             template: "\
             <form @submit.prevent='addtocart' class='d-flex justify-content-left'>\
                 <input v-model='quantity' type='number' aria-label='Search' \
                                             class='form-control' style='width: 100px'>\
                 <button class='btn btn-primary btn-md my-0 p'\
-                                             :class='instock' type='submit'>Add to cart\
+                        :class='{\"disabled grey lighten-1\": disablebutton}' type='submit'>Add to cart\
                     <i class='fas fa-shopping-cart ml-1'></i>\
                 </button>\
             </form>\
@@ -133,8 +140,13 @@
                 }
             },
             computed: {
-                instock() {
-                    return 
+                disablebutton() {
+                    var isinstock = "{{ product.in_stock }}"
+                    if (isinstock === "True") {
+                        return false
+                    } else if (isinstock === "False") {
+                        return true
+                    }
                 }
             },
             methods: {
@@ -176,10 +188,13 @@
             beforeMount() {
                 var product = JSON.parse($("#vue_product").text())
                 
-                _.forEach(product.images, (image) => {
-                    this.$data.colors.push({name: image.variant, value: image.variant})
-                })
-                this.$data.details["color"] = product.images[0].variant
+                var images = product.images
+                if (images.length > 0) {
+                    _.forEach(images, (image) => {
+                        this.$data.colors.push({name: image.variant, value: image.variant})
+                    })
+                    this.$data.details["color"] = product.images[0].variant
+                }
 
                 _.forEach(product.clothe_size, (size, index) => {
                     this.$data.sizes.push({id: index, name: size.name})

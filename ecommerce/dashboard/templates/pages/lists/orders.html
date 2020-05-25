@@ -1,0 +1,19 @@
+{% extends "../../index.html" %}
+
+{% block heading %}
+    {% include "../../components/navs/heading.html" with title="Commandes" %}
+{% endblock %}
+
+{% block content %}
+<div class="row wow fadeIn">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                {% include "../../components/others/tables/orders.html" with items=orders %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "../../components/navs/pagination.html" with href="customer_orders" %}
+{% endblock %}

@@ -27,3 +27,9 @@ class AnonymousCartSerializer(Serializer):
 
 class CartSerializer(Serializer):
     pass
+
+class PromotionalCodeSerializer(Serializer):
+    product  = ProductSerializer(many=True)
+    collection  = CollectionSerializer(many=True)
+    code      = fields.CharField()
+    value   = fields.IntegerField()
