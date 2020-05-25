@@ -7,7 +7,46 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <title>Material Design Bootstrap</title>
+        <title>{% block title %}{% endblock %}</title>
+
+        <!-- Meta -->
+        <meta name="author" content="MyBrand" />
+
+        <meta name="theme-color" content="#484848"/>
+
+        {% block page_description %}
+            <meta name="description" content="">
+        {% endblock %}
+
+        {% block share_metatags %}
+            <meta name="twitter:card" content="" />
+            <meta name="twitter:site" content="" />
+            <meta name="twitter:creator" content="" />
+
+            <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="" />
+            
+            {% block og_description %}
+                <meta property="og:description" content="" />
+            {% endblock %}
+
+            {% block og_image %}
+                <meta property="og:image" content="" />
+                <meta property="og:image:type" content="image/jpeg" />
+                <!-- <meta property="og:image:height" content="200"> -->
+                <!-- <meta property="og:image:width" content="200"> -->
+            {% endblock %}
+
+            <meta property="og:image:alt" content="Nawoka" />
+        {% endblock %}
+
+        <meta property="keywords" content="{% block meta_keywords %}{% endblock %}">
+
+        <!-- STRUCTURED -->
+        {% block structured_data %}
+            {% include "./seo/organization.html" %}
+        {% endblock %}
 
         <!-- FONT AWESOME -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
@@ -25,9 +64,39 @@
         <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
 
         {% block extra_css %}{% endblock %}
+
+        <link rel="alternate" href="mywebsite.fr" hreflang="fr-fr" />
+
+        {% block datalayer %}
+            <script>window.dataLayer = window.dataLayer || [];</script>
+            {% block datalayer_push %}{% endblock %}
+        {% endblock %}
+        
+        <!-- ANALYTICS -->
+        {# This is a specific technique to use Google Optimize with GTM #}
+        {% include "./analytics/google_analytics.html" with ga_tag="" optimize_tag="" %}
+        
+        {% include "./analytics/tag_manager.html" with gtm_id="" %}
+        {% include "./analytics/facebook.html" with id="" %}
+        {% block facebook_events %}{% endblock %}
+
+        <!-- OPTIMIZE -->
+        {% include "./analytics/optimize_anti_flicker.html" with optimize_tag="" %}
+
+        <!-- MAILCHIMP -->
+        {% include "./analytics/mailchimp.html" %}
+
+        <!-- ADWORDS REMARKETING  -->
+        {% include "./analytics/remarketing.html" %}
+        {% block remarketing %}{% endblock %}
     </head>
 
     <body class="{% block body_color %}{% endblock %}">
+        {% include "./analytics/google_no_script.html" with gtm_id="" %}
+        
+        <!-- FACEBOOK PIXELS -->
+        {% block facebook_event %}{% endblock %}
+
         {% block navbar %}
             {% include "navs/nav.html" with display=True %}        
         {% endblock %}
@@ -58,8 +127,7 @@
         <script type="text/javascript" src="{% static 'mdb.js' %}"></script>
         <script type="text/javascript">
             // Animations initialization
-            new WOW().init();
-
+            new WOW().init()
         </script>
 
         <!-- STRIPE -->
@@ -74,5 +142,8 @@
         {% block extra_scripts %}{% endblock %}
 
         {% block vuejs_scripts %}{% endblock %}
+
+        <!-- CHAT -->
+        {% block chat %}{% endblock %}
     </body>
 </html>
