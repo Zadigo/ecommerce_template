@@ -71,8 +71,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'template_ecommerce'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'Constance971'),
+        'USER': os.environ.get('DB_USER', 'princess_ecommerce'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'princess_ecommerce'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': '5432',
     }
@@ -126,3 +126,45 @@ MEDIA_ROOT = 'media'
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, 'static')
 # ]
+
+
+# AUTHENTICATION BACKENDS
+
+# AUTH_USER_MODEL = 'accounts.MyUser'
+
+# AUTHENTICATION_BACKENDS = (
+#     'social_core.backends.twitter.TwitterOAuth',
+#     'social_core.backends.open_id.OpenIdAuth',
+#     'social_core.backends.google.GoogleOpenId',
+#     'social_core.backends.google.GoogleOAuth2',
+#     'social_core.backends.facebook.FacebookOAuth2',
+#     'accounts.backends.EmailAuthenticationBackend'
+# )
+
+
+# SOCIAL DJANGO
+
+LOGIN_URL = 'login'
+
+LOGOUT_URL = 'logout'
+
+LOGIN_REDIRECT_URL = 'profile'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
+
+
+# GMAIL
+
+EMAIL_HOST = 'smtp.gmail.com'
+
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+EMAIL_USE_TLS = True
+
+EMAIL_PORT = 587
+
+EMAIL_USE_LOCALTIME = True
