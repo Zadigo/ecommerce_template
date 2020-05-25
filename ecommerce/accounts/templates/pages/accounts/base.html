@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Mon compte" %}{% endblock %}
+
+{% block body %}
+    <section class="section">
+        <div class="row">
+            
+            {% block profile_content_one %}
+                <div class="col s12 l4">
+                    <!-- SIDE MENU -->
+                    {% include "../../components/accounts/side_menu.html" %}
+                </div>
+
+                <div class="col s12 l8">
+                    {% block profile_content %}{% endblock %}
+                </div>
+            {% endblock %}
+        </div>
+        <div class="csrf">{% csrf_token %}</div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static '_profile.js' %}"></script>
+    <script src="{% static 'accounts.js' %}"></script>
+{% endblock %}

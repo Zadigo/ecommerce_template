@@ -3,8 +3,6 @@ from django.db import models
 from django.db.models import fields, signals
 from django.dispatch import receiver
 
-from dashboard import managers
-
 USER = get_user_model()
 
 class DashboardSetting(models.Model):

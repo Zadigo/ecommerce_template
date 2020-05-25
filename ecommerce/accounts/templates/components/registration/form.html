@@ -1,0 +1,37 @@
+<form method="post" id="{{ form_id }}">
+    {% csrf_token %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div id="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% for error in form.non_field_errors %}
+        <div id="non_field_errors">
+            {{ error }}
+        </div>
+    {% endfor %}
+
+    {% for field in form %}
+        <div class="input-field">
+            {{ field }}
+        </div>
+    {% endfor %}
+    
+    {% if consent %}
+        <p>
+            <label id="_cgu">
+                <input type="checkbox" class="filled-in">
+                <span>Vous consentez à suivre nos <a href="{ url 'cgu' }">CGU</a></span>
+            </label>
+        </p>
+    {% endif %}
+
+    <button type="submit" class="btn-large">
+        <i class="material-icons left">{{ icon|default:"linked_camera" }}</i>
+        {{ button_name }}
+    </button>
+</form>

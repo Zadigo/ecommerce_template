@@ -1,0 +1,17 @@
+{% extends "pages/accounts/base.html" %}
+{% load i18n %}
+
+{% block profile_content %}
+<div id="profile_app">
+    <div class="card-panel">
+        <formcomponent v-bind:fields="form1" v-bind:formname="'userform'" />
+    </div>
+    
+    <div class="card-panel">
+        <formcomponent v-bind:fields="form2" v-bind:formname="'detailsform'" />
+    </div>
+    {{ forms|json_script:"forms" }}
+</div>
+{% endblock profile_content %}
+
+<input type="text" autocomplete="postal-code">

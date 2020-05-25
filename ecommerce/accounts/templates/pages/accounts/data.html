@@ -1,0 +1,49 @@
+{% extends "pages/accounts/base.html" %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Mes données" %}{% endblock %}
+
+{% block profile_content %}
+    <div class="card-panel">
+        <p>
+            {% blocktrans %}
+                Gérer les comptes connectés avec Kurrikulam :
+            {% endblocktrans %}
+        </p>
+        <a href="#!" class="btn {% if provider != 'google-oauth2' %}
+                                    disabled
+                                {% endif %}">
+            <i class="fab fa-google left"></i>Google
+        </a>
+        <a href="#!" class="btn disabled"><i class="fab fa-twitter left"></i>Twitter</a>
+        <a href="#!" class="btn disabled"><i class="fab fa-linkedin left"></i>LinkedIn</a>
+    </div>
+
+    <div class="card-panel">
+        <p>
+            {% blocktrans %}
+                Si vous ne souhaitez plus avoir de compte chez nous, vous pouvez utiliser le lien ci-dessous.</p>
+            {% endblocktrans %}
+        <!-- Modal Trigger-->
+        <a class="waves-effect waves-light btn modal-trigger red darken-4" href="#modal1"><i class="material-icons left">remove_circle</i>Supprimer mon compte</a>
+        <!-- Modal Trigger -->
+    </div>
+
+    <!-- Modal -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <h4>{% trans 'Suppréssion de votre compte' %}</h4>
+            <p>
+                {% blocktrans %}
+                    Vous êtes sur le point de supprimer votre compte. Cette étape
+                    est irréversible et vous perdrez donc toutes les données liées à Kurrikulam.
+                {% endblocktrans %}
+            </p>
+        </div>
+        <div class="modal-footer">
+            <a href="{% url 'delete_account' %}" class="modal-close waves-effect waves-green btn-flat">{% trans 'supprimer' %}</a>
+        </div>
+    </div>
+    <!-- END Modal-->
+{% endblock profile_content %}

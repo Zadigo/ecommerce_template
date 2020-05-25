@@ -1,0 +1,13 @@
+{% extends "pages/registration/index.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Se connecter" %}{% endblock title %}
+
+{% block registration_form %}
+    {% include "../../components/registration/form.html" with form_id="login_form" button_name="Se connecter" %}
+{% endblock registration_form %}
+
+{% block extra_registration_links %}
+    {% include "../../components/registration/p_tag.html" with text="Forgot your password?" href="forgot_password" action_text="Send yourself a new one" %}
+    {% include "../../components/registration/p_tag.html" with text="Don't have an account?" href="signup" action_text="Get yours now" %}
+{% endblock extra_registration_links %}

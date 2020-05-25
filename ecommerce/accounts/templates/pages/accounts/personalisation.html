@@ -1,0 +1,31 @@
+{% extends "pages/accounts/base.html" %}
+{% load i18n %}
+{% block profile_content %}
+    <div class="card-panel">
+        <form method="POST" enctype="multipart/form-data" id="personalisation-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="input-field">
+                    {{ field }}
+                </div>
+            {% endfor %}
+
+            <label>{% trans 'Jupes' %}</label>
+            <p class="range-field">
+                <input type="range" id="jupes" min="0" max="5" name="jupes" value="2" />
+            </p>
+
+            <label>{% trans 'Manteaux' %}</label>
+            <p class="range-field">
+                <input type="range" id="manteaux" min="0" max="5" name="manteaux" value="5" />
+            </p>
+
+            <label>{% trans 'Manteaux' %}</label>
+            <p class="range-field">
+                <input type="range" id="accessoires" min="0" max="5" name="accessoires" value="5" />
+            </p>
+
+            <button type="submit" class="btn waves-effect waves-light light-blue lighten-1"><i class="material-icons left">check</i> {% trans 'Modifier' %}</button>
+        </form>
+    </div>
+{% endblock profile_content %}

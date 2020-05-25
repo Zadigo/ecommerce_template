@@ -11,6 +11,11 @@ class Image(models.Model):
     url     = models.URLField(blank=True, null=True)
     variant = models.CharField(max_length=30, default='black')
 
+    # aws_key   = models.CharField(max_length=50, null=True, blank=True, verbose_name='AWS folder key')
+    # image_url = models.URLField(null=True, blank=True)
+    # main_image  = models.BooleanField(default=False, help_text='Indicates if this is the main image for the product')
+
+
     objects = models.Manager()
     image_manager = managers.ImageManager.as_manager()
 
@@ -69,12 +74,19 @@ class Product(models.Model):
     price_ht    = models.DecimalField(max_digits=3, decimal_places=2)
     discount_pct    = models.IntegerField(default=0, validators=[validators.discount_pct_validator])
     discounted_price   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
+    # price_valid_until = models.DateField(default=utilities.add_to_current_date(d=30), help_text='Determines until which date the price is valid')
+
+    # sku             = models.CharField(max_length=50, blank=True, null=True, 
+    #                         verbose_name='Stock Keeping Unit', help_text='ex. BCLOGO-GRIS-SMA')
+
+    # our_favorite    = models.BooleanField(default=False)
     
     in_stock     = models.BooleanField(default=True)
     discounted  = models.BooleanField(default=False)
     active      = models.BooleanField(default=False)
 
     slug        = models.SlugField()
+    # last_modified   = models.DateField(auto_now=True)
     created_on = models.DateField(auto_now_add=True)
 
     objects = models.Manager()

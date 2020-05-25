@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="card-panel">
+    <div class="collection">
+        <a href="{% url 'profile' %}" class="collection-item">{% trans 'Profil' %}</a>
+        <a href="{% url 'payment_methods' %}" class="collection-item">{% trans 'Modes de paiement' %}</a>
+        <a href="{% url 'change_password' %}" class="collection-item">{% trans 'Mot de passe' %}</a>
+        <a href="{% url 'profile_data' %}" class="collection-item">{% trans 'Mes données' %}</a>
+    </div>
+</div>
+
+<div class="card-panel">
+    <div class="collection">
+        <a href="{ url 'personalisation' }" class="collection-item">{% trans 'Personalisation' %}</a>
+    </div>
+</div>

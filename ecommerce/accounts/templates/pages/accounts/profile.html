@@ -1,0 +1,31 @@
+{% extends "pages/accounts/base.html" %}
+{% load i18n %}
+
+
+
+
+{% block profile_content %}
+    <div class="card-panel">
+        <form method="POST" enctype="multipart/form-data" id="base-profile-form">
+            {% csrf_token %}
+            {% for field in base_profile_form %}
+                <div class="input-field">
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn waves-effect waves-light light-blue lighten-1" onclick="M.toast({html: 'Profil mis à jour'})"><i class="material-icons left">check</i> {% trans 'Valider' %}</button>
+        </form>
+    </div>
+
+    <div class="card-panel">
+        <form method="POST" enctype="multipart/form-data" id="address-profile-form">
+            {% csrf_token %}
+            {% for field in address_profile_form %}
+                <div class="input-field">
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn waves-effect waves-light light-blue lighten-1" onclick="M.toast({html: 'Profil mis à jour'})"><i class="material-icons left">check</i> {% trans 'Valider' %}</button>
+        </form>
+    </div>
+{% endblock profile_content %}
