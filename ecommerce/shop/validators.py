@@ -1,6 +1,8 @@
-from django.core.exceptions import ValidationError
 import datetime
 import re
+
+from django.core.exceptions import ValidationError
+
 
 def discount_pct_validator(pct):
     if pct < 0 or pct > 70:

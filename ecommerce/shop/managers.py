@@ -1,8 +1,10 @@
+import datetime
+
 from django import http
 from django.core import exceptions
 from django.db.models import Case, Count, F, Q, QuerySet, Sum, When, fields
 from django.db.models.functions import TruncMonth
-import datetime
+
 from shop import utilities
 
 
@@ -22,6 +24,7 @@ class CollectionManager(QuerySet):
         return products.filter(price_between_a_and_b)
 
 class ProductManager(QuerySet):
+    pass
     def product_colors(self, product_id):
         """Gets the available colors for a product"""
         colors = self.get(id=product_id).images.values_list('variant', flat=True)
@@ -39,9 +42,9 @@ class ProductManager(QuerySet):
         return products.order_by('collection__name')\
                         .annotate(average_price=Count('price_ht'))
 
-    def names_for_forms(self):
-        queryset = self.values_list('name', flat=True)
-        return [(name, name) for name in queryset]
+    # def names_for_forms(self):
+    #     queryset = self.values_list('name', flat=True)
+    #     return [(name, name) for name in queryset]
 
 class CartManager(QuerySet):
     def my_cart(self, cart_id):
@@ -171,12 +174,6 @@ class CartManager(QuerySet):
                 cart.anonymous = True
                 cart.save()
                 return cart
-
-class OrdersManager(QuerySet):
-    pass
-
-class ShipmentManager(QuerySet):
-    pass
 
 class FormsManager(QuerySet):
     def for_forms(self):

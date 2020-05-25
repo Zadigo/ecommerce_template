@@ -23,6 +23,16 @@ try:
 except:
     USER = get_user_model()
 
+def stripe_tax(price):
+    """Calculates the percentage stripe takes
+    on each given sale
+
+    Formula
+    -------
+
+        price * (2.9% / 100) + 0.27c
+    """
+    return round(price * (2.9 / 100) + 0.27, 2)
 
 def create_payment_reference(n=5):
     """Create a basic reference: `NAW201906126011b0e0b8`

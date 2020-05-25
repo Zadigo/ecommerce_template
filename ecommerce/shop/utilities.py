@@ -67,6 +67,7 @@ def create_product_reference():
     return f'{first}{second}{salt}'
 
 def create_slug(name):
+    """Creates a product slug name"""
     names = name.split(' ')
 
     def normalize_names(raw_name):
@@ -102,27 +103,6 @@ def create_image_slug(name, reverse=False):
     image_name = '_'.join(name.split(' '))
     return f'{image_name.strip().lower()}.jpg'
     
-def transform_to_list(data):
-    """Transform a dict to a list containing list
-    of values: 
-    
-    Description
-    -----------
-
-        [{a: c}, {e: t}] becomes [[c], [t]].
-
-        This is useful for the .add() method for m2m
-        creation fields for an item
-    """
-    values = []
-    for items in data:
-        values.append(list(items.values()))
-    
-    return values
-
-def full_address(address, zip_code, city):
-    return f"{address}, {zip_code}, {city}"
-    
 def create_cart_id(n=12):
     """Creates an iD for the Anonymous cart so that we can
     easily get all the items registered by an anonymous user
@@ -139,16 +119,6 @@ def create_cart_id(n=12):
     date = datetime.datetime.now().date()
     return f'{date.year}_{date.month}_{date.day}_' + token
 
-def stripe_tax(price):
-    """Calculates the percentage stripe takes
-    on each given sale
-
-    Formula
-    -------
-
-        price * (2.9% / 100) + 0.27c
-    """
-    return round(price * (2.9 / 100) + 0.27, 2)
 
 def calculate_discount(price, pct):
     """Calculates a discount price
@@ -197,16 +167,9 @@ def impressions_helper(queryset):
     return items
 
 def add_to_current_date(d=15):
-    """Return a possible delivery date in the future"""
+    """Adds d-days to a current date"""
     current_date = datetime.datetime.now().date()
     return current_date + datetime.timedelta(days=d)
-
-def split_colors(colors):
-    """Takes a comma separated list of colors and returns
-    them into a list"""
-    if "," in colors:
-        return colors.split(",")
-    return [colors]
 
 def get_image_name(image):
     if '.' in image:

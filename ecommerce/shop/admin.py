@@ -47,5 +47,5 @@ class PromotionalCodeAdmin(admin.ModelAdmin):
 
 @admin.register(models.ClotheSize)
 class ClotheSizeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'verbose_name', 'centimeters']
+    list_display = ['name', 'verbose_name', 'chest_circumference', 'waist_hip_circumference']
     search_fields = ['name']

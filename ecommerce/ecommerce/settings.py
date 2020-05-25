@@ -25,9 +25,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'shop',
-    'dashboard',
     'rest_framework',
+    'shop',
+    'accounts',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -56,9 +57,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            # 'libraries': {
-            #     'current_date_tag': 'dashboard.templatetags.current_date_tag',
-            # },
         },
     },
 ]
