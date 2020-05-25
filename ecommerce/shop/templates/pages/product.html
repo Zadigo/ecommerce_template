@@ -12,7 +12,7 @@
                 <div class="p-4">
                     {# {% include "../components/product/badges.html" %} #}
 
-                    <h3>{{ product.name }}</h3>
+                    <h3 class="font-weight-lighter">{{ product.name }}</h3>
                     <p class="lead">
                         {% if product.discounted %}
                             <span class="mr-1">
@@ -21,9 +21,28 @@
                         {% endif %}
                         <span>{{ product.get_price|price_to_text }}</span>
                     </p>
+                    
+                    {% if product.reviews %}
+                        <div class="rating">
+                            <div class="stars">
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star checked"></span>
+                                <span class="fa fa-star"></span>
+                                <span class="fa fa-star"></span>
+                            </div>
+                            <span class="review-no">0 reviews</span>
+                        </div>
+                    {% endif %}
 
-                    <p class="lead font-weight-bold">Description</p>
-                    <p>{{ product.description }}</p>
+                    <div class="delivery mt-3 mb-3">
+                        <a href="#!">Livraison gratuite**</a>
+                    </div>
+                    
+                    {% if product.description %}
+                        <p class="lead font-weight-bold">Description</p>
+                        <p>{{ product.description }}</p>                        
+                    {% endif %}
                     
                     {% if product.active %}
                         <div class="color-selection">
@@ -33,6 +52,10 @@
                             <div>
                                 <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
                             </div>
+
+                            <div class="delivery mt-3 mb-3">
+                                <a href="#!">Guide des tailles**</a>
+                            </div>        
                         </div>
                         
                         <div class="cart-button">
@@ -47,6 +70,14 @@
                         </div>
                     {% endif %}
                 </div>
+
+                <div class="product_rassurance">
+                    <ul class="list-inline p-4 grey lighten-4 text-center">
+                        <li class="list-inline-item"><i class="fa fa-truck fa-2x"></i><br/>Livraison rapide</li>
+                        <li class="list-inline-item"><i class="fa fa-credit-card fa-2x"></i><br/>Paiements sécurisés</li>
+                        <li class="list-inline-item"><i class="fa fa-star fa-2x"></i><br/>Garantie 14 jours</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -55,6 +86,13 @@
 
     <!-- MORE -->
     {% include "../components/product/more.html" %}
+    
+    {% comment %}
+    <!-- REVIEWS -->
+    <div class="row wow fadeIn mt-3">
+        {% include "../components/product/reviews.html" %}
+    </div>        
+    {% endcomment %}
 {% endblock %}
 
 {% block vuejs_scripts %}
@@ -126,11 +164,11 @@
             delimiters: ["[[", "]]"],
             template: "\
             <form @submit.prevent='addtocart' class='d-flex justify-content-left'>\
-                <input v-model='quantity' type='number' aria-label='Search' \
-                                            class='form-control' style='width: 100px'>\
-                <button class='btn btn-primary btn-md my-0 p'\
-                        :class='{\"disabled grey lighten-1\": disablebutton}' type='submit'>Add to cart\
-                    <i class='fas fa-shopping-cart ml-1'></i>\
+                <input v-model='quantity' type='number' aria-label='Search' class='form-control' style='width: 100px'>\
+                <button class='btn btn-large btn-primary btn-md my-0 p':class='{\"disabled grey lighten-1\": disablebutton}' type='submit'>Ajouter au panier\
+                </button>\
+                <button class='btn btn-small red lighten-1 btn-md my-0 p'>\
+                    <i class='fas fa-heart ml-1 text-white'></i>\
                 </button>\
             </form>\
             ",

@@ -1,13 +1,13 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
 
-		<title>Material Design Bootstrap</title>
+		<title>{% block title %}{% endblock %}</title>
 
 		<!-- FONT AWESOME -->
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
@@ -38,13 +38,14 @@
 				position: absolute;
 			}
 		</style>
+
+		{% block extra_css %}{% endblock %}
 	</head>
 
 	<body class="grey lighten-3">
 		<header>
 			<!-- NAVBAR -->
 			{% include "./components/navs/navbar.html" %}
-
 			<!-- SIDEBAR -->
 			{% include "./components/navs/sidebar.html" %}
 		</header>
@@ -64,14 +65,14 @@
 		<!-- JQUERY -->
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-		<!-- Bootstrap tooltips -->
+		<!-- TOOLTIPS -->
 		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
 
-		<!-- Bootstrap core JavaScript -->
+		<!-- BOOTSTRAP JAVASCRIPT -->
 		<script type="text/javascript"
 			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
-		<!-- MDB core JavaScript -->
+		<!-- MDB JAVASCRIPT -->
 		<script type="text/javascript" src="{% static 'mdb.js' %}"></script>
 
 		<!-- Initializations -->

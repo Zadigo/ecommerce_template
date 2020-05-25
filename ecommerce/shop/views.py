@@ -31,10 +31,15 @@ def no_cart_router(request, current_path, debug=False):
 
 class IndexView(generic.View):
     def get(self, request, *args, **kwargs):
+        return render(request, 'pages/shop.html')
+
+class ShopView(generic.View):
+    def get(self, request, *args, **kwargs):
+        collections = models.ProductCollection.objects.filter(gender='femme')
         context = {
-            'collections': models.ProductCollection.objects.all()
+            'collections': collections
         }
-        return render(request, 'pages/shop.html', context)
+        return render(request, 'pages/shop_gender.html', context)
 
 class ProductsView(generic.ListView):
     model = models.ProductCollection
@@ -78,6 +83,7 @@ class ProductView(generic.DetailView):
         product = super().get_object()
         serialized_product = serializers.ProductSerializer(instance=product)
         context['vue_product'] = serialized_product.data
+        context['more'] = self.model.objects.prefetch_related('images').exclude(id=product.id)[:3]
         return context
 
 class CheckoutView(generic.ListView):

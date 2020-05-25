@@ -112,7 +112,7 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = super().get_object()
-        context['additional_images'] = product.images.filter()
+        context['additional_images'] = product.images.all()
         context['images_form'] = forms.ImageAssociationForm(initial={'images': list(product.images.values_list('name', flat=True))})
         return context
 

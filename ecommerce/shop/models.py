@@ -24,6 +24,12 @@ class Image(models.Model):
 
 class ProductCollection(models.Model):
     name      = models.CharField(max_length=50)
+    
+    class GenderChoices(models.Choices):
+        FEMME = 'femme'
+        HOMME = 'homme'
+    gender = models.CharField(max_length=50, choices=GenderChoices.choices, default=GenderChoices.FEMME)
+
     view_name   = models.CharField(max_length=50)
     image       = models.URLField(blank=True, null=True)
     presentation_text = models.TextField(max_length=300, blank=True, null=True)
@@ -131,7 +137,7 @@ class PromotionalCode(models.Model):
     value       = models.IntegerField(default=5)
     product     = models.ManyToManyField(Product, blank=True)
     collection = models.ManyToManyField(ProductCollection, blank=True)
-    # active      = models.BooleanField(default=False)
+    active      = models.BooleanField(default=False)
     end_date    = models.DateField()
 
     objects = models.Manager()

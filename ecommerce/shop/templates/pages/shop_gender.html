@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static card_sizes %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'images_grid.css' %}">
+{% endblock %}
+
+{% block container %}
+    <section class="collections">
+        <div class="row wow fadeIn">
+            <div class="col-12">
+                <img class="img-fluid" src="https://content.asos-media.com/-/media/homepages/ww/2020/05/11/ww_global_desktop-hero_1258x600_4thmay.jpg" alt="image">
+            </div>
+        </div>
+        <div class="row wow fadeIn mt-4">
+            {% for collection in collections %}
+                <div class="col-md-4">
+                    <a href="{% url 'collection' collection.gender collection.view_name %}" id="link_shop">
+                        <img src="{{ collection.image }}" class="img-fluid" alt="image">
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

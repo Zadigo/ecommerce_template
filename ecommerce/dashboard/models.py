@@ -12,7 +12,6 @@ class DashboardSetting(models.Model):
     dark_mode = fields.BooleanField(default=False)
 
     objects = models.Manager()
-    dashboard_manager = managers.DashboardManager.as_manager()
 
     def __str__(self):
         return self.dark_mode

@@ -12,35 +12,40 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- LEFT -->
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link waves-effect" href="{% url 'home' %}">Accueil
-                        <span class="sr-only">(current)</span>
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a class="nav-link waves-effect" href="{% url 'shop_gender' 'femme' %}">Femme
+                        <!-- <span class="sr-only">(current)</span> -->
                     </a>
                 </li>
             </ul>
+            
 
             <!-- RIGHT -->
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
+                    <a href class="nav-link waves-effect">
+                        <i class="fa fa-search"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{% url 'checkout' %}" class="nav-link waves-effect">
-                        <span class="badge red z-depth-1 mr-1">1</span>
+                        {# <span class="badge red z-depth-1 mr-1">1</span> #}
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="/admin/" target="_blank" class="nav-link waves-effect">
-                        <i class="fas fa-admin"></i>Admin
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{% url 'index' %}" target="_blank" class="nav-link waves-effect">
-                        <i class="fas fa-admin"></i>Dashboard
-                    </a>
-                </li>
+
+                {% if user.is_admin %}
+                    <li class="nav-item">
+                        <a href="/admin/" target="_blank" class="nav-link waves-effect">
+                            <i class="fa fa-person"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/dashboard/" target="_blank" class="nav-link waves-effect">
+                            <i class="fa fa-person"></i>
+                        </a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
