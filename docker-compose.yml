@@ -1,0 +1,93 @@
+version: '3'
+
+services:
+  nawoka:
+    build: ./nawoka
+    env_file:
+      - ./docker/environment/env_prod.env
+      - ./docker/environment/general.env
+    # environment:
+    #   VIRTUAL_HOST: nawoka.fr
+    container_name: nawoka_production
+    ports:
+      - "8000:80"
+    links:
+      - db
+    depends_on:
+      - db
+    volumes:
+      - ./nawoka:/app
+      # - ./var/gunicorn/log:/var/log/gunicorn/
+
+  db:
+    build: ./docker/database
+    container_name: apps_database
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - PostgresData:/var/lib/postgresql/data/
+
+  enginx:
+    build: ./docker/nginx
+    container_name: enginx
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - "nawoka"
+    volumes:
+      - ./var/nginx_error.log:/etc/nginx/logs/error.log
+      - ./var/nginx_access.log:/etc/nginx/logs/access.log
+      - ./var/certbot/conf:/etc/letsencrypt/
+      - ./nawoka/allstatic/:/static/allstatic/:ro
+
+  cadvisor:
+    image: google/cadvisor:latest
+    container_name: cadvisor
+    privileged: true
+    ports:
+    - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    depends_on:
+      - "nawoka"
+      - "enginx"
+      - "db"
+
+  failtoban:
+    build: ./docker/failtoban
+    container_name: failtoban
+    depends_on:
+      - "enginx"
+    volumes:
+      - ./var/nginx_error.log:/etc/fail2ban/error.log
+      - ./var/nginx_access.log:/etc/fail2ban/access.log
+
+  certbot:
+    build: ./docker/cert
+    container_name: certbot
+    volumes:
+      - ./var/certbot/conf:/etc/letsencrypt
+      - ./var/certbot/www:/var/www/certbot
+      - ./var/certbot/etc/letsencrypt:/var/etc/letsencrypt
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+volumes:
+  PostgresData: {}
+  NginxLogs: {}
+
+# networks:
+#   default:
+#     external:
+#       name: nginx-proxy

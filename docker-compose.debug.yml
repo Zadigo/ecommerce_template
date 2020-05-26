@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  # vueapp:
+  #   build: ./frontapp/bwaloca
+  #   container_name: vue_application
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - var_html:app/dist/

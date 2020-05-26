@@ -1,0 +1,55 @@
+[DEFAULT]
+bantime = 3600
+ignoreip = 127.0.0.1/8
+findtime = 3600
+maxretry = 6
+
+mta = mail
+destemail = 
+sendername = Fail2Ban
+action = %(action_mwl)s
+
+[nginx-http-auth]
+enabled  = true
+filter   = nginx-http-auth
+port     = http,https
+logpath  = /etc/fail2ban/error.log
+
+[nginx-x00]
+enabled  = true
+filter   = nginx-x00
+port     = http,https
+bantime  = 86400
+maxretry = 2
+logpath  = /etc/fail2ban/access.log
+
+[dana-exploit]
+enabled  = true
+filter   = dana-exploit
+port     = http,https
+bantime  = 86400
+maxretry = 2
+logpath  = /etc/fail2ban/access.log
+
+[ssh]
+# enabled  = true
+# port     = ssh
+# filter   = sshd
+logpath  = /etc/fail2ban/auth.log
+# maxretry = 6
+
+[php-scripts]
+enabled    = true
+filter     = php-scripts
+port       = http,https
+bantime    = 43200
+maxretry   = 2
+logpath    = /etc/fail2ban/access.log
+
+[suspect-ips]
+enabled    = false
+filter     = suspect-ips
+port       = http,https
+bantime    = 86400
+maxretry   = 2
+logpath    = /etc/fail2ban/access.log
