@@ -26,11 +26,13 @@
                     {% endif %}
                 </td>
                 <td><a href="{% url 'update' item.id %}">update</a></td>
-                <td><a href="{% url 'delete_item' 'products' item.id %}">delete</a></td>
+                {% if user.is_admin %}
+                    <td><a href="{% url 'delete_item' 'products' item.id %}">delete</a></td>
+                {% endif %}
             </tr>
         {% empty %}
             <tr scope="row">
-                <td colspan="5">Vous n'avez pas de célébrité</td>
+                <td class="text-center font-weight-bold" colspan="5">Vous n'avez pas encore de produits</td>
             </tr>
         {% endfor %}
     </tbody>

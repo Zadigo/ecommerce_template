@@ -4,7 +4,8 @@ from shop import models
 
 class ClotheSizeSerializer(Serializer):
     name = fields.CharField()
-    centimeters = fields.IntegerField()
+    chest_circumference = fields.IntegerField()
+    waist_hip_circumference = fields.IntegerField()
 
 class ImageSerializer(Serializer):
     pk      = fields.IntegerField()

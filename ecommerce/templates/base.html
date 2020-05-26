@@ -61,7 +61,9 @@
         <link href="{% static 'style.css' %}" rel="stylesheet">
 
         <!-- CUSTOM -->
+        <link href="{% static 'hero.css' %}" rel="stylesheet">
         <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
+        <link href="{% static 'ecommerce_bars.css' %}" rel="stylesheet">
 
         {% block extra_css %}{% endblock %}
 
@@ -98,8 +100,20 @@
         {% block facebook_event %}{% endblock %}
 
         {% block navbar %}
-            {% include "navs/nav.html" with display=True %}        
+            {% include "navs/nav.html" %}        
         {% endblock %}
+
+        {% comment %}
+        <div class="top-banner sales-policies green">
+            <div class="container">
+                <div class="row">
+                    <div class="col-4">A</div>
+                    <div class="col-4">B</div>
+                    <div class="col-4">C</div>
+                </div>
+            </div>
+        </div>
+        {% endcomment %}
 
         <main class="mt-5 pt-4">
             {% block hero %}
@@ -111,7 +125,7 @@
 
         <!-- FOOTER -->
         {% block footer %}
-            {% include "navs/footer.html" with display=True %}
+            {% include "navs/footer.html" %}
         {% endblock %}
 
         <!-- JQUERY -->

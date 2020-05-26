@@ -1,9 +1,121 @@
 {% extends "base.html" %}
 {% load static price_tags %}
 
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block datalayer_push %}
+    {{ impressions|json_script:"impressions" }}
+    
+    <script>
+        var impressions = JSON.parse(document.getElementById("impressions").innerText)
+
+        dataLayer.push({
+            "ecommerce": {
+                "impressions": impressions,
+                "detail": {
+                    "actionField": {"list": "Product list"},
+                    "products": [
+                        {
+                            "name:": "{{ product.name }}",
+                            "id:": "{{ product.reference }}",
+                            "price:": "{{ product.get_price }}",
+                            "brand:": "Nawoka",
+                            "category:": "{{ product.category }}",
+                            "variant:": "{{ product.sku }}",
+                        }
+                    ]
+                }
+            },
+            "remarketingProduct": {
+                "name:": "{{ product.name }}",
+                "id:": "{{ product.reference }}",
+                "price:": "{{ product.get_price }}",
+                "brand:": "Nawoka",
+                "category:": "{{ product.category }}",
+                "variant:": "{{ product.sku }}",
+            }
+        })
+    </script>
+{% endblock %}
+
+{% block structured_data %}
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": "{{ product.name }}",
+            "image": "{{ product.get_main_image_url }}",
+            "description": "{{ product.name }} - {{ product.color }} - {{ product.get_price }}€ {{ product.get_discount_pct_as_text }}",
+            "sku": "{{ product.sku }}",
+            "mpn": "{{ product.sku }}",
+            "color": "{{ product.color }}",
+            "url": "{{ request.build_absolute_uri }}",
+            "brand": {
+              "@type": "Thing",
+              "name": "Nawoka"
+            },
+            "audience": {
+                "@type": "PeopleAudience",
+                "suggestedGender": "{% if product.gender == 'femme' %}female{% else %}male{% endif %}"
+            },
+            "offers": {
+              "@type": "Offer",
+              "url": "{{ request.build_absolute_uri }}",
+              "priceCurrency": "EUR",
+              "price": "{{ product.get_price }}",
+              "priceValidUntil": "{{ product.price_valid_until|date:"d-m-Y" }}",
+              "itemCondition": "https://schema.org/NewCondition",
+              "availability": "https://schema.org/InStock"
+            }
+        }
+    </script>
+    
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "item": {
+                        "@id": "https://nawoka.fr{% url 'home' %}",
+                        "name": "Accueil"
+                    }
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "item": {
+                        "@id": "https://nawoka.fr{% url 'shop' %}",
+                        "name": "Boutique"
+                    }
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "item": {
+                        "@id": "{{ product.get_collection_url }}",
+                        "name": "{{ product.collection.name }}"
+                    }
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 4,
+                    "item": {
+                        "@id": "https://nawoka.fr{{ product.get_absolute_url }}",
+                        "name": "{{ product.name }}"
+                    }
+                }
+            ]
+        }
+    </script>
+{% endblock %}
+
 {% block container %}
     <div id="vue_app">
         <div class="row wow fadeIn">
+            <!-- MAIN IMAGE -->
             <div class="col-md-6 mb-4">
                 <img src="{{ product.get_main_image_url  }}" class="img-fluid" alt="{{ product.slug }}">
             </div>
@@ -11,8 +123,11 @@
             <div class="col-md-6 mb-4">
                 <div class="p-4">
                     {# {% include "../components/product/badges.html" %} #}
-
+                    
+                    <!-- TITLE -->
                     <h3 class="font-weight-lighter">{{ product.name }}</h3>
+
+                    <!-- PRICE -->
                     <p class="lead">
                         {% if product.discounted %}
                             <span class="mr-1">
@@ -23,61 +138,27 @@
                     </p>
                     
                     {% if product.reviews %}
-                        <div class="rating">
-                            <div class="stars">
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star checked"></span>
-                                <span class="fa fa-star"></span>
-                                <span class="fa fa-star"></span>
-                            </div>
-                            <span class="review-no">0 reviews</span>
-                        </div>
+                        <!-- STARS -->
+                        {% include "../components/product/review_stars.html" %}
                     {% endif %}
 
+                    <!-- DELIVERY -->
                     <div class="delivery mt-3 mb-3">
                         <a href="#!">Livraison gratuite**</a>
                     </div>
                     
                     {% if product.description %}
+                        <!-- DESCRIPTION -->
                         <p class="lead font-weight-bold">Description</p>
                         <p>{{ product.description }}</p>                        
                     {% endif %}
                     
-                    {% if product.active %}
-                        <div class="color-selection">
-                            <div>
-                                <colorcomponent @selectcolor="doselection" v-bind:initvalue="details.color" v-bind:colors="colors" />
-                            </div>
-                            <div>
-                                <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
-                            </div>
-
-                            <div class="delivery mt-3 mb-3">
-                                <a href="#!">Guide des tailles**</a>
-                            </div>        
-                        </div>
-                        
-                        <div class="cart-button">
-                            <cartbutton v-bind:details="details" v-bind:product="product" />
-                        </div>
-                        <div class="csrf">{% csrf_token %}</div>
-                    {% else %}
-                        <div class="card">
-                            <div class="card-body red lighten-1 text-white text-center font-weight-bold">
-                                This product is not active
-                            </div>
-                        </div>
-                    {% endif %}
+                    <!-- ADD TO CART -->
+                    {% include "../components/product/actions.html" %}
                 </div>
-
-                <div class="product_rassurance">
-                    <ul class="list-inline p-4 grey lighten-4 text-center">
-                        <li class="list-inline-item"><i class="fa fa-truck fa-2x"></i><br/>Livraison rapide</li>
-                        <li class="list-inline-item"><i class="fa fa-credit-card fa-2x"></i><br/>Paiements sécurisés</li>
-                        <li class="list-inline-item"><i class="fa fa-star fa-2x"></i><br/>Garantie 14 jours</li>
-                    </ul>
-                </div>
+                
+                
+                {% include "../components/product/policies.html" %}
             </div>
         </div>
     </div>
@@ -98,7 +179,6 @@
 {% block vuejs_scripts %}
     {{ vue_product|json_script:"vue_product" }}
     <script>
-        
         var imagescomponent = {
             props: ["images"],
         }
@@ -188,7 +268,28 @@
                 }
             },
             methods: {
+                sendanalytics: function() {
+                    dataLayer.push({
+                        "event": "AddToCart",
+                        "ecommerce": {
+                            "currencyCode": "EUR",
+                            "add": {
+                                "products": [{
+                                    "id": "{{ product.reference }}",
+                                    "name": "{{ product.name }}",
+                                    "price": "{{ product.get_price }}",
+                                    "brand": "Nawoka",
+                                    "category": "{{ product.collection.name }}",
+                                    "variant": "{{ product.color }}",
+                                    "position": 0,
+                                    "quantity": this.$data.quantity || 1
+                                }]
+                            }
+                        }
+                    })
+                },
                 addtocart: function() {
+                    var self = this
                     var formdata = new FormData()
                     formdata.append("quantity", this.$data.quantity)
                     formdata.append("csrfmiddlewaretoken", $(".csrf input").val())
@@ -206,7 +307,7 @@
                         xhr.send(formdata)
                     })
                     promise.then(response => {
-                        // DO SOMETHING
+                        self.sendanalytics()
                     })
                 }
             }

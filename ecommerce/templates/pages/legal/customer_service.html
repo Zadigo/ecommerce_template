@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Service client" %}{% endblock %}
+
+{% block container %}
+    <section class="section center" id="customer-service">
+        <div class="row">
+            {% for link in links %}
+                <div class="col-4">
+                    <a href="{% url 'customer_care_additional_pages' link.page %}">
+                        <div class="card grey lighten-4">
+                            <div class="card-body">
+                                <i class="material-icons" style="font-size: 44px;">{{ link.icon }}</i>
+                                <h5>{{ link.title }}</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card yellow lighten-4 mt-5 mb-5">
+            <div class="card-body">
+                <!-- TITLE -->
+                {% block faq_title %}{% endblock %}
+                <!-- CONTENT -->
+                {% block faq_content %}{% endblock %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section center mt-3" id="help">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col s12 m12 l12">
+                        <h4>Besoin d'aide ?</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 m6 l6">
+                        {# {% include "../general/components/button_link.html" with url_name="contact_us" btn_type="btn-large" id="btn_envoyer_email" extra_class="z-depth-0" icon_name="email" link_name="Nous envoyer un email" %} #}
+                    </div>
+                    <div class="col s12 m6 l6">
+                        {# {% include "../general/components/external_link.html" with href="#modal1" btn_type="btn-large" id="btn_envoyer_email" extra_class="z-depth-0" fab_icon="fab fa-facebook" link_name="Message sur Facebook" %} #}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal1" class="modal">
+            <div class="modal-content">
+                <h5>Email</h5>
+                <div class="input-field">
+                    <select name="reason" id="reason">
+                        <option value="Où est ma commande ?">Où est ma commande ?</option>
+                        <option value="Réclamation - un produit manquant">Réclamation - un produit manquant</option>
+                        <option value="Demande de remboursement">Demande de remboursement</option>
+                        <option value="Requête au sujet du paiement">Requête au sujet du paiement</option>
+                        <option value="Quand est-ce que je vais recevoir mon remboursement">Quand est-ce que je vais recevoir mon remboursement</option>
+                        <option value="Autres">Autres</option>
+                    </select>
+                </div>
+                <div class="input-field">
+                    <input type="text" name="commande" id="commande" placeholder="N° de commande" autocomplete="off">
+                </div>
+                <div class="input-field">
+                    <textarea name="content" id="content" cols="30" rows="10" style="height: 300px;"></textarea>
+                </div>
+
+                {# {% include "../general/components/modal_link.html" with btn_type="btn-large" id="btn_envoyer_email" color="green darken-1" extra_class="z-depth-0" icon_name="email" link_name="Consulter le FAQ" %} #}
+                {# {% include "../general/components/button_link.html" with url_name="contact_us" btn_type="btn-large" id="btn_envoyer_email" color="green darken-1" extra_class="z-depth-0" icon_name="email" link_name="Envoyer un message" %} #}
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -4,11 +4,27 @@ from django.forms import fields, widgets
 from shop import models, utilities
 
 
-class CreateForm1(forms.Form):
-    name = fields.CharField(max_length=50, widget=widgets.TextInput(attrs={'placeholder': 'Nom du produit'}))
-    price_ht = fields.IntegerField(min_value=0, widget=widgets.NumberInput(attrs={'placeholder': 'Prix HT'}))
-    # collection = fields.ChoiceField(choices=models.ProductCollection.forms_manager.for_forms())
-    reference = fields.CharField(initial=utilities.create_product_reference(), disabled=True)
+class CreateForm1(forms.ModelForm):
+    # name = fields.CharField(max_length=50, widget=widgets.TextInput(attrs={'placeholder': 'Nom du produit'}))
+    # price_ht = fields.IntegerField(min_value=0, widget=widgets.NumberInput(attrs={'placeholder': 'Prix HT'}))
+    # # collection = fields.ChoiceField(choices=models.ProductCollection.forms_manager.for_forms())
+    # reference = fields.CharField(initial=utilities.create_product_reference(), widget=widgets.TextInput())
+    # gender  = fields.CharField(widget=widgets.Select(attrs={'class': 'form-control'}, choices=models.Product.GenderChoices))
+
+    class Meta:
+        model = models.Product
+        localized_fields = ('birth_date',)
+        fields = ['name', 'price_ht', 'gender', 'price_valid_until', \
+                        'collection', 'clothe_size', 'reference']
+        widgets = {
+            'name': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du produit'}),
+            'price_ht': widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Prix Hors Taxe', 'min': '0'}),
+            'reference': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Référence'}),
+            'gender': widgets.Select(attrs={'class': 'form-control'}),
+            'collection': widgets.Select(attrs={'class': 'form-control'}),
+            'clothe_size': widgets.SelectMultiple(attrs={'class': 'form-control'}),
+            'price_valid_until': widgets.DateInput(attrs={'class': 'form-control'}),
+        }
 
 class CreateForm2(forms.Form):
     description = fields.CharField(max_length=280, widget=widgets.Textarea(attrs={'placeholder': 'Description courte'}))
@@ -188,13 +204,13 @@ class UpdateForm1(forms.ModelForm):
     class Meta:
         model = models.Product
         fields = ['name', 'collection', \
-                    'price_ht', 'discount_pct', 'clothe_size']
+                    'price_ht', 'discount_pct', 'clothe_size', 'gender']
         widgets = {
             'name': forms.widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du produit'}),
             'collection': forms.widgets.Select(attrs={'class': 'form-control'}),
             'price_ht': forms.widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Prix Hors Taxe', 'min': 0}),
             'discount_pct': forms.widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Réduction (%)', 'min': 0, 'max': 100}),
-            'clothe_size': forms.widgets.SelectMultiple(attrs={'class': 'custom-select'})
+            'clothe_size': forms.widgets.SelectMultiple(attrs={'class': 'custom-select'}),
         }
 
 class UpdateForm2(forms.ModelForm):

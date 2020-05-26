@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Paiement{% endblock %}
+
+{% block datalayer_push %}
+<script>
+    dataLayer.push({
+        "event": "checkout",
+        "ecommerce": {
+            "checkout": {
+                "actionField": {
+                    "step": 3
+                },
+                "products": []
+            }
+        }
+    })
+</script>
+{% endblock %}
+
 {% block body_color %}grey lighten-5{% endblock %}
 
 {% block extra_css %}
@@ -59,9 +77,10 @@
 		<div class="card mt-3 text-muted">
 			<div class="card-body">
 				<p class="mb-0">
-					En passant votre commande, vous acceptez nos Modalités, ainsi que nos politiques 
-					de confidentialité et de retour. Vous consentez à ce que certaines de vos données, 
-					qui seront utilisées pour améliorer le processus d'achats, soient enregistrées par MYWEBSITE.
+					En passant votre commande, vous acceptez nos <a href="{% url 'cgu' %}">Modalités</a>, 
+					ainsi que <a href="{% url 'cgv' %}">nos politiques de confidentialité et de retour</a>. 
+					Vous consentez à ce que certaines de vos données, qui seront utilisées 
+					pour améliorer le processus d'achats, soient enregistrées par MYWEBSITE.
 				</p>
 			</div>
 		</div>

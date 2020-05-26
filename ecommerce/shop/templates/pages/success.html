@@ -1,6 +1,47 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Commande réussie{% endblock %}
+
+{% block datalayer_push %}
+    {{ ecommerce_datalayer|json_script:"ecommerce_datalayer" }}
+
+    <script>
+        dataLayer.push({
+            "event": "checkout",
+            "ecommerce": {
+                "checkout": {
+                    "actionField": {
+                        "step": 2
+                    }
+                },
+                "products": JSON.parse(document.getElementById("ecommerce_datalayer").textContent)
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block remarketing %}
+    <script>
+        gtag("event", "purchase", {
+            "value": "",
+            "items": [{
+                "id": "",
+                "google_business_vertical": "retail"
+            }]
+        });
+    </script>
+
+    <script>
+        gtag("event", "conversion", {
+            "send_to": "",
+            "value": "",
+            "currency": "EUR",
+            "transaction_id": ""
+        });
+  </script>
+{% endblock %}
+
 {% block container %}
     <div class="card z-depth-1">
         <div class="card-body text-center">

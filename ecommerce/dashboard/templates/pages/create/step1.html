@@ -4,36 +4,67 @@
 
 {% block content %}
 <div class="row wow fadeIn">
-    <div class="col-md-12 mb-12">
+    <div class="col-9 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <form>
+                    <div class="form-row" id="image_url_app">
+                        <div class="col-8">
+                            <inputimagefield />
+                        </div>
+                        <div class="col-4 text-center">
+                            <button class="btn btn-sm m-0">Utiliser</button>
+                        </div>
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
         <div class="card">
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
+
+                    {% for error in form.errors %}
+                        <div class="alert alert-danger mb-4" role="alert">
+                            The <span class="font-weight-bold">{{ error }}</span> field in missing or is empty
+                        </div>
+                    {% endfor %}
                 
                     <div class="form-row">
-                        <div class="form-group col-md-12">
+                        <div class="col-9">
                             {{ form.name }}
                         </div>
-                    </div>
-                
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            {{ form.collection }}
+                        <div class="col-3">
+                            {{ form.reference }}
                         </div>
-                    
-                        <div class="form-group col-md-4">
+                    </div>
+
+                    <div class="form-row mt-3">
+                        <div class="col-3">
                             {{ form.price_ht }}
                         </div>
-                    
-                        <div class="form-group col-md-4">
-                            {{ form.discount_pct }}
+                        <div class="col-3">
+                            {{ form.price_valid_until }}
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-3">
+                        <div class="col-4">
+                            {{ form.gender }}
+                        </div>
+                        <div class="col-4">
+                            {{ form.collection }}
                         </div>
                     </div>
                     
-                    <div class="form-row" id="form_app">
+                    <div class="form-row mt-3" id="form_app">
                         <div class="form-input col-12 mb-3">
                             <checkboxcomponent />
                         </div>
+
                         <div class="form-input col-6 d-none" id="size-selection">
                             {{ form.clothe_size }}
                         </div>
@@ -44,10 +75,42 @@
             </div>
         </div>
     </div>
+
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <img src="https://via.placeholder.com/800" alt="product-image" class="img-fluid" id="product-image">  
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block vuejs_scripts %}
+    <script>
+        var inputimagefield = {
+            template: "\
+            <input @change='showimage' v-model='image' type='url' name='image-url'\
+                     class='form-control' id='image-url' placeholder='URL de l\"image'>\
+            ",
+            data() {
+                return {
+                    image: ""
+                }
+            },
+            methods: {
+                showimage: function() {
+                    $("#product-image").attr("src", this.$data.image)
+                }
+            }
+        }
+
+        var imageuploadapp = new Vue({
+            el: "#image_url_app",
+            components: {inputimagefield}
+        })
+    </script>
+
     <script>
         var checkboxcomponent = {
             template: "\
@@ -65,6 +128,7 @@
                 }
             }
         }
+        
         var formapp = new Vue({
             el: "#form_app",
             components: {checkboxcomponent},

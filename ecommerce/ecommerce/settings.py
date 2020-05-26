@@ -25,9 +25,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
     'rest_framework',
     'shop',
-    'accounts',
     'dashboard',
 ]
 
@@ -117,29 +117,29 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = 'static'
+# STATIC_ROOT = 'static'
 
 MEDIA_URL = 'media/'
 
 MEDIA_ROOT = 'media'
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static')
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
 
 
 # AUTHENTICATION BACKENDS
 
-# AUTH_USER_MODEL = 'accounts.MyUser'
+AUTH_USER_MODEL = 'accounts.MyUser'
 
-# AUTHENTICATION_BACKENDS = (
+AUTHENTICATION_BACKENDS = (
 #     'social_core.backends.twitter.TwitterOAuth',
 #     'social_core.backends.open_id.OpenIdAuth',
 #     'social_core.backends.google.GoogleOpenId',
 #     'social_core.backends.google.GoogleOAuth2',
 #     'social_core.backends.facebook.FacebookOAuth2',
-#     'accounts.backends.EmailAuthenticationBackend'
-# )
+    'accounts.backends.EmailAuthenticationBackend',
+)
 
 
 # SOCIAL DJANGO

@@ -5,11 +5,13 @@
     <link rel="stylesheet" href="{% static 'overlays.css' %}">
 {% endblock %}
 
+{% block title %}Détails : {{ product.name }}{% endblock %}
+
 {% block content %}
 <div class="row d-none" id="messages">
     <div class="col-md-12">
         <div class="alert alert-info" role="alert">
-            Vous avez activé {{ product.name }}. <a href="{{ product.get_absolute_url }}" 
+            Vous avez activé {{ product.name }}. <a href="{{ product.get_dashboard_absolute_url }}" 
                     class="alert-link" target="_blank">Voyez par vous même.</a>
         </div>
     </div>
@@ -39,10 +41,10 @@
                         <a href="#" class="fa fa-unlink"></a>
                     </div>
                 </div>
-                <div class="card-body">
-                    {% include "../../components/others/modal_button.html" with btn_name="Associer images" target="link_produt_to_image" %}
-                </div>                    
                 {% comment %}
+                    <div class="card-body">
+                        {% include "../../components/others/modal_button.html" with btn_name="Associer images" target="link_produt_to_image" %}
+                    </div>                    
                 {% endcomment %}
             </div>
         </div>
@@ -50,26 +52,32 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header blue">
-                    <h4>{{ product.collection.name }} / {{ product.name }}</h4>
+                    <h4>{{ product.collection.name }} / <span class="font-weight-lighten">{{ product.name }}</span></h4>
                 </div>
                 <div class="card-body">
                     <p>{{ product.price_ht|price_to_text }}</p>
                     <p>{{ product.discount_pct }}</p>
                     <p><a href="{{ product.get_absolute_url }}" target="_blank">Voir sur le site</a></p>
+                    <p>Crée le : {{ product.created_on }}</p>
+                    
+
+                    <hr class="mt-2 mb-2">
+
                     <span id="switches_app">
                         <div class="row">
-                            <div class="col-auto">
-                                <switchcomponent2 @doaction="performaction" />
-                            </div>
-                            <div class="col-6">
+                            <div class="col-12">
                                 <switchcomponent @doaction="performaction" />
                             </div>
-                            <div class="col-4">
-                                <switchcomponent3 @doaction="performaction" />
-                            </div>
+                            {% if user.is_admin or user.is_product_manager %}
+                                <div class="col-12">
+                                    <switchcomponent2 @doaction="performaction" />
+                                </div>
+                                <div class="col-12">
+                                    <switchcomponent3 @doaction="performaction" />
+                                </div>
+                            {% endif %}
                         </div>
-                    </span>
-                    <p>Crée le : {{ product.created_on }}</p>
+                    </span>                        
                 </div>
             </div>
 
@@ -83,10 +91,12 @@
             </div>
 
             <div class="card mt-3">
-                <div class="card-body">
-                    <a href="{% url 'product_orders' product.id %}" class="btn blue">Orders</a>
-                    <a href="{% url 'update' product.id %}" class="btn blue">Update</a>
-                    <a class="btn btn-danger" data-toggle="modal" data-target="#sideModalBRDangerDemo">Supprimer</a>
+                <div class="card-body text-center">
+                    <a href="{% url 'product_orders' product.id %}" class="btn btn-sm blue">Commandes</a>
+                    <a href="{% url 'update' product.id %}" class="btn btn-sm blue">Modifier</a>
+                    {% if user.is_admin or user.is_product_manager %}
+                        <a class="btn btn-sm btn-danger" data-toggle="modal" data-target="#sideModalBRDangerDemo">Supprimer</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

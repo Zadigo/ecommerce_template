@@ -8,6 +8,9 @@ from accounts.views_profile import ProfileView, ProfileDeleteView, ProfileDataVi
 urlpatterns = [
     url(r'^oauth/', include('social_django.urls', namespace='social')),
     
+    url(r'^login/dashboard$', views.DashboardLogin.as_view(), name='login_dashboard'),
+    url(r'^signup/dashboard$', views.DashboardSignup.as_view(), name='dashboard_signup'),
+
     url(r'^profile/payment-methods/$', PaymentMethodsView.as_view(), name='payment_methods'),
     url(r'^profile/delete/$', ProfileDeleteView.as_view(), name='delete_account'),
     url(r'^profile/data/$', ProfileDataView.as_view(), name='profile_data'),

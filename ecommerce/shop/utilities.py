@@ -175,3 +175,27 @@ def get_image_name(image):
     if '.' in image:
         items = image.split('.')
     return items[0]
+
+def create_product_slug(word:str):
+    new_word = []
+    accents = {
+        'é': 'e',
+        'è': 'e',
+        'ê': 'e',
+        'ë': 'e',
+        'à': 'a',
+        'â': 'a',
+        'ô': 'o',
+        'ï': 'i',
+        'î': 'i',
+        'ù': 'u',
+        'ü': 'u'
+    }
+    letters = [letter for letter in word]
+    for letter in letters:
+        try:
+            new_word.append(accents[letter])
+        except:
+            new_word.append(letter)
+    fitted_word = ''.join(new_word)
+    return fitted_word.replace(' ', '-').lower()

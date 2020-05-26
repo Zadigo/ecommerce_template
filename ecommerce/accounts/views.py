@@ -2,8 +2,7 @@ import datetime
 import re
 
 from django.contrib import messages
-from django.contrib.auth import (authenticate, login, logout,
-                                 update_session_auth_hash)
+from django.contrib import auth
 from django.contrib.auth.forms import (PasswordChangeForm, PasswordResetForm,
                                        SetPasswordForm)
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,9 +14,11 @@ from django.shortcuts import (Http404, HttpResponse, get_object_or_404,
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
-
+from django.views import generic
+from accounts import models
 from accounts.forms import UserLoginForm, UserSignupForm
 from accounts.models import MyUser
+from accounts import forms
 
 
 
@@ -33,28 +34,20 @@ class SignupView(View):
         return render(request, 'pages/registration/signup.html', context)
 
     def post(self, request, **kwargs):
-        # name = request.POST['name']
-        # surname = request.POST['surname']
         email = request.POST['email']
-        # password = request.POST['password']
 
         user_exists = MyUser.objects.filter(email__iexact=email).exists()
         if user_exists:
             return redirect(reverse('login'))
             
         else:
-            # user = MyUser.objects.create_user(email, name=name, surname=surname, password=password)
-            # if user:
-            #     login(request, authenticate(request, email=email, password=password))
-            #     return redirect(request.GET.get('next') or reverse('profile'))
-
             form = UserSignupForm(data=request.POST)
             if form.is_valid():
                 user = form.save()
                 if user:
                     email = form.cleaned_data.get('email')
                     password = form.cleaned_data.get('password2')
-                    login(request, authenticate(request, email=email, password=password))
+                    auth.login(request, auth.authenticate(request, email=email, password=password))
                     return redirect(request.GET.get('next') or reverse('profile'))
             else:
                 return render(request, 'pages/registration/signup.html', {'form': form})
@@ -71,9 +64,9 @@ class LoginView(View):
         email = request.POST['username']
         password = request.POST['password']
         
-        user = authenticate(request, email=email, password=password)
+        user = auth.authenticate(request, email=email, password=password)
         if user:
-            login(request, user)
+            auth.login(request, user)
             return redirect(request.GET.get('next') or 'home')
         else:
             error(request, 'We could not find your account')
@@ -82,7 +75,7 @@ class LoginView(View):
 class LogoutView(View):
     """Logs out the user from their account"""
     def get(self, request, *args, **kwargs):
-        logout(request)
+        auth.logout(request)
         return redirect('home')
 
 class ForgotPasswordView(View):
@@ -132,5 +125,33 @@ class UnauthenticatedChangePasswordView(View):
         form = SetPasswordForm(user)
         if form.is_valid():
             form.save()
-        login(request, user)
+        auth.login(request, user)
         return redirect('/profile/')
+
+class DashboardLogin(generic.TemplateView):
+    template_name = 'pages/registration/dashboard_login.html'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['form'] = forms.DashboardLoginForm
+        return context
+
+class DashboardSignup(generic.TemplateView):
+    template_name = 'pages/registration/dashboard_signup.html'
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        context['form'] = forms.DashboardSignupForm
+        return context
+
+    def post(self, request, **kwargs):
+        form = forms.DashboardSignupForm(request.POST)
+        if form.is_valid():
+            user = models.MyUser.objects.create(**form.cleaned_data)
+            if user:
+                user.active = False
+                user.save()
+                return redirect(f'{reverse("dashboard_login")}?has_token=True')
+        return render(request, self.template_name, {'form': forms.DashboardSignupForm})
+
+

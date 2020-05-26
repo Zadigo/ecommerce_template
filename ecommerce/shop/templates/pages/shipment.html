@@ -1,6 +1,24 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Livraison{% endblock %}
+
+{% block datalayer_push %}
+<script>
+    dataLayer.push({
+        "event": "checkout",
+        "ecommerce": {
+            "checkout": {
+                "actionField": {
+                    "step": 2
+                },
+                "products": []
+            }
+        }
+    })
+</script>
+{% endblock %}
+
 {% block container %}
 <div class="row">
 	<div class="col-md-6 mb-4 offset-md-1">
@@ -26,30 +44,32 @@
 				<div class="row">
 					<div class="col-md-7 mb-2">
 						<div class="md-form mb-5">
-							<input type="text" name="email" id="email" class="form-control" placeholder="youremail@example.com">
+							<input type="text" name="email" id="email" class="form-control" placeholder="Email">
 						</div>
 					</div>
 					<div class="col-md-5 mb-2">
 						<div class="md-form mb-5">
-							<input type="tel" name="telephone" id="telephone" class="form-control" placeholder="0600000000">
+							<input type="tel" name="telephone" id="telephone" class="form-control" placeholder="Téléphone">
 						</div>
 					</div>
 				</div>
 
 				<div class="md-form mb-5">
-					<input type="text" name="address" id="address" class="form-control" placeholder="1234 Main St">
+					<input type="text" name="address" id="address" class="form-control" placeholder="Addresse">
 				</div>
-
+				
+				{% comment %}
 				<div class="md-form mb-5">
 					<input type="text" id="address-2" class="form-control" placeholder="Apartment or suite">
-				</div>
+				</div>					
+				{% endcomment %}
 
 				<div class="row">
 					<div class="col-lg-4 col-md-12 mb-4">
-						<label for="country">Country</label>
+						<label for="country">Pays...</label>
 						<select name="country" class="custom-select d-block w-100" id="country" required>
-							<option value="">Choose...</option>
-							<option>United States</option>
+							<option>France</option>
+							<option>Belgique</option>
 						</select>
 						<div class="invalid-feedback">
 							Please select a valid country.
@@ -57,10 +77,12 @@
 					</div>
 
 					<div class="col-lg-4 col-md-6 mb-4">
-						<label for="state">State</label>
+						<label for="state">Région</label>
 						<select name="city" class="custom-select d-block w-100" id="city" required>
-							<option value="">Choose...</option>
-							<option>California</option>
+							<option>Île de France</option>
+							<option>Nord</option>
+							<option>PACA</option>
+							<option>Rhône Alpes</option>
 						</select>
 						<div class="invalid-feedback">
 							Please provide a valid state.
@@ -68,7 +90,7 @@
 					</div>
 
 					<div class="col-lg-4 col-md-6 mb-4">
-						<label for="zip">Zip</label>
+						<label for="zip">Code postale</label>
 						<input name="zip_code" type="text" class="form-control" id="zip" placeholder="" required>
 						<div class="invalid-feedback">
 							Zip code required.
@@ -77,31 +99,33 @@
 					</div>
 				</div>
 
-				<hr class="mb-4">
+				{% comment %}
+					<hr class="mb-4">
 
-				<div class="custom-control custom-checkbox">
-					<input name="billing_equals_shipping" type="checkbox" class="custom-control-input" id="same-address">
-					<label class="custom-control-label" for="same-address">
-						Shipping address is the same as my billing address
-					</label>
-				</div>
+					<div class="custom-control custom-checkbox">
+						<input name="billing_equals_shipping" type="checkbox" class="custom-control-input" id="same-address">
+						<label class="custom-control-label" for="same-address">
+							Shipping address is the same as my billing address
+						</label>
+					</div>
 
-				<div class="custom-control custom-checkbox">
-					<input name="save" type="checkbox" class="custom-control-input" id="save-info">
-					<label class="custom-control-label" for="save-info">Save this information for next time</label>
-				</div>
+					<div class="custom-control custom-checkbox">
+						<input name="save" type="checkbox" class="custom-control-input" id="save-info">
+						<label class="custom-control-label" for="save-info">Save this information for next time</label>
+					</div>
 
-				<hr class="mb-4">
+					<hr class="mb-4">
+				{% endcomment %}
 
-				<button type="submit" class="btn btn-primary btn-lg btn-block" id="btn_shipping">
-					Continue to checkout
+				<button type="submit" class="btn btn-primary btn-lg btn-block" id="btn_payment">
+					Procéder au paiement
 				</button>
 			</form>
 		</div>
 	</div>
 
 	<div class="col-md-4 mb-4">
-		<!-- Heading -->
+		<!-- HEADER -->
 		{% include "../components/cart/heading.html" %}
 
 		<!-- SIDE CART -->

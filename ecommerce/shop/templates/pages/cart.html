@@ -1,6 +1,34 @@
 {% extends "base.html" %}
 {% load static price_tags %}
 
+{% block title %}Mon panier{% endblock %}
+
+{% block datalayer_push %}
+<script>
+    dataLayer.push({
+        "event": "checkout",
+        "ecommerce": {
+            "checkout": {
+                "actionField": {
+                    "step": 1
+                },
+                "products": []
+            }
+        }
+    })
+</script>
+{% endblock %}
+
+{% block remarketing %}
+    <script>
+        gtag("event", "conversion", {
+            "send_to": "",
+            "value": "",
+            "currency": "EUR"
+        });
+    </script>
+{% endblock %}
+
 {% block container %}
     <div class="row wow fadeIn">
         <div class="col-md-12 mb-12">
@@ -24,12 +52,20 @@
                                         </td>
                                         <td>{{ product.name }}</td>
                                         <td>
-                                            <a href="{% url 'alter_quantity' product.cart_id 'reduce' %}"><i class="fa fa-minus"></i></a>
+                                            <a href="{% url 'alter_quantity' product.cart_id 'reduce' %}" onclick="alterCart('RemoveFromCart')">
+                                                <i class="fa fa-minus"></i>
+                                            </a>
                                             {{ product.quantity }}
-                                            <a href="{% url 'alter_quantity' product.cart_id 'add' %}"><i class="fa fa-plus"></i></a>
+                                            <a href="{% url 'alter_quantity' product.cart_id 'add' %}" onclick="alterCart('AddToCart')">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
                                         </td>
                                         <td class="{% if product.is_discounted %}red-text lighten-2{% endif %}">{{ product.total|price_to_text }}</td>
-                                        <td><a href="{% url 'delete_from_cart' product.cart_id %}"><i class="fa fa-trash fa-1x"></i></a></td>
+                                        <td>
+                                            <a href="{% url 'delete_from_cart' product.cart_id %}" onclick="deleteCart()">
+                                                <i class="fa fa-trash fa-1x"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -54,11 +90,40 @@
         <div class="col-md-12 mb-12">
             <div class="card">
                 <div class="card-body">
-                    <a href="{% url 'shipment' %}" class="btn btn-large blue">Proceed</a>
+                    <a href="{% url 'shipment' %}" class="btn btn-large blue float-right">Continuer</a>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        var alterCart = function(name) {
+                dataLayer.push({
+                "event": name,
+                "ecommerce": {
+                    "currencyCode": "EUR",
+                    "add": {
+                        "products": [{
+                            "id": "{{ product.reference }}",
+                            "name": "{{ product.name }}",
+                            "price": "{{ product.price_ht }}",
+                            "brand": "Nawoka",
+                            "category": "{{ product.category }}",
+                            "variant": "{{ product.color }}",
+                            "position": 0,
+                            "quantity": 1
+                        }]
+                    }
+                }
+            })
+        }
+        
+        var deleteCart = function() {
+            
+        }
+    </script>
 {% endblock %}
 
 {% block vuejs_scripts %}

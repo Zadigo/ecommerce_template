@@ -60,8 +60,8 @@
                                 window.location.href = response.redirect_url
                             }, 3000);
                         } else {
-                            messagecard.removeClass("d-none")
                             messagecard.text("Payment was not successful")
+                            messagecard.removeClass("d-none")
                             button.find("div.spinner-grow").addClass("d-none")
                             button.removeClass("disabled")
                         }

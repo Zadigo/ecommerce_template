@@ -1,11 +1,11 @@
-<div class="row center">
-    <div class="col s12 l5 offset-l3">
-        <div class="card-panel z-depth-0">
-            <a href="{% url 'social:begin' backend='facebook-oauth2' %}" class="btn-large">
-                <i class="fab fa-facebook left"></i>Facebook
+<div class="row mb-4">
+    <div class="col-5 offset-md-4">
+        <div class="card z-depth-0">
+            <a href="{% url 'social:begin' backend='facebook-oauth2' %}" class="btn btn-large m-0 mb-2">
+                <i class="fab fa-facebook"></i>Facebook
             </a>
-            <a href="{% url 'social:begin' backend='google-oauth2' %}" class="btn-large">
-                <i class="fab fa-google left"></i>Google
+            <a href="{% url 'social:begin' backend='google-oauth2' %}" class="btn btn-large m-0 mb-2">
+                <i class="fab fa-google"></i>Google
             </a>
         </div>
     </div>

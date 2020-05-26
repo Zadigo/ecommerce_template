@@ -16,7 +16,8 @@
 		
 		{% include "./sidenav_link.html" with href="dashboard_coupons" active=False icon="fa-usd" title="Coupons" %}
 
-		{% include "./sidenav_link.html" with href="dashboard_users" active=False icon="fa-user" title="Users" %}
-
+		{% if user.is_admin %}
+			{% include "./sidenav_link.html" with href="dashboard_users" active=False icon="fa-user" title="Users" %}	
+		{% endif %}
 	</div>
 </div>

@@ -16,6 +16,6 @@ urlpatterns = [
 
     url(r'^products/(?P<gender>(femme|homme))/(?P<collection>[a-z]+)/(?P<pk>\d+)/(?P<slug>[a-z\-]+)$', views.ProductView.as_view(), name='product'),
     url(r'^products/(?P<gender>(femme|homme))/(?P<collection>[a-z]+)$', views.ProductsView.as_view(), name='collection'),
-    url(r'(?P<gender>(femme|homme))$', views.ShopView.as_view(), name='shop_gender'),
+    url(r'(?P<gender>(femme|homme))$', views.ShopGenderView.as_view(), name='shop_gender'),
     url(r'^$', views.IndexView.as_view(), name='shop')
 ]

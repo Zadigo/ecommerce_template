@@ -67,18 +67,18 @@ class CartManager(QuerySet):
             coupon_value = 0
             coupon_code = ''
 
-        for product in annotated_cart:
+        for item in annotated_cart:
             # Product that is related to the cart
             # in the Product model
-            related_product = product.product.get()
+            related_product = item.product
             constructed_products.append(
                 {
-                    'cart_id': product.id,
+                    'cart_id': item.id,
                     'product_id': related_product.id,
                     'name': related_product.name,
-                    'price_ht': product.true_price,
-                    'total': product.true_price * product.quantity,
-                    'quantity': product.quantity,
+                    'price_ht': item.true_price,
+                    'total': item.true_price * item.quantity,
+                    'quantity': item.quantity,
                     'url': related_product.images.all().first().url,
                     'is_discounted': related_product.is_discounted()
                 }
@@ -107,15 +107,15 @@ class CartManager(QuerySet):
     def add_to_cart(self, request, current_product):
         """Add or increase the amount of products in a given cart"""
         cart_id = request.session.get('cart_id')
-
-        products_without_size = ['sacs']
-
         quantity = request.POST.get('quantity')
         color = request.POST.get('color')
         size = request.POST.get('size')
 
+        if not current_product.active:
+            return False
+
         if color is None:
-            # If this variant is empty,
+            # If variant is empty,
             # just raise an error by refusing
             # the request to the database
             return False

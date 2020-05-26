@@ -1,11 +1,18 @@
-<footer class="page-footer text-center font-small mt-4 wow fadeIn {% if not display %}d-none{% endif %}">
+<footer class="page-footer text-center font-small mt-4 wow fadeIn {% block footer_display %}{% endblock %}">
+    <div class="policies blue lighten-2 p-2">
+        <div class="payments flex-direction-row justify-content-center">
+            <i class="fab fa-cc-visa fa-3x mr-2"></i>
+            <i class="fab fa-cc-mastercard fa-3x ml-2"></i>
+        </div>
+    </div>
+
     <div class="pt-4">
         <div class="row">
             <div class="col-4">
                 <h4 class="font-weight-bold">Information</h4>
                 <ul class="list-unstyled mt-3">
                     <li>
-                        <a href="http://">A propos</a>
+                        <a href="{% url 'who_are_we' %}">A propos</a>
                     </li>
                     <li>
                         <a href="http://">Guide des tailles</a>
@@ -14,7 +21,7 @@
                         <a href="http://">Suivi commande</a>
                     </li>
                     <li>
-                        <a href="http://">FAQ</a>
+                        <a href="{% url 'customer_care' %}">FAQ</a>
                     </li>
                 </ul>
             </div>
@@ -22,7 +29,7 @@
                 <h4 class="font-weight-bold">Service client</h4>
                 <ul class="list-unstyled mt-3">
                     <li>
-                        <a href="http://">Contact</a>
+                        <a href="{% url 'customer_care' %}">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -33,13 +40,13 @@
 
     <!-- SOCIAL -->
     <div class="pb-4">
-        <a href="https://www.facebook.com/mdbootstrap" target="_blank">
+        <a href="" target="_blank">
             <i class="fab fa-facebook-f mr-3"></i>
         </a>
-        <a href="https://twitter.com/MDBootstrap" target="_blank">
+        <a href="" target="_blank">
             <i class="fab fa-twitter mr-3"></i>
         </a>
-        <a href="https://twitter.com/MDBootstrap" target="_blank">
+        <a href="" target="_blank">
             <i class="fab fa-instagram mr-3"></i>
         </a>
 
@@ -50,8 +57,12 @@
         {% endcomment %}
     </div>
 
-    <div class="footer-copyright py-3">
-        © 2019 Copyright:
-        <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank"> MDBootstrap.com </a>
+    <div class="footer-copyright py-3 flex-direction-row justify-content-center">
+        <div class="row">
+            <div class="col-3">© 2019 Copyright <a href="https://mdbootstrap.com/education/bootstrap/" target="_blank">MDBootstrap</a></div>
+            <div class="col-3"><a href="{% url 'cgu' %}">CGU</a></div>
+            <div class="col-3"><a href="{% url 'cgv' %}">CGV</a></div>
+            <div class="col-3"><a href="{% url 'confidentialite' %}">Confidentialité</a></div>
+        </div>
     </div>
 </footer>

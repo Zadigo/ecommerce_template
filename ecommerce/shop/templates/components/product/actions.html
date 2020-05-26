@@ -1,0 +1,25 @@
+{% if product.active %}
+    <div class="color-selection">
+        <div>
+            <colorcomponent @selectcolor="doselection" v-bind:initvalue="details.color" v-bind:colors="colors" />
+        </div>
+        <div>
+            <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
+        </div>
+
+        <div class="delivery mt-3 mb-3">
+            <a href="#!">Guide des tailles**</a>
+        </div>        
+    </div>
+    
+    <div class="cart-button">
+        <cartbutton v-bind:details="details" v-bind:product="product" />
+    </div>
+    <div class="csrf">{% csrf_token %}</div>
+{% else %}
+    <div class="card">
+        <div class="card-body red lighten-1 text-white text-center font-weight-bold">
+            This product is not active
+        </div>
+    </div>
+{% endif %}

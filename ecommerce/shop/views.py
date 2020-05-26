@@ -33,11 +33,11 @@ class IndexView(generic.View):
     def get(self, request, *args, **kwargs):
         return render(request, 'pages/shop.html')
 
-class ShopView(generic.View):
+class ShopGenderView(generic.View):
     def get(self, request, *args, **kwargs):
-        collections = models.ProductCollection.objects.filter(gender='femme')
+        collections = models.ProductCollection.objects.filter(gender=kwargs['gender'])
         context = {
-            'collections': collections
+            'collections': collections[:3]
         }
         return render(request, 'pages/shop_gender.html', context)
 
@@ -49,18 +49,18 @@ class ProductsView(generic.ListView):
 
     def get_queryset(self, **kwargs):
         collection_name = self.kwargs['collection']
-        products = models.ProductCollection.objects.get(view_name__exact=collection_name).product_set.filter(active=True)
-        return products
+        gender = self.kwargs['gender']
+        products = models.ProductCollection.objects.get(view_name__exact=collection_name, gender=gender)
+        return products.product_set.filter(active=True)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         klass = super().get_paginator(self.queryset, self.paginate_by)
-
-        collection_name = self.kwargs['collection']
-        context['collection'] = models.ProductCollection.objects.get(view_name__exact=collection_name)
-
         serialized_products = serializers.ProductSerializer(instance=klass.object_list, many=True)
         context['vue_products'] = serialized_products.data
+
+        collection = self.model.objects.get(view_name__exact=self.kwargs['collection'], gender=self.kwargs['gender'])
+        context['collection'] = collection
         return context
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -83,7 +83,7 @@ class ProductView(generic.DetailView):
         product = super().get_object()
         serialized_product = serializers.ProductSerializer(instance=product)
         context['vue_product'] = serialized_product.data
-        context['more'] = self.model.objects.prefetch_related('images').exclude(id=product.id)[:3]
+        context['more'] = self.model.objects.prefetch_related('images').filter(active=True).exclude(id=product.id)[:3]
         return context
 
 class CheckoutView(generic.ListView):
@@ -178,30 +178,41 @@ class PaymentView(generic.ListView):
         return context
 
     def post(self, request, **kwargs):
-        user_infos = payment_logic.UserInfosHelper(request)
         context = self.get_context_data(object_list=self.get_queryset(), **kwargs)
-        user_infos = user_infos.get_user_infos
+
+        user_infos = payment_logic.UserInfosHelper(request)
+
         context.update({'user_infos': user_infos})
-        request.session['user_infos'] = user_infos
+        request.session['user_infos'] = user_infos.get_user_infos
         return render(request, self.template_name, context)
 
 class ProcessPayment(generic.View):
     def post(self, request, **kwargs):
         import ast
         stripe_token = request.POST.get('token')
-        user_infos = request.session.get("user_infos")
+        user_infos = request.session.get('user_infos')
         user_infos = ast.literal_eval(user_infos)
 
-        logic = payment_logic.ProcessPayment(request, stripe_token, user_infos)
-        logic.cart_model = models.Cart
-        completed = logic.payment_processor()
-        print(logic.errors)
-        if completed:
-            new_order = models.CustomerOrder\
-                .objects.create(reference=completed['reference'], transaction=completed['transaction'],\
-                        payment=completed['total'])
-            return http.JsonResponse(data={'status': completed['status'], 'redirect_url': logic.final_url})
-        return http.JsonResponse(data={'status': False, 'redirect_url': '/shop/cart/payment'})
+        backend = payment_logic.BasePaymentBackend(request, stripe_token, user_infos)
+        backend.cart_model = models.Cart
+        
+        payment_state = backend.process_payment(payment_debug_mode=True)
+        # print(payment_state)
+        print(backend.errors)
+        if payment_state:
+            details = {
+                'reference': payment_state['reference'],
+                'transaction': payment_state['transaction'],
+                'payment': payment_state['total']
+            }
+            order = models.CustomerOrder.objects.create(**details)
+            order.cart.set(backend.cart_queryset)
+            if order:
+                return http.JsonResponse(data=payment_state)
+            else:
+                return http.JsonResponse(data={'status': False})
+        else:
+            return http.JsonResponse(data={'status': False})
 
 class CartSuccessView(generic.TemplateView):
     template_name = 'pages/success.html'

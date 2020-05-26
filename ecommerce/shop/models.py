@@ -29,6 +29,11 @@ class Image(models.Model):
 
 class ProductCollection(models.Model):
     name      = models.CharField(max_length=50)
+
+    class GenderChoices(models.Choices):
+        FEMME = 'femme'
+        HOMME = 'homme'
+    gender = models.CharField(max_length=50, choices=GenderChoices.choices, default=GenderChoices.FEMME)
     
     view_name   = models.CharField(max_length=50)
     image       = models.URLField(blank=True, null=True)
@@ -62,7 +67,7 @@ class ClotheSize(models.Model):
 
 class Product(models.Model):
     name          = models.CharField(max_length=50, blank=True, null=True)
-    reference   = models.CharField(max_length=30, default='')
+    reference   = models.CharField(max_length=30, default=utilities.create_product_reference())
     class GenderChoices(models.Choices):
         FEMME = 'femme'
         HOMME = 'homme'
@@ -73,7 +78,7 @@ class Product(models.Model):
     clothe_size        = models.ManyToManyField(ClotheSize, blank=True)
     description   = models.TextField(max_length=280, blank=True, null=True)
 
-    price_ht    = models.DecimalField(max_digits=8, decimal_places=2)
+    price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
     discount_pct    = models.IntegerField(default=0, validators=[validators.discount_pct_validator])
     discounted_price   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     price_valid_until = models.DateField(default=utilities.add_to_current_date(d=30))
@@ -107,12 +112,12 @@ class Product(models.Model):
             self.discounted_price = utilities.\
                     calculate_discount(self.price_ht, self.discount_pct)
 
-        if self.name:
-            self.slug = utilities.create_slug(self.name)
-
     def get_absolute_url(self):
         collection_name = self.collection.name.lower()
         return reverse('product', args=['femme', collection_name, self.pk, self.slug])
+
+    def get_dashboard_absolute_url(self):
+        return reverse('dashboard_product', args=[self.pk])
 
     @property
     def get_main_image_url(self):
@@ -170,7 +175,7 @@ class PromotionalCode(models.Model):
 
 class Cart(models.Model):
     cart_id         = models.CharField(max_length=80)
-    product     = models.ManyToManyField(Product, blank=True)
+    product     = models.ForeignKey(Product, blank=True, null=True, on_delete=models.CASCADE)
     coupon      = models.ForeignKey(PromotionalCode, on_delete=models.SET_NULL, blank=True, null=True)
     
     price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
@@ -216,10 +221,10 @@ class Cart(models.Model):
         return self.coupon is not None
 
 class CustomerOrder(models.Model):
-    cart             = models.ForeignKey(Cart, blank=True, null=True, on_delete=models.CASCADE)
+    cart             = models.ManyToManyField(Cart, blank=True)
     reference  = models.CharField(max_length=50)
     transaction   = models.CharField(max_length=200, default=utilities.create_transaction_token())
-    payment           = models.DecimalField(max_digits=5, decimal_places=3, default=0)
+    payment           = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     completed       = models.BooleanField(default=False)
 
     created_on      = models.DateField(auto_now_add=True)
@@ -248,3 +253,13 @@ class Shipment(models.Model):
 
     def __str__(self):
         return self.customer_order.transaction
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+@receiver(post_save, sender=Product)
+def create_slug(instance, sender, created, **kwargs):
+    if created:
+        if instance.name:
+            instance.slug = utilities.create_product_slug(instance.name)
+            instance.save()

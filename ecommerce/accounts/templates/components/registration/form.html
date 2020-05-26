@@ -1,9 +1,9 @@
-<form method="post" id="{{ form_id }}">
+<form method="POST" id="{{ form_id }}">
     {% csrf_token %}
 
     {% if messages %}
         {% for message in messages %}
-            <div id="message">
+            <div id="alert alert-danger" role="alert">
                 {{ message }}
             </div>
         {% endfor %}
@@ -16,22 +16,13 @@
     {% endfor %}
 
     {% for field in form %}
-        <div class="input-field">
+        <div class="form-group">
             {{ field }}
         </div>
     {% endfor %}
-    
-    {% if consent %}
-        <p>
-            <label id="_cgu">
-                <input type="checkbox" class="filled-in">
-                <span>Vous consentez à suivre nos <a href="{ url 'cgu' }">CGU</a></span>
-            </label>
-        </p>
-    {% endif %}
 
-    <button type="submit" class="btn-large">
-        <i class="material-icons left">{{ icon|default:"linked_camera" }}</i>
+    <button type="submit" class="btn btn-large">
+        <i class="fa fa-person"</i>
         {{ button_name }}
     </button>
 </form>

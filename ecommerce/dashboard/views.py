@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from dashboard import forms
+from django.contrib import messages
 from shop import models, serializers, utilities
 
 MYUSER = get_user_model()
@@ -112,7 +113,7 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = super().get_object()
-        context['additional_images'] = product.images.all()
+        context['additional_images'] = product.images.filter(main_image=False)
         context['images_form'] = forms.ImageAssociationForm(initial={'images': list(product.images.values_list('name', flat=True))})
         return context
 
@@ -129,6 +130,9 @@ class UserView(LoginRequiredMixin, generic.DetailView):
     queryset = MYUSER.objects.all()
     template_name = 'pages/details/profile.html'
     context_object_name = 'user'
+
+    def post(self, request, **kwargs):
+        pass
 
 class SearchView(LoginRequiredMixin, generic.ListView):
     model = models.Product
@@ -198,25 +202,19 @@ class CustomerOrderView(LoginRequiredMixin, generic.DetailView):
 
 class CreateProductView(LoginRequiredMixin, generic.CreateView):
     model = models.Product
-    form_class = forms.UpdateForm1
+    form_class = forms.CreateForm1
     template_name = 'pages/create/step1.html'
     context_object_name = 'product'
 
     def get_success_url(self):
         return reverse('dashboard_products')
 
-
-    # max_number_of_steps = 3
-
-    # def get(self, request, *args, **kwargs):
-    #     create_form_logic = forms.CreateFormLogic(request)
-    #     return render(request, 'pages/create.html', create_form_logic.context)
-
-    # def post(self, request, **kwargs):
-    #     create_form_logic = forms.CreateFormLogic(request)
-    #     create_form_logic.instances = [['collection', 'collection_name', models.Collection]]
-    #     url = create_form_logic.validate_form_and_update_model(models.Product, viewname='dashboard_create')
-    #     return redirect(url)
+    def get_object(self):
+        product = super().get_object()
+        images = product.images.all()
+        if not images.exists():
+            messages.error(self.request, 'Vous avez créer un produit sans image')
+        return product
 
 class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
     model = models.Product

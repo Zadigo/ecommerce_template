@@ -10,14 +10,17 @@
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<!-- LEFT -->
 			<ul class="navbar-nav mr-auto">
+				{% if user.is_admin %}
+					<li class="nav-item">
+						<a class="nav-link waves-effect" href="/admin/" target="_blank">Admin</a>
+						<span class="sr-only">(current)</span>
+					</li>					
+				{% endif %}
+
 				<li class="nav-item">
-					<a class="nav-link waves-effect" href="/admin/" target="_blank">Admin</a>
-					<span class="sr-only">(current)</span>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link waves-effect" href="{ url 'logout' }">Logout
+					<a class="nav-link waves-effect" href="{% url 'logout' %}">Se déconnecter
 					</a>
-				</li>
+				</li>					
 			</ul>
 			<ul class="navbar-nav ml-auto">
 				<li class="nav-item">

@@ -12,15 +12,13 @@ from django.utils.translation import gettext_lazy as _
 from accounts.models import MyUser, MyUserProfile
 
 
-class CustomUserCreationForm(UserCreationForm):
-    email     = EmailField(required=True)
+class MyUserCreationForm(forms.ModelForm):
     password1 = CharField(label=_('Password'), widget=PasswordInput)
     password2 = CharField(label=_('Password confirmation'), widget=PasswordInput)
 
     class Meta:
         model = MyUser
-        fields = ['surname', 'name', 'email', 'password',\
-                    'admin', 'staff']
+        fields = ['email', 'is_staff', 'product_manager']
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
@@ -40,7 +38,7 @@ class CustomUserCreationForm(UserCreationForm):
 
         return user
         
-class CustomUserChangeForm(UserChangeForm):
+class MyUserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField()
 
     class Meta:
@@ -48,11 +46,11 @@ class CustomUserChangeForm(UserChangeForm):
         fields = ['email', 'password']
 
     def clean_password(self):
-        return self.initial["password"]
+        return self.initial['password']
 
 class UserLoginForm(AuthenticationForm):
-    username    = EmailField(widget=EmailInput(attrs={'placeholder': _('Email professionnel')}))
-    password    = CharField(strip=False, widget=PasswordInput(attrs={'placeholder': _('Mot de passe')}))
+    username    = EmailField(widget=EmailInput(attrs={'class': 'form-input', 'placeholder': _('Email')}))
+    password    = CharField(strip=False, widget=PasswordInput(attrs={'class': 'from-input', 'placeholder': _('Mot de passe')}))
     
     def clean(self):
         email    = self.cleaned_data.get('email')
@@ -69,17 +67,14 @@ class UserLoginForm(AuthenticationForm):
 
         return self.cleaned_data
 
-    def authenticate(self):
-        pass
-
 class UserSignupForm(UserCreationForm):
     class Meta:
         model = MyUser
         fields = ['name', 'surname', 'email']
         widgets = {
-            'surname': TextInput(attrs={'placeholder': 'Nom'}),
-            'name': TextInput(attrs={'placeholder': 'Prénom'}),
-            'email': EmailInput(attrs={'placeholder': 'Email'}),
+            'surname': TextInput(attrs={'class': 'form-input', 'placeholder': 'Nom'}),
+            'name': TextInput(attrs={'class': 'form-input', 'placeholder': 'Prénom'}),
+            'email': EmailInput(attrs={'class': 'form-input', 'placeholder': 'Email'}),
         }
 
     def clean(self):
@@ -92,13 +87,6 @@ class UserSignupForm(UserCreationForm):
             raise forms.ValidationError('Votre mot de passe doit comporter au moins 10 charactères')
 
         return self.cleaned_data
-
-# class UserSignupForm(forms.Form):
-#     name         = CharField(widget=TextInput(attrs={'placeholder': _('Joe')}))
-#     surname      = CharField(widget=TextInput(attrs={'placeholder': _('Doe')}))
-#     email       = EmailField(widget=EmailInput(attrs={'placeholder': _('johndoe@gmail.com')}))
-#     password    = CharField(widget=PasswordInput(attrs={'placeholder': _('Mot de passe')}))
-
 
 
 
@@ -131,3 +119,25 @@ class AnonymousUserForm(forms.Form):
     city = CharField(max_length='45', required=True, widget=TextInput(attrs={'autocomplete': 'city', 'placeholder': 'Lille'}))
     zip_code = CharField(max_length='100', required=True, widget=TextInput(attrs={'autocomplete': 'zip-code', 'placeholder': '59000'}))
     country = CharField(max_length='45', widget=Select(attrs={'autocomplete': 'country', 'placeholder': 'France'}, choices=(('france', 'France'),)))
+
+class DashboardLoginForm(forms.Form):
+    email = forms.CharField(widget=EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
+    password = forms.CharField(widget=PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe'}))
+    authentication_token = forms.CharField(required=False, max_length=70, widget=PasswordInput(attrs={'class': 'form-control', 'placeholder': "Token d'authentication"}))
+
+class DashboardSignupForm(forms.Form):
+    nom   = forms.CharField(widget=TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}))
+    prenom   = forms.CharField(widget=TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}))
+    email = forms.CharField(widget=EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
+    password = forms.CharField(widget=PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
+    token   = forms.CharField(widget=TextInput(attrs={'class': 'form-control', 'placeholder': 'Token'}))
+
+    def clean(self):
+        token = self.cleaned_data['token']
+        password = self.cleaned_data['password']
+        if len(password) < 10:
+            raise forms.ValidationError('Le mot de passe doit être supérieur à 10 charactères')
+        if token != 'gloria':
+            raise forms.ValidationError("Le token n'est pas  valide")
+        return dict(name=self.cleaned_data['nom'], surname=self.cleaned_data['prenom'], \
+                email=self.cleaned_data['email'], password=self.cleaned_data['password'])

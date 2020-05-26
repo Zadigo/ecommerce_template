@@ -1,21 +1,35 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.contrib.auth import admin as auth_admin
 
 from accounts.models import MyUser, MyUserProfile, SubscribedUser
+from accounts import forms
 
+class MyUserAdmin(auth_admin.UserAdmin):
+    form = forms.MyUserChangeForm
+    add_form = forms.MyUserCreationForm
+    model = MyUser
 
-@admin.register(MyUser)
-class MyUserAdmin(admin.ModelAdmin):
-    list_display = ['email', 'name', 'surname', 'is_active', 'admin']
-    list_filter  = ['is_active']
-    readonly_fields = ['password']
+    list_display = ['email', 'name', 'surname', 'is_active', 'is_admin']
+    list_filter = ()
+    filter_horizontal = ()
+    ordering = ['email']
     search_fields = ['name', 'surname', 'email']
     fieldsets = [
         ['Details', {'fields': ['name', 'surname']}],
         ['Credentials', {'fields': ['email', 'password']}],
-        ['Permissions', {'fields': ['is_active', 'admin']}]
+        ['Permissions', {'fields': ['is_active', 'is_admin', 'product_manager']}]
     ]
-    ordering = ['email']
+    add_fieldsets = [
+        [None, {
+                'classes': ['wide'],
+                'fields': ['email', 'password1', 'password2', 'is_staff', 'is_active', 'product_manager']
+            }
+        ],
+    ]
+    # ordering = ['email']
+
+admin.site.register(MyUser, MyUserAdmin)
 
 @admin.register(MyUserProfile)
 class MyUserProfileAdmin(admin.ModelAdmin):

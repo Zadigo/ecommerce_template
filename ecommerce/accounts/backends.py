@@ -1,11 +1,10 @@
-from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth import get_user_model
+from django.contrib.auth.backends import ModelBackend
 
 
 MYUSER = get_user_model()
 
 class EmailAuthenticationBackend(ModelBackend):
-    """Class used to be able to authenticate a user using their email"""
     def authenticate(self, request, email=None, password=None):
         try:
             user = MYUSER.objects.get(email=email)

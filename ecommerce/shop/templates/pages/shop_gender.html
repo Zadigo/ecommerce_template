@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static card_sizes %}
 
+{% block title %}Collections pour femme{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'images_grid.css' %}">
@@ -18,6 +19,7 @@
                 <div class="col-md-4">
                     <a href="{% url 'collection' collection.gender collection.view_name %}" id="link_shop">
                         <img src="{{ collection.image }}" class="img-fluid" alt="image">
+                        <h2>{{ collection.name }}</h2>
                     </a>
                 </div>
             {% endfor %}

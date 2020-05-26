@@ -10,7 +10,7 @@ class ImageAdmin(admin.ModelAdmin):
 
 @admin.register(models.ProductCollection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name', 'gender', 'view_name']
     # search_fields = ['name']
 
 @admin.register(models.Product)
@@ -29,8 +29,8 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(models.CustomerOrder)
 class CustomerOrderAdmin(admin.ModelAdmin):
-    list_display = ['cart', 'payment']
-    search_fields = ['reference', 'transaction', 'cart__product__name']
+    list_display = ['reference', 'transaction', 'payment']
+    search_fields = ['reference', 'transaction']
     date_hierarchy = 'created_on'
     sortable_by = ['payment']
 

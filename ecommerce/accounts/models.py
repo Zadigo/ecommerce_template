@@ -12,13 +12,14 @@ from accounts import managers
 
 class MyUser(AbstractBaseUser):
     """Base user model for those user accounts"""
-    email       = models.EmailField(verbose_name=_('Email address'), max_length=255, unique=True,)
+    email       = models.EmailField(max_length=255, unique=True)
     surname      = models.CharField(max_length=100, null=True, blank=True)
     name         = models.CharField(max_length=100, null=True, blank=True)
     
     is_active        = models.BooleanField(default=True)
-    admin            = models.BooleanField(default=False)
-    staff            = models.BooleanField(default=False)
+    is_admin            = models.BooleanField(default=False)
+    product_manager     = models.BooleanField(default=False)
+    is_staff            = models.BooleanField(default=False)
     
     objects = managers.MyUserManager()
 
@@ -35,16 +36,17 @@ class MyUser(AbstractBaseUser):
         return True
 
     @property
-    def is_admin(self):
-        return self.admin
+    def is_product_manager(self):
+        return self.product_manager
 
     @property
-    def is_staff(self):
-        return self.staff
+    def get_full_name(self):
+        return f'{self.name} {self.surname}' 
 
     @property
-    def full_name(self):
-        return self.name + ' ' + self.surname
+    def get_short_name(self):
+        return self.name
+
 
 class MyUserProfile(models.Model):
     """User profile model used to complete the base user model"""
@@ -82,6 +84,5 @@ class SubscribedUser(models.Model):
 
 @receiver(post_save, sender=MyUser)
 def create_user_profile(sender, instance, created, **kwargs):
-    """Creates the user profile"""
     if created:
         MyUserProfile.objects.create(myuser=instance)

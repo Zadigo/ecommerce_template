@@ -1,0 +1,16 @@
+{% block title %}Recherche{% endblock %}
+
+{% block datalayer_push %}
+    {{ products.super_queryset.impressions|json_script:"impressions" }}
+
+    <script>
+        var impressions = JSON.parse(document.getElementById("impressions").innerText)
+        
+        dataLayer.push({
+            "ecommerce": {
+                "impressions": impressions
+            },
+            "event": "productImpressions"
+        })
+    </script>
+{% endblock %}

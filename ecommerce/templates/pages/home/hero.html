@@ -1,0 +1,56 @@
+{% extends "../../base.html" %}
+{% load i18n static %}
+
+{% block title %}My ecommerce website{% endblock %}
+
+{% block hero %}
+<div class="hero red darken-3" style="background-image: url('https://jobswebsite.s3.eu-west-3.amazonaws.com/nawoka/media/image5.jpg');">
+    <div class="hero-wrapper">
+        <div class="call-to-action">
+            <div class="lead">{% trans "Tous vos désirs mode au même endroit" %}</div>
+            <div class="lead-subtitle">{% trans "Produits mode et beauté uniques" %}</div>
+            <a href="{% url 'shop' %}" class="btn btn-large grey darken-4 waves-effect waves-light" id="btn_call_to_action">
+                {% trans "Commencer mon shopping" %}
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row wow fadeIn mt-3 flex-direction-row justify-content-between">
+    <div class="col-md-6">
+        <a href="#">
+            <img class="img-fluid" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1504&q=80" alt="">
+        </a>
+    </div>
+    <div class="col-md-6">
+        <a href="#">
+            <img class="img-fluid" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1504&q=80" alt="">
+        </a>
+    </div>
+</div>
+
+<div class="row wow fadeIn mt-3">
+    <div class="col md-12">
+        <a href="">
+            <img class="img-fluid" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1504&q=80" alt="">
+        </a>
+    </div>
+</div>
+
+{% comment %}
+<!-- FEATURES -->
+{% include "components/features.html" %}
+
+<!-- FEATURES BOX -->
+{% include "components/features_box.html" %}
+
+<!-- LATEST -->
+{% include "components/latest_products.html" %}
+
+<!-- LOOKBOOK -->
+{% include "components/lookbook.html" %}
+
+<!-- LOGO SECTION -->
+{% include "components/logo_section.html" %}
+{% endcomment %}
+{% endblock %}

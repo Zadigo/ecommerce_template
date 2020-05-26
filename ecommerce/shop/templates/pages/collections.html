@@ -1,17 +1,21 @@
 {% extends "base.html" %}
 {% load static price_tags %}
 
+{% block title %}Enterprise: {{ collection.name }}{% endblock %}
+
 {% block container %}
 <div id="vue_app">
-    <!-- PRESENTATION -->
-    <div class="card blue lighten-1">
-        <div class="card-body">
-            <h3 class="center">{{ collection.name }}</h3>
-            <p>
-                {{ collection.presentation_text }}
-            </p>
-        </div>
-    </div>
+    {% if collection.show_presentation %}
+        <!-- PRESENTATION -->
+        <div class="card blue lighten-1">
+            <div class="card-body">
+                <h3 class="center">{{ collection.name }}</h3>
+                <p>
+                    {{ collection.presentation_text }}
+                </p>
+            </div>
+        </div>        
+    {% endif %}
 
     <!-- NAVBAR -->
     {% include "../components/products/navbar.html" %}
@@ -72,7 +76,7 @@
                 <li class='nav-item'>\
                     <a class='nav-link' href='#'>Outwears</a>\
                 </li>\
-            </div>\
+            </ul\
             "
         }
 

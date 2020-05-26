@@ -1,45 +1,16 @@
+import datetime
+import os
+import secrets
+from urllib.parse import urlencode
+
+from django.core import exceptions
+from django.core.handlers.wsgi import WSGIRequest
+
 try:
     import stripe
 except ImportError:
     print('You should install Stripe in order to use the payment logic.')
-import datetime
-import os
-import re
-import secrets
-from urllib import parse
-
-from django.core import exceptions
-from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.core.handlers.wsgi import WSGIRequest
-from django.core.serializers import serialize
-from django.http.response import JsonResponse
-from django.shortcuts import redirect, reverse
-
-from shop import models
-
-try:
-    from accounts.models import MyAnonymousUser
-except:
-    USER = get_user_model()
-
-def stripe_tax(price):
-    """Calculates the percentage stripe takes
-    on each given sale
-
-    Formula
-    -------
-
-        price * (2.9% / 100) + 0.27c
-    """
-    return round(price * (2.9 / 100) + 0.27, 2)
-
-def create_payment_reference(n=5):
-    """Create a basic reference: `NAW201906126011b0e0b8`
-    """
-    current_date = datetime.datetime.now().date()
-    prefix = f'NAW{current_date.year}{current_date.month}{current_date.day}'
-    return prefix + secrets.token_hex(n)
+    raise
 
 def convert_debug():
     """Helper that gets the environment variable DEBUG and
@@ -70,20 +41,6 @@ def convert_debug():
         development_mode = True
     return development_mode
 
-def stripe_context_processors(request):
-    """Return the publisheable key directly in the context
-    of the application
-    """
-    keys = dict()
-    # If DEBUG is True, we are in 
-    # development return the test key
-    if convert_debug():
-        keys.update({'publishable_key': 'pk_test_eo8zzqww6iuVFzWmLQEJ4F7K'})
-        return keys
-    else:
-        keys.update({'publishable_key': 'pk_live_5skKfskQRtjARTMQpVxzGsH9'})
-        return keys
-
 def initialize_stripe(keys:dict):
     """Initialize stripe is a way that can better evaluate in what
     mode and with which key we are working in a given environment.
@@ -101,6 +58,16 @@ def initialize_stripe(keys:dict):
     return {'stripe_mode': stripe_mode}
 
 stripe_mode = initialize_stripe({'test': 'sk_test_QkRv7ivfBRfQZiYzIfsOTd68', 'live': 'sk_live_GpShUMmBw626p8otQ89Pl3qg'})
+
+
+
+
+def create_payment_reference(n=5):
+    """Create a basic reference: `NAW201906126011b0e0b8`
+    """
+    current_date = datetime.datetime.now().date()
+    prefix = f'NAW{current_date.year}{current_date.month}{current_date.day}'
+    return prefix + secrets.token_hex(n)
 
 class UserInfosHelper(dict):
     """A class that simplifies retrieving of data
@@ -168,7 +135,7 @@ class UserInfosHelper(dict):
     def field_errors(self):
         return f'FieldErrors({self.key_errors})'
 
-class ProcessPayment:
+class BasePaymentBackend:
     """The main logic that initiates and processes a Stripe
     payment
 
@@ -202,27 +169,17 @@ class ProcessPayment:
         Cart_url / cart_success / login_url: urls to use in order to direct
         the user to the correct pages
     """
-    cart_url = '/shop/cart/payment'
-    cart_success = '/shop/cart/success'
-    login_url = '/accounts/login'
 
     cart_model = None
-    order_model = None
+    cart_success = '/shop/cart/success'
 
-    substitute_user_model_to = None
-
-    def __init__(self, request, stripe_token, user_infos: dict):
-        self.base_response = {
-            'status': None,
-            'redirect_url': None
-        }
-
+    def __init__(self, request, stripe_token, user_infos:dict):
         self.stripe_token = stripe_token
 
         # Check that the user information have all the
         # required fields in order to prevent KeyError
         # below when referencing to these fields
-        self.user_infos = self._check_user_infos(user_infos)
+        # self.user_infos = self._check_user_infos(user_infos)
 
         self.request = request
 
@@ -232,7 +189,7 @@ class ProcessPayment:
 
         self.total_of_products_to_buy = 0
 
-        # This parameter returns an charge
+        # This parameter returns a charge
         # object that can be used for other
         # kinds of processing afterwards
         self.completed_charge = None
@@ -247,7 +204,11 @@ class ProcessPayment:
 
         self.errors = []
 
-    def payment_processor(self, customer_id=None, payment_debug_mode=False, **kwargs):
+        self.user_infos = self._check_user_infos(user_infos)
+
+        self.cart_queryset = None
+
+    def process_payment(self, customer_id=None, payment_debug_mode=False, **kwargs):
         """Process a payment and get the charge as an object
         for further processing.
 
@@ -260,6 +221,7 @@ class ProcessPayment:
         total_of_products_to_buy = 0
 
         if self.stripe_token is None:
+            self.errors.append('No token')
             return False
 
         # Get the cart iD from the session 
@@ -267,13 +229,15 @@ class ProcessPayment:
         # because the user has nothing to
         # pay for
         cart_id = self.request.session.get('cart_id')
-        
+
         if cart_id:
             if self.cart_model is None:
                 self.errors.append('No cart model')
                 raise exceptions.ImproperlyConfigured('You should provide a model from which \
                 we can extract the cart total.')
             try:
+                # The model tries to get the cart
+                self.cart_queryset = self.cart_model.objects.filter(cart_id__iexact=cart_id).first()
                 # The model tries to get a get_cart_total() on the model
                 # from a cart_manager() model manager. It should return the total
                 # sum of items that should be charged to Stripe
@@ -282,11 +246,10 @@ class ProcessPayment:
                 self.errors.append('Manager with cart total does not exist')
                 raise exceptions.ObjectDoesNotExist('Could not find a manager of type \
                 .cart_manager.cart_total() from which to get the cart total')
-
         else:
             self.errors.append('There was no cart ID')
             return False
-        
+
         if total_of_products_to_buy != 0:
             amount = self.price_to_stripe(total_of_products_to_buy)
             # Now we can create the dict that will be used
@@ -332,38 +295,45 @@ class ProcessPayment:
                 try:
                     charge = stripe.Charge.create(**params)
                 except stripe.error.CardError as e:
-                    self.errors.append(
-                        {
-                            'status':  e.http_status,
-                            'type': e.error.type,
-                            'code': e.error.code,
-                            'param': e.error.param,
-                            'message': e.error.message
-                        }
-                    )
+                    # Error if card was
+                    # declined -; mainly
+                    errors = {
+                        'status':  e.http_status,
+                        'type': e.error.type,
+                        'code': e.error.code,
+                        'param': e.error.param,
+                        'message': e.error.message
+                    }
+                    self.errors.append(errors)
                     return False
                 except stripe.error.RateLimitError as e:
                     self.errors.append('Rate limit exceeded')
+                    return False
                 except stripe.error.InvalidRequestError as e:
                     self.errors.append('Invalid request')
+                    return False
                 except stripe.error.AuthenticationError as e:
                     self.errors.append('Authentication error')
+                    return False
                 except stripe.error.APIConnectionError as e:
                     self.errors.append('API connection error')
+                    return False
                 except stripe.error.StripeError as e:
                     self.errors.append('Stripe error')
+                    return False
                 except Exception as e:
                     self.errors.append('Unknown error')
+                    return False
             else:
                 # A simple dict that passes the payment
                 # as successful in order order to debug
                 # the rest of the payment process
-                charge = {'status': 'succeeded', 'id': 'Fake ID'}
-            
+                charge = {'status': 'succeeded', 'id': 'FAKE ID'}
+
             if charge['status'] == 'succeeded':
-                parameters = parse.urlencode(
+                parameters = urlencode(
                     {
-                        'reference': self.order_reference.lower(),
+                        'reference': self.order_reference,
                         'transaction': charge['id']
                     }
                 )
@@ -372,59 +342,17 @@ class ProcessPayment:
                 # to the success page
                 self.final_url = f'{self.cart_success}?{parameters}'
 
-                # if self.order_model:
-                    # Here we create the order in the Order model
-                    # that was provided -- there should have a field
-                    # reference and transaction
-                    # self.update_order_model(total_of_products_to_buy, charge['id'])
-
-                self.request.session.pop('cart_id')
-
+                if not payment_debug_mode:
+                    self.request.session.pop('cart_id')
+            else:
+                self.errors.append('The charge has failed')
+                return False
         else:
             self.errors.append('There was no total to charge to Stripe')
             return False
 
-        return {'reference': self.order_reference, 'status': True, \
-                    'transaction': charge['id'], 'total': amount}
-
-    def json_response(self):
-        """Get a valid response for Django view in relation
-        to the payment
-        """
-        status = self.base_response['status']
-        return JsonResponse(self.base_response, safe=False, status=status, content_type='json')
-
-    @property
-    def rest_framework_response(self):
-        """Return a valid response from the rest framework library"""
-        try:
-            from rest_framework.response import Response
-        except ImportError:
-            return self.json_response()
-        self.base_response['success'] = 'success'
-        return Response(data=self.base_response, status=200)
-
-    def _create_customer(self):
-        """This function can used in order to create a customer
-        in Stripe before or during the payment process
-        """
-        pass
-
-    def _create_user(self, cart_id):
-        """Create an anonymous user in our database for marketing and remarketing
-        reasons. This also serves as a way to keep a link between the products that
-        were ordered and the customer
-        """
-        data = {
-            'cart': cart_id,
-            'email': self.user_infos['email'],
-            'address': self.user_infos['address'],
-            'telephone': self.user_infos['telephone'],
-            'country': self.user_infos['country'],
-            'zip_code': self.user_infos['zip_code']
-        }
-        user = USER.objects.create(**data)
-        return user
+        return dict(status=True, reference=self.order_reference, \
+            transaction=charge['id'], total=total_of_products_to_buy['cart_total'], redirect_url=self.final_url)
 
     @staticmethod
     def price_to_stripe(price):
@@ -495,20 +423,3 @@ class ProcessPayment:
             user_infos.update({'country': 'France'})
 
         return user_infos
-
-    def update_order_model(self, payment, charge_id, **fields):
-        """Updates a given model which would most probably be
-        your Orders model"""
-        # try:
-        #     customer_order = self.order_model\
-        #             .objecs.create(reference=self.order_reference, \
-        #                                 transaction=charge_id, payment=payment)
-        # except:
-        #     self.errors.append('Could not create order')
-        #     return False
-        # else:
-        #     if customer_order:
-        #         return customer_order
-        customer_order = self.order_model\
-                    .objecs.create(reference=self.order_reference, \
-                                        transaction=charge_id, payment=payment)
