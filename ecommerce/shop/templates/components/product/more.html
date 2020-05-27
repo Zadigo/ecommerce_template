@@ -8,7 +8,7 @@
     {% for product in more %}
         <div class="col-lg-4 col-md-12 mb-4">
             <a href="{{ product.get_collection_url }}" id="link_see_more">
-                <img src="{{ product.imag.url }}" class="img-fluid" alt="{{ product.slug }}">
+                <img src="{{ product.get_main_image_url }}" class="img-fluid" alt="{{ product.slug }}">
             </a>
         </div>        
     {% endfor %}

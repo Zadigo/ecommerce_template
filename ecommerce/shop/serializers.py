@@ -12,6 +12,7 @@ class ImageSerializer(Serializer):
     name    = fields.CharField()
     url     = fields.URLField()
     variant = fields.CharField()
+    main_image = fields.BooleanField()
 
 class CollectionSerializer(Serializer):
     name      = fields.CharField()

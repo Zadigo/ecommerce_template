@@ -4,11 +4,11 @@
 
 {% block content %}
 <div id="images_app">
-    <div class="row flex-direction-row justify-content-between">
+    <div class="row flex-direction-row justify-content-between mb-3">
         <div class="col-md-4 mb-4 pl-0">
             <filtercomponent />
         </div>
-        <div class="col-auto">
+        <div class="col-md-8 text-right">
             {% include "../../components/others/modal_button.html" with btn_title="Nouvelle image" icon="fa fa-image" extra_class="m-0" target="new_image_modal" %}
         </div>
     </div>
@@ -40,7 +40,7 @@
 
         var filtercomponent = {
             template: "\
-            <select class='custom-select' name='' id=''>\
+            <select class='custom-select' name='' class='d-none' id=''>\
                 <option value='something'>Something</option>\
             </select>\
             "
@@ -49,16 +49,22 @@
         var inputfilecomponent = {
             template: "\
             <form>\
-                <div class='form-group'>\
-                    <input v-model='imagename' type='text' name='name' id='name' placeholder='Nom'>\
+                <div class='form-row'>\
+                    <div class='form-group col-8'>\
+                        <input v-model='imagename' type='text' name='name' class='form-control' id='name' placeholder='Nom'>\
+                    </div>\
+                    <div class='form-group col-4'>\
+                        <input v-model='variant' type='text' name='variant' class='form-control' id='variant' placeholder='Variant'>\
+                    </div>\
                 </div>\
                 <div class='form-group'>\
-                    <input v-model='variant' type='text' name='variant' id='variant' placeholder='Variant'>\
+                    <input @change='saveurl' v-model='imageurl' type='url' name='url' class='form-control' id='url' placeholder='URL de l-image...'>\
                 </div>\
-                <div class='form-group'>\
-                    <input @change='saveurl' v-model='imageurl' type='url' name='url' id='url' placeholder='Url'>\
+                <div class='form-check'>\
+                    <input v-model='markasmainimage' type='checkbox' name='main-image' class='form-check-input' id='main-image'>\
+                    <label for='form-check-label'></label>Marquer comme image principale\
                 </div>\
-                <div class='form-group'>\
+                <div class='form-group d-none'>\
                     <input v-if='isinitial | issuccess' @change='getfiles($event.target.name, $event.target.files)' type='file' class='form-control-file' name='new-image' id='new-image'>\
                     <div v-if='issaving' class='spinner-border' role='status'>\
                         <span class='sr-only'>Loading...</span>\
@@ -71,7 +77,8 @@
                     currentstatus: STATUS_INITIAL,
                     imagename: "",
                     variant: "",
-                    imageurl: ""
+                    imageurl: "",
+                    markasmainimage: false
                 }
             },
             computed: {
@@ -86,6 +93,11 @@
                 }
             },
             methods: {
+                reset: function() {
+                    self.$data.imagename = ""
+                    self.$data.variant = ""
+                    self.$data.markasmainimage = false
+                },
                 saveurl: function() {
                     var self = this
                     var formdata = new FormData()
@@ -94,6 +106,7 @@
                     formdata.append("name", self.$data.imagename)
                     formdata.append("variant", self.$data.variant)
                     formdata.append("url", self.$data.imageurl)
+                    formdata.append("mainimage", self.$data.markasmainimage)
 
                     var promise = new Promise((resolve, reject) => {
                         var xhr = new XMLHttpRequest()
@@ -101,6 +114,7 @@
                         xhr.send(formdata)
                         resolve(xhr.response)
                     }).then((response) => {
+                        self.reset()
                         self.$emit("saveurl", self.$data.imagename, self.$data.variant, self.$data.imageurl)
                     })
                 },
@@ -156,13 +170,6 @@
             delimiters: ["[[", "]]"],
             template: "\
             <div class='row'>\
-                <!--<div v-if='!image.deleted' v-for='image in images' :key='image.slug' class='col-md-3 mb-3'>\
-                    <div class='card'>\
-                        <img @hover='highlightimage' class='card-img-top' :src='image.url' :alt='image.slug'>\
-                        <i @click='deleteimage(image)' class='fa fa-trash'></i>\
-                    </div>\
-                </div>-->\
-                \
                 <div class='row'>\
                     <div v-if='!image.deleted' v-for='image in images' :key='image.slug' class='col-md-3 mb-3'>\
                         <div class='box15'>\
@@ -170,7 +177,12 @@
                             <div class='box-content'>\
                                 <h3 class='title'>[[ image.name ]]</h3>\
                                 <ul class='icon'>\
-                                    <li><li><a @click='sendimageid(image.pk)' data-toggle='modal' data-target='#link_produt_to_image'><i class='fa fa-link'></i></a></li></li>\
+                                    <li>\
+                                        <a @click='markasmain(image)'>\
+                                            <i v-if='image.main_image' class='fa fa-star red-text'></i>\
+                                            <i v-else class='fa fa-star'></i>\
+                                        </a>\
+                                    </li>\
                                     <li><a @click='deleteimage(image)'><i class='fa fa-trash'></i></a></li>\
                                 </ul>\
                             </div>\
@@ -192,11 +204,17 @@
                     xhr.open("POST", window.location.href)
                     xhr.send(formdata)
                 },
-                highlightimage: function() {
+                markasmain: function(image) {
+                    var self = this
+                    var formdata = new FormData()
+                    formdata.append("csrfmiddlewaretoken", csrf)
+                    formdata.append("method", "asmain")
+                    formdata.append("image_id", image.pk)
 
-                },
-                sendimageid: function(id) {
-                    $("input#image_id_field").val(id)
+                    var xhr = new XMLHttpRequest()
+                    xhr.onloadend = function() {image.main_image = !image.main_image}
+                    xhr.open("POST", window.location.href)
+                    xhr.send(formdata)
                 }
             }
         }

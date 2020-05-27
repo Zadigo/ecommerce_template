@@ -152,6 +152,11 @@ class Product(models.Model):
         """Says whether the product is discounted or not"""
         return self.discounted
 
+    @property
+    def get_discount_pct_as_text(self):
+        if self.discounted:
+            return f'-{self.discount_pct}%'
+
 class PromotionalCode(models.Model):
     code        = models.CharField(max_length=4)
     value       = models.IntegerField(default=5)

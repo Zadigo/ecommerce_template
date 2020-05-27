@@ -301,7 +301,21 @@ class ImagesView(LoginRequiredMixin, generic.ListView):
             name = request.POST.get('name')
             variant = request.POST.get('variant')
             url = request.POST.get('url')
-            self.model.objects.create(name=name, variant=variant, url=url)
+            main_image = request.POST.get('mainimage')
+            image = self.model.objects.create(name=name, variant=variant, url=url)
+            if main_image == "true":
+                image.main_image = True
+                image.save()
+
+        if method == 'asmain':
+            image_id = request.POST.get('image_id')
+            image = self.model.objects.get(id=int(image_id))
+            if image:
+                if image.main_image:
+                    image.main_image = False
+                else:
+                    image.main_image = True
+                image.save()
 
         if method == 'association':
             name = request.POST.get('product')

@@ -61,6 +61,7 @@
         <link href="{% static 'style.css' %}" rel="stylesheet">
 
         <!-- CUSTOM -->
+        <link href="{% static 'navbars.css' %}" rel="stylesheet">
         <link href="{% static 'hero.css' %}" rel="stylesheet">
         <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
         <link href="{% static 'ecommerce_bars.css' %}" rel="stylesheet">
@@ -143,6 +144,31 @@
             // Animations initialization
             new WOW().init()
         </script>
+
+        <!-- LARGE NAVBAR -->
+        <script>
+            $(document).on("click", ".dropdown-menu", function (e) {
+                e.stopPropagation();
+            });
+        </script>
+
+        {% comment %}
+        <!-- OFFCANVAS -->
+        <script>
+            $("[data-trigger]").on("click", function() {
+                var trigger_id =  $(this).attr("data-trigger");
+                $(trigger_id).toggleClass("show");
+                $("body").toggleClass("offcanvas-active");
+            });
+
+            // close button 
+            $(".btn-close").click(function(e){
+                $(".navbar-collapse").removeClass("show");
+                $("body").removeClass("offcanvas-active");
+            }); 
+        </script>
+            
+        {% endcomment %}
 
         <!-- STRIPE -->
         <script src="https://js.stripe.com/v3/"></script>

@@ -1,115 +1,114 @@
 {% extends "base.html" %}
-{% load static price_tags %}
+{% load static price_tags impressions %}
 
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block datalayer_push %}
-    {{ impressions|json_script:"impressions" }}
-    
-    <script>
-        var impressions = JSON.parse(document.getElementById("impressions").innerText)
-
-        dataLayer.push({
-            "ecommerce": {
-                "impressions": impressions,
-                "detail": {
-                    "actionField": {"list": "Product list"},
-                    "products": [
-                        {
-                            "name:": "{{ product.name }}",
-                            "id:": "{{ product.reference }}",
-                            "price:": "{{ product.get_price }}",
-                            "brand:": "Nawoka",
-                            "category:": "{{ product.category }}",
-                            "variant:": "{{ product.sku }}",
-                        }
-                    ]
-                }
-            },
-            "remarketingProduct": {
-                "name:": "{{ product.name }}",
-                "id:": "{{ product.reference }}",
-                "price:": "{{ product.get_price }}",
-                "brand:": "Nawoka",
-                "category:": "{{ product.category }}",
-                "variant:": "{{ product.sku }}",
+<script>
+    var impressions ="{% autoescape off %}{% product_impressions more %}{% endautoescape %}"
+    dataLayer.push({
+        "ecommerce": {
+            "impressions": JSON.parse("{% autoescape off %}{% product_impressions more %}{% endautoescape %}"),
+            // "impressions": JSON.parse("{% product_impressions more %}"),
+            "detail": {
+                "actionField": {"list": "Product list"},
+                "products": [
+                    {
+                        "name:": "{{ product.name }}",
+                        "id:": "{{ product.reference }}",
+                        "price:": "{{ product.get_price }}",
+                        "brand:": "Nawoka",
+                        "category:": "{{ product.collection.name }}",
+                        "variant:": "{{ product.sku }}",
+                    }
+                ]
             }
-        })
-    </script>
+        },
+        
+        "remarketingProduct": {
+            "name:": "{{ product.name }}",
+            "id:": "{{ product.reference }}",
+            "price:": "{{ product.get_price }}",
+            "brand:": "Nawoka",
+            "category:": "{{ product.colleciton.name }}",
+            "variant:": "{{ product.sku }}",
+        }
+    })
+</script>
 {% endblock %}
 
 {% block structured_data %}
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": "{{ product.name }}",
-            "image": "{{ product.get_main_image_url }}",
-            "description": "{{ product.name }} - {{ product.color }} - {{ product.get_price }}€ {{ product.get_discount_pct_as_text }}",
-            "sku": "{{ product.sku }}",
-            "mpn": "{{ product.sku }}",
-            "color": "{{ product.color }}",
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "{{ product.name }}",
+        "image": "{{ product.get_main_image_url }}",
+        "description": "",
+        "sku": "{{ product.sku }}",
+        "mpn": "{{ product.sku }}",
+        "color": "{{ product.color }}",
+        "url": "{{ request.build_absolute_uri }}",
+        "brand": {
+            "@type": "Thing",
+            "name": "Nawoka"
+        },
+        "audience": {
+            "@type": "PeopleAudience",
+            "suggestedGender": "{% if product.gender == 'femme' %}female{% else %}male{% endif %}"
+        },
+        "offers": {
+            "@type": "Offer",
             "url": "{{ request.build_absolute_uri }}",
-            "brand": {
-              "@type": "Thing",
-              "name": "Nawoka"
-            },
-            "audience": {
-                "@type": "PeopleAudience",
-                "suggestedGender": "{% if product.gender == 'femme' %}female{% else %}male{% endif %}"
-            },
-            "offers": {
-              "@type": "Offer",
-              "url": "{{ request.build_absolute_uri }}",
-              "priceCurrency": "EUR",
-              "price": "{{ product.get_price }}",
-              "priceValidUntil": "{{ product.price_valid_until|date:"d-m-Y" }}",
-              "itemCondition": "https://schema.org/NewCondition",
-              "availability": "https://schema.org/InStock"
-            }
+            "priceCurrency": "EUR",
+            "price": "{{ product.get_price }}",
+            "priceValidUntil": "{{ product.price_valid_until|date:"d-m-Y" }}",
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": "https://schema.org/InStock"
         }
-    </script>
-    
-    <script type="application/ld+json">
-        {
-            "@context": "http://schema.org",
-            "@type": "BreadcrumbList",
-            "itemListElement": [
-                {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "item": {
-                        "@id": "https://nawoka.fr{% url 'home' %}",
-                        "name": "Accueil"
-                    }
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 2,
-                    "item": {
-                        "@id": "https://nawoka.fr{% url 'shop' %}",
-                        "name": "Boutique"
-                    }
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 3,
-                    "item": {
-                        "@id": "{{ product.get_collection_url }}",
-                        "name": "{{ product.collection.name }}"
-                    }
-                },
-                {
-                    "@type": "ListItem",
-                    "position": 4,
-                    "item": {
-                        "@id": "https://nawoka.fr{{ product.get_absolute_url }}",
-                        "name": "{{ product.name }}"
-                    }
+    }
+</script>
+
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@id": "https://nawoka.fr{% url 'home' %}",
+                    "name": "Accueil"
                 }
-            ]
-        }
-    </script>
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@id": "https://nawoka.fr{% url 'shop' %}",
+                    "name": "Boutique"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                    "@id": "{{ product.get_collection_url }}",
+                    "name": "{{ product.collection.name }}"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                    "@id": "https://nawoka.fr{{ product.get_absolute_url }}",
+                    "name": "{{ product.name }}"
+                }
+            }
+        ]
+    }
+</script>
 {% endblock %}
 
 {% block container %}
