@@ -1,0 +1,163 @@
+{% load static aws_images %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <title>{% block title %}{% endblock %}</title>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:300,400,500&display=swap">
+
+        <style>
+            html {
+                font-family: "Poppins", "Monserrat", "Raleway", "Ubuntu", sans-serif;
+            }
+
+            html p, html a, html li, html span,
+            html .content-text, html .content-tags .chip,
+            html .hover-cover {
+                font-family: "Raleway", "Roboto", sans-serif;
+            }
+
+            .card-panel {
+                position: relative;
+                overflow: hidden;
+                padding: 0;
+            }
+
+            @media only screen and (min-width: 320px)  {
+                .card-panel {
+                    height: 200px;
+                }
+            }
+
+            @media only screen and (min-width: 768px) {
+                .card-panel {
+                    height: 500px;
+                }
+            }
+
+            .card-panel .filter {
+                position: absolute;
+                background-color: black;
+                height: 100%;
+                width: 100%;
+                opacity: .5;
+            }
+
+            .card-container {
+                display: block;
+                position: absolute;
+                top: 200px;
+                padding: .275rem;
+                z-index: 1;
+            }
+
+            .card-container .code {
+                font-size: 5rem;
+                margin: 0;
+                padding: 0 0 0 2rem;
+            
+            }
+
+            .card-container .code-text {
+                margin: 0;
+                padding: 0 0 0 2rem;
+                word-wrap: break-word;
+            }
+
+            .card-container .links {
+                display: inline-flex;
+                padding: 1.8rem 0 0 2rem;
+            }
+
+            .card-container .links a {
+                color: white;
+            }
+
+            .card-container .links a:not(:first-child) {
+                margin-left: 1rem;
+            }
+
+
+            .card-panel h1,
+            .card-panel h5 {
+                color: white;
+                padding: 2rem;
+            }
+
+            @media only screen and (min-width: 301px) {
+                .card-container {
+                    top: 70px;
+                }
+
+                .card-container .code {
+                    font-size: 2rem;
+                }
+
+                .card-container .code-text {
+                    font-size: 14px;
+                }
+            }
+
+            @media only screen and (min-width: 601px) {
+                .card-container {
+                    top: 200px;
+                }
+
+                .card-container .code {
+                    font-size: 5rem;
+                
+                }
+
+                .card-container .code-text {
+                    font-size: initial;
+                }
+            }
+
+            @media only screen and (min-width: 993px) {
+                .card-container {
+                    top: 200px;
+                }
+
+                .card-container .code {
+                    font-size: 5rem;
+                
+                }
+
+                .card-container .code-text {
+                    font-size: initial;
+                }
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col s12 m12 l12">
+                    <div class="card-panel">
+                        <div class="card-container">
+                            <h1 class="code">{% block code %}{% endblock %}</h1>
+                            <h5 class="code-text">
+                                {% block code_text %}{% endblock %}
+                            </h5>
+                            <div class="links">
+                                <a href="{% url 'home' %}">Accueil</a>
+                                <a href="{% url 'shop_gender' 'femme' %}">Femme</a>
+                            </div>
+                        </div>
+                        <div class="filter"></div>
+                        <img src="{% create_aws_image_url 'error1.jpg' %}" class="responsive-img" alt="Nawoka">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

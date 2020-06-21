@@ -1,39 +1,51 @@
-{% load table_header_tag %}
+{% extends "components/others/tables/base.html" %}
+{% load table i18n %}
 
-<table class="table table-hover">
-    <thead class="blue-grey lighten-4">
+{% block table_header %}
+    {% header "ID" "Nom" "Collection" "Prix" "Statut" %}
+    <th colspan="2"></th>
+{% endblock %}
+
+{% block table_body %}
+    {% for product in products %}
         <tr>
-            {% create_table_header "ID" "Nom" "Collection" "Prix" "Statut" %}
-            <th colspan="2"></th>
-        </tr>
-    </thead>
-
-    <!-- Table body -->
-    <tbody>
-        {% for item in items %}
-            <tr>
-                <th scope="row">{{ item.id }}</th>
-                <td>
-                    <a href="{% url 'dashboard_product' item.id %}">{{ item.name }}</a>
-                </td>
-                <td>{{ item.collection.name }}</td>
-                <td>{{ item.price_ht }}</td>
-                <td>
-                    {% if item.active %}
-                        {% include "../badge.html" with type="success" badge_name="actif" %}								
-                    {% else %}
-                        {% include "../badge.html" with type="danger" badge_name="inactif" %}								
-                    {% endif %}
-                </td>
-                <td><a href="{% url 'update' item.id %}">update</a></td>
-                {% if user.is_admin %}
-                    <td><a href="{% url 'delete_item' 'products' item.id %}">delete</a></td>
+            <th scope="row">{{ product.id }}</th>
+            <td>
+                <a href="{% url 'update' product.id %}">{{ product.name }}</a>
+            </td>
+            <td>{{ product.collection.name }}</td>
+            {% with price=product.get_price %}
+                {% if product.is_discounted %}
+                    <td class="red-text">{{ price }}</td>
+                {% else %}
+                    <td>{{ price }}</td>
+                {% endif %}                    
+            {% endwith %}
+            <td>
+                {% if product.active %}
+                    {% include "../badge.html" with type="success" badge_name="actif" %}								
+                {% else %}
+                    {% include "../badge.html" with type="danger" badge_name="inactif" %}								
                 {% endif %}
-            </tr>
-        {% empty %}
-            <tr scope="row">
+            </td>
+            <td>
+                <a href="{% url 'product' product.gender product.collection.view_name product.id product.slug %}" target="_blank">
+                    <div class="fa fa-eye text-muted"></div>
+                </a>
+            </td>
+            {% comment %}
+            {% if user.is_admin %}
+                <td><a href="{% url 'dashboard_delete_product' product.id %}">delete</a></td>
+            {% endif %}                
+            {% endcomment %}
+        </tr>
+    {% empty %}
+        <tr scope="row">
+            {% if request.path == "/dashboard/search/" %}
+                <td class="text-center font-weight-bold" colspan="5">Nous n'avons pas trouvé de produits correspondants</td>
+            {% else %}
                 <td class="text-center font-weight-bold" colspan="5">Vous n'avez pas encore de produits</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            {% endif %}
+        </tr>
+    {% endfor %}
+{% endblock %}

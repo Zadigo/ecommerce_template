@@ -1,15 +1,19 @@
+{% load i18n %}
+
 {% if product.active %}
     <div class="color-selection">
-        <div>
+        <div class="form-group">
             <colorcomponent @selectcolor="doselection" v-bind:initvalue="details.color" v-bind:colors="colors" />
         </div>
-        <div>
-            <sizecomponent @selectcolor="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
+        <div class="form-group">
+            <sizecomponent @selectsize="doselection" v-bind:initvalue="details.size" v-bind:sizes="sizes" />
         </div>
 
+        {% comment %}
         <div class="delivery mt-3 mb-3">
-            <a href="#!">Guide des tailles**</a>
-        </div>        
+            <a href="#!"> {% trans "Guide des tailles" %}**</a>
+        </div>                    
+        {% endcomment %}
     </div>
     
     <div class="cart-button">
@@ -19,7 +23,7 @@
 {% else %}
     <div class="card">
         <div class="card-body red lighten-1 text-white text-center font-weight-bold">
-            This product is not active
+            {% trans "Ce produit n'est pas actif" %}
         </div>
     </div>
 {% endif %}

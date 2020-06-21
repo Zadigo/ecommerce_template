@@ -1,33 +1,24 @@
-{% load table_header_tag %}
+{% extends "components/others/tables/base.html" %}
+{% load table i18n %}
 
-<table class="table table-hover">
-    <thead class="blue-grey lighten-4">
+{% block table_header %}
+    {% header "ID" "Code" "Valeur" "Date de fin" %}
+    <th colspan="3"></th>
+{% endblock %}
+
+{% block table_body %}
+    {% for coupon in coupons %}
         <tr>
-            {% create_table_header "ID" "Code" "Valeur" "Date de fin" %}
-            <th colspan="3"></th>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>
+                <a href="{% url 'coupon_update' coupon.id %}">{{ coupon.code }}</a>
+            </td>
+            <td>{{ coupon.value }}</td>
+            <td>{{ coupon.end_date }}</td>
         </tr>
-    </thead>
-
-    {% comment %}
-    <tbody>
-        {% for item in items %}
-            <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ item.code }}</td>
-                <td>{{ item.value }}</td>
-                <td>{{ item.end_date }}</td>
-            </tr>
-        {% empty %}
-            <tr scope="row">
-                <td class="text-center font-weight-bold" colspan="5">Il n'existe pas de coupon</td>
-            </tr>
-        {% endfor %}
-    </tbody>        
-    {% endcomment %}
-
-    <tbody>
-        <div id="table_app">
-            <tablebodycomponent v-bind:coupons="coupons" />
-        </div>
-    </tbody>
-</table>
+    {% empty %}
+        <td class="text-center font-weight-bold" colspan="5">
+            {% trans "Vous n'avez pas encore de coupons" %}
+        </td>
+    {% endfor %}
+{% endblock %}

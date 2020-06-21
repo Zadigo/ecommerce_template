@@ -1,4 +1,4 @@
-<a class="btn btn-danger {{ extra_class }}" data-toggle="modal" data-target="#{{ target }}">
-    <i class="{{ icon }}"></i>
-    {{ btn_title }}
+<a class="btn btn-{{ type|default:'primary' }} {{ color }} {{ position }}" data-toggle="modal" data-target="#{{ target }}">
+    <i class="{{ icon }} pull-left"></i>
+    {{ btn_name }}
 </a>

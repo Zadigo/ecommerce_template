@@ -1,10 +1,14 @@
 {% extends "base.html" %}
-{% load static %}
 
-{% block title %}Paiement{% endblock %}
+{% load static i18n %}
+
+{% block title %}Nawoka : {% trans "Paiement" %}{% endblock %}
 
 {% block datalayer_push %}
+{{ impressions|json_script:"impressions" }}
 <script>
+    var impressions = JSON.parse(document.getElementById("impressions").innerText)
+
     dataLayer.push({
         "event": "checkout",
         "ecommerce": {
@@ -12,7 +16,7 @@
                 "actionField": {
                     "step": 3
                 },
-                "products": []
+                "products": impressions
             }
         }
     })
@@ -25,21 +29,21 @@
 	<link rel="stylesheet" href="{% static 'stripe.css' %}">
 {% endblock %}
 
-{% block navbar %}
-	{% include "navs/nav.html" with display=False %}        
-{% endblock %}
-
 {% block container %}
-<div class="row wow fadeIn mb-5">
-	<div class="col-3 col-md-3 offset-md-2">
-		<h2 class="text-uppercase font-weight-bold">
-			<a class="text-muted" href="{% url 'home' %}">Homepage</a>
-		</h2>
-	</div>
-	<div class="col-4 col-md-4">
-		<a href="https://stripe.com">
-			<img src="{% static 'logos/stripe.png' %}" alt="stripe">
-		</a>
+<div class="row mb-4 mb-sm-3 mb-md-5">
+	<div class="col-12 col-sm-12 col-md-5 offset-md-2">
+		<div class="row">
+			<div class="col-6 col-sm-12 col-md-6">
+				<h2 class="text-uppercase font-weight-bold m-0">
+					<a class="text-muted" href="{% url 'shop' %}" id="link_payment_to_shop">Nawoka</a>
+				</h2>
+			</div>
+			<div class="col-6 col-sm-12 col-md-6 text-sm-center text-md-right">
+				<a href="https://stripe.com" target="_blank">
+					<img src="{% static 'logos/stripe.png' %}" alt="stripe">
+				</a>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -65,7 +69,9 @@
 
 			<div class="card-footer">
 				<div class="d-flex flex-row justify-content-between">
-					<p class="text-uppercase font-weight-bold mb-0">Nous acceptons</p>
+					<p class="text-uppercase font-weight-bold mb-0">
+						{% trans "Nous acceptons" %}
+					</p>
 					<div class="payments">
 						<i class="fab fa-cc-mastercard fa-1x"></i>
 						<i class="fab fa-cc-visa fa-1x"></i>
@@ -77,36 +83,52 @@
 		<div class="card mt-3 text-muted">
 			<div class="card-body">
 				<p class="mb-0">
-					En passant votre commande, vous acceptez nos <a href="{% url 'cgu' %}">Modalités</a>, 
-					ainsi que <a href="{% url 'cgv' %}">nos politiques de confidentialité et de retour</a>. 
+					En passant votre commande, vous acceptez nos <a href="{% url 'cgu' %}" target="_blank">Modalités</a>, 
+					ainsi que <a href="{% url 'cgv' %}" target="_blank">nos politiques de confidentialité et de retour</a>. 
 					Vous consentez à ce que certaines de vos données, qui seront utilisées 
-					pour améliorer le processus d'achats, soient enregistrées par MYWEBSITE.
+					pour améliorer le processus d'achats, soient enregistrées par Nawoka.						
 				</p>
 			</div>
 		</div>
 
 		<div class="card mt-1 z-depth-0 grey lighten-5">
 			<div class="card-body pl-0 text-muted">
-				<p><a href="#">Assistance</a></p>
+				<p>
+					<a href="{% url 'customer_care' %}" target="_blank">
+						{% trans "Assistance" %}
+					</a>
+				</p>
 			</div>
 		</div>
 	</div>
 
 	<div class="col-md-4 mb-4">
-		<!-- Heading -->
-		{# {% include "../components/cart/heading.html" %} #}
-
 		<!-- SIDE -->
 		{% include "../components/cart/side.html" %}
 	</div>
-
 </div>
 {% endblock %}
 
-{% block footer %}
-	{% include "navs/nav.html" with display=False %}        
-{% endblock %}a
-
 {% block extra_scripts %}
-	{% include "../components/cart/stripejs.html" %}
+{% include "../components/cart/stripejs.html" %}
+
+<script>
+	var startPayment = function() {
+		dataLayer.push({
+			"event": "transaction",
+			"ecommerce": {
+				"purchase": {
+				"actionField": {
+					"id": "98aa382e-dc25-465c-a51d-2684420d7eeb",
+					"affiliation": "Online Store",
+					"revenue": "{{ cart_total }}",
+					"tax": 20,
+					"shipping": 2.99
+				},
+				"products": impressions
+				}
+			}
+		});
+	}
+</script>
 {% endblock %}

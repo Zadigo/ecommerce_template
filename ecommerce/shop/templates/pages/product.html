@@ -1,15 +1,46 @@
 {% extends "base.html" %}
-{% load static price_tags impressions %}
+{% load static price_tags delivery %}
 
-{% block title %}{{ product.name }}{% endblock %}
+{% block title %}Nawoka : {{ product.name }}{% endblock %}
+
+{% block navbar %}
+    {% include "navs/nav.html" %}
+{% endblock %}
+
+{% block page_description %}
+    <meta name="description" content="Découvrez les dernières tendances mode et beauté
+    pour les {{ product.collection.name }} {{ product.gender }} chez Nawoka">
+{% endblock %}
+
+{% block share_metatags %}
+    <meta name="twitter:card" content="{{ product.name }}" />
+    <meta name="twitter:creator" content="@nawoka" />
+
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka : {{ product.name }}" />
+
+    {% block og_description %}
+        <meta property="og:description" content="{{ product.description }}" />
+    {% endblock %}
+
+
+    {% block og_image %}
+        <meta property="og:image" content="{{ product.get_main_image_url }}" />
+        <meta property="og:image:alt" content="{{ product.slug }}" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:height" content="600">
+        <meta property="og:image:width" content="600">
+    {% endblock %}    
+{% endblock %}
 
 {% block datalayer_push %}
+{{ impressions|json_script:"impressions" }}
 <script>
-    var impressions ="{% autoescape off %}{% product_impressions more %}{% endautoescape %}"
+    var impressions = JSON.parse(document.getElementById("impressions").innerText)
     dataLayer.push({
         "ecommerce": {
-            "impressions": JSON.parse("{% autoescape off %}{% product_impressions more %}{% endautoescape %}"),
-            // "impressions": JSON.parse("{% product_impressions more %}"),
+            "impressions": impressions,
             "detail": {
                 "actionField": {"list": "Product list"},
                 "products": [
@@ -18,19 +49,18 @@
                         "id:": "{{ product.reference }}",
                         "price:": "{{ product.get_price }}",
                         "brand:": "Nawoka",
-                        "category:": "{{ product.collection.name }}",
+                        "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
                         "variant:": "{{ product.sku }}",
                     }
                 ]
             }
         },
-        
         "remarketingProduct": {
             "name:": "{{ product.name }}",
             "id:": "{{ product.reference }}",
             "price:": "{{ product.get_price }}",
             "brand:": "Nawoka",
-            "category:": "{{ product.colleciton.name }}",
+            "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
             "variant:": "{{ product.sku }}",
         }
     })
@@ -44,7 +74,7 @@
         "@type": "Product",
         "name": "{{ product.name }}",
         "image": "{{ product.get_main_image_url }}",
-        "description": "",
+        "description": "{{ product.description }}",
         "sku": "{{ product.sku }}",
         "mpn": "{{ product.sku }}",
         "color": "{{ product.color }}",
@@ -64,7 +94,7 @@
             "price": "{{ product.get_price }}",
             "priceValidUntil": "{{ product.price_valid_until|date:"d-m-Y" }}",
             "itemCondition": "https://schema.org/NewCondition",
-            "availability": "https://schema.org/InStock"
+            "availability": "{% if product.in_stock %}https://schema.org/InStock{% else %}https://schema.org/SoldOut{% endif %}"
         }
     }
 </script>
@@ -86,15 +116,15 @@
                 "@type": "ListItem",
                 "position": 2,
                 "item": {
-                    "@id": "https://nawoka.fr{% url 'shop' %}",
-                    "name": "Boutique"
+                    "@id": "https://nawoka.fr{% url 'shop_gender' product.gender %}",
+                    "name": "{{ product.gender|capfirst }}"
                 }
             },
             {
                 "@type": "ListItem",
                 "position": 3,
                 "item": {
-                    "@id": "{{ product.get_collection_url }}",
+                    "@id": "https://nawoka.fr{{ product.get_collection_url }}",
                     "name": "{{ product.collection.name }}"
                 }
             },
@@ -120,7 +150,7 @@
             </div>
 
             <div class="col-md-6 mb-4">
-                <div class="p-4">
+                <div class="p-sm-2 p-lg-4">
                     {# {% include "../components/product/badges.html" %} #}
                     
                     <!-- TITLE -->
@@ -133,7 +163,10 @@
                                 <del>{{ product.price_ht|price_to_text }}</del>
                             </span>                            
                         {% endif %}
-                        <span>{{ product.get_price|price_to_text }}</span>
+                        <span>
+                            {{ product.get_price|price_to_text }}
+                        </span>
+                        
                     </p>
                     
                     {% if product.reviews %}
@@ -143,7 +176,25 @@
 
                     <!-- DELIVERY -->
                     <div class="delivery mt-3 mb-3">
-                        <a href="#!">Livraison gratuite**</a>
+                        <a href data-toggle="modal" data-target="#delivery">Livraison standard**</a>
+
+                        <div class="modal fade" id="delivery" tabindex="-1" role="dialog" aria-labelledby="delivery" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Estimation de la livraison</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Commandez maintement et recevez votre colis entre
+                                        <span class="font-weight-bold blue-text">{% estimated_delivery_date 15 %}</span>
+                                        avec la livraison standard.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     {% if product.description %}
@@ -156,13 +207,13 @@
                     {% include "../components/product/actions.html" %}
                 </div>
                 
-                
-                {% include "../components/product/policies.html" %}
+                <!-- POLICIES -->
+                <div class="p-sm-2 p-lg-4">
+                    {% include "../components/product/policies.html" %}
+                </div>
             </div>
         </div>
     </div>
-
-    <hr>
 
     <!-- MORE -->
     {% include "../components/product/more.html" %}
@@ -175,177 +226,37 @@
     {% endcomment %}
 {% endblock %}
 
+{% block footer %}
+    {% include "navs/footer.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    var CardClick = function(index, name, price, reference) {
+        dataLayer.push({
+            "event": "productClick",
+            "ecommerce": {
+                "click": {
+                    "actionField": {
+                        "list": "more/{{ product.collection.name }}"
+                    },
+                    "products": [{
+                        "id": reference,
+                        "name": name,
+                        "price": price,
+                        "brand": "Nawoka",
+                        "category": "{{ collection.name }}",
+                        "position": index
+                    }]
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}
+
 {% block vuejs_scripts %}
     {{ vue_product|json_script:"vue_product" }}
-    <script>
-        var imagescomponent = {
-            props: ["images"],
-        }
 
-        var sizecomponent = {
-            props: ["sizes", "initvalue"],
-            delimiters: ["[[", "]]"],
-            template: "\
-            <select @change='selectcolor' class='custom-select custom-select-md mb-3' v-model='selectedsize' name='size' id='size'>\
-                <option v-for='size in sizes' :key='size.id' :value='size.name'>\
-                    [[ size.name ]]\
-                </option>\
-            </select>\
-            ",
-            data() {
-                return {
-                    selectedsize: ""
-                }
-            },
-            beforeMount() {
-                this.$data.selectedsize = this.$props.initvalue
-            },
-            methods: {
-                selectcolor: function() {
-                    this.$emit("selectcolor", "size", this.$data.selectedsize)
-                }
-            }
-        }
-
-        var colorcomponent = {
-            props: ["colors", "initvalue"],
-            delimiters: ["[[", "]]"],
-            template: "\
-            <select @change='selectcolor' v-model='selectedcolor' \
-                     class='custom-select custom-select-md mb-3' name='colors' id='colors'>\
-                <option v-for='color in colors' :key='color.name' :value='color.value'>\
-                    [[ color.name ]]\
-                </option>\
-            </select>\
-            ",
-            data() {
-                return {
-                    selectedcolor: ""
-                }
-            },
-            mounted() {
-                this.$data.selectedcolor = this.$props.initvalue
-            },
-            computed: {
-                showselector() {
-                    return this.$props.colors.length > 0
-                }
-            },
-            methods: {
-                selectcolor: function() {
-                    this.$emit("selectcolor", "color", this.$data.selectedcolor)
-                }
-            }
-        }
-
-        var cartbutton = {
-            props: ["product", "details"],
-            delimiters: ["[[", "]]"],
-            template: "\
-            <form @submit.prevent='addtocart' class='d-flex justify-content-left'>\
-                <input v-model='quantity' type='number' aria-label='Search' class='form-control' style='width: 100px'>\
-                <button class='btn btn-large btn-primary btn-md my-0 p':class='{\"disabled grey lighten-1\": disablebutton}' type='submit'>Ajouter au panier\
-                </button>\
-                <button class='btn btn-small red lighten-1 btn-md my-0 p'>\
-                    <i class='fas fa-heart ml-1 text-white'></i>\
-                </button>\
-            </form>\
-            ",
-            data() {
-                return {
-                    quantity: 1
-                }
-            },
-            computed: {
-                disablebutton() {
-                    var isinstock = "{{ product.in_stock }}"
-                    if (isinstock === "True") {
-                        return false
-                    } else if (isinstock === "False") {
-                        return true
-                    }
-                }
-            },
-            methods: {
-                sendanalytics: function() {
-                    dataLayer.push({
-                        "event": "AddToCart",
-                        "ecommerce": {
-                            "currencyCode": "EUR",
-                            "add": {
-                                "products": [{
-                                    "id": "{{ product.reference }}",
-                                    "name": "{{ product.name }}",
-                                    "price": "{{ product.get_price }}",
-                                    "brand": "Nawoka",
-                                    "category": "{{ product.collection.name }}",
-                                    "variant": "{{ product.color }}",
-                                    "position": 0,
-                                    "quantity": this.$data.quantity || 1
-                                }]
-                            }
-                        }
-                    })
-                },
-                addtocart: function() {
-                    var self = this
-                    var formdata = new FormData()
-                    formdata.append("quantity", this.$data.quantity)
-                    formdata.append("csrfmiddlewaretoken", $(".csrf input").val())
-
-                    _.forEach(Object.keys(this.$props.details), (key) => {
-                        formdata.append(key, this.$props.details[key])
-                    })
-
-                    var promise = new Promise((resolve, reject) => {
-                        var xhr = new XMLHttpRequest()
-                        xhr.onloadend = function() {
-                            resolve(xhr.response)
-                        }
-                        xhr.open("POST", window.location.href)
-                        xhr.send(formdata)
-                    })
-                    promise.then(response => {
-                        self.sendanalytics()
-                    })
-                }
-            }
-        }
-        
-        var productapp = new Vue({
-            el: "#vue_app",
-            components: {cartbutton, colorcomponent, imagescomponent, sizecomponent},
-            data() {
-                return {
-                    product: {},
-                    colors: [],
-                    sizes: [],
-                    details: {}
-                }
-            },
-            beforeMount() {
-                var product = JSON.parse($("#vue_product").text())
-                
-                var images = product.images
-                if (images.length > 0) {
-                    _.forEach(images, (image) => {
-                        this.$data.colors.push({name: image.variant, value: image.variant})
-                    })
-                    this.$data.details["color"] = product.images[0].variant
-                }
-
-                _.forEach(product.clothe_size, (size, index) => {
-                    this.$data.sizes.push({id: index, name: size.name})
-                })
-                this.$data.details["size"] = product.clothe_size[0].name
-
-                this.$data.product = product
-            },
-            methods: {
-                doselection: function(method, item) {
-                    this.$data.details[method] = item
-                }
-            }
-        })
-    </script>
+    {% include "../vue/product_app.html" %}
 {% endblock %}

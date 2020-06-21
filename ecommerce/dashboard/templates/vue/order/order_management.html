@@ -1,0 +1,53 @@
+<script>
+var pillcomponent = {
+    template: "\
+    <span class='badge badge-success badge-pill pull-right'>Terminer</span>\
+    "
+}
+var switchcomponent1 = {
+    template: "\
+    <div class='custom-control custom-switch'>\
+        <input @change='doselection' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch1'>\
+        <label class='custom-control-label' for='customSwitch1'>\
+            Terminer\
+        </label>\
+    </div>\
+    ",
+    data() {
+        return {
+            selected: false
+        }
+    },
+    beforeMount() {
+        var completed = "{{ order.completed }}"
+        if (completed === "True") {
+            this.$data.selected = true
+        } else {
+            this.$data.selected = false
+        }
+    },
+    methods: {
+        doselection: function() {
+            this.$emit("doselection", "mark_as_over")
+        }
+    }
+}
+var orderapp = new Vue({
+    el: "#dashboard_order_app",
+    components: {switchcomponent1, pillcomponent},
+    methods: {
+        applyselection: function(name, value) {
+            var xhr = new XMLHttpRequest()
+            var formdata = new FormData()
+
+            formdata.append("data", value)
+            formdata.append("csrfmiddlewaretoken", csrf)
+            xhr.onloadend = function() {
+                window.location.reload()
+            }
+            xhr.open("POST", window.location.href)
+            xhr.send(formdata)
+        }
+    }
+})
+</script>

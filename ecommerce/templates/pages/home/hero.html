@@ -1,56 +1,44 @@
 {% extends "../../base.html" %}
-{% load i18n static %}
+{% load i18n static aws_images %}
 
-{% block title %}My ecommerce website{% endblock %}
+{# Fashion Is Chic And Fun #}
+{% block title %}Nawoka : {% trans "Mode chic et fun" %}{% endblock %}
+
+{% block navbar %}
+    {% include "navs/nav.html" %}
+{% endblock %}
 
 {% block hero %}
-<div class="hero red darken-3" style="background-image: url('https://jobswebsite.s3.eu-west-3.amazonaws.com/nawoka/media/image5.jpg');">
-    <div class="hero-wrapper">
-        <div class="call-to-action">
-            <div class="lead">{% trans "Tous vos désirs mode au même endroit" %}</div>
-            <div class="lead-subtitle">{% trans "Produits mode et beauté uniques" %}</div>
-            <a href="{% url 'shop' %}" class="btn btn-large grey darken-4 waves-effect waves-light" id="btn_call_to_action">
-                {% trans "Commencer mon shopping" %}
-            </a>
-        </div>
-    </div>
-</div>
-
-<div class="row wow fadeIn mt-3 flex-direction-row justify-content-between">
-    <div class="col-md-6">
-        <a href="#">
-            <img class="img-fluid" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1504&q=80" alt="">
-        </a>
-    </div>
-    <div class="col-md-6">
-        <a href="#">
-            <img class="img-fluid" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1504&q=80" alt="">
+<div class="row">
+    <div class="col-12">
+        <a href="{% url 'shop_gender' 'femme' %}">
+            <div class="hero mt-4" style="background-image: url('{% create_aws_image_url 'hero.jpg' %}');height: 70vh;">
+                <div class="hero-wrapper">
+                    <div class="call-to-action"></div>
+                </div>
+            </div>
         </a>
     </div>
 </div>
 
-<div class="row wow fadeIn mt-3">
+<div class="row wow fadeIn mt-2">
+    <div class="col-sm-12 col-md-5 p-0 mr-2 offset-md-1">
+        <a href="{% url 'shop_gender' 'femme' %}">
+            <img class="img-fluid" src="{% create_aws_image_url 'feature1.jpg' %}" alt="shop-gender">
+        </a>
+    </div>
+    <div class="col-sm-12 col-md-5 mt-2 mt-sm-2 mt-md-0 p-0">
+        <a href="{% url 'shop_gender' 'femme' %}">
+            <img class="img-fluid" src="{% create_aws_image_url 'feature2.jpg' %}" alt="shop-gender">
+        </a>
+    </div>
+</div>
+
+<div class="row wow fadeIn mt-2">
     <div class="col md-12">
-        <a href="">
-            <img class="img-fluid" src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1504&q=80" alt="">
+        <a href="{% url 'shop_gender' 'femme' %}">
+            <img class="img-fluid" src="{% create_aws_image_url 'middle1.jpg' %}" alt="nawoka-offers">
         </a>
     </div>
 </div>
-
-{% comment %}
-<!-- FEATURES -->
-{% include "components/features.html" %}
-
-<!-- FEATURES BOX -->
-{% include "components/features_box.html" %}
-
-<!-- LATEST -->
-{% include "components/latest_products.html" %}
-
-<!-- LOOKBOOK -->
-{% include "components/lookbook.html" %}
-
-<!-- LOGO SECTION -->
-{% include "components/logo_section.html" %}
-{% endcomment %}
 {% endblock %}

@@ -1,35 +1,34 @@
-{% load table_header_tag %}
+{% extends "components/others/tables/base.html" %}
+{% load table i18n %}
 
-<table class="table table-hover">
-    <thead class="blue-grey lighten-4">
+{% block header_color %}grey lighten-4{% endblock %}
+
+{% block table_header %}
+    {% header "ID" "Email" "Somme" "Statut" "Date" %}
+{% endblock %}
+
+{% block table_body %}
+    {% for order in orders %}
         <tr>
-            {% create_table_header "ID" "Produit" "Référence" "Quantité" "Paiement" "Statut" %}
+            <td scope="row">{{ order.id }}</td>
+            <td>
+                <a href="{% url 'customer_order' order.id %}">
+                    {{ order.user.email }}
+                </a>
+            </td>
+            <td>{{ order.payment }}</td>
+            <td>
+                {% if order.completed %}
+                    {% include "../badge.html" with type="success" badge_name="Terminer" %}
+                {% else %}
+                    {% include "../badge.html" with type="danger" badge_name="En attente" %}										
+                {% endif %}
+            </td>
+            <td>{{ order.created_on }}</td>
         </tr>
-    </thead>
-
-    <!-- Table body -->
-    <tbody>
-        {% for item in items %}
-            <tr>
-                <th scope="row">{{ forloop.counter }}</th>
-                <td>
-                    <a href="{% url 'customer_order' item.id %}">{{ item.cart.product.name }}</a>
-                </td>
-                <td>{{ item.reference }}</td>
-                <td>{{ item.cart.quantity }}</td>
-                <td>{{ item.payment }}</td>
-                <td>
-                    {% if order.completed %}
-                        {% include "../badge.html" with type="success" badge_name="Terminer" %}
-                    {% else %}
-                        {% include "../badge.html" with type="danger" badge_name="En attente" %}										
-                    {% endif %}
-                </td>
-            </tr>
-        {% empty %}
-            <tr scope="row">
-                <td class="text-center font-weight-bold" colspan="6">Vous n'avez pas encore de de commandes</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    {% empty %}
+        <tr scope="row">
+            <td class="text-center font-weight-bold" colspan="6">Vous n'avez pas encore de de commandes</td>
+        </tr>
+    {% endfor %}
+{% endblock %}

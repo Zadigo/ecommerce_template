@@ -1,13 +1,8 @@
 {% extends "../../index.html" %}
 
+{% block title %}Profile de {{ user.get_full_name }}{% endblock %}
+
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="alert alert-info" role="alert">
-                This is a primary with <a href="#" class="alert-link">an example link</a> it out!
-            </div>
-        </div>
-    </div>
     <div class="row wow fadeIn">
         <div class="col-md-5 mb-4">
             <div class="card mb-3">
@@ -25,10 +20,17 @@
                             </tr>
                             <tr>
                                 <td class="text-right" colspan="2">
-                                    {% if user.is_authenticated %}
-                                        <div class="badge badge-pill badge-success">Online</div>
+                                    {% if user.is_active %}
+                                        <div class="badge badge-pill badge-success">Actif</div>
                                     {% else %}
-                                        <div class="badge badge-pill badge-danger">Offline</div>
+                                        <div class="badge badge-pill badge-danger">Inactif</div>
+                                    {% endif %}
+
+                                    {# TEST #}
+                                    {% if user.is_active %}
+                                        <div class="badge badge-pill badge-success">Connecté</div>
+                                    {% else %}
+                                        <div class="badge badge-pill badge-danger">Déconnecté</div>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -69,31 +71,11 @@
                 </div>
             </div>
 
-            <div class="card mb-3">
-                <div class="card-body">
-                    <p class="font-weight-bold text-uppercase">Messages</p>
-                    <textarea class="form-control" name="message" id="message" cols="10" rows="2"></textarea>
-                    <button class="btn btn-primary float-right mr-0">
-                        <i class="fa fa-envelope pull-left"></i>
-                        Envover
-                    </button>
-                </div>
-            </div>
+            <!-- MESSAGES -->
+            {% include "../../components/profile/message.html" %}
 
-            <div class="card mb-3">
-                <div class="card-body text-center">
-                    <button class="btn btn-primary">
-                        <i class="fa fa-pencil pull-left"></i>Action A
-                    </button>
-                    <button class="btn btn-primary">
-                        <i class="fa fa-write left"></i>Action B
-                    </button>
-                    <button type="button" class="btn btn-danger waves-effect waves-light" 
-                                data-toggle="modal" data-target="#modalLRFormDemo">
-                        <i class="fa fa-trash pull-left"></i>Delete
-                    </button>
-                </div>
-            </div>
+            <!-- ACTIONS -->
+            {% include "../../components/profile/actions.html" %}
 
             <div class="card">
                 <div class="card-body">
@@ -101,142 +83,12 @@
                 </div>
             </div>
 
-            <div class="card mt-3">
-                <div class="card-body">
-                    <div id="switches_app_user">
-                        <div class="col-12">
-                            <switchcomponent3 />
-                        </div>
-                        <hr class="mt-4 mb-4">
-                        <div class="col-12">
-                            <switchcomponent2 />
-                        </div>
-                        <hr class="mt-4 mb-4">
-                        <div class="col-12">
-                            <switchcomponent />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- USER STATE -->
+            {% include "../../components/profile/change_state.html" %}
         </div>
     </div>
 
     {% include "../../components/others/modals/delete_user.html" %}
-{% endblock %}
-
-{% block vuejs_scripts %}
-<script>
-    var csrf = $(".csrf input").val()
-    // PRODUCT MANAGEMENT
-    var switchcomponent3 = {
-        template: "\
-        <div class='custom-control custom-switch'>\
-            <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch3'>\
-            <label class='custom-control-label' for='customSwitch3'>Product Manager</label>\
-        </div>\
-        ",
-        delimiters: ["[[", "]]"],
-        data() {
-            return {
-                selected: false
-            }
-        },
-        beforeMount() {
-            var isproductmanager = "{{ user.is_product_manager }}"
-            if (isproductmanager === "True") {
-                this.$data.selected = true
-            } else {
-                this.$data.selected = false
-            }
-        },
-        methods: {
-            doaction: function() {
-                this.$emit("doaction", "product_manager")
-            }
-        }
-    }
-
-    var switchcomponent2 = {
-        template: "\
-        <div class='custom-control custom-switch'>\
-            <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch2'>\
-            <label class='custom-control-label' for='customSwitch2'>Admin</label>\
-        </div>\
-        ",
-        delimiters: ["[[", "]]"],
-        data() {
-            return {
-                selected: false
-            }
-        },
-        beforeMount() {
-            var isadmin = "{{ user.is_admin }}"
-            if (isadmin === "True") {
-                this.$data.selected = true
-            } else {
-                this.$data.selected = false
-            }
-        },
-        methods: {
-            doaction: function() {
-                this.$emit("doaction", "admin")
-            }
-        }
-    }
-
-    var switchcomponent = {
-        template: "\
-        <div class='custom-control custom-switch'>\
-            <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch1'>\
-            <label class='custom-control-label' for='customSwitch1'>Staff</label>\
-        </div>\
-        ",
-        delimiters: ["[[", "]]"],
-        data() {
-            return {
-                selected: false
-            }
-        },
-        beforeMount() {
-            var isstaff = "{{ user.is_staff }}"
-            if (isstaff === "True") {
-                this.$data.selected = true
-            } else {
-                this.$data.selected = false
-            }
-        },
-        methods: {
-            doaction: function() {
-                this.$emit("doaction", "staff")
-            }
-        }
-    }
-
-    var switchesapp = new Vue({
-        el: "#switches_app_user",
-        components: {switchcomponent, switchcomponent2, switchcomponent3},
-        methods: {
-            performaction: function(name) {
-                var formdata = new FormData()
-                formdata.append("csrfmiddlewaretoken", csrf)
-
-                formdata.append("method", "user_role")
-                formdata.append("switch", name)
-
-                var xhr = new XMLHttpRequest()
-                // xhr.onloadend = function() {
-                //     $("#messages").fadeIn(2000).removeClass("d-none")
-
-                //     setTimeout(() => {
-                //         $("#messages").fadeOut(2000).addClass("d-none")
-                //     }, 8000);
-                // }
-                xhr.open("POST", window.location.href)
-                xhr.send(formdata)
-            }
-        }
-    })
-</script>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -279,4 +131,12 @@
         console.error(reason);
         });
     </script>
+{% endblock %}
+
+{% block vuejs_scripts %}
+<script>
+    var csrf = $(".csrf input").val()
+</script>
+
+{% include "../../vue/user/profile_state.html" %}
 {% endblock %}

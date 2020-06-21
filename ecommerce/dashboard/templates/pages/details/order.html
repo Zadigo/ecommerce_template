@@ -2,14 +2,6 @@
 {% load price_tags %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="alert alert-info" role="alert">
-            This is a primary with <a href="#" class="alert-link">an example link</a> it out!
-        </div>
-    </div>
-</div>
-
 <div class="row wow fadeIn">
     <div class="col-6">
         <div class="card mb-3">
@@ -20,7 +12,7 @@
                     <tbody>
                         <tr role="row">
                             <td>Email</td>
-                            <td>{{ order.cart.user.email }}</td>
+                            <td>{{ order.user.email }}</td>
                         </tr>
                         <tr>
                             <td>Date</td>
@@ -47,10 +39,10 @@
             <div class="card-body">
                 <h3 class="mb-3">Products</h3>
                 <table class="table">
-                    {% for product in products %}
+                    {% for cart in carts %}
                         <tr role="row">
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.get_price|price_to_text }}</td>
+                            <td>{{ cart.quantity }} x {{ cart.product.name }}</td>
+                            <td>{{ cart.product.sku }}</td>
                         </tr>                        
                     {% endfor %}
                 </table>
@@ -99,56 +91,7 @@
 {% block vuejs_scripts %}
 <script>
     var csrf = $(".csrf input").val()
-    var pillcomponent = {
-        template: "\
-        <span class='badge badge-success badge-pill pull-right'>Terminer</span>\
-        "
-    }
-    var switchcomponent1 = {
-        template: "\
-        <div class='custom-control custom-switch'>\
-            <input @change='doselection' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch1'>\
-            <label class='custom-control-label' for='customSwitch1'>\
-                Terminer\
-            </label>\
-        </div>\
-        ",
-        data() {
-            return {
-                selected: false
-            }
-        },
-        beforeMount() {
-            var completed = "{{ order.completed }}"
-            if (completed === "True") {
-                this.$data.selected = true
-            } else {
-                this.$data.selected = false
-            }
-        },
-        methods: {
-            doselection: function() {
-                this.$emit("doselection", "mark_as_over")
-            }
-        }
-    }
-    var orderapp = new Vue({
-        el: "#dashboard_order_app",
-        components: {switchcomponent1, pillcomponent},
-        methods: {
-            applyselection: function(name, value) {
-                var xhr = new XMLHttpRequest()
-                var formdata = new FormData()
-
-                formdata.append("data", value)
-                formdata.append("csrfmiddlewaretoken", csrf)
-                xhr.onloadend = function() {
-                    window.location.reload()
-                }
-                xhr.open("POST", window.location.href)
-                xhr.send(formdata)
-            }
-        }
-    })
 </script>
+
+{# {% include "../../components/vue/order/order_management.html" %} #}
 {% endblock %}

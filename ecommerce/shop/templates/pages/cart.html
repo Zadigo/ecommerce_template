@@ -1,29 +1,36 @@
 {% extends "base.html" %}
-{% load static price_tags %}
+{% load i18n static price_tags table %}
 
-{% block title %}Mon panier{% endblock %}
+{% block title %}Nawoka : {% trans "Mon panier" %}{% endblock %}
+
+{% block navbar %}
+    {% include "navs/nav.html" %}
+{% endblock %}
 
 {% block datalayer_push %}
-<script>
-    dataLayer.push({
-        "event": "checkout",
-        "ecommerce": {
-            "checkout": {
-                "actionField": {
-                    "step": 1
-                },
-                "products": []
+    {{ impressions|json_script:"impressions" }}
+    <script>
+        var impressions = JSON.parse(document.getElementById("impressions").innerText)
+
+        dataLayer.push({
+            "event": "checkout",
+            "ecommerce": {
+                "checkout": {
+                    "actionField": {
+                        "step": 1
+                    },
+                    "products": impressions
+                }
             }
-        }
-    })
-</script>
+        })
+    </script>
 {% endblock %}
 
 {% block remarketing %}
     <script>
         gtag("event", "conversion", {
             "send_to": "",
-            "value": "",
+            "value": "{{ cart_total }}",
             "currency": "EUR"
         });
     </script>
@@ -38,8 +45,7 @@
                         <table class="table table-sm table-hover">
                             <thead>
                                 <th colspan="1"></th>
-                                <th>Nom</th>
-                                <th>Quantité</th>
+                                {% header "Nom" "Quantité" %}
                                 <th colspan="1">Total</th>
                             </thead>
                             </tbody>
@@ -52,17 +58,17 @@
                                         </td>
                                         <td>{{ product.name }}</td>
                                         <td>
-                                            <a href="{% url 'alter_quantity' product.cart_id 'reduce' %}" onclick="alterCart('RemoveFromCart')">
+                                            <a href="{% url 'alter_quantity' product.cart_id 'reduce' %}" id="btn_alter_cart_reduce">
                                                 <i class="fa fa-minus"></i>
                                             </a>
                                             {{ product.quantity }}
-                                            <a href="{% url 'alter_quantity' product.cart_id 'add' %}" onclick="alterCart('AddToCart')">
+                                            <a href="{% url 'alter_quantity' product.cart_id 'add' %}" id="btn_alter_cart_add">
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </td>
                                         <td class="{% if product.is_discounted %}red-text lighten-2{% endif %}">{{ product.total|price_to_text }}</td>
                                         <td>
-                                            <a href="{% url 'delete_from_cart' product.cart_id %}" onclick="deleteCart()">
+                                            <a href="{% url 'delete_from_cart' product.cart_id %}" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.price_ht }}', '{{ product.name }}', '{{ product.quantity }}')">
                                                 <i class="fa fa-trash fa-1x"></i>
                                             </a>
                                         </td>
@@ -90,152 +96,39 @@
         <div class="col-md-12 mb-12">
             <div class="card">
                 <div class="card-body">
-                    <a href="{% url 'shipment' %}" class="btn btn-large blue float-right">Continuer</a>
+                    <a href="{% url 'shipment' %}" class="btn btn-large blue float-right" id="btn_proceed_to_shipment">
+                        {% trans "Continuer" %}
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 {% endblock %}
 
+{% block footer %}
+    {% include "navs/footer.html" %}
+{% endblock %}
+
 {% block extra_scripts %}
     <script>
-        var alterCart = function(name) {
-                dataLayer.push({
-                "event": name,
+        var deleteProduct = function(index, price, name, quantity) {
+            dataLayer.push({
+                "event": "removeFromCart",
                 "ecommerce": {
                     "currencyCode": "EUR",
-                    "add": {
-                        "products": [{
-                            "id": "{{ product.reference }}",
-                            "name": "{{ product.name }}",
-                            "price": "{{ product.price_ht }}",
+                    "remove": {
+                    "products": [{
+                            "id": "",
+                            "price": price,
+                            "name": name,
+                            "category": "",
+                            "variant": "",
                             "brand": "Nawoka",
-                            "category": "{{ product.category }}",
-                            "variant": "{{ product.color }}",
-                            "position": 0,
-                            "quantity": 1
+                            "quantity": quantity
                         }]
                     }
                 }
-            })
+            });
         }
-        
-        var deleteCart = function() {
-            
-        }
-    </script>
-{% endblock %}
-
-{% block vuejs_scripts %}
-    {{ vue_products|json_script:"vue_products" }}
-    <script>
-        var listcomponent = {
-            props: ["products"],
-            delimiters: ["[[", "]]"],
-            template: "\
-            <div>\
-                <tr v-for='(product, index) in products' :key='product.slug' v-if='!product.deleted'>\
-                    <td>\
-                        <div class='cart-image'>\
-                            <img class='img-fluid' :src='product.url' :alt='product.slug'>\
-                        </div>\
-                    </td>\
-                    <td>[[ product.name ]]</td>\
-                    <td>\
-                        <button @click='addsingle(index)' class='btn transparent z-depth-0'><i class='fa fa-minus'></i></button>\
-                        [[ quantities[index] ]]\
-                        <button @click='removesingle(index)' class='btn transparent z-depth-0'><i class='fa fa-plus'></i></button>\
-                    </td>\
-                    <td>[[ product.total|toeuro ]]</td>\
-                    <td><button @click='removecart' class='btn transparent z-depth-0'><i class='fa fa-trash'></i></button></td>\
-                </tr>\
-            </div>\
-            ",
-            data() {
-                return {
-                    quantities: {}
-                }
-            },
-            beforeMount() {
-                var self = this
-                _.forEach(self.$props.products, (product, index) => {
-                    self.$data.quantities[index] = product.quantity
-                })
-            },
-            methods: {
-                sendrequest: function() {
-                    var formdata = new FormData()
-                    formdata.append("csrfmiddlewaretoken", $(".csrf input").val())
-
-                    var promise = new Promise((resolve, reject) => {
-                        var xhr = new XMLHttpRequest()
-                        xhr.onloadend = function() {
-                            resolve(xhr.response)
-                        }
-                        xhr.open("POST", window.location.href)
-                        xhr.send(formdata)
-                    })
-                    return promise
-                },
-                mathoperation: function(method, index) {
-                    if (method === "add") {
-                        this.$data.quantities[index] = this.$data.quantities[index] + 1
-                    }
-                    if (method === "substract") {
-                        var value = this.$data.quantities[index]
-                        var newvalue = value - 1
-
-                        if (newvalue < 1) {
-                            self.removecart()
-                            return this.$emit("mathoperation")
-                        } else {
-                            this.$data.quantities[index] = newvalue
-                        }
-                    }
-                },
-                removecart: function() {
-                    this.sendrequest()
-                },
-                addsingle: function(index) {
-                    var self = this
-                    self.sendrequest().then(response => {
-                        this.mathoperation("add", index)
-                    })
-                },
-                removesingle: function(index) {
-                    var self = this
-                    self.sendrequest().then(response => {
-                        this.mathoperation("substract", index)
-                    })
-                }
-            },
-            filters: {
-                toeuro: function(price) {
-                    return price + " €"
-                }
-            }
-        }
-
-        var cartapp = new Vue({
-            el: "#vue_app",
-            components: {listcomponent},
-            data() {
-                return {
-                    products: undefined
-                }
-            },
-            mounted() {
-                var products = JSON.parse($("#vue_products").text())
-                _.forEach(products, (product) => {
-                    product["deleted"] = false
-                })
-                return this.$data.products = products
-            },
-            methods: {
-                hideproduct: function(index) {
-                    this.$data.products[index].deleted = true
-                }
-            }
-        })
     </script>
 {% endblock %}

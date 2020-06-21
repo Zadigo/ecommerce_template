@@ -2,11 +2,29 @@
 
 {% block title %}Images{% endblock %}
 
+{% block extra_css %}
+    <style>
+        .image_card-enter-active {
+            transition: all ease .3s;
+        }
+        .image_card-enter {
+            opacity: 0;
+        }
+        .image_card-enter-to {
+            opacity: 1;
+        }
+        .image_card-move {
+            transition: all ease .3s;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
 <div id="images_app">
     <div class="row flex-direction-row justify-content-between mb-3">
         <div class="col-md-4 mb-4 pl-0">
-            <filtercomponent />
+            <!-- <filtercomponent /> -->
+            <searchinputcomponent @filterimages="dofilter" />
         </div>
         <div class="col-md-8 text-right">
             {% include "../../components/others/modal_button.html" with btn_title="Nouvelle image" icon="fa fa-image" extra_class="m-0" target="new_image_modal" %}
@@ -14,13 +32,13 @@
     </div>
     
     <div class="row wow fadin">
-        <imagescomponent v-bind:images="images" />
+        <imagescomponent v-bind:images="filteredimages" />
         <!-- <simpleimagescomponent v-bind:images="images" /> -->
     </div>
 
     <!-- MODALS -->
     {% include "../../components/others/modals/new_image.html" %}
-    {% include "../../components/others/modals/link_image_product.html" %}
+    {# {% include "../../components/others/modals/link_image_product.html" %} #}
     <div class="csrf">{% csrf_token %}</div>
 </div>
 
@@ -34,221 +52,6 @@
 
 {% block vuejs_scripts %}
     {{ vue_images|json_script:"vue_images" }}
-    <script>
-        var csrf = $(".csrf input").val()
-        const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3
 
-        var filtercomponent = {
-            template: "\
-            <select class='custom-select' name='' class='d-none' id=''>\
-                <option value='something'>Something</option>\
-            </select>\
-            "
-        }
-
-        var inputfilecomponent = {
-            template: "\
-            <form>\
-                <div class='form-row'>\
-                    <div class='form-group col-8'>\
-                        <input v-model='imagename' type='text' name='name' class='form-control' id='name' placeholder='Nom'>\
-                    </div>\
-                    <div class='form-group col-4'>\
-                        <input v-model='variant' type='text' name='variant' class='form-control' id='variant' placeholder='Variant'>\
-                    </div>\
-                </div>\
-                <div class='form-group'>\
-                    <input @change='saveurl' v-model='imageurl' type='url' name='url' class='form-control' id='url' placeholder='URL de l-image...'>\
-                </div>\
-                <div class='form-check'>\
-                    <input v-model='markasmainimage' type='checkbox' name='main-image' class='form-check-input' id='main-image'>\
-                    <label for='form-check-label'></label>Marquer comme image principale\
-                </div>\
-                <div class='form-group d-none'>\
-                    <input v-if='isinitial | issuccess' @change='getfiles($event.target.name, $event.target.files)' type='file' class='form-control-file' name='new-image' id='new-image'>\
-                    <div v-if='issaving' class='spinner-border' role='status'>\
-                        <span class='sr-only'>Loading...</span>\
-                    </div>\
-                </div>\
-            </form>\
-            ",
-            data() {
-                return {
-                    currentstatus: STATUS_INITIAL,
-                    imagename: "",
-                    variant: "",
-                    imageurl: "",
-                    markasmainimage: false
-                }
-            },
-            computed: {
-                issuccess() {
-                    return this.$data.currentstatus === STATUS_SUCCESS
-                },
-                issaving() {
-                    return this.$data.currentstatus === STATUS_SAVING
-                },
-                isinitial() {
-                    return this.$data.currentstatus === STATUS_INITIAL
-                }
-            },
-            methods: {
-                reset: function() {
-                    self.$data.imagename = ""
-                    self.$data.variant = ""
-                    self.$data.markasmainimage = false
-                },
-                saveurl: function() {
-                    var self = this
-                    var formdata = new FormData()
-                    formdata.append("csrfmiddlewaretoken", csrf)
-                    formdata.append("method", "imageurl")
-                    formdata.append("name", self.$data.imagename)
-                    formdata.append("variant", self.$data.variant)
-                    formdata.append("url", self.$data.imageurl)
-                    formdata.append("mainimage", self.$data.markasmainimage)
-
-                    var promise = new Promise((resolve, reject) => {
-                        var xhr = new XMLHttpRequest()
-                        xhr.open("POST", window.location.href)
-                        xhr.send(formdata)
-                        resolve(xhr.response)
-                    }).then((response) => {
-                        self.reset()
-                        self.$emit("saveurl", self.$data.imagename, self.$data.variant, self.$data.imageurl)
-                    })
-                },
-                save: function(formdata) {
-                    var self = this
-                    var promise = new Promise((resolve, reject) => {
-                        var xhr = new XMLHttpRequest()
-                        xhr.onloadstart = function() {self.$data.currentstatus = STATUS_SAVING}
-                        xhr.onloadend = function () {self.$data.currentstatus = STATUS_SUCCESS}
-                        xhr.open("POST", window.location.href)
-                        xhr.send(formdata)
-                        resolve(xhr.response)
-                    }).then((response) => {
-                        console.log(response)
-                    })
-                },
-                getfiles: function(name, files) {
-                    var formdata = new FormData()
-                    formdata.append("csrfmiddlewaretoken", csrf)
-                    formdata.append("method", "images")
-                    console.log(files)
-
-                    Object.keys(files).forEach(key => {
-                        console.log(key)
-                        formdata.append("images", files[key], files[key]["name"])
-                    })
-                    this.save(formdata)
-                    console.log(formdata)
-                } 
-            }
-        }
-
-        var simpleimagescomponent = {
-            props: ["images"],
-            delimiters: ["[[", "]]"],
-            template: "\
-            <div class='row'>\
-                <div v-if='!image.deleted' v-for='image in images' :key='image.slug' class='col-md-3 mb-3'>\
-                    <div class='card'>\
-                        <img @hover='' class='card-img-top' :src='image.url' :alt='image.slug'>\
-                        <i @click='' class='fa fa-trash'></i>\
-                    </div>\
-                </div>\
-            </div>\
-            ",
-            methods: {
-
-            }
-        }
-
-        var imagescomponent = {
-            props: ["images"],
-            delimiters: ["[[", "]]"],
-            template: "\
-            <div class='row'>\
-                <div class='row'>\
-                    <div v-if='!image.deleted' v-for='image in images' :key='image.slug' class='col-md-3 mb-3'>\
-                        <div class='box15'>\
-                            <img :src='image.url' class='img-fluid' :alt='image.slug'>\
-                            <div class='box-content'>\
-                                <h3 class='title'>[[ image.name ]]</h3>\
-                                <ul class='icon'>\
-                                    <li>\
-                                        <a @click='markasmain(image)'>\
-                                            <i v-if='image.main_image' class='fa fa-star red-text'></i>\
-                                            <i v-else class='fa fa-star'></i>\
-                                        </a>\
-                                    </li>\
-                                    <li><a @click='deleteimage(image)'><i class='fa fa-trash'></i></a></li>\
-                                </ul>\
-                            </div>\
-                        </div>\
-                    </div>\
-                </div>\
-            </div>\
-            ",
-            methods: {
-                deleteimage: function(image) {
-                    var self = this
-                    var formdata = new FormData()
-                    formdata.append("csrfmiddlewaretoken", csrf)
-                    formdata.append("method", "delete")
-                    formdata.append("image_id", image.pk)
-
-                    var xhr = new XMLHttpRequest()
-                    xhr.onloadend = function() {image.deleted = true}
-                    xhr.open("POST", window.location.href)
-                    xhr.send(formdata)
-                },
-                markasmain: function(image) {
-                    var self = this
-                    var formdata = new FormData()
-                    formdata.append("csrfmiddlewaretoken", csrf)
-                    formdata.append("method", "asmain")
-                    formdata.append("image_id", image.pk)
-
-                    var xhr = new XMLHttpRequest()
-                    xhr.onloadend = function() {image.main_image = !image.main_image}
-                    xhr.open("POST", window.location.href)
-                    xhr.send(formdata)
-                }
-            }
-        }
-
-        var imagesapp = new Vue({
-            el: "#images_app",
-            components: {imagescomponent, filtercomponent, inputfilecomponent, simpleimagescomponent},
-            data() {
-                return {
-                    images: []
-                }
-            },
-            beforeMount() {
-                var images = JSON.parse($("#vue_images").text())
-                images.forEach(image => {
-                    image["deleted"] = false
-                })
-                this.$data.images = images
-            },
-            methods: {
-                appendnewimage: function(name, variant, url) {
-                    var base = {
-                        pk: 0,
-                        deleted: false,
-                        name: name,
-                        url: url,
-                        variant: variant
-                    }
-                    _.findLast(this.$data.images, (image) => {
-                        base["pk"] = image.pk + 1
-                    })
-                    this.$data.images.push(base)
-                }
-            }
-        })
-    </script>
+    {% include "../../vue/images/images_management.html" %}
 {% endblock %}

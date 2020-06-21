@@ -1,11 +1,13 @@
 import datetime
 
 from django import http
+from django.contrib import messages
 from django.core import exceptions
-from django.db.models import Case, Count, F, Q, QuerySet, Sum, When, fields
+from django.db.models import (Avg, Case, Count, F, Q, QuerySet, Sum, When,
+                              fields)
 from django.db.models.functions import TruncMonth
 
-from shop import utilities
+from shop import models, utilities
 
 
 class ImageManager(QuerySet):
@@ -24,7 +26,6 @@ class CollectionManager(QuerySet):
         return products.filter(price_between_a_and_b)
 
 class ProductManager(QuerySet):
-    pass
     def product_colors(self, product_id):
         """Gets the available colors for a product"""
         colors = self.get(id=product_id).images.values_list('variant', flat=True)
@@ -42,9 +43,12 @@ class ProductManager(QuerySet):
         return products.order_by('collection__name')\
                         .annotate(average_price=Count('price_ht'))
 
-    # def names_for_forms(self):
-    #     queryset = self.values_list('name', flat=True)
-    #     return [(name, name) for name in queryset]
+    def search_product(self, searched_item):
+        qfunctions = Q(name__icontains=searched_item) | Q(collection__name__icontains=searched_item)
+        queryset = self.filter(qfunctions).filter(active=True)
+        if queryset.exists():
+            return queryset
+        return []
 
 class CartManager(QuerySet):
     def my_cart(self, cart_id):
@@ -57,7 +61,8 @@ class CartManager(QuerySet):
 
         cart = self.my_cart(cart_id=cart_id).prefetch_related('product')
         # Get the real prices of the product
-        condition = When(product__discounted_price__gt=0, then='product__discounted_price')
+        product_marked_as_discounted = Q(product__discounted_price__gt=0) & Q(product__discounted=True)
+        condition = When(product_marked_as_discounted, then='product__discounted_price')
         annotated_cart = cart.annotate(true_price=Case(condition, default='product__price_ht'))
 
         try:
@@ -94,7 +99,8 @@ class CartManager(QuerySet):
         discounted_price_times_quantity = F('product__discounted_price') * F('quantity')
         price_ht_times_quantity = F('product__price_ht') * F('quantity')
         
-        first_case = When(product__discounted_price__gt=0, then=discounted_price_times_quantity)
+        product_marked_as_discounted = Q(product__discounted_price__gt=0) & Q(product__discounted=True)
+        first_case = When(product_marked_as_discounted, then=discounted_price_times_quantity)
         case = Case(first_case, default=price_ht_times_quantity, output_field=fields.DecimalField())
         true_price_queryset = cart.annotate(true_price=case)
 
@@ -105,7 +111,6 @@ class CartManager(QuerySet):
         return self.my_cart(cart_id).aggregate(Sum(F('quantity')))
 
     def add_to_cart(self, request, current_product):
-        """Add or increase the amount of products in a given cart"""
         cart_id = request.session.get('cart_id')
         quantity = request.POST.get('quantity')
         color = request.POST.get('color')
@@ -133,19 +138,31 @@ class CartManager(QuerySet):
             cart_id = utilities.create_cart_id()
             details = {
                 'cart_id': cart_id,
-                'price_ht': current_product.price_ht,
+                'price_ht': current_product.get_price(),
                 'size': size,
                 'color': color,
                 'quantity': int(quantity),
-                'anonymous': True
+                'anonymous': True,
+                'product': current_product
             }
-            new_cart = self.create(**details)
-            new_cart.product.add(current_product)
-            request.session['cart_id'] = cart_id
-            return new_cart
+            try:
+                new_cart = self.create(**details)
+            except:
+                messages.error(request, f"Une erreur s'est produite - CXCRE", extra_tags='alert-danger')
+                return False
+            else:
+                request.session['cart_id'] = cart_id
+                return new_cart
         
         if cart_id:
             try:
+                # TODO
+                # user_cart = Q(cart_id=cart_id) & Q(product__id=current_product.id)
+                # product_details = Q(color=color) 
+                # if size:
+                #     product_details = product_details & Q(size=size)
+                # cart = self.get(user_cart & product_details)
+                
                 # There might be a cart, but with a different
                 # product. In that specific case we need to
                 # put a new product in the cart with different
@@ -154,45 +171,29 @@ class CartManager(QuerySet):
             except:
                 details = {
                     'cart_id': cart_id,
-                    'price_ht': current_product.price_ht,
+                    'price_ht': current_product.get_price(),
                     'size': size,
                     'color': color,
                     'quantity': int(quantity),
-                    'anonymous': True
+                    'anonymous': True,
+                    'product': current_product
                 }
                 new_cart = self.create(**details)
-                new_cart.product.add(current_product)
-                new_cart.anonymous = True
-                new_cart.save()
                 return new_cart
             else:
-                cart.price = current_product.price_ht
-                cart.product.add(current_product)
-                cart.color = color
-                cart.size = size
-                cart.quantity = F('quantity') + int(quantity)
-                cart.anonymous = True
-                cart.save()
-                return cart
-
-class FormsManager(QuerySet):
-    def for_forms(self):
-        choices = []
-        queryset = self.all()
-        for name in queryset:
-            choices.append([name, name])
-        return choices
-
-
-
-class CollectionStatisticsManager(QuerySet):
-    """For dashboard"""
-    pass
-
-class ProductStatisticsManager(QuerySet):
-    """For dashboard"""
-    def total_count(self):
-        return self.all().count()
+                try:
+                    cart.price_ht = current_product.price_ht
+                    cart.product = current_product
+                    cart.color = color
+                    cart.size = size
+                    cart.quantity = F('quantity') + int(quantity)
+                    cart.anonymous = True
+                    cart.save()
+                except:
+                    messages.error(request, f"Une erreur s'est produite - CXAD", extra_tags='alert-danger')
+                    return False
+                else:
+                    return cart
 
 
 # For Dashboard
@@ -223,7 +224,16 @@ class OrdersStatisticsManager(BaseStatistics):
         difference = F('created_on') - datetime.timedelta(days=7)
         return self.filter(created_on__gt=difference)
 
-    def revenue(self):
+    def average_total_order(self):
         carts = self.select_related('cart')
-        cart_total = Sum(F('cart__price_ht')*F('cart__quantity'), output_field=fields.DecimalField())
-        return carts.annotate(revenue=cart_total).aggregate(Sum('revenue'))
+        prices = F('cart__price_ttc') * F('cart__quantity')
+        return carts.annotate(average_prices=prices).aggregate(Avg('prices'))
+
+    def revenue(self):
+        return self.aggregate(Sum('payment'))
+
+    def profit(self):
+        carts = self.prefetch_related('cart')
+        profit = F('cart__price_ttc') - F('cart__price_ht')
+        total_profit = Sum(profit*F('cart__quantity'), output_field=fields.DecimalField())
+        return carts.annotate(total_profit=total_profit).aggregate(Sum('total_profit'))

@@ -6,18 +6,20 @@
 	<div class="list-group list-group-flush">
 		{% include "./sidenav_link.html" with href="index" active=False icon="fa-chart-pie" title="Dashboard" %}
 
-		{% include "./sidenav_link.html" with href="dashboard_products" active=False icon="fa-table" title="Products" %}
+		{% include "./sidenav_link.html" with href="dashboard_products" active=False icon="fa-table" title="Produits" %}
 
-		{% include "./sidenav_link.html" with href="customer_orders" active=False icon="fa-table" title="Orders" %}
+		{% include "./sidenav_link.html" with href="dashboard_collections" active=False icon="fa-table" title="Collections" %}
+
+		{% include "./sidenav_link.html" with href="customer_orders" active=False icon="fa-table" title="Commandes" %}
 		
-		{% include "./sidenav_link.html" with href="dashboard_carts" active=False icon="fa-table" title="Carts" %}
+		{% include "./sidenav_link.html" with href="dashboard_carts" active=False icon="fa-table" title="Paniers" %}
 
 		{% include "./sidenav_link.html" with href="manage_images" active=False icon="fa-image" title="Images" %}
 		
-		{% include "./sidenav_link.html" with href="dashboard_coupons" active=False icon="fa-usd" title="Coupons" %}
+		{% include "./sidenav_link.html" with href="dashboard_coupons" active=False icon="fas fa-tag" title="Coupons" %}
 
 		{% if user.is_admin %}
-			{% include "./sidenav_link.html" with href="dashboard_users" active=False icon="fa-user" title="Users" %}	
+			{% include "./sidenav_link.html" with href="dashboard_users" active=False icon="fa-user" title="Utilisateurs" %}	
 		{% endif %}
 	</div>
 </div>

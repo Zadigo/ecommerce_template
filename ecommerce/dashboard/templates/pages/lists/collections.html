@@ -1,0 +1,20 @@
+{% extends "pages/lists/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Collections" %}{% endblock %}
+
+{% block heading %}
+    {% include "../../components/navs/heading.html" with title="Collections" %}
+{% endblock %}
+
+{% block card_header %}
+    {% include "../../components/others/link.html" with href="create_collection" position="float-right" btn_name="Nouveau"  %}
+{% endblock %}
+
+{% block card_body %}
+    {% include "../../components/others/tables/collections.html" %}
+{% endblock %}
+    
+{% block pagination %}
+    {% include "../../components/navs/pagination.html" with href="dashboard_products" %}
+{% endblock %}

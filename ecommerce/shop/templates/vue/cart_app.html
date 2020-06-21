@@ -1,0 +1,112 @@
+{# Vue scripts created in order to manage the products present a person's cart #}
+<script>
+    var listcomponent = {
+        props: ["products"],
+        name: "CartApp",
+        delimiters: ["[[", "]]"],
+        template: "\
+        <div>\
+            <tr v-for='(product, index) in products' :key='product.slug' v-if='!product.deleted'>\
+                <td>\
+                    <div class='cart-image'>\
+                        <img class='img-fluid' :src='product.url' :alt='product.slug'>\
+                    </div>\
+                </td>\
+                <td>[[ product.name ]]</td>\
+                <td>\
+                    <button @click='addsingle(index)' class='btn transparent z-depth-0'><i class='fa fa-minus'></i></button>\
+                    [[ quantities[index] ]]\
+                    <button @click='removesingle(index)' class='btn transparent z-depth-0'><i class='fa fa-plus'></i></button>\
+                </td>\
+                <td>[[ product.total|toeuro ]]</td>\
+                <td><button @click='removecart' class='btn transparent z-depth-0'><i class='fa fa-trash'></i></button></td>\
+            </tr>\
+        </div>\
+        ",
+        data() {
+            return {
+                quantities: {}
+            }
+        },
+        beforeMount() {
+            var self = this
+            _.forEach(self.$props.products, (product, index) => {
+                self.$data.quantities[index] = product.quantity
+            })
+        },
+        methods: {
+            sendrequest: function() {
+                var formdata = new FormData()
+                formdata.append("csrfmiddlewaretoken", $(".csrf input").val())
+
+                var promise = new Promise((resolve, reject) => {
+                    var xhr = new XMLHttpRequest()
+                    xhr.onloadend = function() {
+                        resolve(xhr.response)
+                    }
+                    xhr.open("POST", window.location.href)
+                    xhr.send(formdata)
+                })
+                return promise
+            },
+            mathoperation: function(method, index) {
+                if (method === "add") {
+                    this.$data.quantities[index] = this.$data.quantities[index] + 1
+                }
+                if (method === "substract") {
+                    var value = this.$data.quantities[index]
+                    var newvalue = value - 1
+
+                    if (newvalue < 1) {
+                        self.removecart()
+                        return this.$emit("mathoperation")
+                    } else {
+                        this.$data.quantities[index] = newvalue
+                    }
+                }
+            },
+            removecart: function() {
+                this.sendrequest()
+            },
+            addsingle: function(index) {
+                var self = this
+                self.sendrequest().then(response => {
+                    this.mathoperation("add", index)
+                })
+            },
+            removesingle: function(index) {
+                var self = this
+                self.sendrequest().then(response => {
+                    this.mathoperation("substract", index)
+                })
+            }
+        },
+        filters: {
+            toeuro: function(price) {
+                return price + " €"
+            }
+        }
+    }
+
+    var cartapp = new Vue({
+        el: "#vue_app",
+        components: {listcomponent},
+        data() {
+            return {
+                products: undefined
+            }
+        },
+        mounted() {
+            var products = JSON.parse($("#vue_products").text())
+            _.forEach(products, (product) => {
+                product["deleted"] = false
+            })
+            return this.$data.products = products
+        },
+        methods: {
+            hideproduct: function(index) {
+                this.$data.products[index].deleted = true
+            }
+        }
+    })
+</script>

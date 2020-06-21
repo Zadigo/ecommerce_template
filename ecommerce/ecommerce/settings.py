@@ -57,6 +57,11 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'aws_images': 'templatetags.aws_images',
+                'general_tags': 'templatetags.general_tags',
+                'table': 'templatetags.table'
+            },
         },
     },
 ]

@@ -1,0 +1,2 @@
+<input type="{{ widget.type }}" name="{{ widget.name }}"
+    {% for key, value in widget.attrs.items %}{{ key }}="{{ value }}"{% endfor %}>

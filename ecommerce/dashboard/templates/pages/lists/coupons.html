@@ -20,50 +20,6 @@
     </div>
 </div>
 
+<!-- PAGINATION -->
 {% include "../../components/navs/pagination.html" with href="dashboard_products" %}
-{% endblock %}
-
-{% block vuejs_scripts %}
-    {{ vue_coupons|json_script:"vue_coupons" }}
-    <script>
-        var tablebodycomponent = {
-            props: ["coupons"],
-            delimiters: ["[[", "]]"],
-            template: "\
-            <div name='tbody'>\
-                <tr v-for='(coupon, index) in coupons' :key='coupon.id' role='row'>\
-                    <td scope='row'>[[ coupon.id ]]</td>\
-                    <td>[[ coupon.code ]]</td>\
-                    <td>[[ coupon.value ]]</td>\
-                    <td>[[ coupon.end_date ]]</td>\
-                    <td>\
-                        <div class='custom-control custom-switch'>\
-                            <input type='checkbox' class='custom-control-input' :id='createswitchname(index)'>\
-                            <label class='custom-control-label' :for='createswitchname(index)'></label>\
-                        </div>\
-                    </td>\
-                </tr>\
-            </div>\
-            ",
-            methods: {
-                createswitchname: function(index) {
-                    return "switch_" + index
-                }
-            }
-        }
-
-        var tableapp = new Vue({
-            el: "#table_app",
-            components: {tablebodycomponent},
-            data() {
-                return {
-                    coupons: []
-                }
-            },
-            beforeMount() {
-                var coupons = JSON.parse($("#vue_coupons").text())
-                this.$data.coupons = coupons
-            }
-        })
-    </script>
 {% endblock %}

@@ -1,3 +1,6 @@
-<a href="{% url href %}" class="btn btn-{{ type|default:'primary' }} {{ position }}">
+<a href="{% url href %}" class="btn btn-{{ type|default:'primary' }} {{ color }} {{ position }}">
+    {% if icon %}
+        <i class="{{ icon }} pull-left"></i>
+    {% endif %}
     {{ btn_name }}
 </a>

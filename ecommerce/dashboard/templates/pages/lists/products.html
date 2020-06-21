@@ -1,0 +1,43 @@
+{% extends "../../index.html" %}
+
+{% block title %}Produits{% endblock %}
+
+{% block heading %}
+    {% include "../../components/navs/heading.html" with title="Produits" %}
+{% endblock %}
+
+{% block content %}
+<div class="row wow fadeIn">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header white">
+                    {% include "../../components/others/modal_button.html" with target="export_modal" icon="fa fa-file-export" position="float-right" btn_name="Exporter" color="grey lighten-3 black-text" %}
+                    
+                    {% if user.is_admin or user.is_product_manager %}
+                        <!-- ACTIONS -->
+                        {% include "../../components/others/modal_button.html" with target="import_modal" icon="fa fa-file-import" position="float-right" btn_name="Importer" color="grey lighten-3 black-text"  %}
+                        {% include "../../components/others/link.html" with href="dashboard_create" position="float-right" btn_name="Nouveau"  %}
+
+                        <!-- MODALS -->
+                        {% include "../../components/others/modals/import_csv.html" %}
+                        {% include "../../components/others/modals/export_csv.html" %}
+                    {% endif %}
+                </div>                
+            
+            <div class="card-body">
+                {% include "../../components/others/tables/products.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGINATION -->
+{% include "../../components/navs/pagination.html" with href="dashboard_products" %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <!-- IMPORT -->
+    {% include "../../vue/list/import_csv.html" %}
+    <!-- EXPORT -->
+    {% include "../../vue/list/export_csv.html" %}
+{% endblock %}

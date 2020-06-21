@@ -1,21 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Commande réussie{% endblock %}
+{% block title %}Nawoka : Commande réussie{% endblock %}
 
 {% block datalayer_push %}
-    {{ ecommerce_datalayer|json_script:"ecommerce_datalayer" }}
-
+    {{ products|json_script:"products" }}
     <script>
+        var impressions = JSON.parse(document.getElementById("products").innerText)
+
         dataLayer.push({
-            "event": "checkout",
+            "event": "purchase",
             "ecommerce": {
                 "checkout": {
                     "actionField": {
-                        "step": 2
+                        "step": 4
                     }
                 },
-                "products": JSON.parse(document.getElementById("ecommerce_datalayer").textContent)
+                "products": products
             }
         });
     </script>
@@ -24,7 +25,7 @@
 {% block remarketing %}
     <script>
         gtag("event", "purchase", {
-            "value": "",
+            "value": "{{ payment }}",
             "items": [{
                 "id": "",
                 "google_business_vertical": "retail"
@@ -34,10 +35,10 @@
 
     <script>
         gtag("event", "conversion", {
-            "send_to": "",
-            "value": "",
+            "send_to": "AW-701852005/2a2RCIXcocMBEOXS1c4C",
+            "value": "{{ payment }}",
             "currency": "EUR",
-            "transaction_id": ""
+            "transaction_id": "{{ transaction|default:reference }}"
         });
   </script>
 {% endblock %}
@@ -48,11 +49,17 @@
             <h3 class="text-muted text-uppercase font-weight-bold">Commande enregistrée</h3>
             <hr class="mt-3 mb-3">
             <p class="mt-4 mb-4">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-                Quas excepturi explicabo, asperiores ab architecto rem molestias 
-                consequuntur enim blanditiis aliquid hic possimus corporis aperiam voluptas nemo 
-                ullam, at nam veniam!
+                Merci d'avoir acheté chez Nawoka. Nous espérons que votre expérience 
+                client a été parfait avec nous et espérons vous revoir très bientôt.
             </p>
+
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center">
+                    <div class="fa fa-facebook-f"></div>
+                    <div class="fa fa-instagram"></div>
+                    <div class="fa fa-pinterest"></div>
+                </div>
+            </div>
 
             <hr class="mt-3 mb-3">
             <h3 class="font-weight-bold text-uppercase">{{ reference }}</h3>

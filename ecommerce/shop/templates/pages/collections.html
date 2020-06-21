@@ -1,7 +1,26 @@
 {% extends "base.html" %}
 {% load static price_tags %}
 
-{% block title %}Enterprise: {{ collection.name }}{% endblock %}
+{% block title %}Nawoka : {{ collection.name }} - {{ collection.gender }}{% endblock %}
+
+{% block navbar %}
+    {% include "navs/nav.html" %}
+{% endblock %}
+
+{% block datalayer_push %}
+    {{ impressions|json_script:"impressions" }}
+
+    <script>
+        var impressions = JSON.parse(document.getElementById("impressions").innerText)
+        
+        dataLayer.push({
+            "ecommerce": {
+                "impressions": impressions
+            },
+            "event": "productImpressions"
+        })
+    </script>
+{% endblock %}
 
 {% block container %}
 <div id="vue_app">
@@ -20,20 +39,38 @@
     <!-- NAVBAR -->
     {% include "../components/products/navbar.html" %}
     
-    <section class="text-center mb-4">
+    <section class="text-center mb-4" id="collection">
         <div class="row wow fadeIn">
             {% for product in products %}
-                <div class="col-lg-3 col-md-4 mb-4">
+                <div class="col-6 col-md-4 col-lg-3 mb-4">
                     <div class="card">
                         <div class="view overlay">
                             <img src="{{ product.get_main_image_url }}" class="card-img-top" alt="{{ product.slug }}">
                             <a><div class="mask rgba-white-slight"></div></a>
                         </div>
     
-                        <div class="card-body text-center">
-                            <a href="{{ product.get_absolute_url }}" class="grey-text">
-                                <h5>{{ product.name }}</h5>
+                        <div class="card-body text-left">
+                            <a href="{{ product.get_absolute_url }}" class="grey-text" onclick="CardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
+                                {% if is_mobile %}
+                                    <p>{{ product.name|truncatechars:20 }}</p>
+                                {% else %}
+                                    <h5>{{ product.name|truncatechars:20 }}</h5>
+                                {% endif %}
+
+                                {% if product.is_novelty %}
+                                    <span class="badge badge-pill danger-color text-uppercase">new</span>                                            
+                                {% endif %}
+
+                                {% if product.our_favorite %}
+                                    <span class="badge badge-pill success-color text-uppercase">favori</span>                                            
+                                {% endif %}
+                                
+                                {% if not product.in_stock %}
+                                    <span class="badge badge-pill info-color text-uppercase">epuise</span>                                            
+                                {% endif %}
                             </a>
+                            
+                            {% comment %}
                             <h5>
                                 <strong>
                                     <a href="" class="dark-grey-text">{{ product.name }}
@@ -42,8 +79,21 @@
                                         {% endif %}
                                     </a>
                                 </strong>
-                            </h5>
-                            <h4 class="font-weight-bold blue-text"><strong>{{ product.price_ht|price_to_text }}</strong></h4>
+                            </h5>                                
+                            {% endcomment %}
+
+                            {% if product.is_discounted %}
+                                <h4 class="font-weight-bold red-text mt-1">
+                                    <strong>{{ product.get_price|price_to_text }}</strong>
+                                </h4>
+                                <h6 class="font-weight-light blue-text mt-1">
+                                    <strike>{{ product.price_ht|price_to_text }}</strike>
+                                </h6>                                                             
+                            {% else %}
+                                <h4 class="font-weight-bold blue-text mt-1">
+                                    <strong>{{ product.get_price|price_to_text }}</strong>
+                                </h4>                                
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -56,77 +106,35 @@
 {% include "../components/products/pagination.html" %}
 {% endblock %}
 
+{% block footer %}
+    {% include "navs/footer.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    var CardClick = function(index, name, price, reference) {
+        dataLayer.push({
+            "event": "productClick",
+            "ecommerce": {
+                "click": {
+                    "actionField": {
+                        "list": "{{ collection.gender }}/{{ collection.name }}"
+                    },
+                    "products": [{
+                        "id": reference,
+                        "name": name,
+                        "price": price,
+                        "brand": "Nawoka",
+                        "category": "{{ collection.name }}",
+                        "position": index
+                    }]
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}
+
 {% block vuejs_scripts %}
     {{ vue_products|json_script:"vue_products" }}
-    <script>
-        var navbarlinks = {
-            template: "\
-            <ul class='navbar-nav'>\
-                <li class='nav-item active'>\
-                    <a class='nav-link' href='#'>All\
-                        <span class='sr-only'>(current)</span>\
-                    </a>\
-                </li>\
-                <li class='nav-item'>\
-                    <a class='nav-link' href='#'>Shirts</a>\
-                </li>\
-                <li class='nav-item'>\
-                    <a class='nav-link' href='#'>Sport wears</a>\
-                </li>\
-                <li class='nav-item'>\
-                    <a class='nav-link' href='#'>Outwears</a>\
-                </li>\
-            </ul\
-            "
-        }
-
-        var cardscomponent = {
-            props: ["products"],
-            template: "\
-            <div class='col-lg-3 col-md-6 mb-4'>\
-                <div class='card'>\
-                    <div class='view overlay'>\
-                        <img src='{{ product.get_main_image_url }}' class='card-img-top' alt=''>\
-                        <a><div class='mask rgba-white-slight'></div></a>\
-                    </div>\
-                    <div class='card-body text-center'>\
-                    <a href='{{ product.get_absolute_url }}' class='grey-text'>\
-                        <h5>{{ product.name }}</h5>\
-                    </a>\
-                    <h5>\
-                        <strong>\
-                            <a href='' class='dark-grey-text'>Denim shirt\
-                            <span class='badge badge-pill danger-color'>NEW</span>\
-                            </a>\
-                        </strong>\
-                    </h5>\
-                    <h4 class='font-weight-bold blue-text'><strong>120$</strong></h4>\
-                </div>\
-            </div>\
-            ",
-            data() {
-                return {
-                }
-            },
-            computed: {
-
-            },
-            methods: {
-
-            }
-        }
-
-        var productapp = new Vue({
-            el: "#vue_app",
-            components: {navbarlinks, cardscomponent},
-            data() {
-                return {
-                    products: undefined
-                }
-            },
-            beforeMount() {
-                return this.$data.products = JSON.parse($("#vue_products").text())
-            }
-        })
-    </script>
 {% endblock %}

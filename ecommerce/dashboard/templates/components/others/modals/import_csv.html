@@ -1,0 +1,31 @@
+<div class="modal fade" id="import_modal" tabindex="-1" role="dialog" aria-labelledby="import modal" aria-hidden="true">
+	<div class="modal-dialog modal-md modal-notify modal-info" role="document">
+		<div class="modal-content">
+			<div class="modal-header green">
+				<p class="heading lead">Importer des produits</p>
+
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true" class="white-text">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body" id="import_csv_app">
+				<p>Importez une fichier CSV avec les colonnes obligatoires</p>
+				<form>
+					<div class="form-row">
+						<div class="form-group">
+							<input @change="getfile($event.target.files)" class="form-control" type="file" name="importcsv" name="importcsv" id="importcsv">
+						</div>
+					</div>
+				</form>
+                <a @click="uploadfile" v-if="!showspinner" class="btn btn-primary btn-lg float-right" :class="{'disabled': disablebutton}" data-modal="dismiss">
+                    <i class="fa fa-file-export"></i>
+                    Importer
+				</a>
+				<div v-else class="spinner-border" role="status">
+					<span class="sr-only">Loading...</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

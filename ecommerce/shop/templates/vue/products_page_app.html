@@ -1,0 +1,71 @@
+<script>
+    var navbarlinks = {
+        template: "\
+        <ul class='navbar-nav'>\
+            <li class='nav-item active'>\
+                <a class='nav-link' href='#'>All\
+                    <span class='sr-only'>(current)</span>\
+                </a>\
+            </li>\
+            <li class='nav-item'>\
+                <a class='nav-link' href='#'>Shirts</a>\
+            </li>\
+            <li class='nav-item'>\
+                <a class='nav-link' href='#'>Sport wears</a>\
+            </li>\
+            <li class='nav-item'>\
+                <a class='nav-link' href='#'>Outwears</a>\
+            </li>\
+        </ul>\
+        "
+    }
+
+    var cardscomponent = {
+        props: ["products"],
+        template: "\
+        <div class='col-lg-3 col-md-6 mb-4'>\
+            <div class='card'>\
+                <div class='view overlay'>\
+                    <img src='{{ product.get_main_image_url }}' class='card-img-top' alt=''>\
+                    <a><div class='mask rgba-white-slight'></div></a>\
+                </div>\
+                <div class='card-body text-center'>\
+                <a href='{{ product.get_absolute_url }}' class='grey-text'>\
+                    <h5>{{ product.name }}</h5>\
+                </a>\
+                <h5>\
+                    <strong>\
+                        <a href='' class='dark-grey-text'>Denim shirt\
+                        <span class='badge badge-pill danger-color'>NEW</span>\
+                        </a>\
+                    </strong>\
+                </h5>\
+                <h4 class='font-weight-bold blue-text'><strong>120$</strong></h4>\
+            </div>\
+        </div>\
+        ",
+        data() {
+            return {
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+
+        }
+    }
+
+    var productapp = new Vue({
+        el: "#vue_app",
+        components: {navbarlinks, cardscomponent},
+        data() {
+            return {
+                products: undefined
+            }
+        },
+        beforeMount() {
+            return this.$data.products = JSON.parse($("#vue_products").text())
+        }
+    })
+</script>

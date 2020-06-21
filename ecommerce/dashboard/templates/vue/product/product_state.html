@@ -1,0 +1,137 @@
+<script>    
+    var switchcomponent3 = {
+        template: "\
+        <div class='custom-control custom-switch'>\
+            <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch3'>\
+            <label class='custom-control-label' for='customSwitch3'>[[ displaytext ]]</label>\
+        </div>\
+        ",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                selected: false
+            }
+        },
+        beforeMount() {
+            var isinstock = "{{ product.in_stock }}"
+            if (isinstock === "True") {
+                this.$data.selected = true
+            } else {
+                this.$data.selected = false
+            }
+        },
+        computed: {
+            displaytext() {
+                if (this.$data.selected) {
+                    return "En stock"
+                } else {
+                    return "Pas en stock"
+                }
+            }
+        },
+        methods: {
+            doaction: function() {
+                this.$emit("doaction", "stock")
+            }
+        }
+    }
+
+    var switchcomponent2 = {
+        template: "\
+        <div class='custom-control custom-switch'>\
+            <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch2'>\
+            <label class='custom-control-label' for='customSwitch2'>[[ displaytext ]]</label>\
+        </div>\
+        ",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                selected: false
+            }
+        },
+        beforeMount() {
+            var isdiscounted = "{{ product.discounted }}"
+            if (isdiscounted === "True") {
+                this.$data.selected = true
+            } else {
+                this.$data.selected = false
+            }
+        },
+        computed: {
+            displaytext() {
+                if (this.$data.selected) {
+                    return "Enlever la réduction"
+                } else {
+                    return "Appliquer une réduction"
+                }
+            }
+        },
+        methods: {
+            doaction: function() {
+                this.$emit("doaction", "reduction")
+            }
+        }
+    }
+
+    var switchcomponent = {
+        template: "\
+        <div class='custom-control custom-switch'>\
+            <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch1'>\
+            <label class='custom-control-label' for='customSwitch1'>[[ displaytext ]]</label>\
+        </div>\
+        ",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                selected: false
+            }
+        },
+        beforeMount() {
+            var isactive = "{{ product.active }}"
+            if (isactive === "True") {
+                this.$data.selected = true
+            } else {
+                this.$data.selected = false
+            }
+        },
+        computed: {
+            displaytext() {
+                if (this.$data.selected) {
+                    return "Désactiver"
+                } else {
+                    return "Activer"
+                }
+            }
+        },
+        methods: {
+            doaction: function() {
+                this.$emit("doaction", "state")
+            }
+        }
+    }
+
+    var switchesapp = new Vue({
+        el: "#switches_app",
+        components: {switchcomponent, switchcomponent2, switchcomponent3},
+        methods: {
+            performaction: function(name) {
+                var formdata = new FormData()
+                formdata.append("csrfmiddlewaretoken", csrf)
+
+                if (name === "state") {
+                    formdata.append("method", "state")
+                } else if (name === "reduction") {
+                    formdata.append("method", "reduction")
+                } else if (name === "stock") {
+                    formdata.append("method", "stock")
+                }
+
+                var xhr = new XMLHttpRequest()
+                xhr.responseType = "json"
+                xhr.onloadend = function() {if (xhr.response.reload == true) {window.location.reload()}}
+                xhr.open("POST", window.location.href)
+                xhr.send(formdata)
+            }
+        }
+    })
+</script>

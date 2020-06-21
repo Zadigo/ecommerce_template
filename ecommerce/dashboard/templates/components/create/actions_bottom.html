@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<hr>
+<div class="col-12 mt-3 p-0">
+    <a href="{% url 'dashboard_delete_product' product.id %}?next={% url 'dashboard_products' %}" class="btn btn-large red lighten-2 ml-0">
+        {% trans "Delete" %}
+    </a>
+    <button type="submit" class="btn btn-large float-right white mr-0">
+        {% trans "Sauvegarder" %}
+    </button>
+</div>				

@@ -2,9 +2,8 @@
 <script>
     (function() {
         var paymentform = $("#form_payment")
-
-        // var publisheablekey = "pk_test_TYooMQauvdEDq54NiTphI7jx"
-        var publisheablekey = "pk_test_eo8zzqww6iuVFzWmLQEJ4F7K"
+        
+        var publisheablekey = "{{ publishable_key }}"
         var stripe = Stripe(publisheablekey)
         var elements = stripe.elements()
         var style = {
@@ -48,6 +47,7 @@
                     var xhr = new XMLHttpRequest()
 
                     xhr.responseType = "json"
+
                     xhr.onloadstart = function() {
                         button.find("div.spinner-grow").removeClass("d-none")
                         button.addClass("disabled")
@@ -60,6 +60,11 @@
                                 window.location.href = response.redirect_url
                             }, 3000);
                         } else {
+                            dataLayer.push({
+                                "event": "Payment",
+                                "PaymentState": false,
+                                "PaymentFailedSum": "{{ cart_total}}"
+                            })
                             messagecard.text("Payment was not successful")
                             messagecard.removeClass("d-none")
                             button.find("div.spinner-grow").addClass("d-none")

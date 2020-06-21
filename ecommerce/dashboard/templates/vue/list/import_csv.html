@@ -1,0 +1,50 @@
+<script>
+    var importcsvapp = new Vue({
+        el: "#import_csv_app",
+        name: "ImportFileApp",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                currentfile: "",
+                showspinner: false,
+                filetosend: null
+            }
+        },
+        computed: {
+            disablebutton() {
+                return this.$data.filetosend == null ? true : false
+            }
+        },
+        methods: {
+            uploadfile: function () {
+                var self = this
+                var xhr = new XMLHttpRequest()
+                xhr.responseType = "json"
+                xhr.onloadstart = () => {
+                    self.$data.showspinner = true
+                }
+                xhr.onloadend = () => {
+                    if (xhr.response.state == false) {
+                        window.location.reload()
+                    }
+                    if (xhr.response.state == true) {
+                        window.location.reload()
+                    }
+                    self.$data.showspinner = false
+                }
+                xhr.open("POST", "/dashboard/products/csv/upload")
+                // xhr.setRequestHeader("Content-Type", "text/csv")
+                xhr.send(self.$data.filetosend)
+            },
+            getfile: function (files) {
+                var self = this
+                var formdata = new FormData()
+                var file = files[0]
+
+                this.$data.currentfile = file.name
+                formdata.append("newcsvfile", file)
+                this.$data.filetosend = formdata
+            }
+        }
+    })
+</script>

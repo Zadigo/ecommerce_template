@@ -1,0 +1,66 @@
+<script>
+    var calculatorcomponent = {
+        delimiters: ["[[", "]]"],
+        name: "Calculator",
+        template: "\
+        <div class='form-row'>\
+            <div v-for='field in fields' :key='field.id' :class='buildcol(field.col)' class='form-group'>\
+                <input-field v-model='values[field.name]' :placeholder='field.placeholder'\
+                                     :id='field.id' type='number' step=10 min=0></input-field>\
+            </div>\
+            <div class='form-group col-12'>\
+                <input-field v-model='margincalculation' disabled></input-field>\
+            </div>\
+            <div class='form-group col-12'>\
+                <h5>Prix final : [[ totalprice ]]€</h5>\
+            </div>\
+        </div>\
+        ",
+        data() {
+            return {
+                fields: [
+                    {id: 1, col: 6, name: "price", tag: "Prix HT", placeholder: "Coût d'achat HT"},
+                    {id: 2, col: 6, name: "transport", tag: "Transport (€)", placeholder: "Frais de transport"},
+                    {id: 3, col: 12, name: "margin", tag: "Marge (%)", placeholder: "Marge souhaitée"},
+                ],
+                values: {price: 0, margin: 20, transport: 0},
+                totaltoinput: 0
+            }
+        },
+        computed: {
+            totalprice() {
+                var value = this.marginresult + (this.$data.values.price * 1)
+                value = value + (this.$data.values.transport * 1)
+                this.$data.total = this.$data.totaltoinput
+                return value ? value : 0
+            },
+            margincalculation() {
+                var margin = this.$data.values.margin
+                var cost = this.$data.values.price
+
+                if (margin === 0 | cost === 0) {
+
+                }
+
+                var step1 = 100 - margin
+                var step2 = (cost * margin) / step1
+                return step2 ? step2 : 0
+            }
+        },
+        methods: {
+            buildcol: function(col) {
+                return "col-" + col
+            },
+            applytotal: function() {
+                $("input[name='price_ht']").val((this.$data.totaltoinput * 1))
+                $("#margin_modal").modal({ show: false})
+            }
+        }
+    }
+
+    var calculatemarginapp = new Vue({
+        el: "#calculate_margin",
+        name: "MarginCalculator",
+        components: {calculatorcomponent}
+    })
+</script>

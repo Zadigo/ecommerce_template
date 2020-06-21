@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
 	<div class="container-fluid">
 		<!-- COLLAPSE -->
@@ -9,7 +11,7 @@
 		<!-- LINKS -->
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<!-- LEFT -->
-			<ul class="navbar-nav mr-auto">
+			<ul class="navbar-nav ml-auto">
 				{% if user.is_admin %}
 					<li class="nav-item">
 						<a class="nav-link waves-effect" href="/admin/" target="_blank">Admin</a>
@@ -18,11 +20,12 @@
 				{% endif %}
 
 				<li class="nav-item">
-					<a class="nav-link waves-effect" href="{% url 'logout' %}">Se déconnecter
+					<a class="nav-link waves-effect" href="{% url 'logout' %}">
+						{% trans "Se déconnecter" %}
 					</a>
 				</li>					
 			</ul>
-			<ul class="navbar-nav ml-auto">
+			<ul class="navbar-nav ml-auto d-none">
 				<li class="nav-item">
 					<a class="nav-link waves-effect btn btn-sm red lighten-2 z-depth-0 text-white" href="{% url 'shop' %}" target="_blank">Voir le site</a>
 				</li>

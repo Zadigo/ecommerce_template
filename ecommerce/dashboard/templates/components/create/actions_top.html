@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="row mt-3">
+    <div class="col-auto">
+        <div id="duplication_app">
+            <a v-if="!clicked" v-on:click="sendrequest" class="mr-4 text-muted">
+                <i class="fa fa-copy mr-2"></i>
+                {% trans "Duplicate" %}
+            </a>
+            <div v-else class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <a href="{% url 'product' product.gender product.collection.view_name product.id product.slug %}" class="text-muted" target="_blank">
+                <fa class="fa fa-eye mr-2"></fa>
+                {% trans "Preview" %}
+            </a>
+        </div>
+    </div>
+</div>

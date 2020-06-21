@@ -2,6 +2,10 @@
 
 {% block title %}Conditions générales d'utilisation{% endblock title %}
 
+{% block navbar %}
+    {% include "navs/nav.html" %}
+{% endblock %}
+
 {% block container %}
     <section class="section" id="cgu">
         <div class="row">
@@ -338,3 +342,7 @@
         </div>    
     </section>    
 {% endblock %}    
+
+{% block footer %}
+    {% include "navs/footer.html" %}
+{% endblock %}

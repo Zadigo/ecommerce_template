@@ -1,9 +1,9 @@
-{% load table_header_tag dates_tags %}
+{% load table dates_tags %}
 
 <table class="table table-hover">
     <thead class="blue-grey lighten-4">
         <tr>
-            {% create_table_header "ID" "Reference" "Quantity" "Since" %}
+            {% header "ID" "Reference" "Quantity" "Since" %}
             <th colspan="1"></th>
         </tr>
     </thead>
@@ -14,7 +14,7 @@
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
                 <td>
-                    <a href="{% url 'dashboard_product' item.id %}">{{ item.cart_id }}</a>
+                    <a href="{% url 'dashboard_product' item.product.id %}">{{ item.cart_id }}</a>
                 </td>
                 <td>{{ item.quantity }}</td>
                 <td>{{ item.created_on|in_cart_since }}</td>

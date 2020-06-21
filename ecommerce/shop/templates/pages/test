@@ -1,1 +1,0 @@
-{{ product.name } - {{ product.gender }} - {{ product.collection.name }} - {{ product.get_price }}€ {{ product.get_discount_pct_as_text }}

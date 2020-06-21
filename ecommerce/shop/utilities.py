@@ -4,6 +4,7 @@ import random
 import secrets
 import string
 import hashlib
+import string
 
 def create_transaction_token(n=1, salt='nawoka'):
     """Create a payment token for Google enhanced ecommerce"""
@@ -166,8 +167,11 @@ def impressions_helper(queryset):
         return []
     return items
 
-def add_to_current_date(d=15):
+def add_to_current_date(d=15, use_timezone=False):
     """Adds d-days to a current date"""
+    if use_timezone:
+        from django.utils import timezone
+        return timezone.now() + datetime.timedelta(days=d)
     current_date = datetime.datetime.now().date()
     return current_date + datetime.timedelta(days=d)
 
@@ -177,7 +181,6 @@ def get_image_name(image):
     return items[0]
 
 def create_product_slug(word:str):
-    new_word = []
     accents = {
         'é': 'e',
         'è': 'e',
@@ -189,13 +192,30 @@ def create_product_slug(word:str):
         'ï': 'i',
         'î': 'i',
         'ù': 'u',
-        'ü': 'u'
+        'ü': 'u',
+        'ç': 'c'
     }
-    letters = [letter for letter in word]
-    for letter in letters:
+    words_to_exlude = ['de', 'en', 'le', 'la']
+    words = word.split(' ')
+
+    intermediate_word = []
+    for i in range(0, len(words)):
+        if "d'" in words[i]:
+            words[i] = words[i].replace("d'", ' ')
+        if words[i] not in words_to_exlude:
+            intermediate_word.append(words[i].strip().lower())
+    
+    final_word = '-'.join(intermediate_word)
+    non_accentuated_word = ''
+    for letter in final_word:
         try:
-            new_word.append(accents[letter])
+            non_accentuated_word = non_accentuated_word + accents[letter]
         except:
-            new_word.append(letter)
-    fitted_word = ''.join(new_word)
-    return fitted_word.replace(' ', '-').lower()
+            non_accentuated_word = non_accentuated_word + letter            
+
+    return non_accentuated_word
+
+def create_discount_code():
+    n = random.randrange(1000, 9000)
+    s = random.choice(string.ascii_uppercase)
+    return f'NAW{n}{s}'

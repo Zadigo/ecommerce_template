@@ -1,0 +1,158 @@
+<script>
+    // MODAL COMPONENTS
+    const STATUS_INITIAL = 0, 
+    STATUS_SAVING = 1, 
+    STATUS_SUCCESS = 2, 
+    STATUS_FAILED = 3
+    
+    var sideimagescomponent = {
+        template: "\
+        <div class='col-md-2'>\
+            <div v-for='image in vue_images' class='card'>\
+                <img src='{{ image.url }}' alt='' class='card-img-top'>\
+            </div>\
+        </div>\
+        "
+    }
+    
+    var urlcomponent = {
+        template: "\
+        <div class='row'>\
+            <div class='col-12 mt-1'>\
+                <input @change='senddata' v-model='name' type='text' class='form-control' placeholder='Nom ex. {{ product.name }}'>\
+            </div>\
+            <div class='col-12 mt-1'>\
+                <input @change='senddata' v-model='url' type='url' class='form-control' :disabled='activatefield' placeholder='URL'>\
+            </div>\
+            <div class='col-12 mt-1'>\
+                <input @change='senddata' v-model='variant' type='text' class='form-control' :disabled='activatefield' placeholder='Couleur du produit ex. Rouge'>\
+            </div>\
+            <div class='col-12 mt-1'>\
+                <div class='form-check'>\
+                    <input @change='senddata' v-model='asmain' class='form-check-input' type='checkbox' id='main-image'>\
+                    <label class='form-check-label' for='main-image'>\
+                        Marquer comme image principale\
+                    </label>\
+                </div>\
+            </div>\
+            <div class='col-12 mt-1 text-right mt-3'>\
+                <button @click='uploadimage' class='btn btn-large'>Ajouter</button>\
+            </div>\
+        </div>\
+        ",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                name: undefined,
+                url: undefined,
+                variant: "Noir",
+                asmain: false
+            }
+        },
+        methods: {
+            uploadimage: function() {
+                this.$emit("uploadimage")
+            },
+            senddata: function() {
+                this.$emit("geturl", this.$data.name, this.$data.url, 
+                            this.$data.variant, this.$data.asmain, "url")
+            }
+        },
+        computed: {
+            activatefield() {
+                if (this.$data.name !== undefined & this.$data.name != "") {
+                    return false
+                }
+                return true
+            }
+        }
+    }
+    
+    var inputfilecomponent = {
+        template: "\
+        <div class='card-body grey'>\
+            <input v-if='isinitial | issuccess' @change='getfiles($event.target.name, $event.target.files)' type='file' name='new-image' id='new-image'>\
+            <div v-if='issaving' class='spinner-border' role='status'>\
+                <span class='sr-only'>Loading...</span>\
+            </div>\
+        </div>\
+        ",
+        data() {
+            return {
+                currentstatus: STATUS_INITIAL
+            }
+        },
+        computed: {
+            issuccess() {
+                return this.$data.currentstatus === STATUS_SUCCESS
+            },
+            issaving() {
+                return this.$data.currentstatus === STATUS_SAVING
+            },
+            isinitial() {
+                return this.$data.currentstatus === STATUS_INITIAL
+            }
+        },
+        methods: {
+            save: function(formdata) {
+                var self = this
+                var promise = new Promise((resolve, reject) => {
+                    var xhr = new XMLHttpRequest()
+                    xhr.onloadstart = function() {self.$data.currentstatus = STATUS_SAVING}
+                    xhr.onloadend = function () {self.$data.currentstatus = STATUS_SUCCESS}
+                    xhr.open("POST", window.location.href)
+                    xhr.send(formdata)
+                    resolve(xhr.response)
+                }).then((response) => {
+                    console.log(response)
+                })
+            },
+            getfiles: function(name, files) {
+                var formdata = new FormData()
+                formdata.append("csrfmiddlewaretoken", csrf)
+                formdata.append("method", "images")
+                console.log(files)
+    
+                Object.keys(files).forEach(key => {
+                    console.log(key)
+                    formdata.append("images", files[key], files[key]["name"])
+                })
+                this.save(formdata)
+                console.log(formdata)
+            } 
+        }
+    }
+    
+    var bottommodalapp = new Vue({
+        el: "#picture_uploader_app",
+        components: {inputfilecomponent, urlcomponent, sideimagescomponent},
+        data() {
+            return {
+                itemstosend: {}
+            }
+        },
+        methods: {
+            doupload: function(name, url, variant, asmain, type) {
+                this.$data.itemstosend["name"] = name
+                this.$data.itemstosend["url"] = url
+                this.$data.itemstosend["type"] = type
+                this.$data.itemstosend["variant"] = variant
+                this.$data.itemstosend["asmain"] = asmain
+            },
+            sendimages: function() {
+                var formdata = new FormData()
+                _.forEach(Object.keys(this.$data.itemstosend), (key) => {
+                    formdata.append(key, this.$data.itemstosend[key])
+                })
+                formdata.append("csrfmiddlewaretoken", csrf)
+                formdata.append("method", "images")
+    
+                var xhr = new XMLHttpRequest()
+                xhr.onloadend = function() {window.location.reload()}
+                xhr.open("POST", window.location.href)
+                xhr.send(formdata)
+            }
+        }
+    })
+</script>
+    
