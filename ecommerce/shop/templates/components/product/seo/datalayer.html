@@ -1,0 +1,30 @@
+{{ impressions|json_script:"impressions" }}
+<script>
+    var impressions = JSON.parse(document.getElementById("impressions").innerText)
+    dataLayer.push({
+        "ecommerce": {
+            "impressions": impressions,
+            "detail": {
+                "actionField": { "list": "Product list" },
+                "products": [
+                    {
+                        "name:": "{{ product.name }}",
+                        "id:": "{{ product.reference }}",
+                        "price:": "{{ product.get_price }}",
+                        "brand:": "Nawoka",
+                        "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
+                        "variant:": "{{ product.sku }}",
+                    }
+                ]
+            }
+        },
+        "remarketingProduct": {
+            "name:": "{{ product.name }}",
+            "id:": "{{ product.reference }}",
+            "price:": "{{ product.get_price }}",
+            "brand:": "Nawoka",
+            "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
+            "variant:": "{{ product.sku }}",
+        }
+    })
+</script>

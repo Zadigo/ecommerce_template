@@ -4,7 +4,7 @@
 {% block header_color %}grey lighten-4{% endblock %}
 
 {% block table_header %}
-    {% header "ID" "Email" "Somme" "Statut" "Date" %}
+    {% header "ID" "Référence" "Somme" "Statut" "Date" %}
 {% endblock %}
 
 {% block table_body %}
@@ -13,13 +13,18 @@
             <td scope="row">{{ order.id }}</td>
             <td>
                 <a href="{% url 'customer_order' order.id %}">
-                    {{ order.user.email }}
+                    {{ order.reference }}
                 </a>
             </td>
             <td>{{ order.payment }}</td>
             <td>
-                {% if order.completed %}
-                    {% include "../badge.html" with type="success" badge_name="Terminer" %}
+                
+                {% if order.refund %}
+                    {% include "../badge.html" with type="dark" badge_name="Remboursement" %}
+                {% elif order.accepted %}
+                    {% include "../badge.html" with type="primary" badge_name="Livraison" %}
+                {% elif order.completed %}
+                    {% include "../badge.html" with type="success" badge_name="Terminé" %}
                 {% else %}
                     {% include "../badge.html" with type="danger" badge_name="En attente" %}										
                 {% endif %}

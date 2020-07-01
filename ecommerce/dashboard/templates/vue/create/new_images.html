@@ -1,32 +1,32 @@
 <script>
     Vue.component("image-component", {
-        template: "\
-        <div class='col-6 p-0 pr-1'>\
-            <slot></slot>\
-        </div>\
-        "
+        template: `
+        <div class="col-6 p-0 pr-1">
+            <slot></slot>
+        </div>
+        `
     })
     
     var imagescomponent = {
         props: ["images"],
         name: "AddImage",
-        template: "\
-        <div class='row'>\
-            <div class='col-8 pl-0 pr-1'>\
-                <img :src='mainimage' class='img-fluid'>\
-            </div>\
-            <div class='col-4'>\
-                <div class='row'>\
-                    <image-component>\
-                        <img :src='firstimage' class='img-fluid'>\
-                    </image-component>\
-                    <image-component>\
-                        <img :src='firstimage' class='img-fluid'>\
-                    </image-component>\
-                </div>\
-            </div>\
-        </div>\
-        ",
+        template: `
+        <div class="row">
+            <div class="col-8 pl-0 pr-1">
+                <img :src="mainimage" class="img-fluid">
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <image-component>
+                        <img :src="firstimage" class="img-fluid">
+                    </image-component>
+                    <image-component>
+                        <img :src="firstimage" class="img-fluid">
+                    </image-component>
+                </div>
+            </div>
+        </div>
+        `,
         data() {
             return {
                 placeholder: "https://via.placeholder.com/600"

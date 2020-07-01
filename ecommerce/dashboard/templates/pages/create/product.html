@@ -1,80 +1,48 @@
-{% extends "../../index.html" %}
+{% extends "../base_create.html" %}
+{% load i18n %}
 
 {% block title %}Création d'un nouveau produit{% endblock %}
 
-{% block content %}
-<div class="row wow fadeIn">
-	<div class="col-12">
-		<form action="{{ post_to_view }}" method="POST" enctype="multipart/form-data" class="new-product" id="general_form">
-			{% csrf_token %}
+{% block class %}new-product{% endblock %}
 
-			{% for error in form.errors %}
-				<div class="alert alert-danger mb-4" role="alert">
-					The <span class="font-weight-bold">{{ error }}</span> field in missing or is empty
-				</div>
-			{% endfor %}
-			
-			<div class="form-row">
-				<div class="form-group col-12">
-					<div>
-						<submitformbutton v-bind:images="images"  />
-					</div>
-					<a href="{% url 'dashboard_products' %}" class="btn btn-large float-right white">Abandonner</a>
-				</div>
-			</div>				
-			
-			<div class="form-row">
-				<div class="col-8">
-					<!-- GENERAL -->
-					{% include "../../components/create/base.html" %}
-					
-					<!-- MEDIA -->
-					{# {% include "../../components/create/media.html" %} #}
-					
-					<!-- PRIX -->
-					{% include "../../components/create/price.html" %}
-					
-					<!-- INVENTORY -->
-					{% include "../../components/create/inventory.html" %}
-					
-					<!-- VARIANTS -->
-					{% include "../../components/create/variants.html" %}
-				</div>
-				
-				<!-- SIDE -->
-				{% include "../../components/create/side.html" %}
+{% block top_form_buttons %}
+	<div class="form-row">
+		<div class="form-group col-12">
+			<div>
+				<submitformbutton v-bind:images="images" />
 			</div>
-
-			{% comment %}
-				<!-- SEO -->
-				<div class="col-8 p-0">
-					<div class="card">
-						<div class="card-body">
-							<p class="text-uppercase text-muted font-weight-bold mb-1">SEO</p>
-							<div id="seo_app">
-								<p class="text-primary" id="main-link"></p>
-								<p class="green-text">https://nawoka.fr/</p>
-								<p class="text-muted" id="description-text"></p>
-							</div>
-						</div>
-					</div>
-				</div>				
-			{% endcomment %}
-			
-			<!-- ACTIONS -->
-			{# {% include "../../components/create/actions_bottom.html" %} #}
-		</form>
+			<a href="{% url 'dashboard_products' %}" class="btn btn-large float-right white">Abandonner</a>
+		</div>
 	</div>
-	<div class="csrf">{% csrf_token %}</div>
-</div>
+{% endblock %}
 
-<!-- MODALS -->
-{% include "../../components/others/modals/margin.html" %}
+{% block left_content %}
+	<!-- GENERAL -->
+	{% include "../../components/edit/base.html" %}
+
+	<!-- MEDIA -->
+	{# {% include "../../components/edit/media.html" %} #}
+
+	<!-- PRIX -->
+	{% include "../../components/edit/price.html" %}
+
+	<!-- INVENTORY -->
+	{% include "../../components/edit/inventory.html" %}
+
+	<!-- VARIANTS -->
+	{% include "../../components/edit/variants.html" %}
+
+	<!-- MODALS -->
+	{% include "../../components/others/modals/margin.html" %}
+{% endblock %}
+
+{% block right_content %}
+	<!-- SIDE -->
+	{% include "../../components/edit/side.html" %}
 {% endblock %}
 
 {% block vuejs_scripts %}
-	<!-- FORM -->
-	{% include "../../vue/create/form.html" %}
+	{{ block.super }}
 	<!-- CALCULATOR -->
 	{% include "../../vue/create/calculator.html" %}
 {% endblock %}

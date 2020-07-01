@@ -1,0 +1,14 @@
+{# Payments for Google Pay, Apple Pay, Amazon Pay etc. #}
+
+{% extends "components/others/modals.html" %}
+
+{% block modal_id %}one_click_payments{% endblock %}
+{% block modal_aria %}one_click_payments{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div id="google-pay-button"></div>
+        </div>
+    </div>
+{% endblock %}

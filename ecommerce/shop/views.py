@@ -32,7 +32,7 @@ from django.views.decorators import http as http_decorator
 from django.views.decorators.csrf import csrf_exempt
 
 from accounts import models as accounts_models
-from shop import forms, models, payment_logic, serializers, utilities
+from shop import forms, models, payment, serializers, utilities
 
 
 def no_cart_router(request, current_path, debug=False):
@@ -45,6 +45,7 @@ def no_cart_router(request, current_path, debug=False):
     else:
         return render
 
+
 def create_products_impressions(queryset):
     """Create impressions for Google Analytics"""
     impressions = []
@@ -56,6 +57,7 @@ def create_products_impressions(queryset):
                     category=product.collection.name, position=index, \
                         list=f'{product.collection.gender}/{product.collection.name}'))
     return impressions
+
 
 def create_cart_impressions(constructed_products):
     impressions = []
@@ -71,6 +73,7 @@ def create_cart_impressions(constructed_products):
         }
         impressions.append(item)
     return impressions
+
 
 def creat_cart_products_from_queryset(queryset):
     impressions = []
@@ -91,8 +94,10 @@ class IndexView(generic.View):
     def get(self, request, *args, **kwargs):
         return render(request, 'pages/shop.html')
 
+
 class LookBookView(generic.TemplateView):
     template_name = 'pages/lookbook.html'
+
 
 class ShopGenderView(generic.View):
     def get(self, request, *args, **kwargs):
@@ -101,6 +106,7 @@ class ShopGenderView(generic.View):
             'collections': collections[:3]
         }
         return render(request, 'pages/shop_gender.html', context)
+
 
 class ProductsView(generic.ListView):
     model = models.Collection
@@ -160,6 +166,7 @@ class ProductsView(generic.ListView):
         context['impressions'] = create_products_impressions(products)
         return context
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class ProductView(generic.DetailView):
     model = models.Product
@@ -169,7 +176,7 @@ class ProductView(generic.DetailView):
 
     def post(self, request, **kwargs):
         product = super().get_object()
-        
+
         cart = models.Cart.cart_manager.add_to_cart(request, product)
         if cart:
             return http.JsonResponse(data={'success': 'success'})
@@ -184,10 +191,17 @@ class ProductView(generic.DetailView):
         context['vue_product'] = serialized_product.data
 
         suggested_products = self.model.objects.prefetch_related('images') \
-                                    .filter(active=True).exclude(id=product.id)[:3]
+            .filter(active=True).exclude(id=product.id)[:3]
         context['more'] = suggested_products
-        context['impressions'] = create_products_impressions(suggested_products)
+        context['impressions'] = create_products_impressions(
+            suggested_products)
+
+        images = product.images.all()
+        serialized_images = serializers.ImageSerializer(
+            instance=images, many=True)
+        context['serialized_images'] = serialized_images.data
         return context
+
 
 class CheckoutView(generic.ListView):
     model = models.Cart
@@ -230,6 +244,7 @@ class CheckoutView(generic.ListView):
         context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
         return context
 
+
 @http_decorator.require_http_methods(['GET'])
 def delete_product_from_cart(request, **kwargs):
     cart_id = request.session.get('cart_id')
@@ -244,6 +259,7 @@ def delete_product_from_cart(request, **kwargs):
             else:
                 return redirect('no_cart')
     return redirect('checkout')
+
 
 @http_decorator.require_http_methods(['GET'])
 def alter_item_quantity(request, **kwargs):
@@ -312,11 +328,13 @@ class ShipmentView(generic.ListView):
 
         context['cart_id'] = cart_id
         context['coupon_form'] = forms.CouponForm
+        context['shipment_form'] = forms.ShipmentForm
         # context['has_coupon'] = self.get_queryset().first().coupon.has_coupon
         context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
 
         context['impressions'] = create_cart_impressions(products)
         return context
+
 
 class PaymentView(generic.ListView):
     model = models.Cart
@@ -329,15 +347,17 @@ class PaymentView(generic.ListView):
         cart_id = self.request.session.get('cart_id')
         if cart_id is None:
             return redirect(reverse('no_cart'))
-            
+
         queryset = super().get_queryset().filter(cart_id=cart_id)
         if not queryset.exists():
             return redirect('no_cart')
         return get_request
 
     def post(self, request, **kwargs):
-        context = self.get_context_data(object_list=self.get_queryset(), **kwargs)
-        request.session['user_infos'] = {}
+        context = self.get_context_data(
+            object_list=self.get_queryset(), **kwargs)
+        payment.PreprocessPayment(
+            request, set_in_session=True, shipping='standard')
         return render(request, self.template_name, context)
 
     def get_queryset(self, **kwargs):
@@ -349,47 +369,81 @@ class PaymentView(generic.ListView):
         products = self.get_queryset(**kwargs)
         cart_id = self.request.session.get('cart_id')
         context['cart_id'] = cart_id
-        context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
+        context['cart_total'] = self.model.cart_manager.cart_total(cart_id)[
+            'cart_total']
         context['impressions'] = create_cart_impressions(products)
         return context
 
+
 class ProcessPayment(generic.View):
     def post(self, request, **kwargs):
-        import ast
-        stripe_token = request.POST.get('token')
-        user_infos = request.session.get('user_infos')
-        request.session['conversion'] = {'reference': '', 'transaction': '', 'payment': ''}
-        return http.JsonResponse(data={'status': False})
+        backend = payment.SessionPaymentBackend(request)
+        backend.cart_model = models.Cart
+        # state, data = backend.process_payment(payment_debug=False)
+        state, data = backend.create_customer_and_process_payment()
+
+        if state:
+            details = {
+                'reference': data['order_reference'],
+                'transaction': data['transaction'],
+                'payment': data['total']
+            }
+
+            try:
+                order = models.CustomerOrder.objects.create(**details)
+                order.cart.add(*list(backend.cart_queryset))
+            except:
+                return http.JsonResponse(data={'state': state, 'redirect_url': '/shop/payment'})
+            else:
+                backend.set_session_for_post_process()
+
+                user, _ = accounts_models.MyUser.objects.get_or_create(
+                    email=backend.user_infos['email'])
+
+                user.name = backend.user_infos['firstname']
+                user.surname = backend.user_infos['lastname']
+                user.save()
+
+                profile = user.myuserprofile_set.get()
+                profile.telephone = backend.user_infos['telephone']
+                profile.address = backend.user_infos['address']
+                profile.city = backend.user_infos['city']
+                profile.zip_code = backend.user_infos['zip_code']
+
+                profile.save()
+
+                order.user = user
+                order.save()
+        else:
+            return http.JsonResponse(data={'state': state, 'redirect_url': data['redirect_url'], 'code': data['errors'][0]['code']})
+        return http.JsonResponse(data={'state': state, 'redirect_url': data['redirect_url']})
+
 
 class CartSuccessView(generic.TemplateView):
     template_name = 'pages/success.html'
 
     def get(self, request, *args, **kwargs):
         context = {}
-        reference = request.session.get('conversion')['reference']
-        transaction = request.session.get('conversion')['transaction']
-        url_based_token = request.GET.get('transaction_token')
-        session_based_token = request.session.get('transaction_token')
+        data = request.session.get('conversion')
 
-        # None == None is True and to counter this effect,
-        # this logic checks that both values are indeed present
-        if url_based_token is None and session_based_token is None:
-            return redirect(reverse('no_cart'))
+        backend = payment.PostProcessPayment(request)
 
-        if url_based_token == session_based_token:
-            customer_order = models.CustomerOrder.objects.get(reference=reference)
-            if customer_order:
-                products = customer_order.cart.all()
-                context['products'] = creat_cart_products_from_queryset(products)
-            context['reference'] = reference
-            context['transaction'] = transaction
-            context['payment'] = request.session.get('conversion')['payment'] or 0
+        if backend.is_authorized:
+            customer_order = models.CustomerOrder.objects.get(
+                reference=data['reference'])
+            products = customer_order.cart.all()
+            context['products'] = creat_cart_products_from_queryset(products)
+            context['payment'] = data['payment']
+            context['transaction'] = data['transaction']
+            context['reference'] = data['reference']
             return render(request, 'pages/success.html', context=context)
         else:
-            return redirect(reverse('no_cart'))
+            return redirect('no_cart')
+
 
 class EmptyCartView(generic.TemplateView):
     template_name = 'pages/no_cart.html'
+
 
 @http_decorator.require_POST
 def apply_coupon(request, **kwargs):
@@ -406,6 +460,7 @@ def apply_coupon(request, **kwargs):
             return redirect('shipment')
     else:
         return redirect('shipment')
+
 
 class SearchView(generic.ListView):
     model = models.Product
@@ -438,6 +493,7 @@ class SearchView(generic.ListView):
         context['impressions'] = create_products_impressions(products)
         return context
 
+
 @http_decorator.require_http_methods('GET')
 def csv_catologue(request):
     import csv
@@ -460,6 +516,7 @@ def csv_catologue(request):
     response['Content-Disposition'] = 'inline; filename=products.csv'
     return response
   
+
 class SpecialOfferView(generic.DetailView):
     model = models.Discount
     template_name = 'pages/product.html'

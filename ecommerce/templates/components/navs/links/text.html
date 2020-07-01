@@ -1,0 +1,9 @@
+<ul class="navbar-nav {% if extra_class%}{{ extra_class }}{% endif %}">
+    {% for name, url in urls %}
+        <li class="nav-item">
+            <a href="{{ url }}" class="nav-link waves-effect" id="link_{{ name }}">
+                {{ name|capfirst }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>

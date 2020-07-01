@@ -6,6 +6,7 @@ import string
 import hashlib
 import string
 
+
 def create_transaction_token(n=1, salt='nawoka'):
     """Create a payment token for Google enhanced ecommerce"""
     tokens = [secrets.token_hex(2) for _ in range(0, n)]
@@ -14,11 +15,12 @@ def create_transaction_token(n=1, salt='nawoka'):
     tokens.append(hashlib.sha256(salt.encode('utf-8')).hexdigest())
     return '-'.join(tokens)
 
+
 def validate_payment_id(token, salt='nawoka'):
     """Validate a payment ID"""
     parts = token.split('-')
     hashed_salt = hashlib.sha256(salt.encode('utf-8')).hexdigest()
-    
+
     # The salt should always theoretically
     # be the last component of the array
     incoming_hashed_part = parts.pop(-1)
@@ -38,7 +40,7 @@ def validate_payment_id(token, salt='nawoka'):
         truth_array.append(True)
     else:
         truth_array.append(False)
-    
+
     # Each part should have a
     # maximum of 5 characters
     for part in parts:
@@ -47,12 +49,14 @@ def validate_payment_id(token, salt='nawoka'):
 
     return all(truth_array)
 
+
 def create_reference(n=5):
     """Create a basic reference: `NAW201906126011b0e0b8`
     """
     current_date = datetime.datetime.now().date()
     prefix = f'NAW{current_date.year}{current_date.month}{current_date.day}'
     return prefix + secrets.token_hex(n)
+
 
 def create_product_reference():
     """Creates a product reference number: AC4565ZE4TEZD
@@ -67,6 +71,7 @@ def create_product_reference():
     salt = secrets.token_hex(4).upper()
     return f'{first}{second}{salt}'
 
+
 def create_slug(name):
     """Creates a product slug name"""
     names = name.split(' ')
@@ -78,6 +83,7 @@ def create_slug(name):
         names[names.index(name)] = normalize_names(name)
 
     return '-'.join(names)
+
 
 def create_image_slug(name, reverse=False):
     """Create an image slug
@@ -96,14 +102,16 @@ def create_image_slug(name, reverse=False):
     if reverse:
         if '_' in name:
             spaced_name = name.split('_')
-            cleaned_name = [name.split('.') for name in spaced_name if '.' in name][0][0]
+            cleaned_name = [name.split('.')
+                            for name in spaced_name if '.' in name][0][0]
             spaced_name.pop(-1)
             spaced_name.append(cleaned_name)
             return ' '.join(spaced_name).capitalize()
 
     image_name = '_'.join(name.split(' '))
     return f'{image_name.strip().lower()}.jpg'
-    
+
+
 def create_cart_id(n=12):
     """Creates an iD for the Anonymous cart so that we can
     easily get all the items registered by an anonymous user
@@ -130,6 +138,7 @@ def calculate_discount(price, pct):
     """
     return round(float(price) * (1 - (pct / 100)), 2)
 
+
 def calculate_tva(price, tva=20):
     """Calculates the tax on a product
 
@@ -138,6 +147,7 @@ def calculate_tva(price, tva=20):
         price * (1 + (tax / 100))
     """
     return round(float(price) * (1 + (tva / 100)), 2)
+
 
 def impressions_helper(queryset):
     """A helper function that helps create an impressions
@@ -159,13 +169,14 @@ def impressions_helper(queryset):
                     'price': price,
                     'brand': "Nawoka",
                     'category': product.collection.collection_name,
-                    'position': position 
+                    'position': position
                 }
             )
             position = position + 1
     except:
         return []
     return items
+
 
 def add_to_current_date(d=15, use_timezone=False):
     """Adds d-days to a current date"""
@@ -175,12 +186,14 @@ def add_to_current_date(d=15, use_timezone=False):
     current_date = datetime.datetime.now().date()
     return current_date + datetime.timedelta(days=d)
 
+
 def get_image_name(image):
     if '.' in image:
         items = image.split('.')
     return items[0]
 
-def create_product_slug(word:str):
+
+def create_product_slug(word: str):
     accents = {
         'é': 'e',
         'è': 'e',
@@ -204,16 +217,17 @@ def create_product_slug(word:str):
             words[i] = words[i].replace("d'", ' ')
         if words[i] not in words_to_exlude:
             intermediate_word.append(words[i].strip().lower())
-    
+
     final_word = '-'.join(intermediate_word)
     non_accentuated_word = ''
     for letter in final_word:
         try:
             non_accentuated_word = non_accentuated_word + accents[letter]
         except:
-            non_accentuated_word = non_accentuated_word + letter            
+            non_accentuated_word = non_accentuated_word + letter
 
     return non_accentuated_word
+
 
 def create_discount_code():
     n = random.randrange(1000, 9000)

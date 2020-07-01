@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-
-{% load static i18n %}
+{% load static price_tags i18n %}
 
 {% block title %}Nawoka : {% trans "Paiement" %}{% endblock %}
 
@@ -49,11 +48,17 @@
 
 <div class="row wow fadeIn">
 	<div class="col-md-5 offset-md-2">
+		{% comment %}
+			<div class="card">
+				<div id="payment-request-button"></div>
+			</div>			
+		{% endcomment %}
+
 		<div class="card">
 			<form method="POST" class="card-body stripe stripe-styling" id="form_payment">	
 				{% csrf_token %}
 				
-				<div class="alert alert-danger d-none" role="alert" id="card-errors"></div>
+				<div class="alert alert-danger text-center d-none" role="alert" id="card-errors"></div>
 				
 				<div class="row wow fadeIn">
 					<div id="card-element"></div>
@@ -63,7 +68,9 @@
 							btn-lg btn-block mt-4" id="btn_payment">
 					<i class="fa fa-lock d-none"></i>
 					<div class="spinner-grow d-none" role="status"></div>
-					Paiement
+					<span class="payment-button-text">
+						{% trans "Payer" %} {{ cart_total|price_to_text }}
+					</span>
 				</button>
 			</form>
 

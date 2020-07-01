@@ -2,7 +2,7 @@
     var mixin = {
         data() {
             return {
-                csrf: $(".csrf input").val(),
+                csrf: $("input[name='csrfmiddlewaretoken']").val(),
                 clicked: false
             }
         },

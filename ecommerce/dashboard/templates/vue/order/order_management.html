@@ -1,18 +1,21 @@
 <script>
 var pillcomponent = {
-    template: "\
-    <span class='badge badge-success badge-pill pull-right'>Terminer</span>\
-    "
+    template: `
+    <span class="badge badge-success badge-pill pull-right">
+        Terminer
+    </span>
+    `
 }
 var switchcomponent1 = {
-    template: "\
-    <div class='custom-control custom-switch'>\
-        <input @change='doselection' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch1'>\
-        <label class='custom-control-label' for='customSwitch1'>\
-            Terminer\
-        </label>\
-    </div>\
-    ",
+    template: `
+    <div class="custom-control custom-switch">
+        <input @change="doselection" v-model="selected" type="checkbox" class="custom-control-input" id="customSwitch1">
+        
+        <label class="custom-control-label" for="customSwitch1">
+            Terminer
+        </label>
+    </div>
+    `,
     data() {
         return {
             selected: false

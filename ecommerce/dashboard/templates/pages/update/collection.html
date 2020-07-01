@@ -1,4 +1,4 @@
-{% extends "../create/base_create.html" %}
+{% extends "pages/base_create.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Modification de" %}{{ collection.name }}{% endblock %}
@@ -21,7 +21,7 @@
 
 {% block left_content %}
 <!-- GENERAL -->
-{% include "../../components/create/base.html" with description_as_field=form.presentation_text %}
+{% include "components/edit/base.html" with description_as_field=form.presentation_text %}
 
 <!-- TYPE -->
 <div class="card mt-3">

@@ -30,14 +30,14 @@ MYUSER = get_user_model()
 class IndexView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         context = {
-            'carts_count': models.Cart.statistics.total_count(),
+            'carts_without_orders': models.Cart.statistics.carts_without_orders(),
             'orders_count': models.CustomerOrder.statistics.total_count(),
             'latest_orders': models.CustomerOrder.statistics.latest_orders(),
-            'revenue': models.CustomerOrder.statistics.revenue()
+            'revenue': models.CustomerOrder.statistics.revenue(),
+            'awaiting': models.CustomerOrder.statistics.awaiting_revenue(),
+            'refunded': models.CustomerOrder.statistics.total_refunded_orders()
         }
         return render(request, 'pages/home.html', context)
-
-
 
 
 # ############
@@ -53,12 +53,23 @@ class ProductsView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'products'
     paginate_by = 10
 
+    def get(self, request, *args, **kwargs):
+        get_request = super().get(request, *args, **kwargs)
+        # This section resets the next_for_update in the
+        # session to prevent persistence when trying to
+        # return to the product page
+        previous_searched_terms = self.request.session.get('next_for_update')
+        if previous_searched_terms:
+            self.request.session.pop('next_for_update')
+        return get_request
+
+
 class ProductView(LoginRequiredMixin, generic.DetailView):
     """The details of a specific product
     """
     model = models.Product
     queryset = models.Product.objects.all()
-    template_name = 'pages/details/product.html'
+    template_name = 'pages/update/product.html'
     context_object_name = 'product'
 
     def post(self, request, **kwargs):
@@ -86,11 +97,12 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
                         or url.endswith('.jpeg'):
                     if url is None:
                         url = 'https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Products/17.jpg'
-                    image = models.Image.objects.create(name=name, url=url, \
-                                        variant=variant, main_image=main_image)
+                    image = models.Image.objects.create(name=name, url=url,
+                                                        variant=variant, main_image=main_image)
                     product.images.add(image)
                 else:
-                    messages.error(request, "L'URL doit être le lien vers une image de type JPEG/JPG/WEBP", extra_tags='alert-danger')
+                    messages.error(
+                        request, "L'URL doit être le lien vers une image de type JPEG/JPG/WEBP", extra_tags='alert-danger')
             else:
                 uploaded_files = request.FILES['images']
                 filename = uploaded_files.name
@@ -103,7 +115,7 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
                 product.save()
                 product.images.add(image)
             return http.JsonResponse({'status': 'Images updated'})
-        
+
         if method == 'state':
             current_state = product.active
             if current_state == True:
@@ -139,13 +151,16 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
                 # main image might return many values
                 image = product.images.get(main_image=True)
             except exceptions.MultipleObjectsReturned:
-                messages.error(request, "Il semblerait qu'il y ait eu un problème avec les images", extra_tags='alert-danger') 
+                messages.error(
+                    request, "Il semblerait qu'il y ait eu un problème avec les images", extra_tags='alert-danger')
             except:
-                messages.error(request, "Une erreur s'est produite", extra_tags='alert-danger')
+                messages.error(request, "Une erreur s'est produite",
+                               extra_tags='alert-danger')
             else:
                 product.images.remove(image)
-                messages.warning(request, "Le produit ne possède plus d'image principale", extra_tags='alert-warning')
-                
+                messages.warning(
+                    request, "Le produit ne possède plus d'image principale", extra_tags='alert-warning')
+
         if method == 'association':
             product = super().get_object()
             images = request.POST.get('images')
@@ -171,12 +186,14 @@ class ProductView(LoginRequiredMixin, generic.DetailView):
         context['additional_images'] = product.images.filter(main_image=False)
         return context
 
+
 class UsersView(LoginRequiredMixin, generic.ListView):
     model = MYUSER
     queryset = MYUSER.objects.all()
     template_name = 'pages/lists/users.html'
     context_object_name = 'users'
     paginate_by = 10
+
 
 class UserView(LoginRequiredMixin, generic.DetailView):
     model = MYUSER
@@ -187,12 +204,16 @@ class UserView(LoginRequiredMixin, generic.DetailView):
     def post(self, request, **kwargs):
         user = super().get_object()
         try:
-            user.email_user('subject', 'message', from_email='contact.nawoka@gmail.com')
+            user.email_user('subject', 'message',
+                            from_email='contact.nawoka@gmail.com')
         except:
-            messages.warning(request, "L'email n'a pas pu être envoyé", extra_tags='alert-warning')
+            messages.warning(
+                request, "L'email n'a pas pu être envoyé", extra_tags='alert-warning')
         else:
-            messages.success(request, f"Email envoyé à {user.email}", extra_tags='alert-success')
+            messages.success(
+                request, f"Email envoyé à {user.email}", extra_tags='alert-success')
         return redirect(reverse('dashboard_user', args=[user.id]))
+
 
 class SearchView(LoginRequiredMixin, generic.ListView):
     model = models.Product
@@ -203,6 +224,9 @@ class SearchView(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['search'] = searched_term = self.request.GET.get('s')
+        self.request.session.update({'next_for_update': searched_term})
+
+        # TODELETE: Not sure what this serves to
         context['extra_url_params'] = f"&s={searched_term}"
         return context
 
@@ -225,17 +249,18 @@ class SearchView(LoginRequiredMixin, generic.ListView):
         if searched_item.startswith('-'):
             searched_item = re.search(r'^-(?:\s?)(.*)', searched_item).group(1)
             terms = ~Q(name__icontains=searched_item) & ~Q(reference__icontains=searched_item) \
-                            & ~Q(collection__name__icontains=searched_item)
+                & ~Q(collection__name__icontains=searched_item)
         else:
             terms = Q(name__icontains=searched_item) | Q(reference__icontains=searched_item) \
-                            | Q(collection__name__icontains=searched_item)
+                | Q(collection__name__icontains=searched_item)
 
         return queryset.filter(terms)
+
 
 class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
     """All the orders made by customers for a specific company
     """
-    model   = models.CustomerOrder
+    model = models.CustomerOrder
     queryset = models.CustomerOrder.objects.all()
     context_object_name = 'orders'
     template_name = 'pages/lists/orders.html'
@@ -245,10 +270,11 @@ class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
         context = super().get_context_data()
         return context
 
+
 class ProductOrdersView(LoginRequiredMixin, generic.ListView):
     """Orders for one single product
     """
-    model   = models.CustomerOrder
+    model = models.CustomerOrder
     context_object_name = 'orders'
     template_name = 'pages/lists/orders.html'
 
@@ -257,52 +283,44 @@ class ProductOrdersView(LoginRequiredMixin, generic.ListView):
         queryset = product.cart.product.all()
         return queryset
 
-class CustomerOrderView(LoginRequiredMixin, generic.DetailView):
+
+class CustomerOrderView(LoginRequiredMixin, generic.UpdateView):
     """Orders for one single product
     """
-    model   = models.CustomerOrder
-    template_name = 'pages/details/order.html'
+    model = models.CustomerOrder
+    form_class = forms.CustomerOrderForm
+    template_name = 'pages/update/order.html'
     context_object_name = 'order'
 
-    def post(self, request, **kwargs):
-        customerorder = super().get_object()
-        if customerorder.completed:
-            customerorder.completed = False
-        else:
-            customerorder.completed = True
-        customerorder.save()
-        return http.JsonResponse(data={'success': True})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_success_url(self):
         order = super().get_object()
-        carts = order.cart.all()
-        context['carts'] = carts 
-        return context
+        return reverse('customer_order', args=[order.id])
+
 
 @login_required
 @views_decorators.require_http_methods('POST')
 def create_images(request, **kwargs):
     method = request.POST.get('method')
-    
+
     if method == 'new':
         images = []
         data = request.POST.dict()
-        
+
         for _, value in data.items():
             if value.endswith('.jpeg') or \
                     value.endswith('.jpg'):
                 images.append(value)
-        
+
         images_objects = []
         for index, url in enumerate(images):
             if index == 0:
                 images_objects.append(models.Image(url=url, main_image=True))
             else:
                 images_objects.append(models.Image(url=url))
-        
+
         new_images = models.Image.objects.bulk_create(images_objects)
-        request.session['images_to_associate'] = [image.id for image in new_images]
+        request.session['images_to_associate'] = [
+            image.id for image in new_images]
         return http.JsonResponse(data={'status': 'Uploaded'})
 
     if method == 'update':
@@ -310,6 +328,7 @@ def create_images(request, **kwargs):
         product = get_object_or_404(models.Product, id=product_id)
 
     return http.JsonResponse(data={'status': 'Uploaded'})
+
 
 @login_required
 @views_decorators.require_POST
@@ -331,11 +350,12 @@ def preflight_images(request):
         stream.write(url)
 
     request.session.update({'images_urls': stream.getvalue()})
-    
+
     stream.flush()
     stream.close()
 
     return http.JsonResponse(data={'state': True, 'url': url})
+
 
 class CreateProductView(LoginRequiredMixin, generic.CreateView):
     model = models.Product
@@ -380,7 +400,8 @@ class CreateProductView(LoginRequiredMixin, generic.CreateView):
         context['post_to_view'] = reverse('dashboard_create')
         return context
 
-class UpdateProductView1(LoginRequiredMixin, generic.UpdateView):
+
+class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
     model = models.Product
     template_name = 'pages/update/product.html'
     form_class = forms.ProductForm
@@ -391,23 +412,32 @@ class UpdateProductView1(LoginRequiredMixin, generic.UpdateView):
         product = super().get_object()
         context['post_to_view'] = reverse('update', args=[product.id])
 
+        # If we clicked update from the search page,
+        # this method allows to return that same
+        # search page as opposed to all the products
+        context['return_to_search'] = self.request.session.get(
+            'next_for_update') or None
+
         queryset = super().get_queryset()
         queryset_list = list(queryset.values_list('id', flat=True))
         queryset_list_length = len(queryset_list)
         current_product_index = queryset_list.index(product.id)
-        
+
         next_product_index = current_product_index + 1
         if next_product_index == queryset_list_length:
             next_product_index = 0
             context['disable_next'] = True
-        
-        context['previous_product'] = reverse('update', args=[queryset_list[current_product_index - 1]])
-        context['next_product'] = reverse('update', args=[queryset_list[next_product_index]])
+
+        context['previous_product'] = reverse(
+            'update', args=[queryset_list[current_product_index - 1]])
+        context['next_product'] = reverse(
+            'update', args=[queryset_list[next_product_index]])
         return context
 
     def get_success_url(self):
         product = super().get_object()
         return reverse('update', args=[product.id])
+
 
 class CartsView(LoginRequiredMixin, generic.ListView):
     model = models.Cart
@@ -416,6 +446,7 @@ class CartsView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'carts'
     paginate_by = 5
 
+
 class ImagesView(LoginRequiredMixin, generic.ListView):
     model = models.Image
     queryset = models.Image.objects.all()
@@ -423,50 +454,52 @@ class ImagesView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'images'
     paginate_by = 8
 
-    # def post(self, request, **kwargs):
-    #     method = request.POST.get('method')
-    #     if not method:
-    #         return http.JsonResponse(data={'status': 'Understood'}, code=202)
+    def post(self, request, **kwargs):
+        method = request.POST.get('method')
+        if not method:
+            return http.JsonResponse(data={'status': 'Understood'}, code=202)
 
-    #     if method == 'delete':
-    #         image_id = request.POST.get('image_id')
-    #         if not image_id:
-    #             return http.JsonResponse(data={'status': 'Ok.'}, code=202)
-    #         image = self.queryset.get(id=int(image_id))
-    #         if image_id:
-    #             image.delete()
-    #             return http.JsonResponse(data={'status': 'Success'})
+        if method == 'delete':
+            image_id = request.POST.get('image_id')
+            if not image_id:
+                return http.JsonResponse(data={'status': 'Ok.'}, code=202)
+            image = self.queryset.get(id=int(image_id))
+            if image_id:
+                image.delete()
+                return http.JsonResponse(data={'status': 'Success'})
 
-    #     if method == 'imageurl':
-    #         name = request.POST.get('name')
-    #         variant = request.POST.get('variant')
-    #         url = request.POST.get('url')
-    #         main_image = request.POST.get('mainimage')
-    #         image = self.model.objects.create(name=name, variant=variant, url=url)
-    #         if main_image == "true":
-    #             image.main_image = True
-    #             image.save()
+        if method == 'imageurl':
+            name = request.POST.get('name')
+            variant = request.POST.get('variant')
+            url = request.POST.get('url')
+            main_image = request.POST.get('mainimage')
+            image = self.model.objects.create(
+                name=name, variant=variant, url=url)
+            if main_image == "true":
+                image.main_image = True
+                image.save()
 
-    #     if method == 'asmain':
-    #         image_id = request.POST.get('image_id')
-    #         image = self.model.objects.get(id=int(image_id))
-    #         if image:
-    #             if image.main_image:
-    #                 image.main_image = False
-    #             else:
-    #                 image.main_image = True
-    #             image.save()
+        if method == 'asmain':
+            image_id = request.POST.get('image_id')
+            image = self.model.objects.get(id=int(image_id))
+            if image:
+                if image.main_image:
+                    image.main_image = False
+                else:
+                    image.main_image = True
+                image.save()
 
-    #     if method == 'association':
-    #         name = request.POST.get('product')
-    #         image_id = request.POST.get('image_id')
-    #         database_product = get_object_or_404(models.Product, name__iexact=name)
-    #         if database_product:
-    #             image = self.queryset.get(id=int(image_id))
-    #             database_product.images.add(image)
-    #             return redirect('manage_images')
+        if method == 'association':
+            name = request.POST.get('product')
+            image_id = request.POST.get('image_id')
+            database_product = get_object_or_404(
+                models.Product, name__iexact=name)
+            if database_product:
+                image = self.queryset.get(id=int(image_id))
+                database_product.images.add(image)
+                return redirect('manage_images')
 
-    #     return http.JsonResponse(data={'status': 'No image'})
+        return http.JsonResponse(data={'status': 'No image'})
 
     def get_context_data(self, **kwargs):
         queryset = super().get_queryset()
@@ -476,10 +509,12 @@ class ImagesView(LoginRequiredMixin, generic.ListView):
         paginator = Paginator(queryset, 8)
         page = self.request.GET.get('page')
         images = paginator.get_page(page)
-        images = serializers.ImageSerializer(instance=images.object_list, many=True)
+        images = serializers.ImageSerializer(
+            instance=images.object_list, many=True)
         context['vue_images'] = images.data
         # context['product_form'] = forms.ImagesForm()
         return context
+
 
 class ImageView(LoginRequiredMixin, generic.DetailView):
     model = models.Image
@@ -501,11 +536,10 @@ class ImageView(LoginRequiredMixin, generic.DetailView):
         has_products = products.exists()
         context['is_linked'] = has_products
         if has_products:
-            pass
-            # context['images_form'] = forms.ImageAssociationForm(initial={'products': [products.first().name]})
+            context['images_form'] = forms.ImageAssociationForm(
+                initial={'products': [products.first().name]})
         else:
-            # context['images_form'] = forms.ImageAssociationForm()
-            pass
+            context['images_form'] = forms.ImageAssociationForm()
         return context
 
     def post(self, request, **kwargs):
@@ -518,27 +552,34 @@ class ImageView(LoginRequiredMixin, generic.DetailView):
                 image.name = form.cleaned_data['name']
                 image.url = form.cleaned_data['url']
                 image.save()
-                messages.success(request, "L'image a été changé", extra_tags='alert-success')
+                messages.success(request, "L'image a été changé",
+                                 extra_tags='alert-success')
 
         if method == 'associate':
             product_to_associate = request.POST.get('products')
             try:
-                product = models.Product.objects.get(name__iexact=product_to_associate)
+                product = models.Product.objects.get(
+                    name__iexact=product_to_associate)
             except exceptions.MultipleObjectsReturned:
-                messages.success(request, "Une erreur est survenue - Plusieurs produits ayant le même nom", extra_tags='alert-warning')
+                messages.success(
+                    request, "Une erreur est survenue - Plusieurs produits ayant le même nom", extra_tags='alert-warning')
                 return redirect(reverse('manage_image', args=[image.id]))
             image.product_set.clear()
             image.product_set.add(product)
-            messages.success(request, f"Cette image a été associé à {product.name}", extra_tags='alert-success')
+            messages.success(
+                request, f"Cette image a été associé à {product.name}", extra_tags='alert-success')
 
         if method == 'dissociate':
             if not image.product_set.all().exists():
-                messages.warning(request, f"Cette image n'était associé à aucun produit", extra_tags='alert-warning')
+                messages.warning(
+                    request, f"Cette image n'était associé à aucun produit", extra_tags='alert-warning')
             else:
                 image.product_set.clear()
-                messages.success(request, f"Cette image a été dissocié de tout produit", extra_tags='alert-success')
+                messages.success(
+                    request, f"Cette image a été dissocié de tout produit", extra_tags='alert-success')
 
         return redirect(reverse('manage_image', args=[image.id]))
+
 
 @login_required
 def delete_view(request, **kwargs):
@@ -548,25 +589,38 @@ def delete_view(request, **kwargs):
 
     if method == 'carts':
         item = get_object_or_404(models.Cart, id=kwargs['pk'])
+        # Check if the cart has orders and if so,
+        # mark them as terminated or completed
+        item.customerorder_set.all().update(completed=True)
 
     item.delete()
     url = f'dashboard_{method}'
-    messages.success(request, f"{item.name} a été supprimé")
-    return redirect(reverse(url))
+    messages.success(request, f"L'élément a été supprimé",
+                     extra_tags='alert-success')
+
+    page = request.GET.get('page')
+    url = reverse(url)
+    if page:
+        url = url + f'?page={page}'
+    return redirect(url)
+
 
 @login_required
 def delete_product_update_page(request, **kwargs):
     item = get_object_or_404(models.Product, id=kwargs['pk'])
     item.delete()
-    messages.success(request, f"{item.name} a été supprimé", extra_tags='alert-success')
+    messages.success(
+        request, f"{item.name} a été supprimé", extra_tags='alert-success')
     return redirect('dashboard_products' or request.GET.get('next'))
+
 
 @login_required
 @views_decorators.require_http_methods('POST')
 def duplicate_view(request, **kwargs):
     product = get_object_or_404(models.Product, id=kwargs['pk'])
     if not product:
-        messages.error(request, "Le produit n'a pas pu être dupliqué", extra_tags="alert-warning")
+        messages.error(
+            request, "Le produit n'a pas pu être dupliqué", extra_tags="alert-warning")
         return redirect(reverse('update', args=[product.id]))
     base = {
         'name': f'Copie de {product.name}',
@@ -580,9 +634,11 @@ def duplicate_view(request, **kwargs):
     try:
         new_product = models.Product.objects.create(**base)
     except:
-        messages.error(request, "Le produit n'a pas pu être dupliqué", extra_tags='alert-warning')
+        messages.error(
+            request, "Le produit n'a pas pu être dupliqué", extra_tags='alert-warning')
         return http.JsonResponse(data={'state': False}, code=400)
-    messages.success(request, f"{new_product.name} a bien été créer", extra_tags="alert-success")
+    messages.success(
+        request, f"{new_product.name} a bien été créer", extra_tags="alert-success")
     # return redirect(reverse('update', args=[new_product.id]))
     return http.JsonResponse(data={'redirect_url': reverse('update', args=[new_product.id])})
 
@@ -591,18 +647,17 @@ class Settings(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         return render(request, 'settings.html', {})
 
+
 @login_required
 def send_email(request, **kwargs):
     sender = None
     receiver = None
     message = None
 
-    status = send_email(request, sender=sender, \
-                receiver=receiver, message=message)
+    status = send_email(request, sender=sender,
+                        receiver=receiver, message=message)
 
     return http.JsonResponse(data={})
-
-
 
 
 # ############
@@ -617,12 +672,14 @@ class CouponsView(LoginRequiredMixin, generic.ListView):
     template_name = 'pages/lists/coupons.html'
     context_object_name = 'coupons'
 
+
 class CreateCouponsView(LoginRequiredMixin, generic.CreateView):
     model = models.Discount
     form_class = forms.DiscountForm
     queryset = models.Discount.objects.all()
     template_name = 'pages/create/coupon.html'
     context_object_name = 'coupon'
+
 
 class UpdateCouponsView(LoginRequiredMixin, generic.UpdateView):
     model = models.Discount
@@ -633,7 +690,6 @@ class UpdateCouponsView(LoginRequiredMixin, generic.UpdateView):
     success_url = '/dashboard/coupons'
 
 
-
 @login_required
 @csrf_exempt
 @views_decorators.require_http_methods('POST')
@@ -642,17 +698,20 @@ def upload_csv(request):
     try:
         data = file['newcsvfile']
     except:
-        messages.error(request, "Une erreur s'est produite", extra_tags='alert-warning')
+        messages.error(request, "Une erreur s'est produite",
+                       extra_tags='alert-warning')
         return http.JsonResponse({'state': False})
-    
+
     if not data.name.endswith('.csv'):
-        messages.error(request, "Le fichier doit être de type .csv", extra_tags='alert-warning')
+        messages.error(request, "Le fichier doit être de type .csv",
+                       extra_tags='alert-warning')
         return http.JsonResponse({'state': False})
 
     try:
         csv_data = data.read().decode('UTF-8')
     except:
-        messages.error(request, "Le fichier n'a pas pu être lu", extra_tags='alert-warning')
+        messages.error(request, "Le fichier n'a pas pu être lu",
+                       extra_tags='alert-warning')
         return http.JsonResponse({'state': False})
     else:
         data_stream = io.StringIO(csv_data)
@@ -664,9 +723,11 @@ def upload_csv(request):
         # fields before uploading anythin to the
         # database and have consistent products
         required_keys = ['name', 'price_ht', 'gender', 'collection']
-        missing_fields = [required_key for required_key in required_keys if required_key not in headers]
+        missing_fields = [
+            required_key for required_key in required_keys if required_key not in headers]
         if missing_fields:
-            messages.error(request, f"Les champs suivants sont manquants: {', '.join(missing_fields)}", extra_tags='alert-warning')
+            messages.error(
+                request, f"Les champs suivants sont manquants: {', '.join(missing_fields)}", extra_tags='alert-warning')
             return http.JsonResponse({'state': False})
 
         try:
@@ -677,14 +738,16 @@ def upload_csv(request):
                 # raise and catch an exception if not
                 # the case
                 if len(row) != len(headers):
-                    raise Exception("The header length is not equals to the row length")
+                    raise Exception(
+                        "The header length is not equals to the row length")
                 products.append(list(zip(headers, row)))
         except:
-            messages.error(request, "L'entête ne correspond pas au nombre de produits", extra_tags='alert-error')
+            messages.error(
+                request, "L'entête ne correspond pas au nombre de produits", extra_tags='alert-error')
             return http.JsonResponse({'state': False})
         else:
             database_products = []
-            collections = models.Collection.objects.all()
+            collections = models.ProductCollection.objects.all()
             for item in products:
                 for field in item:
                     key = field[0]
@@ -694,12 +757,15 @@ def upload_csv(request):
                             value = collections.get(name__iexact=value)
                         except exceptions.ObjectDoesNotExist:
                             value = collections.first()
-                            messages.error(request, "La collection %s n'existe pas. Nous avons assigné les produits à une collection par défaut", extra_tags='alert-warning')
+                            messages.error(
+                                request, "La collection %s n'existe pas. Nous avons assigné les produits à une collection par défaut", extra_tags='alert-warning')
                     database_products.append(models.Product(**{key: value}))
             print(database_products)
 
-    messages.error(request, "Les produits ont été créés", extra_tags='alert-success')
+    messages.error(request, "Les produits ont été créés",
+                   extra_tags='alert-success')
     return http.JsonResponse(data={'state': True})
+
 
 @login_required
 @views_decorators.require_http_methods('GET')
@@ -715,8 +781,8 @@ def download_csv(request):
             pass
         else:
             try:
-                products = models.Collection\
-                        .collection_manager.active_products(name)
+                products = models.ProductCollection\
+                    .collection_manager.active_products(name)
             except:
                 products = []
 
@@ -724,10 +790,10 @@ def download_csv(request):
     response = http.HttpResponse(content_type='text/csv')
 
     csv_writer = csv.writer(response)
-    csv_writer.writerow(['id', 'title', 'description', 'condition', 'availability', 
-                        'link', 'brand', 'price',
-                        'image_link', 'google_product_category', 'gender',
-                        'is_final_sale', 'return_policy_days', 'inventory'])
+    csv_writer.writerow(['id', 'title', 'description', 'condition', 'availability',
+                         'link', 'brand', 'price',
+                         'image_link', 'google_product_category', 'gender',
+                         'is_final_sale', 'return_policy_days', 'inventory'])
     for product in products:
         url = f'https://nawoka.fr{product.get_absolute_url()}'
         if product.gender == 'femme':
@@ -748,9 +814,6 @@ def download_csv(request):
     return response
 
 
-
-
-
 # ############
 #
 # COLLECTIONS
@@ -764,23 +827,23 @@ class CollectionsView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'collections'
     paginate_by = 10
 
+
 class CreateCollectionView(LoginRequiredMixin, generic.CreateView):
     model = models.Collection
     form_class = forms.CollectionForm
     template_name = 'pages/create/collection.html'
     context_object_name = 'collection'
 
+
 class UpdateCollectionView(LoginRequiredMixin, generic.UpdateView):
     model = models.Collection
     form_class = forms.CollectionForm
     template_name = 'pages/update/collection.html'
     context_object_name = 'collection'
-    
+
     def get_success_url(self):
         product = super().get_object()
         return reverse('update_collection', args=[product.id])
-
-
 
 
 # ############
@@ -796,8 +859,6 @@ class CreateCustomerView(LoginRequiredMixin, generic.CreateView):
     context_object_name = 'customer'
 
 
-
-
 # ############
 #
 # PURCHASES
@@ -807,8 +868,6 @@ class CreateCustomerView(LoginRequiredMixin, generic.CreateView):
 # class PurchaseOrderView(LoginRequiredMixin, generic.CreateView):
 class PurchaseOrderView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'pages/create/purchase_order.html'
-
-
 
 
 # ############
@@ -821,10 +880,11 @@ class BaseAPIView(APIView):
     authentication_classes = []
     permission_classes = []
 
+
 class ChartsView(BaseAPIView):
     def get(self, format=None, **kwargs):
         payments_by_month = models.CustomerOrder\
-                            .statistics.payments_by_month()
+            .statistics.payments_by_month()
         data = {
             "myChart": {
                 'labels': payments_by_month[0],

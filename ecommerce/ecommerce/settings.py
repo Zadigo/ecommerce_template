@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'rest_framework',
+    'django_extensions',
     'shop',
     'dashboard',
 ]
@@ -60,7 +61,14 @@ TEMPLATES = [
             'libraries': {
                 'aws_images': 'templatetags.aws_images',
                 'general_tags': 'templatetags.general_tags',
-                'table': 'templatetags.table'
+                'table': 'templatetags.table',
+
+                'share': 'templatetags.share',
+                'navbar': 'templatetags.navbar',
+
+                'carts_count_tags': 'shop.templatetags.carts_count_tags',
+                'delivery': 'shop.templatetags.delivery',
+                'price_tags': 'shop.templatetags.price_tags',
             },
         },
     },
@@ -75,7 +83,7 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'template_ecommerce'),
+        'NAME': os.environ.get('DB_NAME', 'template_ecommerce6'),
         'USER': os.environ.get('DB_USER', 'princess_ecommerce'),
         'PASSWORD': os.environ.get('DB_PASSWORD', 'princess_ecommerce'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
@@ -173,3 +181,28 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
 EMAIL_USE_LOCALTIME = True
+
+
+# STRIPE
+
+STRIPE_DEBUG = True
+
+STRIPE_API_KEYS = {
+    'test': {
+        'publishable': '',
+        'secret': ''
+    },
+    'live': {
+        'publishable': '',
+        'secret': ''
+    }
+}
+
+STRIPE_PAYMENT_SUCCESS_URL = '/shop/cart/success'
+
+APPLE_PAY_DOMAIN = ''
+
+
+# AWS
+
+AWS_IMAGES_FOLDER = ''

@@ -1,108 +1,87 @@
-{% extends "../../index.html" %}
+{% extends "../base_create.html" %}
+{% load i18n %}
 
-{% block title %}Création d'un nouveau produit{% endblock %}
+{% block title %}Mise à jour de {{ product.name }}{% endblock %}
 
-{% block content %}
-<div class="row wow fadeIn">
+{% block class %}new-product{% endblock %}
+
+{% block page_header %}
 	<div class="col-12 mb-1">
 		<div class="row">
 			<div class="col-6">
-				<a href="{% url 'dashboard_products' %}" class="text-muted"><fa class="fa fa-arrow-left mr-2"></fa>Produits</a>
+				{% if return_to_search %}
+				<a href="{% url 'dashboard_search' %}?s={{ return_to_search|escape }}" class="text-muted">
+					<fa class="fa fa-arrow-left mr-2"></fa>
+					Produits
+				</a>
+				{% else %}
+				<a href="{% url 'dashboard_products' %}" class="text-muted">
+					<fa class="fa fa-arrow-left mr-2"></fa>
+					Produits
+				</a>
+				{% endif %}
 			</div>
 			<div class="col-6 text-right">
-				<a href="{{ previous_product }}" class="text-muted"><fa class="fa fa-arrow-left"></fa></a>
-				<a href="{{ next_product }}" class="text-muted" {% if disable_next %}disabled{% endif %}><fa class="fa fa-arrow-right ml-4"></fa></a>
+				<a href="{{ previous_product }}" class="text-muted">
+					<fa class="fa fa-arrow-left"></fa>
+				</a>
+				<a href="{{ next_product }}" class="text-muted" {% if disable_next %}disabled{% endif %}>
+					<fa class="fa fa-arrow-right ml-4"></fa>
+				</a>
 			</div>
 		</div>
-	</div>		
+	</div>
 	<div class="col-12 mb-4">
 		<div class="row">
 			<div class="col-auto">
 				<h3 class="m-0">{{ product.name }}</h3>
 			</div>
 		</div>
-		
+
 		<!-- ACTIONS -->
-		{% include "../../components/create/actions_top.html" %}
+		{% include "../../components/edit/actions_top.html" %}
 	</div>
+{% endblock %}
 
-	<div class="col-sm-12">
-		<form action="{{ post_to_view }}" method="POST" enctype="multipart/form-data" class="new-product" id="general_form">
-			{% csrf_token %}
+{% block top_form_buttons %}
 
-			{% for error in form.errors %}
-			<div class="alert alert-danger mb-4" role="alert">
-				The <span class="font-weight-bold">{{ error }}</span> field in missing or is empty
-			</div>
-			{% endfor %}
-			
-			{% if request.path == "/dashboard/products/new" %}
-				<div class="form-row">
-					<div class="form-group col-12">
-						<div>
-							<submitformbutton v-bind:images="images"  />
-						</div>
-						<a href="{% url 'dashboard_products' %}" class="btn btn-large float-right white">Abandonner</a>
-					</div>
-				</div>				
-			{% endif %}
+{% endblock %}
 
-			<div class="form-row">
-				<div class="form-group col-8">
-					<!-- BASE -->
-					{% include "../../components/create/base.html" %}
-					
-					<!-- MEDIA -->
-					{# {% include "../../components/create/media.html" %} #}
-					
-					<!-- PRIX -->
-					{% include "../../components/create/price.html" %}
-					
-					<!-- INVENTORY -->
-					{% include "../../components/create/inventory.html" %}
-					
-					<!-- VARIANTS -->
-					{% include "../../components/create/variants.html" %}
-				</div>
-				
-				<!-- SIDE -->
-				{% include "../../components/create/side.html" %}
-			</div>
+{% block left_content %}
+	<!-- BASE -->
+	{% include "../../components/edit/base.html" %}
 
-			{% comment %}
-				<!-- SEO -->
-				<div class="col-8 p-0">
-					<div class="card">
-						<div class="card-body">
-							<p class="text-uppercase text-muted font-weight-bold mb-1">SEO</p>
-							<div id="seo_app">
-								<p class="text-primary" id="main-link"></p>
-								<p class="green-text">https://nawoka.fr/</p>
-								<p class="text-muted" id="description-text"></p>
-							</div>
-						</div>
-					</div>
-				</div>				
-			{% endcomment %}
-			
-			<!-- ACTIONS -->
-			{% include "../../components/create/actions_bottom.html" %}
-		</form>
-	</div>
-	<div class="csrf">{% csrf_token %}</div>
-</div>
+	<!-- MEDIA -->
+	{# {% include "../../components/edit/media.html" %} #}
 
-<!-- MODALS -->
-{% include "../../components/others/modals/margin.html" %}
+	<!-- PRIX -->
+	{% include "../../components/edit/price.html" %}
+
+	<!-- INVENTORY -->
+	{% include "../../components/edit/inventory.html" %}
+
+	<!-- VARIANTS -->
+	{% include "../../components/edit/variants.html" %}
+
+	<!-- MODALS -->
+	{% include "../../components/others/modals/margin.html" %}
+{% endblock %}
+
+{% block right_content %}
+	<!-- SIDE -->
+	{% include "../../components/edit/side.html" %}
+{% endblock %}
+
+{% block bottom_form_buttons %}
+	<!-- ACTIONS -->
+	{% include "../../components/edit/actions_bottom.html" with delete_url="dashboard_delete_product" item_id=product.id next_url="dashboard_products" %}
 {% endblock %}
 
 {% block vuejs_scripts %}
 	{{ block.super }}
-	
+
 	<!-- DUPLICATION -->
 	{% include "../../vue/create/duplicate.html" %}
-	<!-- FORM -->
-	{% include "../../vue/create/form.html" %}
 	<!-- CALCULATOR -->
 	{% include "../../vue/create/calculator.html" %}
 {% endblock %}

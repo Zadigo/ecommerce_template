@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% load static price_tags %}
+{% load static price_tags i18n %}
 
 {% block title %}Nawoka : Recherche{% endblock %}
 
 {% block navbar %}
-    {% include "navs/nav.html" %}
+    {% include "components/navs/nav.html" %}
 {% endblock %}
 
 {% block share_metatags %}
@@ -52,7 +52,7 @@
             <div class="col-lg-3 col-md-4 mb-4">
                 <div class="card">
                     <div class="view overlay">
-                        <img src="{{ product.get_main_image_url }}" class="card-img-top" alt="{{ product.slug }}">
+                        <img src="{{ product.get_main_image_url|default:'https://via.placeholder.com/800' }}" class="card-img-top" alt="{{ product.slug }}">
                         <a><div class="mask rgba-white-slight"></div></a>
                     </div>
 
@@ -69,6 +69,7 @@
                                 <span class="badge badge-pill info-color text-uppercase">épuisé</span>                                            
                             {% endif %}
                         </a>
+
                         {% comment %}
                         <h5>
                             <strong>
@@ -92,11 +93,13 @@
                     <div class="card blue lighten-4">
                         <div class="card-body text-muted">
                             <h4 class="text-uppercase font-weight-bold">
-                                Aucun article ne correspond à votre recherce
+                                {% trans "Aucun article ne correspond à votre recherche" %}
                             </h4>
                             <p>
-                                Mais vous pouvez toujours retenter votre chance : vérifiez l'orthographe 
-                                ou essayez des termes de recherche moins spécifiques.
+                                {% blocktrans %}
+                                    Mais vous pouvez toujours retenter votre chance : vérifiez l'orthographe 
+                                    ou essayez des termes de recherche moins spécifiques.
+                                {% endblocktrans %}
                             </p>
                         </div>
                     </div>
@@ -104,12 +107,12 @@
             </div>
             <div class="row mt-4">
                 <div class="col col-sm-12 col-md-10 offset-md-1">
-                    <h5>Nouveautés</h5>
+                    <h5>{% trans "Nouveautés" %}</h5>
                     <div class="row mt-4">
                         {% for product in proposed_products %}
                             <div class="col-sm-3 col-md-3">
                                 <a href="{{ product.get_collection_url }}" id="link_see_more" onclick="CardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
-                                    <img src="{{ product.get_main_image_url }}" class="img-fluid" alt="{{ product.slug }}">
+                                    <img src="{{ product.get_main_image_url|default:'https://via.placeholder.com/800' }}" class="img-fluid" alt="{{ product.slug }}">
                                 </a>
                             </div>
                         {% endfor %}
@@ -122,5 +125,5 @@
 {% endblock %}
 
 {% block footer %}
-    {% include "navs/footer.html" %}
+    {% include "components/navs/footer.html" %}
 {% endblock %}

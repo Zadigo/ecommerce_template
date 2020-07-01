@@ -12,3 +12,7 @@ def price_to_text(price):
 @register.filter
 def number_to_percentage(number):
     return f'{number}%'
+
+@register.filter
+def discount_as_text(price):
+    return f'-{price}%'

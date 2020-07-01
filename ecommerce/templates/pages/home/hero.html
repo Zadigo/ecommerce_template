@@ -5,7 +5,7 @@
 {% block title %}Nawoka : {% trans "Mode chic et fun" %}{% endblock %}
 
 {% block navbar %}
-    {% include "navs/nav.html" %}
+    {% include "components/navs/nav.html" %}
 {% endblock %}
 
 {% block hero %}
@@ -41,4 +41,8 @@
         </a>
     </div>
 </div>
+{% endblock %}
+
+{% block footer %}
+    {% include "components/navs/footer.html" %}
 {% endblock %}

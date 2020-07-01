@@ -4,7 +4,7 @@
 {% block title %}Nawoka : {% trans "Mon panier" %}{% endblock %}
 
 {% block navbar %}
-    {% include "navs/nav.html" %}
+    {% include "components/navs/nav.html" %}
 {% endblock %}
 
 {% block datalayer_push %}
@@ -29,7 +29,7 @@
 {% block remarketing %}
     <script>
         gtag("event", "conversion", {
-            "send_to": "",
+            "send_to": "AW-701852005/xTa9CP_dt8oBEOXS1c4C",
             "value": "{{ cart_total }}",
             "currency": "EUR"
         });
@@ -106,7 +106,7 @@
 {% endblock %}
 
 {% block footer %}
-    {% include "navs/footer.html" %}
+    {% include "components/navs/footer.html" %}
 {% endblock %}
 
 {% block extra_scripts %}

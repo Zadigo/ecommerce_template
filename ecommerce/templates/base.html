@@ -10,7 +10,7 @@
         <title>{% block title %}{% endblock %}</title>
 
         <!-- META -->
-        <meta name="author" content="My ecommerce" />
+        <meta name="author" content="Nawoka Fashion" />
 
         <meta name="theme-color" content="#484848"/>
 
@@ -49,7 +49,7 @@
         crop tops, pantalons, mode bcbg, mode chic, sport chic{% endblock %}">
 
         <!-- PINTEREST -->
-        {% include "./analytics/pinterest.html" with verification_code="13e2f3eb0403572f570c8f8cde500e71" %}
+        {% include "./analytics/pinterest.html" with verification_code="" %}
 
         <!-- STRUCTURED -->
         {% block structured_data %}
@@ -58,6 +58,7 @@
 
         <!-- FONT AWESOME -->
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+        {% include "components/font_awesome_kit.html" with name="0db272f9a5" %}
 
         <!-- BOOTSTRAP -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
@@ -79,7 +80,7 @@
 
         {% block extra_css %}{% endblock %}
 
-        <link rel="alternate" href="example.com" hreflang="fr-fr" />
+        <link rel="alternate" href="nawoka.fr" hreflang="fr-fr" />
 
         {% block datalayer %}
             <script>window.dataLayer = window.dataLayer || [];</script>
@@ -126,7 +127,7 @@
         </div>
         {% endcomment %}
 
-        <main class="mt-4 pt-2">
+        <main class="mt-4 mt-sm-2 mt-md-5 mt-lg-5">
             {% block hero %}
                 <div class="container dark-grey-text mt-5">
                     {% for message in messages %}
@@ -165,8 +166,18 @@
 
         <!-- LARGE NAVBAR -->
         <script>
-            $(document).on("click", ".dropdown-menu", function (e) {
-                e.stopPropagation();
+            $(document).ready(function () {
+                $(document).find(".dropdown")
+                    .on("mouseenter", function (e) {
+                        $(this).addClass("show")}
+                    )
+                    .on("mouseleave", function (e) {
+                        $(this).removeClass("show")}
+                    )
+
+                $(document).on("click", ".dropdown-menu", function (e) {
+                    e.stopPropagation();
+                });
             });
         </script>
 

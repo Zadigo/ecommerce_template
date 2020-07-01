@@ -1,4 +1,3 @@
-{{ user_infos|json_script:"user_infos" }}
 <script>
     (function() {
         var paymentform = $("#form_payment")
@@ -50,25 +49,50 @@
 
                     xhr.onloadstart = function() {
                         button.find("div.spinner-grow").removeClass("d-none")
+                        button.find(".payment-button-text").addClass("d-none")
                         button.addClass("disabled")
                     }
 
                     xhr.onloadend = function() {
                         var response = xhr.response
-                        if (response.status == true) {
+                        if (xhr.status === 500 | xhr.status === 400) {
                             setTimeout(() => {
-                                window.location.href = response.redirect_url
-                            }, 3000);
-                        } else {
-                            dataLayer.push({
-                                "event": "Payment",
-                                "PaymentState": false,
-                                "PaymentFailedSum": "{{ cart_total}}"
-                            })
-                            messagecard.text("Payment was not successful")
-                            messagecard.removeClass("d-none")
-                            button.find("div.spinner-grow").addClass("d-none")
-                            button.removeClass("disabled")
+                                messagecard.text("Une erreur interne s'est produite")
+                                messagecard.removeClass("d-none")
+
+                                button.find("div.spinner-grow").addClass("d-none")
+                                button.find(".payment-button-text").removeClass("d-none")
+                                button.removeClass("disabled")
+                            }, 3000)
+                        }
+                        
+                        if (xhr.status === 200) {
+                            if (response.state == true) {
+                                setTimeout(() => {
+                                    window.location.href = response.redirect_url
+                                }, 3000);
+                            } 
+                            if (response.state == false) {
+                                dataLayer.push({
+                                    "event": "Payment",
+                                    "PaymentState": false,
+                                    "PaymentFailedSum": "{{ cart_total }}"
+                                })
+                                if (response.code === "card_declined") {
+                                    messagecard.text("Le paiement a été refusé")
+                                } else if (response.code === "expired_card") {
+                                    messagecard.text("Le carte n'est plus valide")
+                                } else if (response.code === "incorrect_cvc") {
+                                    messagecard.text("Le cvc est incorrect")
+                                } else {
+                                    messagecard.text("Le paiement n'a pas pu aboutir")
+                                }
+                                messagecard.removeClass("d-none")
+
+                                button.find("div.spinner-grow").addClass("d-none")
+                                button.find(".payment-button-text").removeClass("d-none")
+                                button.removeClass("disabled")
+                            }
                         }
                     }
                     

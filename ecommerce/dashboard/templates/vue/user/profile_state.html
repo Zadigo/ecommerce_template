@@ -1,11 +1,11 @@
 <script>
     var switchcomponent3 = {
-        template: "\
-        <div class='custom-control custom-switch'>\
-            <input @change='doaction' v-model='selected' type='checkbox' class='custom-control-input' id='customSwitch3'>\
-            <label class='custom-control-label' for='customSwitch3'>Product Manager</label>\
-        </div>\
-        ",
+        template: `
+        <div class="custom-control custom-switch">
+            <input @change="doaction" v-model="selected" type="checkbox" class="custom-control-input" id="customSwitch3">
+            <label class="custom-control-label" for="customSwitch3">Product Manager</label>
+        </div>
+        `,
         delimiters: ["[[", "]]"],
         data() {
             return {

@@ -10,13 +10,12 @@ from django.contrib.auth import get_user_model
 from accounts.utils import get_user_profile_model
 
 
-
 class ProductForm(forms.ModelForm):
     class Meta:
         model = models.Product
         localized_fields = ('price_valid_until',)
-        fields = ['name', 'description', 'gender', 'price_ht', 'discount_pct', 'price_valid_until', \
-                        'collection', 'clothe_size', 'reference', 'sku', 'in_stock', 'active', 'our_favorite', 'discounted', 'google_category']
+        fields = ['name', 'description', 'gender', 'price_ht', 'discount_pct', 'quantity', 'price_valid_until',
+                  'collection', 'clothe_size', 'reference', 'sku', 'in_stock', 'active', 'our_favorite', 'discounted', 'google_category']
         widgets = {
             'name': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du produit'}),
             'description': forms.widgets.Textarea(attrs={'class': 'form-control'}),
@@ -24,11 +23,12 @@ class ProductForm(forms.ModelForm):
 
             'sku': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'SKU'}),
             'reference': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Référence'}),
-            
+
             'price_ht': widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Prix Hors Taxe', 'min': '0'}),
             'price_valid_until': custom_widgets.DateInput(),
-            'discount_pct': widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Nombre en %', 'min': '0', 'value': '0'}),
-            
+            'discount_pct': widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Nombre en %', 'min': '5'}),
+            'quantity': widgets.NumberInput(attrs={'class': 'form-control', 'step': '5', 'min': '0'}),
+
             'clothe_size': widgets.SelectMultiple(attrs={'class': 'form-control'}),
             'collection': widgets.Select(attrs={'class': 'form-control'}),
             'google_category': widgets.Select(attrs={'class': 'form-control'}),
@@ -39,11 +39,12 @@ class ProductForm(forms.ModelForm):
             'active': widgets.CheckboxInput(attrs={'class': 'custom-control-input', 'id': 'active'}),
         }
 
+
 class DiscountForm(forms.ModelForm):
     class Meta:
         model = models.Discount
-        fields = ['code', 'value_type', 'value', 'collection', 'on_entire_order',\
-         'minimum_purchase', 'minimum_quantity', 'usage_limit', 'start_date', 'end_date']
+        fields = ['code', 'value_type', 'value', 'collection', 'on_entire_order',
+                  'minimum_purchase', 'minimum_quantity', 'usage_limit', 'start_date', 'end_date']
 
         widgets = {
             'code': custom_widgets.TextInput(attrs={'placeholder': 'Code'}),
@@ -53,7 +54,7 @@ class DiscountForm(forms.ModelForm):
             'collection': widgets.Select(attrs={'class': 'form-control'}),
 
             'on_entire_order': widgets.CheckboxInput(),
-            
+
             'minimum_purchase': custom_widgets.NumberInput(),
             'minimum_quantity': custom_widgets.NumberInput(),
 
@@ -62,6 +63,7 @@ class DiscountForm(forms.ModelForm):
             'start_date': custom_widgets.DateInput(),
             'end_date': custom_widgets.DateInput(),
         }
+
 
 class CollectionForm(forms.ModelForm):
     class Meta:
@@ -73,6 +75,7 @@ class CollectionForm(forms.ModelForm):
             'presentation_text': forms.widgets.Textarea(attrs={'class': 'form-control'}),
         }
 
+
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
@@ -82,7 +85,24 @@ class CustomerForm(forms.ModelForm):
             'name': custom_widgets.TextInput(attrs={'placeholder': 'Nom'}),
         }
 
-class ImageForm(forms.ModelForm): 
+
+class CustomerOrderForm(forms.ModelForm):
+    class Meta:
+        model = models.CustomerOrder
+        fields = ['accepted', 'shipped',
+                  'completed', 'refund', 'tracking_number']
+
+        widgets = {
+            'accepted': custom_widgets.CheckBoxInput(),
+            'completed': custom_widgets.CheckBoxInput(),
+            'refund': custom_widgets.CheckBoxInput(),
+            'shipped': custom_widgets.CheckBoxInput(),
+            'delivery': custom_widgets.TextInput(),
+            'tracking_number': custom_widgets.TextInput(),
+        }
+
+
+class ImageForm(forms.ModelForm):
     class Meta:
         model = models.Image
         fields = ['name', 'url']
@@ -92,14 +112,6 @@ class ImageForm(forms.ModelForm):
         }
 
 
-
-
-
-
-# class TestForm(forms.Form):
-#     google = forms.CharField(widget=custom_widgets.TextInput())
-#     apple = forms.CharField(widget=custom_widgets.CheckBoxInput())
-
-# class ImageAssociationForm(forms.Form):
-#     products = forms.CharField(widget=forms.Select(attrs={'class': 'form-control'}, \
-#             choices=[[product[0], product[0]] for product in models.Product.objects.values_list('name')]))
+class ImageAssociationForm(forms.Form):
+    products = forms.CharField(widget=forms.Select(attrs={'class': 'form-control'},
+                                                   choices=[[product[0], product[0]] for product in models.Product.objects.values_list('name')]))

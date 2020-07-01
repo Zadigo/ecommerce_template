@@ -1,0 +1,38 @@
+{% load i18n %}
+
+<dropdown-cart v-bind:clicked="clicked" v-show="clicked" inline-template>
+    <transition name="dropdown_cart">
+    <div class="drop-down-cart-wrapper" :class="{'show': clicked === true}">
+            <div class="card z-depth-1 drop-down-cart">
+                <div class="card-body">
+                    <div class="products" style="overflow-y: scroll;">
+                        {% for product in cart %}
+                            <div class="row mt-2">
+                                <div class="col-2">
+                                    <img src="{{ product.product.get_main_image_url }}" class="img-fluid" alt="{{ product.product.name }}">
+                                </div>
+                                <div class="col-auto p-0">
+                                    {{ product.quantity }} x {{ product.product.name }}
+                                </div>
+                                <div class="col-2">
+                                    <button class="btn btn-sm z-depth-0">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="alert alert-primary text-center">
+                                {% trans "Votre panier est vide" %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'checkout' %}" class="btn btn-large btn-primary btn-block z-depth-0">
+                        {% trans "Panier" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </transition>
+</dropdown-cart>
