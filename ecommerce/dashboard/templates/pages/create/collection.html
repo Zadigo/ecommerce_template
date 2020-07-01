@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block title %}
-	{% trans "Création d'une nouvelle collection" %}
+{% trans "Création d'une nouvelle collection" %}
 {% endblock %}
 
 {% block class %}collection-form{% endblock %}
@@ -10,109 +10,36 @@
 {% block form_url %}{{ request.path }}{% endblock %}
 
 {% block top_form_buttons %}
-	<div class="form-row">
-		<div class="form-group col-12">
-			<div>
-				<submitformbutton />
-			</div>
-			<a href="{% url 'dashboard_products' %}" class="btn btn-large float-right white">Abandonner</a>
+<div class="form-row">
+	<div class="form-group col-12">
+		<div>
+			<submitformbutton />
 		</div>
+		<a href="{% url 'dashboard_products' %}" class="btn btn-large float-right white">Abandonner</a>
 	</div>
+</div>
 {% endblock %}
 
 {% block left_content %}
-	<!-- GENERAL -->
-	{% include "../../components/edit/base.html" with description_as_field=form.presentation_text %}
-	
-	<!-- TYPE -->
-	<div class="card mt-3">
-		<div class="card-body">
-			<p class="font-weight-bold mb-4">{% trans "Type de collection" %}</p>
-	
-			<div class="form-group">
-				<div class="form-input-check">
-					<input type="radio" id="manual" value="manual">
-					<label for="manual">{% trans "Manuel" %}</label>
-				</div>
-			</div>
-			<div class="form-group">
-				<div class="form-input-check">
-					<input type="radio" id="automatic" value="automatic">
-					<label for="automatic">{% trans "Automatique" %}</label>
-				</div>
-			</div>
-		</div>
-	
-		<div class="card-footer">
-			<p class="font-weight-bold mb-4">{% trans "Conditions" %}</p>
-	
-			<div class="form-group d-flex flex-direction-row">
-				<p class="ml-2">
-					{% trans "Les produits doivent respecter :" %}
-				</p>
-				<div class="form-input-check ml-1">
-					<input type="radio" id="all" value="all">
-					<label for="all">{% trans "Toutes les conditions" %}</label>
-				</div>
-				<div class="form-input-check ml-1">
-					<input type="radio" id="some" value="some">
-					<label for="some">{% trans "Certaines conditions" %}</label>
-				</div>
-			</div>
-	
-			<div class="form-row">
-				<div class="col-3">
-					<div class="form-group">
-						<select name="condition1" class="form-control" id="condition1">
-							<option value="Nom du produit">{% trans "Nom du produit" %}</option>
-						</select>
-					</div>
-				</div>
-				<div class="col-3">
-					<div class="form-group">
-						<select name="condition2" class="form-control" id="condition2">
-							<option value="Nom du produit">{% trans "Is equal to" %}</option>
-							<option value="Nom du produit">{% trans "Is not equal to" %}</option>
-							<option value="Nom du produit">{% trans "Is greater than" %}</option>
-							<option value="Nom du produit">{% trans "Is less than" %}</option>
-							<option value="Nom du produit">{% trans "Starts with" %}</option>
-							<option value="Nom du produit">{% trans "Ends with" %}</option>
-							<option value="Nom du produit">{% trans "Contains" %}</option>
-							<option value="Nom du produit">{% trans "Does not contain" %}</option>
-							<option value="Nom du produit">{% trans "Yes" %}</option>
-							<option value="Nom du produit">{% trans "No" %}</option>
-						</select>
-					</div>
-				</div>
-				<div class="col-3">
-					<div class="form-group">
-						<input type="text" class="form-control" name="value" id="value" placeholder="{% trans 'Valeur' %}">
-					</div>
-				</div>
-				<div class="col-3">
-					<button class="btn btn-transparent btn-sm white m-0 z-depth-0">
-						<div class="fa fa-trash"></div>
-					</button>
-				</div>
-			</div>
-	
-			<a class="btn btn-large white black-text z-depth-0 ml-0">{% trans "Ajouter une condition" %}</a>
-		</div>
-	</div>
+<!-- GENERAL -->
+{% include "../../components/edit/base.html" with description_as_field=form.presentation_text %}
+
+<!-- TYPE -->
+{% include "../../components/edit/collections/conditions.html" %}
 {% endblock %}
 
 {% block right_content %}
-	<!-- IMAGE -->
-	<div class="card">
-		<div class="card-body">
-			<p class="font-weight-bold mb-4">{% trans "Image de la collection" %}</p>
+<!-- IMAGE -->
+<div class="card">
+	<div class="card-body">
+		<p class="font-weight-bold mb-4">{% trans "Image de la collection" %}</p>
 
-			<div class="form-group">
-				<div class="custom-file">
-					<input type="file" name="image" class="custom-file-input" id="image">
-					<label class="custom-file-label" for="image">{% trans "Choisir une image" %}</label>
-				</div>
+		<div class="form-group">
+			<div class="custom-file">
+				<input type="file" name="image" class="custom-file-input" id="image">
+				<label class="custom-file-label" for="image">{% trans "Choisir une image" %}</label>
 			</div>
 		</div>
 	</div>
+</div>
 {% endblock %}
