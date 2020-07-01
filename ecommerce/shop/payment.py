@@ -141,6 +141,10 @@ class PostProcessPayment:
 
         order_reference = request.session.get('conversion')['reference']
 
+        # This compares that the transaction token
+        # in the url corresponds to the one in the
+        # session. -; Determines for example whether
+        # the user can be on this page or not.
         if enforce_comparision:
             result = self.compare(
                 request.GET.get('transaction_token'),
@@ -200,7 +204,7 @@ class SessionPaymentBackend(PaymentMixin):
 
         The flow of a stripe payment is the following:
             1. Stripe JS
-            2. SessionBasedBacked
+            2. SessionBasedBackend
             3. Stripe JS
 
     Parameters
@@ -423,8 +427,7 @@ class SessionPaymentBackend(PaymentMixin):
     def create_customer_and_process_payment(self, payment_debug=False):
         # TODO: Make final dict a global element
         final_dictionnary = {}
-        customer_name = self._get_full_name(
-            self.user_infos['firstname'], self.user_infos['lastname'])
+        customer_name = self._get_full_name(self.user_infos['firstname'], self.user_infos['lastname'])
         customer = {
             'source': self.stripe_token,
             'name': customer_name,

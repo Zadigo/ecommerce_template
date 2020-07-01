@@ -3,6 +3,13 @@ from django.shortcuts import reverse
 
 register = template.Library()
 
+# These are the most common
+# tags you can find in a navbar.
+
+# Complete this list the icon
+# that you want if you wish to
+# implement additional ones.
+
 ICONS = {
     'home': 'fa fa-home',
     'search': 'fa fa-search',
