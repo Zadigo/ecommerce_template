@@ -21,7 +21,7 @@ def normalize_url(url):
     return url.lower()
 
 
-@register.inclusion_tag('components/navs/links/icon.html')
+@register.inclusion_tag('project_components/navs/links/icon.html')
 def icon_links(*urls):
     context = {
         'urls': []
@@ -38,7 +38,7 @@ def icon_links(*urls):
     return context
 
 
-@register.inclusion_tag('components/navs/links/text.html')
+@register.inclusion_tag('project_components/navs/links/text.html')
 def text_links(*urls):
     context = {
         'urls': []
