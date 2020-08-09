@@ -2,7 +2,7 @@
 
 This template is an __ecommerce website intended for a single business owner that wants to sell products online on his own store.__
 
-If you are interested in a marketplace __where differenct users can login in a similar way to Shopify, create different stores in which they can create different set of products and start selling directly to customers__ checkout [this template instead](https://example.com).
+If you are interested in a marketplace __where different users can login in a similar way to Shopify, create different stores in which they can create different set of products and start selling directly to customers__ checkout [this template instead](https://github.com/Zadigo/ecommerce_marketplace_template).
 
 # About
 
