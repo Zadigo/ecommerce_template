@@ -1,0 +1,38 @@
+{% extends "pagpages/edit/base_edit.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Modification de" %}{{ collection.name }}{% endblock %}
+
+{% block page_header %}
+
+{% endblock %}
+
+{% block left_content %}
+
+{% endblock %}
+
+{% block right_content %}
+<div class="card">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Général" %}</p>
+
+        
+    </div>
+</div>
+{% endblock %}
+
+{% block bottom_action_buttons %}
+<hr>
+<div class="col-12 mt-3 p-0">
+    {% comment "Commented because the url does not exist" %}
+        <a href="{% url 'dashboard:dashboard_delete_product' product.id %}?next={% url 'dashboard:products' %}"
+            class="btn btn-large red lighten-2 ml-0">
+            {% trans "Delete" %}
+        </a>
+    {% endcomment %}
+
+    <button type="submit" class="btn btn-large float-right white mr-0">
+        {% trans "Sauvegarder" %}
+    </button>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "index.html" %}
+
+{% block heading %}{% endblock %}
+
+{% block content %}
+    <div class="row wow fadeIn">
+        <div class="col-md-12 mb-4">
+            <form action="{% url 'dashboard:table_actions' %}?next={{ request.path }}" method="POST" id="table-form">
+                {% csrf_token %}
+                <div class="card" id="vue_table_app">
+                    {% block card_header %}
+                        <div class="card-header white">
+                            {% block card_header_content %}{% endblock %}
+                        </div>
+                    {% endblock %}
+                    
+                    <div class="card-body">
+                        {% block card_body %}{% endblock %}
+                    </div>
+                </div>
+                <input type="hidden" name="method" value="not-selected" id="id_method">
+            </form>
+        </div>
+    </div>
+
+    {% block pagination %}{% endblock %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <!-- GLOBAL -->
+    {% include "vue/global_components.html" %}
+{% endblock %}

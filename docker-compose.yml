@@ -1,32 +1,61 @@
 version: '3'
 
 services:
-  nawoka:
-    build: ./nawoka
+  web:
+    build: ./mywebsite
+    container_name: mywebsite
+    command: gunicorn mywebsite.wsgi -w 4 -b 0.0.0.0:8000 --chdir=/app/mywebsite --log-level=debug --log-file=/app/mywebsite/gunicorn.log
+    # command: python manage.py runserver 0.0.0.0:8000
     env_file:
       - ./docker/environment/env_prod.env
       - ./docker/environment/general.env
-    # environment:
-    #   VIRTUAL_HOST: nawoka.fr
-    container_name: nawoka_production
     ports:
       - "8000:80"
-    links:
-      - db
-    depends_on:
-      - db
     volumes:
-      - ./nawoka:/app
-      # - ./var/gunicorn/log:/var/log/gunicorn/
+      - ./mywebsite:/app
+    networks:
+      - mywebsite_network
+
+  caching:
+    image: memcached 
+    container_name: memcaching
+    ports: 
+      - "11211:11211"
+    volumes:
+      - ./mywebsite:/app
+    depends_on:
+      - mywebsite
+    networks:
+      - mywebsite_network
 
   db:
     build: ./docker/database
-    container_name: apps_database
+    container_name: database
     restart: always
     ports:
       - "5432:5432"
     volumes:
       - PostgresData:/var/lib/postgresql/data/
+    networks:
+      - mywebsite_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports:
+      - "5050:80"
+      - "443:443"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL="contact.mywebsite@gmail.com"
+      - PGADMIN_DEFAULT_PASSWORD="EugenieBouchard97170#KlossyKarlie"
+      - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
+    #   - PGADMIN_CONFIG_LOGIN_BANNER='Only authorized users are allowed here'
+    #   - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
+    # volumes:
+    #   - ./var/certbot/conf:/certs/server.cert
+    #   - ./var/certbot/conf:/certs/server.key
+    networks:
+      - mywebsite_network
 
   enginx:
     build: ./docker/nginx
@@ -35,12 +64,14 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - "nawoka"
+      - mywebsite
     volumes:
       - ./var/nginx_error.log:/etc/nginx/logs/error.log
       - ./var/nginx_access.log:/etc/nginx/logs/access.log
       - ./var/certbot/conf:/etc/letsencrypt/
-      - ./nawoka/allstatic/:/static/allstatic/:ro
+    # - ./mywebsite/allstatic/:/static/allstatic/:ro
+    networks:
+      - mywebsite_network
 
   cadvisor:
     image: google/cadvisor:latest
@@ -54,18 +85,22 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
     depends_on:
-      - "nawoka"
-      - "enginx"
-      - "db"
+      - mywebsite
+      - enginx
+      - db
+    networks:
+      - mywebsite_network
 
   failtoban:
     build: ./docker/failtoban
     container_name: failtoban
     depends_on:
-      - "enginx"
+      - enginx
     volumes:
       - ./var/nginx_error.log:/etc/fail2ban/error.log
       - ./var/nginx_access.log:/etc/fail2ban/access.log
+    networks:
+      - mywebsite_network
 
   certbot:
     build: ./docker/cert
@@ -74,20 +109,73 @@ services:
       - ./var/certbot/conf:/etc/letsencrypt
       - ./var/certbot/www:/var/www/certbot
       - ./var/certbot/etc/letsencrypt:/var/etc/letsencrypt
+    networks:
+      - mywebsite_network
 
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
+  redis:
+    build: ./docker/redis
+    container_name: redis_db
     ports:
-      - "80:80"
+      - 6379:6379
+    restart: always
+    depends_on:
+      - mywebsite
     volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - RedisData:/data
+    networks:
+      - mywebsite_network
+
+  celery:
+    build: ./mywebsite
+    container_name: celery
+    command: celery worker -A mywebsite -l info -f /app/mywebsite/celery.log
+    env_file:
+      - ./docker/environment/env_prod.env
+      - ./docker/environment/general.env
+    depends_on:
+      - redis
+      - mywebsite
+    volumes:
+      - ./mywebsite/:/app
+    networks:
+      - mywebsite_network
+
+  beat:
+    build: ./mywebsite
+    container_name: celerybeat
+    command: celery beat -A mywebsite.celery_tasks.app -l info -f /app/mywebsite/celery_beat.log
+    env_file:
+      - ./docker/environment/env_prod.env
+      - ./docker/environment/general.env
+    depends_on:
+      - redis
+      - celery
+    volumes:
+      - ./mywebsite/:/app
+    networks:
+      - mywebsite_network
+
+  flower:
+    build: ./mywebsite
+    container_name: flower
+    command: flower -A mywebsite --port=5555 --broker=redis://redis:6379/0
+    env_file:
+      - ./docker/environment/env_prod.env
+      - ./docker/environment/general.env
+    ports:
+        - 5555:5555
+    depends_on:
+        - celery
+        - beat
+    networks:
+      - mywebsite_network
 
 volumes:
   PostgresData: {}
   NginxLogs: {}
+  RedisData: {}
 
-# networks:
-#   default:
-#     external:
-#       name: nginx-proxy
+networks:
+  mywebsite_network:
+    # name: princess_ecommerce
+    driver: bridge

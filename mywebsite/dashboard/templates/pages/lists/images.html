@@ -1,0 +1,103 @@
+{% extends "pages/edit/base_edit.html" %}
+{% load i18n cache %}
+
+{% block title %}{% trans "Listes des images" %}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Images" %}
+{% endblock %}
+
+{% block page_header %}
+    <div class="col-12">
+        <div id="vue_images_app">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <search-input-field @filterimages="dofilter" />
+                            <filter-input-field />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% cache 10 allimages %}
+                <div v-if="images.length > 0">
+                    <images-component :images="filteredimages" :noresults="noresults" inline-template>
+                        <div>
+                            <div v-show="!noresults" class="row">
+                                <div v-for="image in images" :key="image.slug" class="col-md-3 mb-3">
+                                    <div class="box15">
+                                        <img :src="image.url" class="img-fluid" :alt="image.slug">
+                                        <div class="box-content">
+                                            <h3 class="title">[[ image.name ]]</h3>
+                                            <ul class="icon">
+                                                <li>
+                                                    <a :href="constructurl(image.pk)" class="fa fa-edit"></a>
+                                                </li>
+                                                <li>
+                                                    <a @click="markasmain(image)">
+                                                        <i v-if="image.main_image" class="fa fa-star red-text"></i>
+                                                        <i v-else class="fa fa-star"></i>
+                                                    </a>
+                                                </li>
+                                                <li><a @click="deleteimage(image)"><i class="fa fa-trash"></i></a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div v-show="noresults" class="row">
+                                <div class="col-12">                                    
+                                    <transition name="no-results">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <p class="text-center">
+                                                    {% trans "Aucune image ne correspond à votre recherche" %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </transition>
+                                </div>
+                            </div>
+                        </div>
+                    </images-component>
+                </div>
+            {% endcache %}
+
+            <div v-else>
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="p-1 mt-3">
+                            {% trans "Vous n'avez pas encore d'images" %}
+                        </h5>
+
+                        <a @click="newfromlocal=true" class="btn btn-large blue" data-toggle="modal" data-target="#import_new_image">
+                            <i class="fa fa-link mr-3"></i>
+                            {% trans "Nouvelle image url" %}
+                        </a>
+
+                        <a @click="newfromlocal=false" class="btn btn-large blue" data-toggle="modal" data-target="#import_new_image">
+                            <i class="fa fa-image mr-3"></i>
+                            {% trans "Nouvelle image locale" %}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- MODALS -->
+                {% include "components/others/modals/new_image.html" %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    {{ vue_images|json_script:"vue_images" }}
+    
+    <script>
+        var images = JSON.parse($("#vue_images").text())
+    </script>
+
+    {% include "vue/images/base.html" %}
+{% endblock %}

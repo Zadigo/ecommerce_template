@@ -1,0 +1,28 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+stripe = "*"
+psycopg2 = "*"
+django-storages = "*"
+boto3 = "*"
+gunicorn = "*"
+django = "*"
+social-auth-app-django = "*"
+django-rest-framework = "*"
+django-cors-headers = "*"
+djangorestframework-jwt = "*"
+django-extensions = "*"
+celery = "*"
+redis = "*"
+django-celery-beat = "*"
+pandas = "*"
+flower = "*"
+python-memcached = "*"
+
+[requires]
+python_version = "3.8"

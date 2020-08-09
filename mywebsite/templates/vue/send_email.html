@@ -1,0 +1,105 @@
+{% load i18n %}
+
+<script>
+    Vue.component("reasons-column", {
+        props: ["width"],
+        delimiters: ["[[", "]]"],
+        template: `
+        <div :class="width">
+            <div class="form-group">
+                <select name="reason" id="reason" class="form-control">
+                    <option @change="selected(index)" 
+                            v-for="(reason, index) in reasons" 
+                                    :key="reason[0]" :value="reason[0]">
+                        [[ reason[1] ]]
+                    </option>
+                </select>
+                <input type="hidden" name="verbose-reason" value="reason["
+            </div>
+        </div>        
+        `,
+        data() {
+            return {
+                reasons: [
+                    ['where', 'Où est ma commande ?'],
+                    ['missing', 'Réclamation - un produit manquant'],
+                    ['refund', 'Demande de remboursement'],
+                    ['payment-question', 'Requête au sujet du paiement'],
+                    ['defectuous', 'Ma commande ou mon produit est défectueux'],
+                    ['refund-duration', 'Quand est-ce que je vais recevoir mon remboursement ?'],
+                    ['other', 'Autre'],
+                ],
+                verbose: "Où est ma commande ?"
+            }
+        },
+        methods: {
+            selected: function (index) {
+                this.$data.verbose = this.$data.reasons[index][1]
+            }
+        }
+    })
+
+    Vue.component("input-column", {
+        props: ["type", "width", "name", "placeholder"],
+        template: `
+        <div :class="width">
+            <div class="form-group">
+                <input :type="type" class="form-control" :name="name" :id="name" :placeholder="placeholder">
+            </div>
+        </div>
+        `
+    })
+
+    Vue.component("text-area-column", {
+        props: ["placeholder"],
+        template: `
+        <div class="col-12">
+            <div class="form-group">
+                <textarea class="form-control" 
+                        name="message" id="message" cols="30" rows="10">
+                </textarea>
+            </div>
+        </div>
+        `
+    })
+
+    var emailapp = new Vue({
+        el: "#vue_email_app",
+        name: "CustomerCareEmail",
+        delimiters: ["[[", "]]"],
+        template: `
+        <form action="{% url 'customer_care' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-row">
+                <reasons-column :width="'col-12'" />
+            </div>
+
+            <div class="form-row">
+                <input-column :type="'email'" :width="'col-6'" :name="'email'" :placeholder="'Email'" />
+                <input-column :type="'order'" :width="'col-6'" :name="'order'" :placeholder="'Numéro de commande'" />
+            </div>
+
+            <div class="form-row">
+                <text-area-column :placeholder="'Votre message'" />
+            </div>
+
+            <button type="submit" 
+                    class="btn btn-large btn-primary float-right">
+                {% trans "Créer" %}
+            </button>
+        </form>
+        `,
+        // computed: {
+        //     disablebutton() {
+        //         var tests = [
+        //             this.$data.order != "",
+        //             this.$data.email != ""
+        //         ]
+        //         var result = tests.every(function (test) { test === true })
+        //         return {
+        //             "disabled": result === false ? true : false
+        //         }
+        //     }
+        // },
+    })
+</script>

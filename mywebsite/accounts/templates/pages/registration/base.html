@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <section class="section" id="registration">
+        <!-- SOCIAL REGISTRATION -->
+        {% if request.path == "/accounts/login/" or request.path == "/accounts/signup/" %}
+                {# {% include "components/registration/social.html" %} #}
+        {% endif %}
+
+        <div class="row wow fadeIn">
+            <div class="col-5 offset-sm-12 offset-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        {% block registration_form %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row wow fadeIn">
+            <div class="col-12 offset-sm-4 offset-md-4">
+                {% block extra_registration_links %}{% endblock %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

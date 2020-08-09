@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load i18n static prices seo %}
+
+{% block title %}{{ collection.name }} - {{ collection.gender|capfirst }} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block page_description %}
+    <meta name="description" content="{{ collection.google_description|default:collection.presentation_text|truncatechars:160 }}">
+{% endblock %}
+
+{% block datalayer_push %}
+    {{ impressions|json_script:"impressions" }}
+
+    <script>
+        var impressions = JSON.parse(document.getElementById("impressions").innerText)
+
+        dataLayer.push({
+            "ecommerce": {
+                "impressions": impressions
+            },
+            "event": "productImpressions"
+        })
+    </script>
+
+    {# {% impressions products %} #}
+{% endblock %}
+
+{% block structured_data %}
+    {% include "components/products/seo.html" %}
+{% endblock %}
+
+{% block container %}
+    <div id="vue_products_app">
+        <section class="text-center mb-4" id="collection">
+            {% if collection.show_presentation %}
+                <!-- PRESENTATION -->
+                <div class="card blue lighten-1">
+                    <div class="card-body">
+                        <h1 class="center collection-presentation-text">{{ collection.name }}</h1>
+                        <p>
+                            {{ collection.presentation_text }}
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- FILTER BAR -->
+            {% include "components/products/filterbar.html" %}
+
+
+            <!-- CARDS -->
+            {% include "components/products/cards.html" %}
+
+            {% comment "Vue cards" %}
+                <transition-group name="product-cards" :class="'row wow fadeIn'">
+                    <card-component v-for="product in products" :key="product.pk" v-bind:product="product">
+                    </card-component>
+                </transition-group>
+            {% endcomment %}
+        </section>
+    </div>
+
+    <!-- PAGINATION -->
+    {% include "components/products/pagination.html" %}
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        var CardClick = function (index, name, price, reference) {
+            dataLayer.push({
+                "event": "productClick",
+                "ecommerce": {
+                    "click": {
+                        "actionField": {
+                            "list": "{{ collection.gender }}/{{ collection.name }}"
+                        },
+                        "products": [{
+                            "id": reference,
+                            "name": name,
+                            "price": price,
+                            "brand": "Nawoka",
+                            "category": "{{ collection.name }}",
+                            "position": index
+                        }]
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <!-- PRODUCTS -->
+    {# {% include "vue/products.html" %} #}
+{% endblock %}

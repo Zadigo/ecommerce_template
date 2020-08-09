@@ -1,0 +1,192 @@
+{% load i18n %}
+
+<!-- IMAGES -->
+{% include "vue/create/product/images.html" %}
+
+<script>
+    Vue.component("discount-section", {
+        name: "ToggleDiscount",
+        data() {
+            return {
+                showdiscountfield: false
+            }
+        },
+        methods: {
+            toggle: function () {
+                this.$data.showdiscountfield = !this.$data.showdiscountfield
+            }
+        }
+    })
+
+
+    Vue.component("quantity-section", {
+        name: "ToggleQuantity",
+        data() {
+            return {
+                showquantityfield: false
+            }
+        },
+        methods: {
+            toggle: function () {
+                this.$data.showquantityfield = !this.$data.showquantityfield
+            }
+        }
+    })
+
+    
+    
+    
+    
+    // SIZE
+    
+    var textinput = {
+        props: ["id", "name", "value", "placeholder"],
+        template: `
+        <input type="text" :name="name" 
+            class="form-control" :id="'id_' + id" :value="value" :placeholder="placeholder">
+        `
+    }
+    
+    var addsizecomponent = {
+        props: ["initialsizes"],
+        name: "AddSizeComponent",
+        components: { textinput },
+        delimiters: ["[[", "]]"],
+        template: `
+        <div class="form-group">
+            <div v-for="(size, index) in sizes" :key="size.id" class="form-row mt-3">
+                <div class="col-2">
+                    <textinput :key="size.id" :name="sizefieldname(size.type)" 
+                        :id="size.id" :value="size.value" :placeholder="'Taille'" />
+                    <input v-if="size.type==='existing'" type="hidden" name="keys" :value="size.id">
+                </div>
+
+                <div class="col-5">
+                    <textinput :name="verbosefieldname(size.type)" :id="'id_verbose_name'" 
+                            :value="size.verbosename" :placeholder="'Nom'" />
+                </div>
+                    
+                <div class="col-5">
+                    <a @click="add" class="btn btn-sm btn-primary m-0" style="height: 35px;">
+                        <i class="fas fa-plus"></i>
+                    </a>
+
+                    <a @click="remove(index)" class="btn btn-sm btn-primary m-0 mr-1" style="height: 35px;">
+                        <i class="fas fa-minus"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        `,
+        data() {
+            return {
+                sizes: [],
+                fieldcount: 1
+            }
+        },
+        created() {
+            if (this.$props.initialsizes.length > 0) {
+                var initialsizes = this.$props.initialsizes
+                this.$data.sizes = _.sortBy(initialsizes, ["id"])
+            } else {
+                this.$data.sizes = [
+                    {id: 1, value: "", type: "non-existing"}
+                ]
+            }
+            this.$data.fieldcount = this.$props.initialsizes.length
+        },
+        computed: {
+            keys() {
+                var primarykeys = []
+                _.forEach(this.$data.sizes, (size) => {
+                    primarykeys.push(size.id)
+                })
+                return primarykeys
+            }
+        },
+        methods: {
+            add: function () {
+                var lastsize = _.last(this.$data.sizes)
+                this.$data.sizes.push(
+                    { id: lastsize.id + 1, value: "", type: "non-existing" }
+                )
+                this.addtofieldcount("add")
+            },
+            remove: function (index) {
+                var currentlength = this.$data.sizes.length
+                if (currentlength !== 1) {
+                    this.$data.sizes.pop(index)
+                }
+                this.addtofieldcount("sub")
+            },
+            addtofieldcount: function (method) {
+                if (method === "add") {
+                    this.$data.fieldcount = this.$data.fieldcount + 1
+                }
+                if (method === "sub") {
+                    this.$data.fieldcount = this.$data.fieldcount - 1
+                }                    
+            },
+            sizefieldname: function (type) {
+                if (type === "existing") {
+                    return "size-name"
+                } else {
+                    return "new-size-name"
+                }
+            },
+            verbosefieldname: function (type) {
+                if (type === "existing") {
+                    return "verbose-name"
+                } else {
+                    return "new-verbose-name"
+                }
+            }
+        }
+    }
+
+    Vue.component("size-section", {
+        name: "ToggleSize",
+        components: { addsizecomponent },
+        data() {
+            return {
+                showsizefield: false,
+                selectedsizeid: 1,
+                initialsizes: []
+            }
+        },
+        created() {
+            var self = this
+            try {
+                var variants = product.variant
+                _.forEach(variants, (variant) => {
+                    this.$data.initialsizes.push(
+                        {
+                            id: variant.pk,
+                            value: variant.name,
+                            name: variant.name,
+                            verbosename: variant.verbose_name,
+                            type: "existing"
+                        }
+                    )
+                })
+                if (variants.length > 0) {
+                    this.$data.showsizefield = true
+                }
+            } catch (error) {
+                console.log('Create.')
+            }
+        },
+        methods: {
+            toggle: function () {
+                this.$data.showsizefield = !this.$data.showsizefield
+            },
+            selectsizetype: function (value) {
+                this.$data.selectedsizeid = value
+                
+                var size = _.filter(this.$data.sizetypes, (type) => {
+                    return type.value === value
+                })
+            }
+        }
+    })
+</script>

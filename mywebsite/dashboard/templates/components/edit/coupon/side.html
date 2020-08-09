@@ -1,0 +1,16 @@
+{% load i18n %}
+
+
+<resume-section inline-template>
+    <ul>
+        <li>[[ checkdiscountvalue ]]% off [[ collectiondisplaytext ]]</li>
+        <li v-if="minimumvaluecheck">Minimum quantity of [[ fieldsdata.minimumquantity ]] items</li>
+        <li v-if="minimumquantitycheck">Minimum purchase of [[ fieldsdata.minimumpurchase ]]€</li>
+        <li v-if="showlimittobuyer | showlimittotal">
+            <span v-if="showlimittotal">Limit of 15 uses<span v-if="showlimittobuyer & showlimittotal">,</span></span>
+            <span v-if="showlimittobuyer">[[ fieldsdata.usage_limit ]] per customer</span>
+        </li>
+        <li>Active from today</li>
+        <li>Active today</li>
+    </ul>    
+</resume-section>

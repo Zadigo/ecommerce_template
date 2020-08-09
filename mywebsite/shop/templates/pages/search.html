@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static prices i18n %}
+
+{% block title %}Recherche - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block page_description %}
+    <meta name="description" content="Recherchez nos derniers crop tops ou accessoires pour {{ collection.gender }} chez Nawoka. 
+        Achetez nos meilleurs collections de crop tops, chaussures et plus encore.">
+{% endblock %}
+
+{% block share_metatags %}
+    <meta name="twitter:card" content="Recherchez nos derniers crop tops ou accessoires pour {{ collection.gender }} chez Nawoka. 
+        Achetez nos meilleurs collections de crop tops, chaussures et plus encore." />
+    <meta name="twitter:site" content="@mywebsite" />
+    <meta name="twitter:creator" content="@mywebsite" />
+
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka : Recherchez crop tops, bijoux, 
+    accessoires ou encore produits de beauté chez Nawoka" />
+    
+    {% block og_description %}
+        <meta property="og:description" content="Recherchez nos derniers crop tops ou accessoires pour {{ collection.gender }} chez Nawoka. 
+        Achetez nos meilleurs collections de crop tops, chaussures et plus encore." />
+    {% endblock %}
+
+    <meta property="og:image" content="{% get_media_prefix %}hero/hero2.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:height" content="1200">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:alt" content="Nawoka" />
+{% endblock %}
+
+{% block metatags %}
+    <link rel="canonical" href="{{ product.get_absolute_url }}">
+{% endblock %}
+
+{% block datalayer_push %}
+    {{ impressions|json_script:"impressions" }}
+
+    <script>
+        var impressions = JSON.parse(document.getElementById("impressions").innerText)
+        
+        dataLayer.push({
+            "ecommerce": {
+                "impressions": impressions
+            },
+            "event": "productImpressions"
+        })
+    </script>
+{% endblock %}
+
+{% block container %}
+<section class="text-center mb-4" id="search">
+    <div class="row wow fadeIn">
+        {% for product in products %}
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="card">
+                    <div class="view overlay">
+                        <img src="{{ product.get_main_image_url|default:'https://via.placeholder.com/800' }}" class="card-img-top" alt="{{ product.slug }}">
+                        <a><div class="mask rgba-white-slight"></div></a>
+                    </div>
+
+                    <div class="card-body text-center">
+                        <a href="{{ product.get_absolute_url }}" class="grey-text" onclick="CardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
+                            <h5>{{ product.name }}</h5>
+                            {% if product.is_novelty %}
+                                <span class="badge badge-pill danger-color text-uppercase">new</span>                                            
+                            {% endif %}
+                            {% if product.our_favorite %}
+                                <span class="badge badge-pill success-color text-uppercase">favori</span>                                            
+                            {% endif %}
+                            {% if not product.in_stock %}
+                                <span class="badge badge-pill info-color text-uppercase">épuisé</span>                                            
+                            {% endif %}
+                        </a>
+
+                        {% comment %}
+                        <h5>
+                            <strong>
+                                <a href="" class="dark-grey-text">{{ product.name }}
+                                    {% if product.is_novelty %}
+                                        <span class="badge badge-pill danger-color">NEW</span>                                            
+                                    {% endif %}
+                                </a>
+                            </strong>
+                        </h5>                                
+                        {% endcomment %}
+                        <h4 class="font-weight-bold blue-text mt-1">
+                            <strong>{{ product.price_ht|price_to_text }}</strong>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="row">
+                <div class="col-sm-10 col-md-10 offset-2">                    
+                    <div class="card blue lighten-4">
+                        <div class="card-body text-muted">
+                            <h4 class="text-uppercase font-weight-bold">
+                                {% trans "Aucun article ne correspond à votre recherche" %}
+                            </h4>
+                            <p>
+                                {% blocktrans %}
+                                    Mais vous pouvez toujours retenter votre chance : vérifiez l'orthographe 
+                                    ou essayez des termes de recherche moins spécifiques.
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col col-sm-12 col-md-10 offset-md-1">
+                    <h5>{% trans "Nouveautés" %}</h5>
+                    <div class="row mt-4">
+                        {% for product in proposed_products %}
+                            <div class="col-sm-3 col-md-3">
+                                <a href="{{ product.get_collection_url }}" id="link_see_more" onclick="CardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
+                                    <img src="{{ product.get_main_image_url|default:'https://via.placeholder.com/800' }}" class="img-fluid" alt="{{ product.slug }}">
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

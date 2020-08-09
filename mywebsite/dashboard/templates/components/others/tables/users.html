@@ -1,0 +1,30 @@
+{% extends "components/others/tables/base.html" %}
+{% load table i18n %}
+
+{% block table_header %}
+    {% header "ID" "Email" "Nom" "Actif" %}
+    <th colspan="3"></th>
+{% endblock %}
+
+{% block table_body %}
+    {% for user in users %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>
+                <a href="{% url 'dashboard:dashboard_user' user.id %}">{{ user.email|default:"-" }}</a>
+            </td>
+            <td>{{ user.get_full_name|default:"-" }}</td>
+            <td>
+                {% if user.is_active %}
+                    {% include "../badge.html" with type="success" badge_name="actif" %}								
+                {% else %}
+                    {% include "../badge.html" with type="danger" badge_name="inactif" %}								
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <tr scope="row">
+            <td class="text-center" colspan="5">Il n'y a pas encore d'utilisateurs</td>
+        </tr>
+    {% endfor %}
+{% endblock %}

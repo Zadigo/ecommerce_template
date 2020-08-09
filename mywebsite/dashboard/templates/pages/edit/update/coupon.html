@@ -1,0 +1,121 @@
+{% extends "pages/edit/base_edit.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Création d'un nouveau coupon" %}{% endblock %}
+
+{% block page_header %}
+<div class="col-12">
+    <a href="{% url 'dashboard:coupons:home' %}">
+        <i class="fa fa-arrow-left mr-2"></i>
+        {% trans "Coupons" %}
+    </a>
+</div>
+<div class="col-12 mb-1 mt-2">
+    <h3 class="font-weight-bold">{{ coupon.code }}</h3>
+</div>
+<div class="col-12 mb-4 mt-1" id="coupon_app">
+    <activate-coupon></activate-coupon>
+    
+    {% if coupon.active %}
+        <button class="btn btn-sm btn-secondary">
+            <i class="fa fa-link-open"></i>
+            {% trans "Promouvoir" %}
+        </button>        
+    {% endif %}
+
+    {% if coupon.active %}
+        <p class="green lighten-4 p-4 mt-2">
+            {% trans "Promouvoire le code -" %}
+        </p>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block left_content %}
+<div class="card card-body">
+    <div class="form-row">
+        <div class="col-6">
+            <p class="font-weight-bold mb-4">{% trans "Code promotionnel" %}</p>
+        </div>
+        <div class="col-6 text-right">
+            <a href>{% trans "Générer une nouveau code" %}</a>
+        </div>
+    </div>
+    {{ form.code }}
+    <label class="text-muted mt-3" for="id_code">
+        {% trans "L'utilisateur utilisera le code à l'écran final" %}
+    </label>
+</div>
+
+<!-- TYPES -->
+<div class="card card-body mt-3">
+    <p class="font-weight-bold mb-4">
+        {% trans "Types" %}
+    </p>
+
+    <div class="form-row">
+        <div class="col-5">
+            <label for="id_value_type">{% trans "Le type de coupon" %}</label>
+            {{ form.value_type }}
+        </div>
+    </div>
+</div>
+
+<!-- VALUE -->
+{% include "components/edit/coupon/value.html" %}
+
+<!-- MINIMUM -->
+{% include "components/edit/coupon/minimum.html" %}
+
+<!-- LIMITATIONS -->
+{% include "components/edit/coupon/limitations.html" %}
+
+
+<!-- DATES -->
+<div class="card card-body mt-3">
+    <p class="font-weight-bold mb-4">{% trans "Dates" %}</p>
+
+    <div class="form-row">
+        <div class="col-6">
+            <div class="form-input-check">
+                <label class="text-muted" for="">{% trans "Date de début" %}</label>
+                {{ form.start_date }}
+            </div>
+        </div>
+    </div>
+    <div class="form-row mt-3">
+        <div class="col-6">
+            <div class="form-input-check">
+                <label class="text-muted" for="">{% trans "Date de fin" %}</label>
+                {{ form.end_date }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block right_content %}
+<!-- SIDE -->
+<div class="card grey lighten-4">
+    <div class="card-header">
+        <h5>{% trans "Résumé" %}</h5>
+    </div>
+    <div class="card-body">
+        <p class="font-weight-bold">{{ coupon.code }}</p>
+        {# {% include "components/edit/coupon/side.html" %} #}
+    </div>
+</div>
+{% endblock %}
+
+{% block bottom_form_buttons %}
+    {% include "components/edit/actions_bottom.html" %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    {{ block.super }}
+
+    <!-- COUPON FEATURES -->
+    {% include "vue/create/coupon.html" %}
+    <!-- FORM -->
+    {% include "vue/create/form.html" %}
+{% endblock %}

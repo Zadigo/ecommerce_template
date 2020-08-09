@@ -1,0 +1,55 @@
+{% extends "pages/edit/base_edit.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Création d'un nouveau produit" %}{% endblock %}
+
+{% block class %}new-product{% endblock %}
+
+{% block top_form_buttons %}
+	{% include "components/edit/actions/main.html" with cancel_url="dashboard:products:home" %}
+{% endblock %}
+
+{% block left_content %}
+	<!-- GENERAL -->
+	{% include "components/edit/titles.html" %}
+
+	<!-- MEDIA -->
+	{# {% include "components/edit/product/media.html" %} #}
+	{% include "components/edit/product/media2.html" %}
+
+	<!-- PRICE -->
+	{% include "components/edit/product/price.html" %}
+
+	<!-- INVENTORY -->
+	{% include "components/edit/product/inventory.html" %}
+
+	<!-- VARIANTS -->
+	{% include "components/edit/product/variants.html" %}
+
+	<!-- MODALS -->
+	{% include "components/others/modals/margin.html" %}
+{% endblock %}
+
+{% block right_content %}
+	<!-- SIDE -->
+	{% include "components/edit/product/side.html" %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+	{{ block.super }}
+
+	{{ vue_other_images|json_script:"vue_other_images" }}
+	
+	<script>
+		var otherimages = JSON.parse($("#vue_other_images").text())
+	</script>
+
+	<!-- SECTIONS -->
+	{% include "vue/create/product/base.html" %}
+	<!-- EDITOR -->
+	{# {% include "vue/create/quill.html" %} #}
+	<!-- FORM -->
+	{% include "vue/create/form.html" %}
+	<!-- CALCULATOR -->
+	{% include "vue/create/others/calculator.html" %}
+{% endblock %}

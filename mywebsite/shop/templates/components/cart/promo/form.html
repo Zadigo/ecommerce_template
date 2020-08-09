@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<form action="{% url 'add_coupon' %}" method="POST" class="card p-2">
+    {% csrf_token %}
+    {% for error in coupon_form.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+
+    <div class="input-group">
+        {% for field in coupon_form %}
+            {{ field }}
+        {% endfor %}
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-secondary btn-md waves-effect m-0">
+                {% trans "Ajouter" %}
+            </button>
+        </div>
+    </div>
+</form>

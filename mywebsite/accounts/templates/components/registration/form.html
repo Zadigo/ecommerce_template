@@ -1,0 +1,28 @@
+<form method="POST" id="{{ form_id }}">
+    {% csrf_token %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {% endfor %}
+
+    {% for field in form %}
+        <div class="form-group">
+            {{ field }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-large">
+        <i class="fa fa-person"</i>
+        {{ button_name }}
+    </button>
+</form>

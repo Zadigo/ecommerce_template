@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load i18n static prices %}
+
+{% block title %}{% trans "Paiement" %} - Nawoka{% endblock %}
+
+{% block datalayer_push %}
+	{{ impressions|json_script:"impressions" }}
+	<script>
+		var impressions = JSON.parse(document.getElementById("impressions").innerText)
+
+		dataLayer.push({
+			"event": "checkout",
+			"ecommerce": {
+				"checkout": {
+					"actionField": {
+						"step": 3
+					},
+					"products": impressions
+				}
+			}
+		})
+	</script>
+{% endblock %}
+
+{% block body_color %}grey lighten-5{% endblock %}
+
+{% block extra_css %}
+	<link rel="stylesheet" href="{% static 'stripe.css' %}">
+{% endblock %}
+
+{% block container %}
+	<div class="row mb-4 mb-sm-3 mb-md-5">
+		<div class="col-12 col-sm-12 col-md-5 offset-md-2">
+			<div class="row">
+				<div class="col-6 col-sm-12 col-md-6">
+					<h2 class="text-uppercase font-weight-bold m-0">
+						<a class="text-muted" href="{% url 'shop' %}" id="link_payment_to_shop">Nawoka</a>
+					</h2>
+				</div>
+				<div class="col-6 col-sm-12 col-md-6 text-sm-center text-md-right">
+					<a href="https://stripe.com" target="_blank">
+						<img src="{% static 'logos/stripe.png' %}" alt="stripe">
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row wow fadeIn">
+		<div class="col-md-5 offset-md-2">
+			{% comment %}
+				<div class="card">
+					<div id="payment-request-button"></div>
+				</div>			
+			{% endcomment %}
+
+			<div class="card">
+				<form method="POST" class="card-body stripe stripe-styling" id="form_payment">	
+					{% csrf_token %}
+					
+					<div class="alert alert-danger text-center d-none" role="alert" id="card-errors"></div>
+					
+					<div class="row wow fadeIn">
+						<div id="card-element"></div>
+					</div>
+					
+					<button type="submit" class="btn btn-primary 
+								btn-lg btn-block mt-4" id="btn_payment">
+						<i class="fa fa-lock d-none"></i>
+						<div class="spinner-grow d-none" role="status"></div>
+						<span class="payment-button-text">
+							{% trans "Payer" %} {{ cart_total|price_to_text }}
+						</span>
+					</button>
+				</form>
+
+				<div class="card-footer">
+					<div class="d-flex flex-row justify-content-between">
+						<p class="text-uppercase font-weight-bold mb-0">
+							{% trans "Nous acceptons" %}
+						</p>
+						<div class="payments">
+							<i class="fab fa-cc-mastercard fa-1x"></i>
+							<i class="fab fa-cc-visa fa-1x"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="card mt-3 text-muted">
+				<div class="card-body">
+					<p class="mb-0">
+						En passant votre commande, vous acceptez nos <a href="{% url 'cgu' %}" target="_blank">Modalités</a>, 
+						ainsi que <a href="{% url 'cgv' %}" target="_blank">nos politiques de confidentialité et de retour</a>. 
+						Vous consentez à ce que certaines de vos données, qui seront utilisées 
+						pour améliorer le processus d'achats, soient enregistrées par Nawoka.						
+					</p>
+				</div>
+			</div>
+
+			<div class="card mt-1 z-depth-0 grey lighten-5">
+				<div class="card-body pl-0 text-muted">
+					<p>
+						<a href="{% url 'customer_care' %}" target="_blank">
+							{% trans "Assistance" %}
+						</a>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-4 mb-4">
+			<!-- SIDE -->
+			{% include "components/cart/side.html" %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block extra_scripts %}
+	<!-- STRIPE -->
+	{% include "components/scripts/stripe.html" %}
+
+	<script>
+		var startPayment = function() {
+			dataLayer.push({
+				"event": "transaction",
+				"ecommerce": {
+					"purchase": {
+						"actionField": {
+							"id": "98aa382e-dc25-465c-a51d-2684420d7eeb",
+							"affiliation": "Online Store",
+							"revenue": "{{ cart_total }}",
+							"tax": 20,
+							"shipping": 2.99
+						},
+						"products": impressions
+					}
+				}
+			});
+		}
+	</script>
+{% endblock %}

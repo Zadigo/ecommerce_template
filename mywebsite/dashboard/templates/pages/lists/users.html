@@ -1,0 +1,16 @@
+{% extends "pages/lists/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Utilisateurs" %}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Utilisateurs" %}
+{% endblock %}
+
+{% block card_body %}
+    {% include "components/others/tables/users.html" %}    
+{% endblock %}
+    
+{% block pagination %}
+    {% include "components/navs/pagination.html" with href="dashboard:dashboard_users" %}
+{% endblock %}

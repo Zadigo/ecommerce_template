@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="card mt-2">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Variants" %}</p>
+
+        <size-section inline-template>
+            <div class="form-group">
+                <checkbox-submit-component @showfield="toggle" :checked="showsizefield" 
+                    :id="'size'" :name="'has-size'" :label="'Ce produit possède une taille'">
+                </checkbox-submit-component>
+                
+                <div v-if="showsizefield" class="form-group mt-3 mb-5">     
+                    <addsizecomponent :initialsizes="initialsizes" />
+                </div>
+            </div>
+        </size-section>
+    </div>
+</div>

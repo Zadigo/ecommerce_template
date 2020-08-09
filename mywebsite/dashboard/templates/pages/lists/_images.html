@@ -1,0 +1,57 @@
+{% extends "../../index.html" %}
+
+{% block title %}Images{% endblock %}
+
+{% block extra_css %}
+    <style>
+        .image_card-enter-active {
+            transition: all ease .3s;
+        }
+        .image_card-enter {
+            opacity: 0;
+        }
+        .image_card-enter-to {
+            opacity: 1;
+        }
+        .image_card-move {
+            transition: all ease .3s;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div id="images_app">
+    <div class="row flex-direction-row justify-content-between mb-3">
+        <div class="col-md-4 mb-4 pl-0">
+            <!-- <filtercomponent /> -->
+            <searchinputcomponent @filterimages="dofilter" />
+        </div>
+        <div class="col-md-8 text-right">
+            {% include "components/others/modal_button.html" with btn_title="Nouvelle image" icon="fa fa-image" extra_class="m-0" target="new_image_modal" %}
+        </div>
+    </div>
+    
+    <div class="row wow fadin">
+        <imagescomponent v-bind:images="filteredimages" />
+        <!-- <simpleimagescomponent v-bind:images="images" /> -->
+    </div>
+
+    <!-- MODALS -->
+    {% include "components/others/modals/new_image.html" %}
+    {# {% include "components/others/modals/link_image_product.html" %} #}
+    <div class="csrf">{% csrf_token %}</div>
+</div>
+
+
+<div class="row wow fadeIn">
+    <div class="col-md-12 mb-12">
+        {% include "components/navs/pagination.html" with href="manage_images" %}
+    </div>
+</div>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    {{ vue_images|json_script:"vue_images" }}
+
+    {% include "vue/images/images_management.html" %}
+{% endblock %}

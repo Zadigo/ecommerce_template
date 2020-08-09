@@ -1,0 +1,11 @@
+{# Use this for a page that shows multiple products, services... #}
+
+<script>
+    var impressions = {{ impressions }}
+    dataLayer.push({
+        "ecommerce": {
+            "impressions": impressions
+        },
+        "event": "productImpressions"
+    })
+</script>

@@ -1,0 +1,12 @@
+{# Main actions for submitting a form or cancelling the creation of an item #}
+
+{% load i18n %}
+
+<div class="form-row">
+    <div class="form-group col-12">
+        <submit-button></submit-button>
+        <a href="{% url cancel_url %}" class="btn btn-large float-right white">
+            {% trans "Abandonner" %}
+        </a>
+    </div>
+</div>

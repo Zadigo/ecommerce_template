@@ -1,0 +1,55 @@
+<a data-toggle="modal" data-target="#size_guide">
+    Guide des tailles
+</a>
+
+<div class="modal" id="size_guide" tabindex="-1" role="dialog" 
+                            aria-labelledby="size_guide" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Guide des tailles</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        {% if product.size.is_top_clothe %}
+                            <th>Croix épaule (cm)</th>
+                            <th>Largeur (cm)</th>
+                            <th>Longueur (cm)</th>
+                            <th>Manche (cm)</th>
+                        {% elif product.size.is_bottom_clothe %}
+                            <th>Longueur (cm)</th>
+                            <th>Hanche (cm)</th>
+                            <th>Taille (cm)</th>
+                            <th>Cuisse (cm)</th>
+                        {% endif %}
+                    </thead>
+                
+                    <tbody>
+                        {% if product.size.is_top_clothe %}
+                            {% for size in size %}
+                                <tr>{{ size.name }}</tr>
+                                <tr>{{ size.front }}</tr>
+                                <tr>{{ size.sleeve }}</tr>
+                                <tr>{{ size.shoulder }}</tr>
+                                <tr>{{ size.chest }}</tr>
+                                <tr>{{ size.cross_shoulder }}</tr>
+                            {% endfor %}
+                        {% elif product.size.is_bottom_clothe %}        
+                            {% for size in size %}
+                                <tr>{{ size.name }}</tr>
+                                <tr>{{ size.waist }}</tr>
+                                <tr>{{ size.hip }}</tr>
+                                <tr>{{ size.length }}</tr>
+                                <tr>{{ size.thigh }}</tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>            
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+{% extends "./base_middle_modal.html" %}
+{% load i18n %}
+
+{% block id %}export_csv_modal{% endblock %}
+
+{% block title %}
+    {% trans "Exporter des produits" %}
+{% endblock %}
+
+{% block body %}
+    <export-csv-component inline-template>
+        <div>
+            <div class="form-row">
+                <div class="col-6">
+                    <p>{% trans "Exporter les données pour" %} :</p>
+                    <select-component @returndata="exportfor" :id="'export-for'" :name="'export_for'" 
+                        :options="[{name: 'Général', value: 'general'}, {name: 'Facebook', value: 'facebook'}]" >
+                    </select-component>
+                </div>            
+            </div>
+            
+            <div class="form-row mt-3">
+                <div class="col-12">
+                    <p>{% trans "Types de données à exporter" %} :</p>
+        
+                    <radio-component 
+                        @showfield="showcollecitonname"  
+                            v-bind:fields="fields" :triggerid="'collection'" 
+                                :name="'export_options'">
+                    </radio-component>
+                    
+                    <div v-if="show" class="col-12 mt-3">
+                        <input v-model="collectionname" class="form-control" type="text" name="collectionname" id="collectioname"
+                            placeholder="Nom de la collection">
+                    </div>
+                </div>
+            </div>
+            
+            <a @click="closemodal" :href="constructurl" 
+                class="btn btn-primary btn-lg float-right" 
+                    :class="disablebutton" data-modal="dismiss">
+                <i class="fa fa-file-export"></i>
+                {% trans "Exporter" %}
+            </a> 
+                     
+            {% comment "Export data on the current page / problem is how to treat the data received from the AJAX response" %}
+            <a @click="getcurrentpage" 
+                class="btn btn-primary btn-lg float-right" 
+                    :class="disablebutton" data-modal="dismiss">
+                <i class="fa fa-file-export"></i>
+                {% trans "Exporter" %}
+            </a>
+            {% endcomment %}
+        </div>
+    </export-csv-component>
+{% endblock %}

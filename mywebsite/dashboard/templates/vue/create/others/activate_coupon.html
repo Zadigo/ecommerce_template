@@ -1,0 +1,56 @@
+{% load i18n %}
+
+<script>
+    Vue.component("activate-coupon", {
+        name: "ActivateCoupon",
+        delimiters: ["[[", "]]"],
+        template: `
+        <button v-if='showspinner' class="btn btn-sm btn-primary ml-0">
+            <spinner-component></spinner-component>
+        </button>
+
+        <button v-else @click="activatecoupon" class="btn btn-sm btn-primary ml-0">
+            [[ buttonmessage ]]
+        </button>
+        `,
+        data() {
+            return {
+                showspinner: false
+            }
+        },
+        computed: {
+            buttonmessage() {
+                if ("{{ coupon.active }}" === "True") {
+                    return '{% trans "Désactiver" %}'
+                } else {
+                    return '{% trans "Activer" %}'
+                }
+            }
+        },
+        methods: {
+            activatecoupon: function () {
+                var self = this
+                var xhr = new XMLHttpRequest()
+                xhr.responseType = "json"
+                xhr.onloadstart = () => {
+                    self.$data.showspinner = true
+                }
+                xhr.onloadend = () => {
+                    if (xhr.status == 200) {
+                        window.location.reload()
+                    }
+                    if (xhr.status === 400 | xhr.status === 500) {
+                        window.location.reload()
+                    }
+                }
+                xhr.open("POST", "{% url 'dashboard:coupon_activate' coupon.id %}")
+                xhr.send()
+            }
+        }
+    })
+
+    var couponapp = new Vue({
+        el: "#coupon_app",
+        name: "CouponActions"
+    })
+</script>

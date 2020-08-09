@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load i18n static share prices carts seo %}
+
+{% block title %}{{ product.name }} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block page_description %}
+    <meta name="description" content="{{ product.description }}">
+{% endblock %}
+
+{% block metatags %}
+    <link rel="canonical" href="{{ product.get_absolute_url }}">
+{% endblock %}
+
+{% block share_metatags %}
+    <meta name="twitter:card" content="{{ product.name }}" />
+    <meta name="twitter:creator" content="@mywebsite" />
+
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka : {{ product.name }}" />
+
+    {% block og_description %}
+        <meta property="og:description" content="{{ product.description }}" />
+    {% endblock %}
+
+    {% block og_image %}
+        <meta property="og:image" content="{{ product.get_main_image_url }}" />
+        <meta property="og:image:alt" content="{{ product.slug }}" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:height" content="800">
+        <meta property="og:image:width" content="800">
+    {% endblock %}    
+{% endblock %}
+
+{% block datalayer_push %}
+    {% impression more %}
+{% endblock %}
+
+{% block structured_data %}
+    {% include "components/product/seo/structured_data.html" %}
+{% endblock %}
+
+{% block container %}
+    <div id="vue_app">
+        {% comment %}
+        <!-- DROPDOWN CART -->
+        {% dropdown_cart request %}            
+        {% endcomment %}
+
+        <div class="row wow fadeIn">
+            {% if not is_mobile %}
+                <!-- SIDE IMAGES -->
+                <div class="col-md-1">
+                    <side-images @showimage="display" v-bind:images="images" inline-template>
+                        <div class="side-images">
+                            <img @click="showimage(index)" v-for="(image, index) in images"
+                                :key="image.pk" :src="image.url" class="img-fluid"
+                                    :class="{'mt-2': index !== 0}" :alt="image.name">
+                        </div>
+                    </side-images>
+                </div>                
+                
+                <!-- MAIN IMAGE -->
+                <div class="col-md-6 mb-4">
+                    <main-image v-bind:image="currentimage" inline-template>
+                        <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
+                    </main-image>
+                </div>
+            {% else %}
+                <div class="col-md-6 mb-4 p-0">
+                    <mobile-slider v-bind:images="images" inline-template>
+                        <div class="interface" style="position: relative;">
+                            <div class="navigation d-flex flex-direction-row justify-content-between" style="position: absolute;width: 90%;top: 40%;left: 4%;">
+                                <div @click="changeimage('prev')" class="left">
+                                    <i class="fa fa-arrow-left"></i>
+                                </div>
+                                
+                                <div @click="changeimage('next')" class="right">
+                                    <i class="fa fa-arrow-right"></i>
+                                </div>
+                            </div>
+
+                            <transition :name="currentdirection">
+                                <component v-bind:images="images" v-bind:cursor="currentslide" :is="slides[currentslide]"></component>
+                            </transition>
+                        </div>
+                    </mobile-slider>
+                </div>
+            {% endif %}
+
+            <div class="col-sm-6 col-md-5 mb-4">
+                <div class="p-sm-2 p-lg-4">
+                    {# {% include "components/product/badges.html" %} #}
+                    
+                    <!-- TITLE -->
+                    <h1 class="product-title">{{ product.name }}</h1>
+
+                    <!-- PRICE -->
+                    <p class="lead">
+                        {% if product.discounted %}
+                            <span class="mr-1">
+                                <del>{{ product.price_ht|price_to_text }}</del>
+                            </span>                            
+                        {% endif %}
+                        <span>
+                            {{ product.get_price|price_to_text }}
+                        </span>
+                        
+                    </p>
+                    
+                    {% if product.reviews %}
+                        <!-- STARS -->
+                        {% include "components/product/review_stars.html" %}
+                    {% endif %}
+
+                    <!-- DELIVERY -->
+                    <div class="delivery mt-3 mb-3">
+                        <a href data-toggle="modal" data-target="#delivery">{% trans "Livraison standard" %}**</a>
+                        {% include "components/modals/delivery.html" with modal_title=True %}
+                    </div>
+                    
+                    {% if product.description %}
+                        <!-- DESCRIPTION -->
+                        <p class="lead font-weight-bold">{% trans "Description" %}</p>
+                        <p>{{ product.description }}</p>                        
+                    {% endif %}
+                    
+                    <!-- ADD TO CART + SIZES + COLORS -->
+                    {% include "components/product/actions.html" %}
+                    <div class="csrf">
+                        {% csrf_token %}
+                    </div>
+                </div>
+                
+                <!-- POLICIES -->
+                <div class="p-sm-2 p-lg-4">
+                    {% include "components/product/policies.html" %}
+                </div>
+
+                <!-- SHARE -->
+                <div class="col-md-6">
+                    <div class="p-sm-1 p-0 pl-lg-4 pr-lg-4">
+                        <a href="{% facebook request.build_absolute_uri %}" class="mr-3" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="{% twitter request.build_absolute_uri product.description 'https://mywebsite.fr' %}" class="mr-3" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="{% pinterest request.build_absolute_uri product.description product.get_main_image_url %}" target="_blank"><i class="fab fa-pinterest"></i></a>
+                    </div>
+                </div>
+                {% comment %}
+                {% endcomment %}
+            </div>
+        </div>
+    </div>
+
+    <!-- MORE -->
+    {% include "components/product/more.html" %}
+    
+    {% comment %}
+    <!-- REVIEWS -->
+    <div class="row wow fadeIn mt-3">
+        {% include "components/product/reviews.html" %}
+    </div>        
+    {% endcomment %}
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    var CardClick = function(index, name, price, reference) {
+        dataLayer.push({
+            "event": "productClick",
+            "ecommerce": {
+                "click": {
+                    "actionField": {
+                        "list": "more/{{ product.collection.name }}"
+                    },
+                    "products": [{
+                        "id": reference,
+                        "name": name,
+                        "price": price,
+                        "brand": "Nawoka",
+                        "category": "{{ collection.name }}",
+                        "position": index
+                    }]
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    {{ vue_product|json_script:"vue_product" }}
+    {# {{ serialized_images|json_script:"serialized_images" }} #}
+
+    <!-- VUEJS -->
+    {% include "../vue/product.html" %}
+    <!-- GOOGLEPAY -->
+    {# {% include "components/cart/google_payjs.html" %} #}
+{% endblock %}

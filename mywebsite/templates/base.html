@@ -1,0 +1,231 @@
+{% load static aws_images %}
+
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+        <title>{% block title %}{% endblock %}</title>
+
+        <!-- META -->
+        <meta name="author" content="Nawoka Fashion" />
+
+        <meta name="theme-color" content="#484848"/>
+
+        {% block page_description %}
+            <meta name="description" content="Découvrez les dernières tendances mode et beauté chez Nawoka. 
+            Achetez nos meilleurs collections de vêtements, chaussures et plus encore.">
+        {% endblock %}
+
+        {% block share_metatags %}
+            <meta name="twitter:card" content="Tous vos désirs mode et beauté au même endroit" />
+            <meta name="twitter:site" content="@mywebsite" />
+            <meta name="twitter:creator" content="@mywebsite" />
+
+            <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="Nawoka : Tous vos désirs mode et beauté au même endroit" />
+            
+            {% block og_description %}
+                <meta property="og:description" content="Découvrez les dernières tendances mode et beauté chez Nawoka. 
+                Achetez nos meilleurs collections de vêtements, chaussures et plus encore." />
+            {% endblock %}
+
+            {% block og_image %}
+                <meta property="og:image" content="{% create_aws_image_url 'hero.jpg' %}" />            
+            {% endblock %}
+
+            <meta property="og:image:type" content="image/jpeg" />
+            <meta property="og:image:height" content="1200">
+            <meta property="og:image:width" content="800">
+            <meta property="og:image:alt" content="Nawoka" />
+        {% endblock %}
+
+        {% block metatags %}{% endblock %}
+
+        <meta property="keywords" content="{% block meta_keywords %}womens fashion, 
+        accessoires mode, beauté, soins et beauté, soins du corps, chaussures,
+        bottines, maquillage, marketplace, basic crop top, robe, bracelets, sacs, tote bag, top court,
+        crop tops, pantalons, sport chic, top court a bretelle femme{% endblock %}">
+
+        <!-- PINTEREST -->
+        {% include "project_components/analytics/pinterest.html" with verification_code="13e2f3eb0403572f570c8f8cde500e71" %}
+
+        <!-- STRUCTURED -->
+        {% block structured_data %}
+            {% include "project_components/seo/organization.html" %}
+        {% endblock %}
+
+        <!-- FONT AWESOME -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+        {% include "project_components/font_awesome_kit.html" with name="0db272f9a5" %}
+
+        <!-- BOOTSTRAP -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" 
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" 
+                crossorigin="anonymous">
+        
+        <!-- MATERIAL DESIGN BOOTSTRAP -->
+        <link href="{% static 'mdb.css' %}" rel="stylesheet">
+
+        <!-- MATERIALIZE -->
+        <link href="{% static 'style.css' %}" rel="stylesheet">
+
+        <!-- GOOGLE FONT ICONS -->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <!-- CUSTOM -->
+        <link href="{% static 'navbars.css' %}" rel="stylesheet">
+        <link href="{% static 'hero.css' %}" rel="stylesheet">
+        <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
+        <link href="{% static 'ecommerce_bars.css' %}" rel="stylesheet">
+
+        {% block extra_css %}{% endblock %}
+
+        <link rel="alternate" href="mywebsite.fr" hreflang="fr-fr" />
+
+        <script>window.dataLayer = window.dataLayer || []</script>
+        {% block datalayer_push %}{% endblock %}
+        
+        <!-- ANALYTICS -->
+        {# This is a specific technique to use Google Optimize with GTM #}
+        {% include "project_components/analytics/google_analytics.html" with ga_tag="UA-148220996-1" optimize_tag="GTM-WXVG7KF" %}
+        
+        {% include "project_components/analytics/tag_manager.html" with gtm_id="GTM-5S7S9CD" %}
+        {% include "project_components/analytics/facebook.html" with id="191877658898691" %}
+        {% block facebook_events %}{% endblock %}
+
+        <!-- OPTIMIZE -->
+        {% include "project_components/analytics/optimize_anti_flicker.html" with optimize_tag="GTM-5S7S9CD" %}
+
+        <!-- MAILCHIMP -->
+        {# {% include "project_components/analytics/mailchimp.html" %} #}
+
+        <!-- ADWORDS REMARKETING  -->
+        {% include "project_components/analytics/remarketing.html" with remarketing_tag="AW-701852005" %}
+        {% block remarketing %}{% endblock %}
+    </head>
+
+    <body class="{% block body_color %}{% endblock %}">
+        {% include "project_components/analytics/google_no_script.html" with gtm_id="GTM-5S7S9CD" %}
+        
+        <!-- FACEBOOK PIXELS -->
+        {% block facebook_event %}{% endblock %}
+        
+        <!-- NAVBAR -->
+        {% block navbar %}{% endblock %}
+
+        {% comment %}
+        <div class="top-banner sales-policies green">
+            <div class="container">
+                <div class="row">
+                    <div class="col-4">A</div>
+                    <div class="col-4">B</div>
+                    <div class="col-4">C</div>
+                </div>
+            </div>
+        </div>
+        {% endcomment %}
+
+        <main class="mt-4 mt-sm-2 mt-md-5 mt-lg-5">
+            {% block hero %}
+                <div class="container dark-grey-text mt-5">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags %}{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
+                            role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+
+                    {% block container %}{% endblock %}
+                </div>
+            {% endblock %}
+        </main>
+
+        <!-- FOOTER -->
+        {% block footer %}{% endblock %}
+
+        <!-- JQUERY -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" 
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" 
+                crossorigin="anonymous">
+        </script>
+
+        <!-- Bootstrap tooltips -->
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" 
+                crossorigin="anonymous">
+        </script>
+
+        <!-- Bootstrap core JavaScript -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" 
+            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" 
+                crossorigin="anonymous">
+        </script>
+
+        <!-- MDB core JavaScript -->
+        <script type="text/javascript" src="{% static 'mdb.js' %}"></script>
+
+        <script type="text/javascript">
+            // Animations initialization
+            new WOW().init()
+        </script>
+
+        <!-- LARGE NAVBAR -->
+        <script>
+            $(document).ready(function () {
+                $(document).find(".dropdown")
+                    .on("mouseenter", function (e) {
+                        $(this).addClass("show")}
+                    )
+                    .on("mouseleave", function (e) {
+                        $(this).removeClass("show")}
+                    )
+
+                $(document).on("click", ".dropdown-menu", function (e) {
+                    e.stopPropagation();
+                });
+            });
+        </script>
+
+        {% comment %}
+        <!-- OFFCANVAS -->
+        <script>
+            $("[data-trigger]").on("click", function() {
+                var trigger_id =  $(this).attr("data-trigger");
+                $(trigger_id).toggleClass("show");
+                $("body").toggleClass("offcanvas-active");
+            });
+
+            // close button 
+            $(".btn-close").click(function(e){
+                $(".navbar-collapse").removeClass("show");
+                $("body").removeClass("offcanvas-active");
+            }); 
+        </script>
+        {% endcomment %}
+
+        <!-- STRIPE -->
+        <script src="https://js.stripe.com/v3/"></script>
+
+        <!-- LODASH -->
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+        <!-- VUEJS -->
+        {# <script src="https://cdn.jsdelivr.net/npm/vue"></script> #}
+        
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+        {% block extra_scripts %}{% endblock %}
+
+        {% block vuejs_scripts %}{% endblock %}
+
+        <!-- CHAT -->
+        {% block chat %}{% endblock %}
+    </body>
+</html>

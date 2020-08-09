@@ -1,0 +1,35 @@
+{% load i18n %}
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+	<div class="container-fluid">
+		<!-- COLLAPSE -->
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<!-- LINKS -->
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<!-- LEFT -->
+			<ul class="navbar-nav ml-auto">
+				{% if user.is_admin %}
+					<li class="nav-item">
+						<a class="nav-link waves-effect" href="/admin/" target="_blank">Admin</a>
+						<span class="sr-only">(current)</span>
+					</li>					
+				{% endif %}
+
+				<li class="nav-item">
+					<a class="nav-link waves-effect" href="{% url 'accounts:logout' %}">
+						{% trans "Se déconnecter" %}
+					</a>
+				</li>					
+			</ul>
+			<ul class="navbar-nav ml-auto d-none">
+				<li class="nav-item">
+					<a class="nav-link waves-effect btn btn-sm red lighten-2 z-depth-0 text-white" href="{% url 'shop' %}" target="_blank">Voir le site</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>

@@ -1,0 +1,45 @@
+{% load i18n %}
+
+{% if product.active %}
+    <div class="details-selection">
+        <div class="form-group">
+            <color-selector @selectcolor="doselection" 
+                v-bind:initvalue="details.color" 
+                    v-bind:colors="colors">
+            </color-selector>
+        </div>
+        <div class="form-group">
+            <size-selector @selectsize="doselection" 
+                v-bind:initvalue="sizes[0].value" 
+                v-bind:sizes="sizes">
+            </size-selector>
+        </div>
+
+        {% comment %}
+        <!-- SIZE -->
+        <div class="delivery mt-3 mb-3">
+            <a href="#!"> {% trans "Guide des tailles" %}**</a>
+        </div>                    
+        {% endcomment %}
+    </div>
+    
+    <div class="cart-button">
+        <addtocart @addtocart="cartbuttonclicked" v-bind:details="details" v-bind:product="product" v-bind:disabled="isdisabled" />
+    </div>
+
+    {% comment %}
+        <!-- ONE CLICK -->
+        <div class="one-click mt-3">
+            <a href class="font-weight-bold text-muted" data-toggle="modal"
+                data-target="#one_click_payments">{% trans "Je souhaite l'acheter immédiatement" %}**</a>
+            {% include "components/others/one_click.html" %}
+        </div>        
+        <div class="csrf">{% csrf_token %}</div>
+    {% endcomment %}
+{% else %}
+    <div class="card">
+        <div class="card-body red lighten-1 text-white text-center font-weight-bold">
+            {% trans "Ce produit n'est pas actif" %}
+        </div>
+    </div>
+{% endif %}

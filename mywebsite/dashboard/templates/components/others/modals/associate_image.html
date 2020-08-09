@@ -1,0 +1,37 @@
+{% extends "components/others/modals/base_bottom_modal.html" %}
+{% load i18n cache %}
+
+{% block id %}associate_new_image{% endblock %}
+
+{% block title %}
+    {% trans "Associer des images" %}
+{% endblock %}
+
+{% block body %}
+    {% comment "Django image iteration" %}
+        <div class="row">
+            {% for image in images %}
+                <div class="col-2">
+                    <div class="custom-control custom-checkbox image-selector">
+                        <input type="checkbox" id="id_{{ forloop.counter }}" class="custom-control-input">
+                        <label class="custom-control-label" for="id_{{ forloop.counter }}">
+                            {% if image.image_url %}
+                                <img src="{{ image.image_url }}" class="img-fluid mt-1">
+                            {% else %}
+                                <img src="{{ image.url }}" class="img-fluid mt-1">
+                            {% endif %}
+                        </label>
+                    </div>
+                </div>
+            {% endfor %}            
+        </div>
+    {% endcomment %}
+    
+    {% cache 10 allimages %}
+        <list-images-component @selectimage="temporaryselection" :allimages="allimages" />
+    {% endcache %}
+{% endblock %}
+
+{% block action_button %}
+    <modal-confirm-button @associateimages="confirmassociation" :hasselection="hasselection" />
+{% endblock %}

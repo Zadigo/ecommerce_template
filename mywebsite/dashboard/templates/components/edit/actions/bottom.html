@@ -1,0 +1,16 @@
+{# This is the same as main but at the bottom of the form #}
+
+{% load i18n %}
+
+<hr>
+<div class="col-12 mt-3 p-0">
+    {% if delete_url %}
+        <a href="{% url delete_url item_id %}?next={% url next_url %}" class="btn btn-large red lighten-2 ml-0">
+            {% trans "Supprimer" %}
+        </a>
+    {% endif %}
+    
+    <button type="submit" class="btn btn-large float-right white mr-0">
+        {% trans "Sauvegarder" %}
+    </button>
+</div>

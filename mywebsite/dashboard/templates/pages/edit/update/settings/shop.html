@@ -1,0 +1,58 @@
+{% extends "pagpages/edit/base_edit.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Réglages généraux" %}{% endblock %}
+
+{% block page_header %}
+
+{% endblock %}
+
+{% block left_content %}
+
+{% endblock %}
+
+{% block right_content %}
+<div class="card">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Général" %}</p>
+
+        <div class="form-group">
+            <label for="id_name">{% trans "Nom de la boutique" %}</label>
+            {{ form.name }}
+        </div>
+    </div>
+</div>
+
+<div class="card  mt-3">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Contact" %}</p>
+
+        <div class="form-group">
+            <label for="id_contact_email">{% trans "Email de contact" %}</label>
+            {{ form.contact_email }}
+        </div>
+        <div class="form-group">
+            <label for="id_customer_care_email">{% trans "Email du service client" %}</label>
+            {{ form.customer_care_email }}
+        </div>
+    </div>
+</div>
+
+<div class="card  mt-3">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Achive" %}</p>
+
+        <div class="form-group">
+            <p>{% trans "Archiver automatiquement toute les commandes" %}</p>
+            <div class="custom-control custom-checkbox">
+                {{ form.automatic_archive }}
+                <label class="custom-control-label" for="id_automatic_archive">{% trans "Archivage automatique" %}</label>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block bottom_form_buttons %}
+    {% include "components/edit/actions_bottom.html" %}
+{% endblock %}

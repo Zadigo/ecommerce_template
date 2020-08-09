@@ -1,0 +1,53 @@
+{% load i18n prices %}
+
+<div class="row wow fadeIn">
+    {% for product in products %}
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
+            <div class="card">
+                <div class="view overlay">
+                    <img src="{{ product.get_main_image_url|default:'https://via.placeholder.com/800' }}" class="card-img-top"
+                        alt="{{ product.slug }}">
+                    <a>
+                        <div class="mask rgba-white-slight"></div>
+                    </a>
+                </div>
+    
+                <div class="card-body text-left">
+                    <a href="{{ product.get_absolute_url }}" class="grey-text"
+                        onclick="CardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
+                        {% if is_mobile %}
+                            <p>{{ product.name|truncatechars:20 }}</p>
+                        {% else %}
+                            <h5>{{ product.name|truncatechars:20 }}</h5>
+                        {% endif %}
+    
+                        {% if product.is_novelty %}
+                            <span class="badge badge-pill danger-color text-uppercase">{% trans "nouveau" %}</span>
+                        {% endif %}
+    
+                        {% if product.our_favorite %}
+                            <span class="badge badge-pill success-color text-uppercase">{% trans "favori" %}</span>
+                        {% endif %}
+    
+                        {% if not product.in_stock %}
+                            <span class="badge badge-pill info-color text-uppercase">{% trans "epuise" %}</span>
+                        {% endif %}
+                    </a>
+    
+                    {% if product.is_discounted %}
+                        <h4 class="font-weight-bold red-text mt-1">
+                            <strong>{{ product.get_price|price_to_text }}</strong>
+                        </h4>
+                        <h6 class="font-weight-light blue-text mt-1">
+                            <strike>{{ product.price_ht|price_to_text }}</strike>
+                        </h6>
+                    {% else %}
+                        <h4 class="font-weight-bold blue-text mt-1">
+                            <strong>{{ product.get_price|price_to_text }}</strong>
+                        </h4>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

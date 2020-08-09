@@ -1,0 +1,32 @@
+{% load prices %}
+
+<div class="list-group list-group-flush">
+    {% comment "Additional statistics fields" %}
+    <a class="list-group-item list-group-item-action waves-effect">Sales
+        <span class="badge badge-success badge-pill pull-right">22%
+            <i class="fas fa-arrow-up ml-1"></i>
+        </span>
+    </a>
+    <a class="list-group-item list-group-item-action waves-effect">Traffic
+        <span class="badge badge-danger badge-pill pull-right">5%
+            <i class="fas fa-arrow-down ml-1"></i>
+        </span>
+    </a>        
+    {% endcomment %}
+    
+    <a class="list-group-item list-group-item-action waves-effect">Un. carts
+        <span class="badge badge-danger badge-pill pull-right">{{ carts_without_orders }}</span>
+    </a>
+    <a class="list-group-item list-group-item-action waves-effect">Orders
+        <span class="badge badge-primary badge-pill pull-right">{{ orders_count }}</span>
+    </a>
+    <a class="list-group-item list-group-item-action waves-effect">Refunded
+        <span class="badge badge-danger badge-pill pull-right">{{ refunded.payment__sum|price_to_text }}</span>
+    </a>
+    <a class="list-group-item list-group-item-action waves-effect">Awaiting
+        <span class="badge badge-danger badge-pill pull-right">{{ awaiting.payment__sum|price_to_text }}</span>
+    </a>
+    <a class="list-group-item list-group-item-action waves-effect">Revenue
+        <span class="badge badge-primary badge-pill pull-right">{{ revenue.payment__sum|price_to_text }}</span>
+    </a>
+</div>

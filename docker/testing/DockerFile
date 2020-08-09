@@ -1,0 +1,13 @@
+FROM ubuntu
+
+WORKDIR /home/
+
+RUN mkdir selenium_files
+
+COPY . /selenium_files/
+
+RUN python3 -m pip3 install selenium
+
+ENTRYPOINT ["-m" "selenium_files/live.py" ]
+
+CMD [ "python" ]

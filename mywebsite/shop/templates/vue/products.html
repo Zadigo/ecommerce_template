@@ -1,0 +1,172 @@
+{% load i18n prices %}
+
+{{ vue_products|json_script:"vue_products" }}
+
+<script>
+    Vue.component("sorting-component", {
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                items: [
+                    {id: 1, name: "{% trans 'Nom' %}"},
+                    {id: 2, name: "{% trans 'Prix croissant' %}"},
+                    {id: 3, name: "{% trans 'Prix décroissant' %}"},
+                    {id: 4, name: "{% trans 'Les mieux notés' %}"},
+                ]
+            }
+        },
+        methods: {
+            startsort: function (value) {
+                this.$emit("startsort", value)
+            }
+        }
+    })
+
+    var spancomponent = {
+        props: ["color"],
+        name: "StateSpan",
+        template: `
+        <span class="badge badge-pill text-uppercase" :class="color">
+            <slot></slot>
+        </span>
+        `
+    }
+
+    Vue.component("card-component", {
+        props: ["product"],
+        components: {spancomponent},
+        delimiters: ["[[", "]]"],
+        template: `
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
+            <div class="card">
+                <div class="view overlay">
+                    <img :src="mainimage.url" :alt="product.slug" class="card-img-top">
+                    <a><div class="mask rgba-white-slight"></div></a>
+                </div>
+
+                <div class="card-body text-left">
+                    <a @click="gotopage" href="" class="grey-text">
+                        <p>[[ product.name ]]</p>
+
+                        <spancomponent v-if="product.is_novelty" :color="'danger-color'">
+                            <slot>{% trans "nouveau" %}</slot>
+                        </spancomponent>
+
+                        <spancomponent v-if="product.our_favorite" :color="'success-color'">
+                            <slot>{% trans "favori" %}</slot>
+                        </spancomponent>                                        
+                        
+                        <spancomponent v-if="!product.in_stock" :color="'info-color'">
+                            <slot>{% trans "epuise" %}</slot>
+                        </spancomponent>                                        
+                    </a>
+                    
+                    
+                    <h4 v-if="product.is_discounted" class="font-weight-bold red-text mt-1">
+                        <strong>[[ product.discounted_price|euro ]]</strong>
+                    </h4>
+                    <h6 v-if="product.is_discounted" class="font-weight-light blue-text mt-1">
+                        <strike>[[ product.price_ht|euro ]]</strike>
+                    </h6>
+                                                                            
+                    <h4 v-else class="font-weight-bold blue-text mt-1">
+                        <strong>[[ product.price_ht|euro ]]</strong>
+                    </h4>                                
+                </div>
+            </div>
+        </div>
+        `,
+        methods: {
+            senddatalayer: function () {
+
+            },
+            gotopage: function () {
+                this.senddatalayer()
+            }
+        },
+        computed: {
+            mainimage() {
+                var product =  _.filter(this.$props.product.images, (product) => {
+                    return product.main_image === true
+                })
+                if (!product) {
+                    product = this.$props.product.images[0]
+                }
+                return product[0]
+            }
+        },
+        filters: {
+            euro: function (value) {
+                return value + "€"
+            }
+        }
+    })
+
+    var productsinterface = new Vue({
+        el: "#vue_products_app",
+        name: "ProductsInterface",
+        data() {
+            return {
+                products: [],
+                selected: "Nom",
+                selectedcolor: "Black",
+                colors: []
+            }
+        },
+        beforeMount() {
+            var products = JSON.parse($("#vue_products").text())
+            // console.log(products)
+            this.$data.products = products
+
+            var colors = []
+            _.forEach(products, (product) => {
+                _.forEach(product.images, (image) => {
+                    colors.push(image.variant)
+                })
+            })
+            this.$data.colors = _.uniq(colors)
+        },
+        computed: {
+            sortedproducts() {
+                var selected = this.$data.selected
+                if (selected === "Nom") {
+                    return this.byname
+                } else if (selected === "Prix croissant") {
+                    return this.bypricehigh
+                } else if (selected === "Prix décroissant") {
+                    return this.bypricelow
+                } else if (selected === "Les mieux notés") {
+                    
+                } 
+            },
+            bycolor() {
+                return _.forEach(this.list, (product) => {
+                    _.filter(product.images, (image) => {
+                        return image.variant === this.$data.selectedcolor ? product : false
+                    })
+                })
+            },
+            bypricehigh() {
+                return this.list.sort((a, b) => {
+                    return b.price_ht - a.price_ht
+                })
+            },
+            bypricelow() {
+                return this.list.sort((a, b) => {
+                    return a.price_ht - b.price_ht
+                })
+            },
+            byname() {
+                return _.sortBy(this.list, ['name'])
+            },
+            list() {
+                return this.$data.products
+            }
+        },
+        methods: {
+            dosort: function (value) {
+                this.$data.selected = value
+            }
+        }
+    })
+</script>

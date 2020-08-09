@@ -1,0 +1,20 @@
+{% extends "pages/lists/base_lists.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Paniers" %}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Paniers" %}
+{% endblock %}
+
+{% block card_header_content %}
+    {% include "components/others/link.html" with href="dashboard:carts" position="float-right" btn_name="Nouveau"  %}
+{% endblock %}
+
+{% block card_body %}
+    {% include "components/others/tables/carts.html" %}
+{% endblock %}
+
+{% block pagination %}
+    {% include "components/navs/pagination.html" with href="dashboard:carts" %}
+{% endblock %}

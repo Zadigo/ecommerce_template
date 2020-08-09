@@ -1,0 +1,29 @@
+{% extends "components/others/tables/base.html" %}
+{% load table i18n %}
+
+{% block table_header %}
+    {% header "ID" "Nom" "Genre" "Type" %}
+{% endblock %}
+
+{% block table_body %}
+    {% for collection in collections %}
+        <tr>
+            <td>{{ collection.id }}</td>
+            <th scope="row">
+                <a href="{% url 'dashboard:collections:update' collection.id %}">{{ collection.name }}</a>
+            </th>
+            <td>{{ collection.gender|capfirst }}</td>
+            <td>
+                {% if collection.automatic %}
+                    {% include "components/others/badge.html" with type="danger" badge_name="automatic" %}
+                {% else %}
+                    {% include "components/others/badge.html" with type="success" badge_name="manuel" %}
+                {% endif %}
+            </td>
+        </tr>
+    {% empty %}
+        <td class="text-center font-weight-bold" colspan="5">
+            {% trans "Vous n'avez pas encore de collections" %}
+        </td>
+    {% endfor %}
+{% endblock %}

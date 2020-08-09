@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load i18n aws_images %}
+
+{% block title %}{% trans "Service client" %} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block share_metatags %}
+    <meta name="twitter:card" content="Service client Nawoka" />
+    <meta name="twitter:site" content="@mywebsitefashion" />
+    <meta name="twitter:creator" content="@mywebsitefashion" />
+
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka: Pour répondre au mieux à votre demande, notre service client
+    est disponible 5 jours sur 7" />
+    
+    {% block og_description %}
+        <meta property="og:description" content="Nawoka: Pour répondre au mieux à votre demande, notre service client
+        est disponible 5 jours sur 7" />
+    {% endblock %}
+
+    <meta property="og:image" content="{% create_aws_image_url 'banner8.jpg' %}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:height" content="1200">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:alt" content="MyWebsite" />
+{% endblock %}
+
+{% block structured_data %}
+    {{ block.super }}
+    {% include "project_components/seo/faq.html" %}
+{% endblock %}
+
+{% block container %}
+    <section class="section" id="customer-service">
+        <div class="row wow fadeIn">
+            {% include "project_components/headers/picture.html" with image="banner8.jpg" alt="customer care" %}
+        </div>
+
+        <!-- LINKS -->
+        <div class="row wow fadeIn mt-3">
+            {% for link in links %}
+                <div class="col-4">
+                    <a href="{% url 'customer_care_additional_pages' link.page %}#faq">
+                        <div class="card grey lighten-4">
+                            <div class="card-body">
+                                <i class="material-icons" style="font-size: 44px;">{{ link.icon }}</i>
+                                <h5>{{ link.title }}</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="section" id="faq">
+        <div class="card blue lighten-4 mt-3 mb-5">
+            <div class="card-body">
+                <!-- TITLE -->
+                {% block faq_title %}{% endblock %}
+                <!-- CONTENT -->
+                {% block faq_content %}
+                    <div class="md-accordion accordion-1" id="accordion">
+                        {% block accordion_content %}
+                            {% trans "Nawoka et son service client fera au mieux pour répondre au moindre de vos attentes." %}
+                        {% endblock %}
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    </section>
+
+    <!-- HELP -->
+    {% include "project_components/customer_care/help_card.html" %}
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <!-- EMAIL -->
+    {% include "vue/send_email.html" %}
+{% endblock %}

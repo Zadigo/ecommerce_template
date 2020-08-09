@@ -1,0 +1,11 @@
+{% load sidebar %}
+
+<div class="sidebar-fixed position-fixed">
+	<a href="dashboard:{% url 'dashboard:index' %}" class="logo-wrapper waves-effect">
+		<img src="https://mdbootstrap.com/img/logo/mdb-email.png" class="img-fluid" alt="brand_logo">
+	</a>
+
+	<div class="list-group list-group-flush">
+		{% sidebar_links %}
+	</div>
+</div>

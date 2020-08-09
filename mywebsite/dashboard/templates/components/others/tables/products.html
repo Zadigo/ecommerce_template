@@ -1,0 +1,86 @@
+{% extends "components/others/tables/base.html" %}
+{% load table i18n %}
+
+{% block table_header %}
+    {% comment "Feature for selecting multiple items in a table" %}
+        <th>
+            <checkbox-data-component 
+                @returndata="selectall" 
+                v-bind:key="'all'" 
+                :id="'all'" 
+                :value="'all'" 
+            />
+        </th>
+    {% endcomment %}
+    <th colspan="1"></th>
+    {% header "ID" "Nom" "Collection" "Prix" "Statut" %}
+    <th colspan="2"></th>
+{% endblock %}
+
+{% block table_body %}
+    {% for product in products %}
+        <tr>
+            <td>
+                <checkbox-data-component @returndata="doselection" :name="'key'"
+                    v-bind:key="'{{ product.id }}'" :id="'{{ product.id }}'" :value="'{{ product.id }}'">
+                </checkbox-data-component>
+            </td>                
+
+            <td>{{ product.id }}</td>
+
+            <th scope="row" class="bootrstrap-link">
+                <a href="{% url 'dashboard:products:update' product.id %}">
+                    {{ product.name }}
+                </a>
+            </th>
+            <td>{{ product.collection.name }}</td>
+            {% with price=product.get_price %}
+                {% if product.is_discounted %}
+                    <td class="red-text">{{ price }}</td>
+                {% else %}
+                    <td>{{ price }}</td>
+                {% endif %}                    
+            {% endwith %}
+            <td>
+                {% if product.active %}
+                    {% include "../badge.html" with type="success" badge_name="actif" %}								
+                {% else %}
+                    {% include "../badge.html" with type="danger" badge_name="inactif" %}								
+                {% endif %}
+            </td>
+            <td>
+                {% if product.active %}
+                    <a href="{{ product.get_absolute_url }}" target="_blank">
+                        <div class="fa fa-eye text-muted"></div>
+                    </a>                    
+                {% else %}
+                    <a href="{{ product.get_preview_url }}" target="_blank">
+                        <div class="fa fa-eye text-muted"></div>
+                    </a>
+                {% endif %}
+            </td>
+
+            {% comment "Feature for deleting a product on the products page" %}
+                {% if user.is_admin %}
+                    <td><a href="{% url 'dashboard:dashboard_delete_product' product.id %}">delete</a></td>
+                {% endif %}                
+            {% endcomment %}
+        </tr>
+    {% empty %}
+        <tr scope="row">
+            {% if request.path == "/dashboard/search/" %}
+                <td class="text-center font-weight-bold" colspan="5">
+                    {% trans "Nous n'avons pas trouvé de produits correspondants" %}
+                </td>
+            {% else %}
+                <td class="text-center font-weight-bold" colspan="5">
+                    {% trans "Vous n'avez pas encore de produits" %}
+                </td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block paginate_number %}
+    {{ products.count }}
+{% endblock %}

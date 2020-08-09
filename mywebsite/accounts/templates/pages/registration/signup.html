@@ -1,0 +1,15 @@
+{% extends "pages/registration/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Créer un compte" %}{% endblock title %}
+
+{% block registration_form %}
+    {% include "components/registration/form.html" with form_id="signup_form" button_name="S'enregistrer" %}
+{% endblock registration_form %}
+
+
+{% block extra_registration_links %}
+    <p class="registration-nav-link">
+        Registered with us already? <a href="{% url 'accounts:login' %}" class="bold-text-1">Login here</a>
+    </p>
+{% endblock extra_registration_links %}

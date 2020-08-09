@@ -1,0 +1,44 @@
+{% load i18n %}
+
+<script>
+    var mixin = {
+        data() {
+            return {
+                csrf: $("input[name='csrfmiddlewaretoken']").val(),
+                clicked: false
+            }
+        }
+    }
+
+    var duplicationapp = new Vue({
+        el: "#vue_duplication_app",
+        name: "Duplication",
+        mixins: [mixin],
+        methods: {
+            sendrequest: function (method) {
+                var self = this
+                var formdata = new FormData()
+                formdata.append("csrfmiddlewaretoken", this.$data.csrf)
+
+                var xhr = new XMLHttpRequest()
+                xhr.responseType = "json"
+                xhr.onloadstart = () => {
+                    self.$data.clicked = true
+                }
+                xhr.onloadend = () => {
+                    if (xhr.status === 500 || xhr.status === 400) {
+                        self.$data.clicked = false
+                        window.location.reload()
+                    }
+
+                    if (xhr.status === 200) {
+                        window.location.href = xhr.response.redirect_url
+                    }
+                }
+
+                xhr.open("POST", "{% url 'dashboard:products:duplicate' product.id %}")
+                xhr.send(formdata)
+            }
+        }
+    })
+</script>

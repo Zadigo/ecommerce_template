@@ -1,0 +1,27 @@
+{% load i18n prices %}
+
+{% if more %}
+    <hr>
+    <div class="row d-flex justify-content-center wow fadeIn">
+        <div class="col-md-6 text-center">
+            <h2 class="my-4 font-weight-bold">
+                {% trans "Vous allez aussi adorer" %}
+            </h2>
+        </div>
+    </div>
+    <div class="row wow fadeIn">
+        {% for product in more %}
+            <div class="col-lg-4 col-md-12 mb-4">
+                <div class="card z-depth-0">
+                    <a href="{{ product.get_absolute_url }}" id="link_see_more" onclick="CardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
+                        <img src="{{ product.get_main_image_url|default:'https://via.placeholder.com/800' }}" class="img-fluid" alt="{{ product.slug }}">
+                    </a>
+                    <div class="card-body p-0 pt-2">
+                        <p class="text-muted mb-0">{{ product.name }}</p>
+                        <p class="font-weight-bold">{{ product.get_price|price_to_text }}</p>
+                    </div>
+                </div>
+            </div>        
+        {% endfor %}
+    </div>
+{% endif %}

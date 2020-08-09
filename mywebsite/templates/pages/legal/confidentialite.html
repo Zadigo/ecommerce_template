@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Confidentialité et cookies - Nawoka{% endblock title %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block page_description %}
+    <meta name="description" content="Découvrez notre politique de confidentialité">
+{% endblock %}
+
+{% block share_metatags %}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka : Découvrez notre politique de confidentialité" />
+
+    {% block og_description %}
+        <meta property="og:description" content="Découvrez notre politique de confidentialité" />
+    {% endblock %}
+
+    {% comment %}
+    {% block og_image %}
+        <meta property="og:image" content="{% create_aws_image_url 'hero.jpg' %}" />            
+    {% endblock %}        
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:height" content="1200">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:alt" content="Nawoka" />
+    {% endcomment %}
+{% endblock %}
+
+
+
+{% block container %}
+    <section class="section" id="confidentialite">
+        {% include "./return_link.html" %}
+        
+        <div class="row wow fadeIn">
+            <div class="col-12">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        {% include "./small_title.html" with title="Utilisation des données personnelles" %}
+                        <p>
+                            Les données personnelles collectées auprès des utilisateurs ont pour objectif 
+                            la mise à disposition des services du site web, leur amélioration et le maintien 
+                            d'un environnement sécurisé. Plus précisément, les utilisations sont les suivantes :
+                            <ul>
+                                <li>accès et utilisation du site web par l'utilisateur ;</li>
+                                <li>gestion du fonctionnement et optimisation du site web ;</li>
+                                <li>organisation des conditions d'utilisation des Services de paiement ;</li>
+                                <li>vérification, identification et authentification des données transmises par l'utilisateur ;</li>
+                                <li>proposition à l'utilisateur de la possibilité de communiquer avec d'autres utilisateurs du site web ;</li>
+                                <li>mise en oeuvre d'une assistance utilisateurs ;</li>
+                                <li>
+                                    personnalisation des services en affichant des publicités en fonction de 
+                                    l'historique de navigation de l'utilisateur, selon ses préférences ;
+                                </li>
+                                <li>
+                                    prévention et détection des fraudes, malwares (malicious softwares ou logiciels malveillants) 
+                                    et gestion des incidents de sécurité ;
+                                </li>
+                                <li>gestion des éventuels litiges avec les utilisateurs ;</li>
+                                <li>
+                                    envoi d'informations commerciales et publicitaires, 
+                                    en fonction des préférences de l'utilisateur.
+                                </li>
+                            </ul>    
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        {% include "./small_title.html" with title="Partage des données personnelles avec des tiers" %}
+                        <p>
+                            Les données personnelles peuvent être partagées avec des sociétés tierces, dans les cas suivants :
+                            <ul>
+                                <li>
+                                    quand l'utilisateur utilise les services de paiement, pour la mise en oeuvre de ces services, 
+                                    le site web est en relation avec des sociétés bancaires et financières tierces avec lesquelles 
+                                    elle a passé des contrats ;
+                                </li>
+                                <li>
+                                    lorsque l'utilisateur publie, dans les zones de commentaires libres du site web, 
+                                    des informations accessibles au public ;   
+                                </li>
+                                <li>
+                                    quand l'utilisateur autorise le site web d'un tiers à accéder à ses données ;
+                                </li>
+                                <li>
+                                    quand le site web recourt aux services de prestataires pour fournir l'assistance utilisateurs, 
+                                    la publicité et les services de paiement. Ces prestataires disposent d'un accès limité aux données de l'utilisateur, 
+                                    dans le cadre de l'exécution de ces prestations, et ont une obligation contractuelle de les utiliser 
+                                    en conformité avec les dispositions de la réglementation applicable en matière protection des données 
+                                    à caractère personnel ;
+                                </li>
+                            </ul>
+                        </p>
+                        <p>
+                            Si la loi l'exige, le site web peut effectuer la transmission de données pour donner suite aux réclamations 
+                            présentées contre le site web et se conformer aux procédures administratives et judiciaires ;   
+                        </p>
+                        <p>
+                            Si le site web est impliquée dans une opération de fusion, acquisition, 
+                            cession d'actifs ou procédure de redressement judiciaire, 
+                            elle pourra être amenée à céder ou partager tout ou partie de ses actifs, 
+                            y compris les données à caractère personnel. Dans ce cas, les utilisateurs seraient informés, 
+                            avant que les données à caractère personnel ne soient transférées à une tierce partie. 
+                        </p>
+                    </div>
+                </div>
+            
+                <div class="card mb-3">
+                    <div class="card-body">
+                        {% include "./small_title.html" with title="Sécurité et confidentialité" %}
+                        <p>
+                            Le site web met en oeuvre des mesures organisationnelles, techniques, logicielles 
+                            et physiques en matière de sécurité du numérique pour protéger les données personnelles 
+                            contre les altérations, destructions et accès non autorisés. 
+                            Toutefois, il est à signaler qu'internet n'est pas un environnement complètement 
+                            sécurisé et le site web ne peut pas garantir la sécurité de la transmission 
+                            ou du stockage des informations sur internet.    
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        {% include "./small_title.html" with title="Mise en oeuvre des droits des utilisateurs" %}
+                        <p>
+                            En application de la réglementation applicable aux données à caractère personnel, 
+                            les utilisateurs disposent des droits suivants, qu'ils peuvent exercer 
+                            en faisant leur demande à l'adresse suivante: {{ addresse }}.
+                            <ul>
+                                <li>
+                                    le droit d’accès : ils peuvent exercer leur droit d'accès, pour connaître les données personnelles les concernant. 
+                                    Dans ce cas, avant la mise en œuvre de ce droit, le site web peut demander une preuve de l'identité de l'utilisateur 
+                                    afin d'en vérifier l'exactitude.
+                                </li>
+                                <li>
+                                    le droit de rectification : si les données à caractère personnel détenues par le site web sont inexactes, 
+                                    ils peuvent demander la mise à jour des informations.
+                                </li>
+                                <li>
+                                    le droit de suppression des données : les utilisateurs peuvent demander la suppression de leurs données 
+                                    à caractère personnel, conformément aux lois applicables en matière de protection des données.
+                                </li>
+                                <li>
+                                    le droit à la limitation du traitement : les utilisateurs peuvent de demander au site web de limiter le traitement 
+                                    des données personnelles conformément aux hypothèses prévues par le RGPD.
+                                </li>
+                                <li>
+                                    le droit de s’opposer au traitement des données : les utilisateurs peuvent s’opposer à ce que ses données 
+                                    soient traitées conformément aux hypothèses prévues par le RGPD.
+                                </li>
+                                <li>
+                                    le droit à la portabilité : ils peuvent réclamer que le site web leur remette les données personnelles 
+                                    qui lui sont fournies pour les transmettre à un nouveau site web.
+                                </li>
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="card mt-3 d-none">
+                    <div class="card-body">
+                        <h5>Evolution de la présente clause</h5>      
+                        <p>
+                            Le site web se réserve le droit d'apporter toute modification à la présente clause relative à la protection des données à caractère personnel à tout moment. Si une modification est apportée à la présente clause de protection des données à caractère personnel, le site web s'engage à publier la nouvelle version sur son site. Le site web informera également les utilisateurs de la modification par messagerie électronique, dans un délai minimum de 15 jours avant la date d'effet. Si l'utilisateur n'est pas d'accord avec les termes de la nouvelle rédaction de la clause de protection des données à caractère personnel, il a la possibilité de supprimer son compte.    
+                                
+                                
+                            Annexe:     
+                            
+                            Formulaire de rétractation     
+                            
+                            (à compéter par le consommateur,   
+                            
+                            et à envoyer par lettre recomandée avec accusé de réception,   
+                            
+                            dans le délai maximum de 14 jours suivant la date de conclusion du contrat de prestation)   
+                            
+                            Formulaire de rétractation    
+                            
+                            
+                            
+                            A l'attention de:   
+                            
+                            situé à :   ,         
+                            n° de téléphone :      
+                            adresse mél :      
+                            
+                            Je vous notifie, par la présente, ma rétractation du contrat portant sur la prestation de service, commandée le :   
+                            
+                            Prénom et nom du consommateur :   
+                            Adresse du consommateur :   
+                            Date :
+                            Signature du consommateur
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

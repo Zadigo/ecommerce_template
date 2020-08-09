@@ -1,0 +1,75 @@
+{% extends "pages/lists/base_lists.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Produits" %}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Produits" %}
+{% endblock %}
+
+{% block card_header_content %}
+    <div class="inner-header" v-if="!allowactions">
+        {% include "components/others/modal_button.html" with target="export_csv_modal" icon="fa fa-file-export" position="float-right" btn_name="Exporter" color="grey lighten-3 black-text" %}
+        
+        {% if user.is_admin or user.is_product_manager %}
+            <!-- ACTIONS -->
+            {# Import a CSV to the database #}
+            {# {% include "components/others/modal_button.html" with target="import_modal" icon="fa fa-file-import" position="float-right" btn_name="Importer" color="grey lighten-3 black-text"  %} #}
+            {% include "components/others/link.html" with href="dashboard:products:create" position="float-right" btn_name="Nouveau"  %}
+            
+            <!-- MODALS -->
+            {% comment "Modal for importing a CSV file" %}
+                {% include "components/others/modals/import_csv.html" %}
+            {% endcomment %}
+            {% include "components/others/modals/export_csv.html" %}
+        {% endif %}        
+    </div>
+
+    <div class="inner-header" v-else>
+        <dropdown-button v-bind:selected="selected" inline-template>
+            <div class="btn-group float-right">
+                <button @click.prevent="submitform('duplicate')" type="submit" class="btn btn-primary">
+                    {% trans "Dupliquer" %}
+                    <span class="badge badge-light ml-2">
+                        [[ selected ]]
+                    </span>
+                </button>
+
+                <button type="button" class="btn btn-primary dropdown-toggle px-3" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    <span class="sr-only">Toggle Dropdown</span>
+                </button>
+
+                <div class="dropdown-menu">
+                    <button @click.prevent="submitform(item.method)" v-for="item in items" :key="item.name" type="submit" class="dropdown-item">
+                        [[ item.name ]]
+                    </button>
+
+                    <div class="dropdown-divider"></div>
+                    <button @click.prevent="submitform('delete')" type="submit" class="dropdown-item">
+                        {% trans "Supprimer" %}
+                    </button>
+                </div>
+            </div>
+        </dropdown-button>
+    </div>
+{% endblock %}
+
+{% block card_body %}
+    {% include "components/others/tables/products.html" %}
+{% endblock %}
+
+{% block pagination %}
+    {% include "components/navs/pagination.html" with href="dashboard:products:home" %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    {{ block.super }}
+    
+    {{ on_current_page|json_script:"on_current_page" }}
+
+    <!-- EXPORT -->
+    {% include "vue/list/export_csv.html" %}
+    <!-- CHECKBOXES -->
+    {% include "vue/list/table.html" %}
+{% endblock %}

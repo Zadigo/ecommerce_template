@@ -1,0 +1,5 @@
+<text-input-component inline-template>
+    <!-- DJANGO WIDGET -->
+    <input v-model="{{ widget.name }}" type="{{ widget.type }}" 
+        {% for key, value in widget.attrs.items %}{{ key }}="{{ value }}"{% endfor %}>
+</text-input-component>

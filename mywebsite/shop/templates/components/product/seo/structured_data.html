@@ -1,0 +1,71 @@
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "{{ product.name }}",
+        "image": "{{ product.get_main_image_url }}",
+        "description": "{{ product.description }}",
+        "sku": "{{ product.sku }}",
+        "mpn": "{{ product.sku }}",
+        "color": "{{ product.color }}",
+        "url": "{{ request.build_absolute_uri }}",
+        "brand": {
+            "@type": "Thing",
+            "name": "Nawoka"
+        },
+        "audience": {
+            "@type": "PeopleAudience",
+            "suggestedGender": "{% if product.gender == 'femme' %}female{% else %}male{% endif %}"
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": "{{ request.build_absolute_uri }}",
+            "priceCurrency": "EUR",
+            "price": "{{ product.get_price }}",
+            "priceValidUntil": "{{ product.price_valid_until|date:"d-m-Y" }}",
+            "itemCondition": "https://schema.org/NewCondition",
+            "availability": "{% if product.in_stock %}https://schema.org/InStock{% else %}https://schema.org/SoldOut{% endif %}"
+        }
+    }
+</script>
+
+<script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@id": "https://mywebsite.fr{% url 'home' %}",
+                    "name": "Accueil"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@id": "https://mywebsite.fr{% url 'shop_gender' product.gender %}",
+                    "name": "{{ product.gender|capfirst }}"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                    "@id": "https://mywebsite.fr{{ product.get_collection_url }}",
+                    "name": "{{ product.collection.name }}"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                    "@id": "https://mywebsite.fr{{ product.get_absolute_url }}",
+                    "name": "{{ product.name }}"
+                }
+            }
+        ]
+    }
+</script>

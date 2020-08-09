@@ -1,0 +1,131 @@
+{% load i18n %}
+
+<script>
+    Vue.component("resume-section", {
+        props: ["selections"],
+        name: "Resume",
+        computed: {
+            discounton() {
+                return "<li>" + this.discountvalue + " collection or product</li>"
+            },
+            discountvalue() {
+                return "<li>" + 45 + "% off</li>"
+            },
+            minimumquantityof() {
+                return "<li>Minimum quantity of " + 15 + " items</li>"
+            },
+            minimnumpurchaseof() {
+                return "<li>Minimum purchase of " + 5 + "</li>"
+            },
+            totalpercustomer() {
+                return "<li>" + this.totallimitof + 4 + ", per customer</li>"
+            },
+            totallimitof() {
+                return "<li>Limit of " + 15 + " uses</li>"
+            },
+            activefromtoday() {
+                return `
+                <li>{% trans 'Active from today' %}</li>
+                `
+            },
+            activetoday() {
+                return `
+                <li>{% trans 'Active today' %}</li>
+                `
+            }
+        }
+    })
+
+    Vue.component("coupon-collection-section", {
+        name: "ToggleCollectionCoupon",
+        data() {
+            return {
+                show: false,
+                triggerid: "id_on_entire_order2",
+                fields: [
+                    { id: "id_on_entire_order", label: "{% trans 'Toute la commande' %}", value: true, checked: true },
+                    { id: "id_on_entire_order2", label: "{% trans 'Une collection spécifique' %}", value: false, checked: false },
+                ],
+            }
+        },
+        beforeMount() {
+            if ("{{ coupon.on_entire_order }}" === "True") {
+                this.$data.fields[0].checked = true
+                this.$data.fields[1].checked = false
+            } else {
+                this.$data.fields[0].checked = false
+                this.$data.fields[1].checked = true
+                this.$data.show = true
+            }
+        },
+        methods: {
+            doshow: function (id, triggered) {
+                this.reset()
+                if (id === this.$data.triggerid) {
+                    this.$data.show = true
+                } else {
+                    this.$data.show = false
+                }
+
+                this.$emit("doshow", "collectioncoupon", this.$data.show)
+            },
+            reset: function () {
+                _.forEach(this.$data.fields, (field) => {
+                    field.checked = false
+                })
+            }
+        }
+    })
+
+    Vue.component("coupon-minimum-section", {
+        name: "ToggleCouponMinimum",
+        data() {
+            return {
+                showpurchase: false,
+                showquantity: false,
+                triggerid: ["min_quantity1", "min_quantity2"],
+                fields: [
+                    { id: "none", label: "{% trans 'Aucun' %}", value: true, checked: true },
+                    { id: "min_quantity1", label: "{% trans 'Minimum en valeur (€)' %}", value: false, checked: false },
+                    { id: "min_quantity2", label: "{% trans 'Minimum en quantité' %}", value: false, checked: false },
+                ],
+            }
+        },
+        methods: {
+            doshow: function (id, triggered) {
+                this.reset()
+                if (id === "min_quantity1") {
+                    this.$data.showpurchase = triggered
+                    this.$data.showquantity = !triggered
+                }
+                if (id === "min_quantity2") {
+                    this.$data.showquantity = triggered
+                    this.$data.showpurchase = !triggered
+                }
+                if (id === "none") {
+                    this.$data.showquantity = triggered
+                    this.$data.showpurchase = triggered
+                }
+            },
+            reset: function () {
+                _.forEach(this.$data.fields, (field) => {
+                    field.checked = false
+                })
+            }
+        }
+    })
+
+    Vue.component("limit-buyer-section", {
+        name: "LimitByCustomer",
+        data() {
+            return {
+                show: false
+            }
+        },
+        methods: {
+            doshow: function () {
+                this.$data.show = !this.$data.show
+            }
+        }
+    })
+</script>

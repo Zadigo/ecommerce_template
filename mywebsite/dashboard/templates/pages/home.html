@@ -1,0 +1,61 @@
+{% extends "index.html" %}
+{% load i18n table %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+	<div class="row wow fadeIn">
+		<!-- CHART-1 -->
+		<div class="col-md-9 mb-4">
+			{% include "components/charts/bar.html" with chart_name="myChart" endpoint="dashboard:api:chart" %}
+		</div>
+
+		<!-- STATS -->
+		<div class="col-md-3 mb-4">
+			<div class="card">
+				<div class="card-body">
+					{% include "components/others/stats_card.html" %}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-6 mb-4">
+			<div class="card">
+				<div class="card-body">
+					<p class="font-weight-bold text-uppercase">
+						{% trans "Dernières commandes" %}
+					</p>
+					<table class="table table-hover">
+						<thead class="blue lighten-4">
+							{% header "ID" "Référence" "Somme" "Statut" %}
+						</thead>
+						<tbody>
+							{% for order in latest_orders %}
+								<tr>
+									<th scope="row">{{ order.id }}</th>
+									<td>{{ order.reference }}</td>
+									<td>{{ order.payment }}</td>
+									<td>
+										{% if order.completed %}
+											<span class="badge badge-success badge-pill pull-right">
+												{% trans "Terminer" %}
+											</span>										
+										{% else %}
+											<span class="badge badge-danger badge-pill pull-right">
+												{% trans "En attente" %}
+											</span>										
+										{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block chart_scripts %}
+	{% include "scripts/bar_chart.html" %}
+{% endblock %}

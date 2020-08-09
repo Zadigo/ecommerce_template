@@ -1,0 +1,52 @@
+{% load i18n %}
+
+<script>
+    Vue.component("card-group", {
+        props: ["card"],
+        template: `
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <transition name="lookbook-card" tag="div">
+                <div v-if="card.type='base'" class="card">
+                        <img :src="card.imageurl" :alt="card.slug" class="img-fluid">
+                    </div>
+                <div v-else-if="card.type='content'" class="card" :id="card.slug">
+                    <div class="card-body">
+                        [[ card.content ]]
+                    </div>
+                </div>
+                <div v-else class="card" :style="cardbackground(card.imageurl)">
+                    <a :href="card.url" class="btn btn-large btn-primary">
+                        {% trans "Acheter le look" %}
+                    </a>
+                </div>
+            </transition>
+        </div>
+        `,
+        methods: {
+            cardbackground: function (imageurl) {
+                return {
+                    "background-image": "url(" + imageurl + ");",
+                    "height": "1000px;",
+                    "background-position": "center;",
+                    "background-repeat": "no-repeat;"
+                }
+            }
+        }
+    })
+
+    var lookcards = new Vue({
+        el: "#vue_lookbook",
+        data() {
+            return {
+                cards: [
+                    [
+                        {id: 1, url: "", imageurl: "", content: "", slug: "", type: "base"}
+                    ],
+                    [
+                        {id: 1, url: "", imageurl: "", content: "", slug: "", type: "base"}
+                    ],
+                ]
+            }
+        }
+    })
+</script>

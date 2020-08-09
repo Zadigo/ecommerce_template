@@ -1,0 +1,49 @@
+{% extends "pages/edit/base_edit.html" %}
+{% load i18n %}
+
+{% block title %}
+	{% trans "Création d'une nouvelle collection" %}
+{% endblock %}
+
+{% block class %}collection-form{% endblock %}
+
+{% block form_url %}{{ request.path }}{% endblock %}
+
+{% block top_form_buttons %}
+	{% include "components/edit/actions/main.html" with cancel_url="dashboard:collections:home" %}
+{% endblock %}
+
+{% block left_content %}
+	<!-- GENERAL -->
+	{% include "components/edit/titles.html" with description_as_field=form.presentation_text %}
+	
+	{% comment "Choose the collection's type" %}
+		<!-- TYPE -->
+		{% include "components/edit/collections/conditions.html" %}		
+	{% endcomment %}
+{% endblock %}
+
+{% block right_content %}
+	<!-- IMAGE -->
+	<div class="card">
+		<div class="card-body">
+			<p class="font-weight-bold mb-4">{% trans "Image de la collection" %}</p>
+
+			<div class="form-group">
+				<div class="custom-file">
+					<input type="file" name="image" class="custom-file-input" id="image">
+					<label class="custom-file-label" for="image">{% trans "Choisir une image" %}</label>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block vuejs_scripts %}
+	{{ block.super }}
+
+	<!-- COLLECTIONS FEATURES -->
+	{% include "vue/create/collection.html" %}
+	<!-- FORM -->
+	{% include "vue/create/form.html" %}
+{% endblock %}

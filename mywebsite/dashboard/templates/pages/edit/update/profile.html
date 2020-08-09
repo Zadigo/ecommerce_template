@@ -1,0 +1,142 @@
+{% extends "../../index.html" %}
+
+{% block title %}Profile de {{ user.get_full_name }}{% endblock %}
+
+{% block content %}
+    <div class="row wow fadeIn">
+        <div class="col-md-5 mb-4">
+            <div class="card mb-3">
+                <img src="https://via.placeholder.com/300" alt="user" class="img-fluid">
+                <div class="card-body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td class="font-weight-bold">Nom</td>
+                                <td>{{ user.get_full_name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="font-weight-bold">Email</td>
+                                <td>{{ user.email }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-right" colspan="2">
+                                    {% if user.is_active %}
+                                        <div class="badge badge-pill badge-success">Actif</div>
+                                    {% else %}
+                                        <div class="badge badge-pill badge-danger">Inactif</div>
+                                    {% endif %}
+
+                                    {# TEST #}
+                                    {% if user.is_active %}
+                                        <div class="badge badge-pill badge-success">Connecté</div>
+                                    {% else %}
+                                        <div class="badge badge-pill badge-danger">Déconnecté</div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <iframe width="340" height="315" src="https://www.youtube.com/embed/VaDytO4-HEk" 
+                            frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7 mb-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p class="font-weight-bold text-uppercase">Description</p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. 
+                    Aliquam, optio incidunt. Obcaecati velit officiis voluptatem ab cupiditate voluptatibus, 
+                    natus ipsa voluptates molestias soluta magni libero esse doloremque aliquid iusto? Quas?
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="card-body text-center">
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MESSAGES -->
+            {% include "../../components/profile/message.html" %}
+
+            <!-- ACTIONS -->
+            {% include "../../components/profile/actions.html" %}
+
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="pdf-canvas"></canvas>
+                </div>
+            </div>
+
+            <!-- USER STATE -->
+            {% include "../../components/profile/change_state.html" %}
+        </div>
+    </div>
+
+    {% include "../../components/others/modals/delete_user.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <script>
+        var url = "http://home.fa.utl.pt/~cfig/Bibliografia%20Computacao/Fashion%20Design%20Essentials.pdf"
+        var library = window['pdfjs-dist/build/pdf']
+        library.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+        var loadingTask = library.getDocument(url);
+
+        loadingTask.promise.then(function(pdf) {
+            console.log('PDF loaded');
+            
+            // Fetch the first page
+            var pageNumber = 1;
+            pdf.getPage(pageNumber).then(function(page) {
+                console.log('Page loaded');
+                
+                var scale = 1.5;
+                var viewport = page.getViewport({scale: scale});
+
+                // Prepare canvas using PDF page dimensions
+                var canvas = document.getElementById("pdf-canvas");
+                var context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Render PDF page into canvas context
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                var renderTask = page.render(renderContext);
+                renderTask.promise.then(function () {
+                    console.log('Page rendered');
+                });
+            });
+        }, function (reason) {
+        // PDF loading error
+        console.error(reason);
+        });
+    </script>
+{% endblock %}
+
+{% block vuejs_scripts %}
+<script>
+    var csrf = $(".csrf input").val()
+</script>
+
+{# {% include "../../vue/user/profile_state.html" %} #}
+{% endblock %}

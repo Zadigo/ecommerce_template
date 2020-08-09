@@ -1,0 +1,67 @@
+{% load i18n %}
+
+<script>
+    Vue.component("submit-button", {
+        name: "SubmitButton",
+        delimiters: ["[[", "]]"],
+        template: `
+        <button v-if="showspinner" class="btn btn-large btn-primary float-right pull-left disabled">
+            <spinner-component></spinner-component>
+        </button>
+
+        <button v-else @click.prevent="submitform" type="submit" class="btn btn-large btn-primary float-right pull-left">
+            {% trans "Sauvegarder" %}
+        </button>
+        `,
+        data() {
+            return {
+                showspinner: false
+            }
+        },
+        methods: {
+            submitform: function () {
+                var self = this
+                var form = $("#general_form")
+
+                setTimeout(() => {
+                    self.$data.showspinner = true
+                    form.submit()
+                }, 700);
+            }
+        }
+    })
+
+    var formapp = new Vue({
+        el: "#general_form",
+        name: "Form",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                selection: [],
+                editmode: "{{ vue_edit_mode }}",
+
+                allimages: []
+            }
+        },
+        beforeMount() {
+            if (product !== "") {
+                this.$data.product = product
+
+                var images = []
+                try {
+                    images = product.images
+                } catch {
+                    // DO NOTHING
+                }
+                if (images.length > 0) {
+                    _.forEach(images, (image) => {
+                        image["id"] = image.pk
+                    })
+                    this.$data.images = images
+                }
+            }
+
+            this.$data.allimages = otherimages
+        }
+    })    
+</script>

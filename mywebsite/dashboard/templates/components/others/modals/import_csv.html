@@ -1,0 +1,29 @@
+{% extends "./base_middle_modal.html" %}
+{% load i18n %}
+
+{% block id %}import_csv_app{% endblock %}
+
+{% block title %}
+	{% trans "Importer des produits" %}
+{% endblock %}
+
+{% block body %}
+	<form>
+		<div class="form-row">
+			<div class="form-group">
+				<input @change="getfile($event.target.files)" class="form-control" type="file" name="importcsv"
+					name="importcsv" id="importcsv">
+			</div>
+		</div>
+	</form>
+
+	<a @click="uploadfile" v-if="!showspinner" class="btn btn-primary btn-lg float-right"
+		:class="{'disabled': disablebutton}" data-modal="dismiss">
+		<i class="fa fa-file-export"></i>
+		Importer
+	</a>
+
+	<div v-else class="spinner-border" role="status">
+		<span class="sr-only">Loading...</span>
+	</div>
+{% endblock %}

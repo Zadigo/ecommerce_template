@@ -1,0 +1,148 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+
+	<title>{% block title %}{% endblock %}</title>
+
+	<!-- FONT AWESOME -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+
+	<!-- BOOTSTRAP -->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+	<!-- MATERIAL DESIGN BOOTSTRAP -->
+	<link href="{% static 'dashboard.css' %}" rel="stylesheet">
+	
+	<!-- MATERIALIZE -->
+	<link href="{% static 'dashboard_style.css' %}" rel="stylesheet">
+	<link href="{% static 'hover_effects.css' %}" rel="stylesheet">
+	
+	<!-- CUSTOM -->
+	<link rel="stylesheet" href="{% static 'page_preloader.css' %}">
+	<link href="{% static 'transitions.css' %}" rel="stylesheet">
+	<link href="{% static 'custom.css' %}" rel="stylesheet">
+
+	<style>
+		.map-container {
+			overflow: hidden;
+			padding-bottom: 56.25%;
+			position: relative;
+			height: 0;
+		}
+
+		.map-container iframe {
+			left: 0;
+			top: 0;
+			height: 100%;
+			width: 100%;
+			position: absolute;
+		}
+	</style>
+
+	{% block extra_css %}{% endblock %}
+</head>
+
+<body class="grey lighten-3">
+	<header>
+		<!-- NAVBAR -->
+		{% include "./components/navs/navbar.html" %}
+		<!-- SIDEBAR -->
+		{% include "./components/navs/sidebar.html" %}
+	</header>
+
+	<main class="pt-5 mx-lg-5">
+		<div class="container-fluid mt-5">
+			<!-- <div class="preloader">
+				<div class="loader">
+					<div></div>
+				</div>
+				<svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+					<defs>
+						<filter id="goo">
+							<fegaussianblur in="SourceGraphic" stddeviation="15" result="blur"></fegaussianblur>
+							<fecolormatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 30 -10"
+								result="goo"></fecolormatrix>
+							<feblend in="SourceGraphic" in2="goo"></feblend>
+						</filter>
+					</defs>
+				</svg>	
+			</div> -->
+			
+			{% for message in messages %}
+			<div class="alert {% if message.tags %}{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
+				role="alert">
+				{{ message }}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			{% endfor %}
+
+			<!-- HEADING -->
+			{% block heading %}{% endblock %}
+			<!-- CONTENT -->
+			{% block content %}{% endblock %}
+		</div>
+	</main>
+
+	<!-- FOOTER -->
+	{% include "components/navs/footer.html" %}
+
+	<!-- JQUERY -->
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+	<!-- TOOLTIPS -->
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+
+	<!-- BOOTSTRAP JAVASCRIPT -->
+	<script type="text/javascript"
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+	<!-- MDB JAVASCRIPT -->
+	<script type="text/javascript" src="{% static 'mdb.js' %}"></script>
+
+	<!-- Initializations -->
+	<script type="text/javascript">
+		new WOW().init();
+	</script>
+
+	<!-- LODASH -->
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+
+	<!-- VUEJS -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+	<!-- Quill -->
+	<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+	<script>
+		$(document).ready(function (e) {
+			// SIDEBAR
+			var links = $(".list-group.list-group-flush").find("a")
+
+			links.first().addClass("active")
+
+			links.on("click", function (e) {
+				links.each((link) => {
+					$(links[0]).removeClass("active")
+				})
+				$(this).addClass("active")
+			})
+		})
+	</script>
+
+	{% block extra_scripts %}{% endblock %}
+
+	{% block vuejs_scripts %}{% endblock %}
+
+	<!-- CHARTS -->
+	{% block chart_scripts %}{% endblock %}
+</body>
+
+</html>

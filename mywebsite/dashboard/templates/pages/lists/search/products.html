@@ -1,0 +1,16 @@
+{% extends "pages/lists/base_lists.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Recherche pour" %} {{ search }}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Recherche" %}
+{% endblock %}
+
+{% block card_body %}
+    {% include "components/others/tables/products.html" %}
+{% endblock %}
+
+{% block pagination %}
+    {% include "components/navs/pagination.html" with href="dashboard:search" extra_params=extra_url_params %}    
+{% endblock %}

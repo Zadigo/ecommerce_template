@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<div class="card card-body mt-3">
+    <p class="font-weight-bold mb-4">{% trans "Limitations" %}</p>
+
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="limit_total">
+        <label class="custom-control-label" for="limit_total">{% trans "Limiter à un nombre d'utilisation totale" %}</label>
+    </div>
+
+    <limit-buyer-section inline-template>
+        <div class="form-group">
+            <checkbox-component @showfield="doshow"
+                :id="'id_limit_per_customer'" :label="'Limiter à une utilisation par acheteur'">
+            </checkbox-component>
+            <div class="form-group">
+                <div v-if="show" class="form-row">
+                    <div class="col-4">
+                        {{ form.usage_limit }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </limit-buyer-section>
+</div>

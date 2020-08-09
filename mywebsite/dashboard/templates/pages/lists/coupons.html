@@ -1,0 +1,20 @@
+{% extends "pages/lists/base_lists.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Coupons" %}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Coupons" %}
+{% endblock %}
+
+{% block card_header_content %}
+    {% include "components/others/link.html" with href="dashboard:coupons:create" position="float-right" btn_name="Nouveau"  %}
+{% endblock %}
+
+{% block card_body %}
+    {% include "components/others/tables/carts.html" %}
+{% endblock %}
+
+{% block pagination %}
+    {% include "components/navs/pagination.html" with href="dashboard:dashboard_coupons" %}
+{% endblock %}

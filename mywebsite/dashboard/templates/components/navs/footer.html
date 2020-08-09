@@ -1,0 +1,9 @@
+{% load dates %}
+
+<footer class="page-footer text-center font-small primary-color-dark darken-2 mt-4 wow fadeIn">
+	<!--COPYRIGHT-->
+	<div class="footer-copyright py-3">
+		© {{ current_date|date:"Y" }} Copyright:
+		<a href="{% url 'home' %}" target="_blank">Nawoka</a>
+	</div>
+</footer>

@@ -1,0 +1,33 @@
+<script>
+    var editor = new Quill(".editor-container", {
+        modules: {
+            toolbar: [
+                [{ 'header': 1 }, { 'header': 2 }, { 'header': 3 }],
+                ['bold', 'italic'],
+                ['link'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['clean'],
+            ],
+            history: {
+                delay: 2000,
+                maxStack: 500,
+                userOnly: true
+            }
+        },
+        theme: "snow"
+    })
+
+    editor.setContents(
+        "{% if product.description %}{{ product.description|safe }}{% endif %}"
+    )
+
+    // var form = $("#form_update_product")
+    // form.on("submit", () => {
+    //     var field = $("input[name='description']")
+    //     var htmlfield = $("input[name='description_html'")
+    //     var editorcontent = editor.root.innerHTML
+
+    //     field.val(JSON.stringify(editor.getContents()))
+    //     htmlfield.val(editorcontent)
+    // })
+</script>

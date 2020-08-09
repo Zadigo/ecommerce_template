@@ -1,0 +1,46 @@
+{% load i18n %}
+
+{% autoescape on %}
+    {% blocktrans %}Bonjour{% endblocktrans %},
+
+    {% blocktrans %}
+        Nous vous informons que votre commande a été expédiée. Votre colis est en cours d'acheminement et cette commande ne peut
+        donc plus être modifiée. Si vous souhaitez retourner un article, visualiser ou modifier une autre commande, veuillez
+        consulter http://mywebsite.fr.
+    {% endblocktrans %}
+
+    
+    Votre colis est expédié par Nawoka Logistics et votre numéro de suivi est {{ tracking_number }}. Selon votre option de livraison
+    il est possible que les informations de suivi ne soient pas encore consultables au moment où vous recevez cet e-mail.
+    Veuillez consulter notre page d'aide pour plus d'informations sur le transporteur et obtenir l'adresse de son site de
+    suivi en ligne.
+
+    {% trans "Récapitulatif de votre commande" %}
+
+    Sous-total des articles :   
+    Frais d'envoi :
+    Montant total de la commande : {{ order_total }}
+
+
+
+    Vous pouvez vous rétracter de cette commande dans un délai de 14 jours à compter de la date à laquelle vous aurez reçu
+    le(s) produit(s) (sous réserve de certaines exceptions).
+    
+    Nous vous rembourserons le prix du/des produit(s) et les frais de livraison standard (c’est à dire correspondant à la
+    livraison la moins onéreuse que nous proposons). Vous prendrez à votre charge les frais de retour du/des produit(s),
+    sauf si vous retournez des vêtements, chaussures ou accessoires (voir nos politiques de retours).
+    
+    Vous pourrez être amené à supporter des frais de retour supplémentaires si le(s) produit(s) ne peu(ven)t être
+    retourné(s) normalement par la poste. Vous pouvez exercer votre droit de rétractation via notre Centre de retours en
+    ligne ; en nous contactant ; ou en remplissant ce formulaire et en nous l'envoyant par courrier.
+    
+    Veuillez également consulter notre politique de retours (nous vous rembourserons le prix payé pour le(s) produit(s)).
+    Pour en savoir plus sur notre politique de retours de 30 jours, cliquez ici.
+    
+    Pour en savoir plus sur vos droits en application des garanties légales de conformité et des vices cachés, cliquez ici.
+    
+    Pour toute réclamation ou question complémentaire, veuillez contacter notre Service Client.
+
+    Veuillez noter que ce message vous a été envoyé d'une adresse qui ne peut recevoir d'e-mails. Merci de ne pas y
+    répondre.
+{% endautoescape %}

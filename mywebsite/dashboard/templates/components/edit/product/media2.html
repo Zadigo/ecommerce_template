@@ -1,0 +1,69 @@
+{% load i18n %}
+
+<div class="card mt-2">
+    
+    <div class="card-body">
+        <div class="d-flex flex-direction-row justify-content-between mb-3">
+            <p class="text-uppercase text-muted font-weight-bold mb-1">
+                {% trans "Media" %}
+            </p>
+        
+            <upload-type-dropdown />
+        </div>
+
+        <media-section :allimages="allimages" :editmode="editmode" inline-template>
+            <div class="form-group">
+                <p v-if="showwarning">
+                    {% trans "Le nom de l'image sera utilisé comme nom du fichier lors de son téléchargement vers AWS :" %} + [[ ]]
+                </p>
+                <transition-group name="conditions" tag="div">
+                    <div v-for="(image, index) in images" :key="image.id" class="form-row">
+                        <div class="col-3">
+                            <div class="form-group">
+                                <simple-input-text :type="'text'" :name="'image-name'" :key="image.id" :placeholder="'Nom'"
+                                        :value="image.name" :newfield="image.newfield" :index="index" />
+                                <input v-if="!image.newfield | image.to_link" type="hidden" :value="image.pk" name="image-key">
+                            </div>
+                        </div>
+            
+                        <div class="col-5">
+                            <div class="form-group">
+                                <simple-input-text :type="'url'" :name="'image-url'" :key="image.id" :placeholder="'Url'"
+                                        :value="image.url" :newfield="image.newfield" :index="index" />
+                            </div>
+                        </div>
+            
+                        <div class="col-2">
+                            <div class="form-group">
+                                <simple-input-text :type="'text'" :name="'image-variant'" :key="image.id" :placeholder="'Couleur'" 
+                                        :value="image.variant" :newfield="image.newfield" :index="index" />
+                            </div>
+                        </div>
+            
+                        <div class="col-auto text-right">
+                            <a v-if="editmode==='update' & !image.newfield" @click="unlinkimage(index, image.id)" 
+                                            class="btn btn-sm blue m-0" style="height: 38px;line-height: 2.25;">
+                                <i v-if="unlinkclicked==false" class="fa fa-unlink"></i>
+                                <spinner-component v-if="unlinkclicked==true" />
+                            </a>
+            
+                            <a v-if="editmode==='create' | image.newfield" @click="remove(index)" 
+                                            class="btn red btn-sm ligthen-4 m-0" style="height: 38px;line-height: 2.25;">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </transition-group>
+            
+                <a @click="add" class="btn btn-large blue m-0 float-right">
+                    <i class="fa fa-image mr-2"></i>
+                    {% trans "Ajouter une image" %}
+                </a>
+
+                <!-- MODAL -->
+                {% include "components/others/modals/associate_image.html" %}
+            </div>
+        </media-section>
+    </div>
+
+</div>

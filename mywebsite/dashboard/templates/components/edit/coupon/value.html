@@ -1,0 +1,37 @@
+{% load i18n %}
+
+<div class="card card-body mt-3">
+    <p class="font-weight-bold mb-4">
+        {% trans "Valeur" %}
+    </p>
+    <div class="form-row">
+        <div class="col-4">
+            <label class="text-muted" for="id_value">
+                {% trans "Valeur de la réduction" %}
+            </label>
+            {{ form.value }}
+        </div>
+    </div>
+
+    <hr>
+
+    <p class="font-weight-bold mb-4">
+        {% trans "Champs d'application" %}
+    </p>
+
+    <coupon-collection-section inline-template>
+        <div class="form-group">
+            <radio-component @showfield="doshow" :name="'on_entire_order'" 
+                v-bind:fields="fields" :triggerid="'id_on_entire_order2'">
+            </radio-component>
+    
+            <div v-if="show" class="form-group mt-2">
+                <div class="form-row">
+                    <div class="col-6">
+                        {{ form.collection }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </coupon-collection-section>
+</div>

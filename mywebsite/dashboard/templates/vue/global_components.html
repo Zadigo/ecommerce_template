@@ -1,0 +1,136 @@
+<script>
+    Vue.component("spinner-component", {
+        name: "Spinner",
+        template: `
+        <div class="spinner-border spinner-border-sm text-white" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        `
+    })
+
+    Vue.component("select-component", {
+        props: ["id", "name", "options"],
+        delimiters: ["[[", "]]"],
+        name: "SelectInput",
+        template: `
+            <select @change="returndata" v-model="selected" :name="name" :id="id" class="form-control">
+                <option v-for="option in options" :key="option.name" :value="option.value">
+                    [[ option.name ]]
+                </option>
+            </select>
+
+        `,
+        data() {
+            return {
+                selected: ""
+            }
+        },
+        beforeMount() {
+            this.$data.selected = this.$props.options[0].value
+        },
+        methods: {
+            returndata: function () {
+                this.$emit("returndata", this.$data.selected)
+            }
+        }
+    })
+
+    Vue.component("checkbox-component", {
+        props: ["id", "label"],
+        delimiters: ["[[", "]]"],
+        name: "CheckboxInput",
+        template: `
+        <div class="custom-control custom-checkbox">
+            <input @click="showfield" :id="id" type="checkbox" class="custom-control-input">
+            <label class="custom-control-label" :for="id">
+                [[ label ]]
+            </label>
+        </div>
+        `,
+        methods: {
+            showfield: function () {
+                this.$emit("showfield")
+            }
+        }
+    })
+
+    Vue.component("checkbox-submit-component", {
+        props: ["id", "label", "name", "checked"],
+        delimiters: ["[[", "]]"],
+        name: "CheckboxForSubmitInput",
+        template: `
+        <div class="custom-control custom-checkbox">
+            <input @click="showfield" :id="id" :name="name" :checked="checked" type="checkbox" class="custom-control-input">
+            <label class="custom-control-label" :for="id">
+                [[ label ]]
+            </label>
+        </div>
+        `,
+        methods: {
+            showfield: function () {
+                this.$emit("showfield")
+            }
+        }
+    })
+
+    Vue.component("checkbox-data-component", {
+        props: ["id", "label", "value", "name"],
+        delimiters: ["[[", "]]"],
+        name: "CheckboxDataInput",
+        template: `
+        <div class="custom-control custom-checkbox">
+            <input @click="returndata" :id="'id_' + id" :value="value" :name="name" type="checkbox" class="custom-control-input">
+            <label class="custom-control-label" :for="'id_' + id">
+                [[ label ]]
+            </label>
+        </div>
+        `,
+        data() {
+            return {
+                checked: false
+            }
+        },
+        methods: {
+            returndata: function () {
+                this.$data.checked = !this.$data.checked
+                this.$emit("returndata", this.$props.value, this.$data.checked)
+            }
+        }
+    })
+
+    Vue.component("radio-component", {
+        props: ["fields", "triggerid", "name"],
+        delimiters: ["[[", "]]"],
+        name: "RadioInputs",
+        template: `
+        <div class="form-group">
+            <div v-for="field in fields" :key="field.id"  class="custom-control custom-radio">
+                <input @click="showfield(field.id)" :id="field.id" :value="field.value" 
+                        :checked="field.checked" type="radio" 
+                            :name="name" class="custom-control-input">
+
+                <label class="custom-control-label" :for="field.id">
+                    [[ field.label ]]
+                </label>
+            </div>
+        </div>
+        `,
+        methods: {
+            showfield: function (id) {
+                var currentradio = _.filter(this.$props.fields, (field) => {
+                    return field.id === id
+                })
+
+                // console.log(currentradio)
+                // console.log(currentradio.id)
+                // console.log(this.$props.triggerid.includes(currentradio.id))
+
+                if (typeof(this.$data.triggerid) == "string") {
+                    this.$emit("showfield", id, currentradio.id === this.$props.triggerid)
+                } else {
+                    this.$emit("showfield", id, this.$props.triggerid.includes(currentradio[0].id))
+                }
+            }
+        }
+    })
+</script>

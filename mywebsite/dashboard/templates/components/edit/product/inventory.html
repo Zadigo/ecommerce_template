@@ -1,0 +1,35 @@
+{% load i18n %}
+
+<div class="card mt-2">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Inventaire" %}</p>
+
+        <div class="form-row">
+            <div class="col-6">
+                <label for="sku">Stock Keeping Unit</label>
+                {{ form.sku }}
+            </div>
+            <div class="col-6">
+                <label for="sku">{% trans "Référence interne du produit" %}</label>
+                {{ form.reference }}
+            </div>
+        </div>
+        
+        <div class="form-group">
+        </div>
+
+        <quantity-section :class="'mt-2'" inline-template>
+            <div class="form-group">
+                <checkbox-component @showfield="toggle" :id="'quantity'" :label="'Ajouter une quantité'">
+                </checkbox-component>
+        
+                <div v-if="showquantityfield" class="form-group mt-3 mb-5">
+                    <div class="col-6 pl-0">
+                        <label for="id_quantity">{% trans "Nombre de produits disponible" %}</label>
+                        {{ form.discount_pct }}
+                    </div>
+                </div>
+            </div>
+        </quantity-section>
+    </div>
+</div>

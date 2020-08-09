@@ -1,0 +1,50 @@
+{% extends "./base_middle_modal.html" %}
+{% load i18n %}
+
+{% block id %}import_new_image{% endblock %}
+
+{% block title %}
+    {% trans "Importer une nouvelle image" %}
+{% endblock %}
+
+{% block body %}
+    <form action="{% url 'dashboard:images:home' %}" method="post">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+            <input type="text" name="new-image-name" class="form-control" id="new-name" placeholder="{% trans 'Nom' %}">
+        </div>
+        
+        <div v-if="newfromlocal" class="input-group mb-3" class="form-group">
+            <input type="text" name="new-image-link" class="form-control" id="new-image" placeholder="https://">
+        </div>
+        
+        <div v-else class="input-group mb-3" class="form-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroupFileAddon01">
+                    {% trans "Télécharger" %}
+                </span>
+            </div>
+
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="new-local-image" aria-describedby="new-local-image" multiple>
+                <label class="custom-file-label" for="new-local-image">
+                    {% trans "Choisir une image" %}
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="new-image-variant" class="form-control" id="new-variant" placeholder="{% trans 'Couleur' %}">
+        </div>
+
+        <input v-if="newfromlocal" type="hidden" name="method" value="from-url">
+        <input v-else type="hidden" name="method" value="local" value="from-local">
+
+        <div class="form-group text-right">
+            <button type="submit" class="btn btn-large">
+                {% trans "Soumettre" %}
+            </button>
+        </div>
+    </form>
+{% endblock %}

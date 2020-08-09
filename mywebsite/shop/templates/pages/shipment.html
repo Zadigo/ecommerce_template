@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Livraison" %} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block datalayer_push %}
+{{ impressions|json_script:"impressions" }}
+<script>
+	var impressions = JSON.parse(document.getElementById("impressions").innerText)
+
+	dataLayer.push({
+		"event": "checkout",
+		"ecommerce": {
+			"checkout": {
+				"actionField": {
+					"step": 2
+				},
+				"products": impressions
+			}
+		}
+	})
+</script>
+{% endblock %}
+
+{% block container %}
+<div class="row">
+	<div class="col-md-6 mb-4 offset-md-1">
+		<div class="card">
+			<form method="POST" action="{% url 'payment' %}" class="card-body" id="form_shipping">
+				{% csrf_token %}
+
+				<div class="row">
+					<div class="col-md-6 mb-2">
+						<div class="md-form ">
+							<input type="text" name="firstname" id="firstName" class="form-control" placeholder="{% trans 'Nom' %}">
+						</div>
+					</div>
+
+					<div class="col-md-6 mb-2">
+						<div class="md-form">
+							<input type="text" name="lastname" id="lastname" class="form-control" placeholder="{% trans 'Prénom' %}">
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-7 mb-2">
+						<div class="md-form mb-5">
+							<input type="text" name="email" id="email" class="form-control" placeholder="{% trans 'Email' %}">
+						</div>
+					</div>
+					<div class="col-md-5 mb-2">
+						<div class="md-form mb-5">
+							<input type="tel" name="telephone" id="telephone" class="form-control" placeholder="{% trans 'Téléphone' %}">
+						</div>
+					</div>
+				</div>
+
+				<div class="md-form mb-5">
+					<input type="text" name="address" id="address" class="form-control" placeholder="{% trans 'Addresse' %}">
+				</div>
+				
+				{% comment %}
+				<div class="md-form mb-5">
+					<input type="text" id="address-2" class="form-control" placeholder="{% trans 'Apartment or suite' %}">
+				</div>					
+				{% endcomment %}
+
+				<div class="row">
+					<div class="col-lg-4 col-md-12 mb-4">
+						<label for="country">{% trans "Pays..." %}</label>
+						<select name="country" class="custom-select d-block w-100" id="country" required>
+							<option>{% trans "France" %}</option>
+							<option>{% trans "Belgique" %}</option>
+						</select>
+						<div class="invalid-feedback">
+							{% trans "Please select a valid country." %}
+						</div>
+					</div>
+
+					<div class="col-lg-4 col-md-6 mb-4">
+						<label for="state">{% trans "Région" %}</label>
+						<select name="city" class="custom-select d-block w-100" id="city" required>
+							<option>{% trans "Île de France" %}</option>
+							<option>{% trans "Nord" %}</option>
+							<option>{% trans "PACA" %}</option>
+							<option>{% trans "Rhône Alpes" %}</option>
+						</select>
+						<div class="invalid-feedback">
+							{% trans "Please provide a valid state." %}
+						</div>
+					</div>
+
+					<div class="col-lg-4 col-md-6 mb-4">
+						<label for="zip">Code postale</label>
+						<input name="zip_code" type="text" class="form-control" id="zip" placeholder="" required>
+						<div class="invalid-feedback">
+							{% trans "Zip code required." %}
+						</div>
+
+					</div>
+				</div>
+
+				{% comment %}
+					<hr class="mb-4">
+
+					<div class="custom-control custom-checkbox">
+						<input name="billing_equals_shipping" type="checkbox" class="custom-control-input" id="same-address">
+						<label class="custom-control-label" for="same-address">
+							{% trans "Shipping address is the same as my billing address" %}
+						</label>
+					</div>
+
+					<div class="custom-control custom-checkbox">
+						<input name="save_for_next_time" type="checkbox" class="custom-control-input" id="save-info">
+						<label class="custom-control-label" for="save-info">
+							{% trans "Save this information for next time" %}
+						</label>
+					</div>
+
+					<hr class="mb-4">
+				{% endcomment %}
+
+				<button type="submit" class="btn btn-primary btn-lg btn-block" id="btn_payment" onclick="nextStep()">
+					{% trans "Procéder au paiement" %}
+				</button>
+			</form>
+		</div>
+	</div>
+
+	<div class="col-md-4 mb-4">
+		<!-- HEADER -->
+		{% include "components/cart/heading.html" %}
+
+		<!-- SIDE CART -->
+		{% include "components/cart/side.html" %}
+		
+		<!-- FORM -->
+		{% include "components/cart/promo/form.html" %}
+	</div>
+</div>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+	<script>
+		var nextStep = function() {
+			dataLayer.push({
+				"event": "checkoutOption",
+				"ecommerce": {
+					"checkout_option": {
+						"actionField": {
+							"step": 3,
+							"option": ""
+						}
+					}
+				}
+			});
+		}
+	</script>
+{% endblock %}

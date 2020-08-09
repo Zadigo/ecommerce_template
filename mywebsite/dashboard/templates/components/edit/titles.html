@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<div class="card">
+    <div class="card-body">
+        <label for="id_name">{% trans "Nom" %}</label>
+        {{ form.name }}
+
+        <label class="mt-3" for="id_description">{% trans "Description" %}</label>
+        {% comment "Quill editor for advanced editing" %}
+            {% include "components/edit/quill_editor.html" %}
+        {% endcomment %}
+
+        {% if description_as_field %}
+            {{ description_as_field }}
+        {% else %}
+            {{ form.description }}
+        {% endif %}            
+    </div>
+</div>

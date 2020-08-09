@@ -1,0 +1,32 @@
+{% load navbar i18n %}
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar {% block nav_display %}{% endblock %}">
+    <div class="container">
+        <!-- BRAND -->
+        <a class="navbar-brand waves-effect" href="{% url 'home' %}">
+            <strong class="blue-text text-uppercase">Nawoka</strong>
+        </a>
+
+        <!-- HAMBURGER -->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- OFFCANVAS -->
+            {# {% include "offcanvas.html" %} #}
+
+            <!-- DROP LARGE -->
+            {% include "./dropdowns/medium.html" %}
+
+            <!-- RIGHT -->
+            <ul class="navbar-nav">
+                {% icon_links "search" "checkout" %}
+
+                {% if user.is_admin %}
+                    {% icon_links "accounts:login" "accounts:logout" %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

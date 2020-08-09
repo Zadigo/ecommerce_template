@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% load i18n static prices table %}
+
+{% block title %}{% trans "Mon panier" %} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block datalayer_push %}
+    {{ impressions|json_script:"impressions" }}
+    <script>
+        var impressions = JSON.parse(document.getElementById("impressions").innerText)
+
+        dataLayer.push({
+            "event": "checkout",
+            "ecommerce": {
+                "checkout": {
+                    "actionField": {
+                        "step": 1
+                    },
+                    "products": impressions
+                }
+            }
+        })
+    </script>
+{% endblock %}
+
+{% block remarketing %}
+    <script>
+        gtag("event", "conversion", {
+            "send_to": "AW-701852005/xTa9CP_dt8oBEOXS1c4C",
+            "value": "{{ cart_total }}",
+            "currency": "EUR"
+        });
+    </script>
+{% endblock %}
+
+{% block container %}
+    <div class="row wow fadeIn">
+        <div class="col-md-12 mb-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover">
+                            <thead>
+                                <th colspan="1"></th>
+                                {% header "Nom" "Quantité" %}
+                                <th colspan="1">Total</th>
+                            </thead>
+                            </tbody>
+                                {% for product in constructed_products.constructed_products %}
+                                    <tr>
+                                        <td>
+                                            <div class="cart-image">
+                                                <img class="img-fluid" src="{{ product.url }}" alt="{{ product.slug }}">
+                                            </div>
+                                        </td>
+                                        <td>{{ product.name }}</td>
+                                        <td>
+                                            <a href="{% url 'alter_quantity' product.cart_id 'reduce' %}" id="btn_alter_cart_reduce">
+                                                <i class="fa fa-minus"></i>
+                                            </a>
+                                            {{ product.quantity }}
+                                            <a href="{% url 'alter_quantity' product.cart_id 'add' %}" id="btn_alter_cart_add">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </td>
+                                        <td class="{% if product.is_discounted %}red-text lighten-2{% endif %}">{{ product.total|price_to_text }}</td>
+                                        <td>
+                                            <a href="{% url 'delete_from_cart' product.cart_id %}" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.price_ht }}', '{{ product.name }}', '{{ product.quantity }}')">
+                                                <i class="fa fa-trash fa-1x"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+
+                            {% comment %}
+                            <tbody>
+                                <div id="vue_app">
+                                    <listcomponent @mathoperation="hideproduct" v-bind:products="products" />
+                                </div>
+                            </tbody>
+                            {% endcomment %}
+                            
+                        </table>
+                        <div class="csrf">{% csrf_token %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row wow fadeIn mt-3">
+        <div class="col-md-12 mb-12">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'shipment' %}" class="btn btn-large blue float-right" id="btn_proceed_to_shipment">
+                        {% trans "Continuer" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        var deleteProduct = function(index, price, name, quantity) {
+            dataLayer.push({
+                "event": "removeFromCart",
+                "ecommerce": {
+                    "currencyCode": "EUR",
+                    "remove": {
+                    "products": [{
+                            "id": "",
+                            "price": price,
+                            "name": name,
+                            "category": "",
+                            "variant": "",
+                            "brand": "Nawoka",
+                            "quantity": quantity
+                        }]
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

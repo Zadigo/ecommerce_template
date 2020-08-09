@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load i18n aws_images %}
+
+{% block title %}{% trans "Qui sommes nous" %} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block page_description %}
+    <meta name="description" content="Découvrez en quelque ligne notre histoire, 
+    notre vision et notre avenir">
+{% endblock %}
+
+{% block share_metatags %}
+    <meta name="twitter:card" content="Découvrez qui nous sommes" />
+    <meta name="twitter:site" content="@mywebsite" />
+    <meta name="twitter:creator" content="@mywebsite" />
+
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka: notre histoire, notre vision et notre avenir" />
+    
+    {% block og_description %}
+        <meta property="og:description" content="Nawoka: notre histoire, notre vision et notre avenir" />
+    {% endblock %}
+
+    <meta property="og:image" content="{% create_aws_image_url 'banner9.jpg' %}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:height" content="1200">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:alt" content="MyWebsite" />
+{% endblock %}
+
+{% block container %}
+    <section class="section" id="who-we-are">
+        <div class="row wow fadeIn">
+            {% include "project_components/headers/picture.html" with image="banner9.jpg" alt="who we are" %}
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-12 col-lg-12">
+                <div class="row wow fadeIn">
+                    <div class="col-sm-12 col-md-4 mb-sm-3">
+                        <div class="card">
+                            <div class="card-body">
+                                Test
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="mb-3 text-uppercase font-weight-bold">Présentation</p>
+                                <p>
+                                    Nawoka est une marque que j'ai créer en Janvier 2020 portée par une vision
+                                    de diversité et d'équilibre dans la mode.
+                                </p>
+                                <p>
+                                    Passionnée par la mode depuis mon plus jeune âge, je me rappel regarder les
+                                    défilés haute couture avec Naomi Campbelle et Christie Turlington en me
+                                    posant la question du comment je pouvais apporter ma contribution dans
+                                    ce milieu sans jamais avoir eu d'expérience à ce niveau.
+                                </p>
+                                <p>
+                                    C'est dans ce contexte qu'est né Nawoka.
+                                </p>
+                                <p>
+                                    La diversité est une question proéminente dans le monde de la mode. Et ma vision,
+                                    c'est d'y apporter une certaine réponse à ma manière en proposant des produits
+                                    qui conviendraient autant aux femmes issues de la diversité que les autres.
+                                </p>
+                                <p>
+                                    <strong>John Pendenque - Founder</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row wow fadeIn mt-3">
+                    <div class="col-sm-12 col-md-7 mb-sm-3">
+                        <div class="card">
+                            <div class="card-body">
+                                Test
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-5 mb-sm-3">
+                        <div class="card">
+                            <div class="card-body">
+                                Test
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

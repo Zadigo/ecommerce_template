@@ -1,0 +1,33 @@
+{% extends "pagpages/edit/base_edit.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Réglages généraux" %}{% endblock %}
+
+{% block page_header %}
+
+{% endblock %}
+
+{% block left_content %}
+
+{% endblock %}
+
+{% block right_content %}
+<div class="card">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Entreprise" %}</p>
+
+        <div class="form-group">
+            <label for="id_name">{% trans "Nom légal" %}</label>
+            {{ form.legal_name }}
+        </div>
+        <div class="form-group">
+            <label for="id_name">{% trans "Téléphone" %}</label>
+            {{ form.telephone }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block bottom_form_buttons %}
+        {% include "components/edit/actions_bottom.html" %}
+{% endblock %}

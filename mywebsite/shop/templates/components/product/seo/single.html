@@ -1,0 +1,31 @@
+{# Use this for a page that shows a single product detail with additional products to choose from #}
+
+<script>
+    var impressions = {{ impressions }}
+    dataLayer.push({
+        "ecommerce": {
+            "impressions": impressions,
+            "detail": {
+                "actionField": { "list": "Collections List" },
+                "products": [
+                    {
+                        "name:": "{{ product.name }}",
+                        "id:": "{{ product.reference }}",
+                        "price:": "{{ product.get_price }}",
+                        "brand:": "Nawoka",
+                        "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
+                        "variant:": "{{ product.sku }}",
+                    }
+                ]
+            }
+        },
+        "remarketingProduct": {
+            "name:": "{{ product.name }}",
+            "id:": "{{ product.reference }}",
+            "price:": "{{ product.get_price }}",
+            "brand:": "Nawoka",
+            "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
+            "variant:": "{{ product.sku }}",
+        }
+    })
+</script>

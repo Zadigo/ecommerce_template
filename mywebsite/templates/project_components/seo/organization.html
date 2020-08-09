@@ -1,0 +1,38 @@
+{% load aws_images %}
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "image": [],
+        "@id": "{{ request.build_absolute_uri }}",
+        "name": "MyWebsite",
+        "alternateName": [
+            "mywebsite",
+            "Nawoka Fashion"
+        ],
+        "description": "",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "",
+            "addressRegion": "",
+            "postalCode": "59000"
+        },
+        "ContactPoint": [
+            {
+                "@type": "ContactPoint",
+                "ContactType": "Customer service",
+                "url": "https://mywebsite.fr/customer-care/"
+            }
+        ],
+        "email": "mailto:contact.mywebsite@gmail.com",
+        "url": "https://mywebsite.fr/customer-care/",
+        "telephone": "",
+        "founder": {
+            "@type": "Person",
+            "name": "",
+            "jobTitle": ""
+        },
+        "sameAs": []
+    }
+</script>

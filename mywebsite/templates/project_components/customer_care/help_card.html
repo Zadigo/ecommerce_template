@@ -1,0 +1,55 @@
+{% load i18n %}
+
+<section class="section mt-3">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 text-center">
+                    <h4>{% trans "Toujours besoin d'aide ?" %}</h4>
+                    <p>
+                        {% trans "Envoyez-nous un message en utilisant l'une des options ci-dessous. Nous vous répondrons au plus vite." %}
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12 text-center">
+                    <a href class="btn btn-large btn-primary">
+                        <i class="fa fa-twitter mr-3 fa-1x"></i>
+                        {% trans "Envoyer un Tweet" %}
+                    </a>
+                    <a href class="btn btn-large btn-primary">
+                        <i class="fa fa-facebook-f mr-3 fa-1x"></i>
+                        {% trans "Envoyer une message Facebook" %}
+                    </a>
+                    <button class="btn btn-large btn-primary" data-toggle="modal" data-target="#send_email">
+                        <i class="fas fa-envelope mr-3 fa-1x"></i>
+                        {% trans "Envoyer un email" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal fade" id="send_email" tabindex="-1" role="dialog" aria-labelledby="send_email" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5>{% trans "Envoyer une ticket" %}</h5>
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div id="vue_email_app">
+                        <div class="container">
+                            <emailapp />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

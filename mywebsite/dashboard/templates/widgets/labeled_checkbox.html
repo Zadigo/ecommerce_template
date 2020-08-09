@@ -1,0 +1,6 @@
+<div class="custom-control custom-checkbox">
+    <input type="{{ widget.type }}" name="{{ widget.name }}" class="custom-control-input" {% for key, value in widget.attrs.items %}{{ key }}="{{ value }}"{% endfor %}>
+    <label for="{{ widget.attrs.id }}" class="custom-control-label">
+        {{ widget.label_name }}
+    </label>
+</div>

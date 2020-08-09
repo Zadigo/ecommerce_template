@@ -1,0 +1,73 @@
+{% extends "index.html" %}
+{% load i18n %}
+
+{% block title %}
+    {% trans "Réglages de la boutique" %}
+{% endblock %}
+
+{% block content %}
+    {% if user_has_store %}
+        <div class="row">
+            <div class="col-3">
+                <a href="{% url 'dashboard:dashboard_general_settings' 2 %}">
+                    <div class="card">
+                        <div class="card-body">
+                            {% trans "Général" %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-3">
+                <a href="{% url 'dashboard:store_settings' 2 %}">
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fas fa-shop"></i>
+                            {% trans "Boutique" %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-3">
+                <a href="{% url 'dashboard:analytics_settings' 2 %}">
+                    <div class="card">
+                        <div class="card-body">
+                            <i class="fas fa-shop"></i>
+                            {% trans "Analytics" %}
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="p-3 text-center">
+                                    {% blocktrans  %}
+                                        Il semblerait que vous n'ayez pas encore de boutique ou que celle-ci ne
+                                        soit pas encore active. Veuillez contacter votre administrateur afin de pouvoir
+                                        changer les paramètres de la boutique.
+                                    {% endblocktrans %}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <button class="btn btn-danger waves-effect waves-light">
+                                    {% trans "contacter Nawoka" %}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block bottom_form_buttons %}
+    {% include "components/edit/actions_bottom.html" %}
+{% endblock %}

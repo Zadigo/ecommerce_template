@@ -1,0 +1,40 @@
+{% load i18n prices %}
+
+<ul class="list-group mb-3 z-depth-1">
+    {% for product in products.constructed_products %}
+        <li class="list-group-item d-flex justify-content-between lh-condensed">
+            <div>
+                <h6 class="my-0">{{ product.quantity }} x {{ product.name|truncatechars:28 }}</h6>
+                <small class="text-muted">{{ product.description }}</small>
+            </div>
+            
+            <span class="text-muted">{{ product.price_ht|price_to_text }}</span>
+        </li>
+    {% endfor %}
+
+    <li class="list-group-item grey lighten-4">
+        <p class="m-0">
+            <i class="fas fa-info-circle fa-1x mr-2"></i>
+            {{coupon}}
+            {% if coupon.value_type == "free shipping" %}
+                {% blocktrans %}
+                    Les frais de livraison vous sont offerts
+                {% endblocktrans %}
+            {% else %}
+                {% blocktrans %}
+                    Les frais de livraison à hauteur de <strong>2.95€</strong> 
+                    sont inclus dans le prix final
+                {% endblocktrans %}                
+            {% endif %}
+        </p>
+    </li>
+    
+    {% if products.coupon_value > 0 %}
+        {% include "components/cart/promo/info.html" with coupon_value=products.coupon_value coupon_code=products.coupon_code %}        
+    {% endif %}
+
+    <li class="list-group-item d-flex justify-content-between">
+        <span class="text-uppercase font-weight-bold">{% trans "Total à régler" %}</span>
+        <span class="font-weight-bold">{{ cart_total|price_to_text }}</span>
+    </li>
+</ul>

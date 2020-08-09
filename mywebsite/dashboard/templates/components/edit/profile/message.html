@@ -1,0 +1,14 @@
+<div class="card mb-3">
+    <div class="card-body">
+        <p class="font-weight-bold text-uppercase">Envoyer un message</p>
+        <form action="{% url 'dashboard:dashboard_user' user.id %}" method="POST">
+            {% csrf_token %}
+
+            <textarea class="form-control" name="message" id="message" cols="10" rows="2"></textarea>
+            <button type="submit" class="btn btn-primary float-right mr-0">
+                <i class="fa fa-envelope pull-left"></i>
+                Envover
+            </button>
+        </form>
+    </div>
+</div>

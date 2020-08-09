@@ -1,0 +1,7 @@
+{% for viewname, data in links %}
+    <a href="{{ data.href }}" class="list-group-item {% if active %}active{% endif %} waves-effect">
+        <i class="{{ data.icon|default:'fa-chart-pie' }} mr-3"></i>
+        <span class="sr-only">{{ viewname }}</span>
+        {{ data.name }}
+    </a>
+{% endfor %}    

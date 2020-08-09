@@ -1,0 +1,36 @@
+{
+    "policies": {
+        "payment": {
+
+        },
+        "delivery": {
+            "2": {
+                "question": "Dois-je signer à la réception de ma commande ?",
+                "content": [
+                    "Nous savons qu'il est possible que vous ne soyez pas chez vous pour signer à la réception de votre colis, c’est pourquoi il pourra être déposé dans un endroit sûr ou chez un voisin. Sachez que l’ensemble des instructions que vous avez laissées ne sont que des demandes et ne peuvent être garanties. Si elles ne sont pas réalisables, nous laisserons une carte d’appel qui comprendra les informations nécessaires à l'organisation d'une nouvelle livraison.",
+                ],
+                "id": "id_delivery_signature"
+            },
+            "3": {
+                "question": "Que faire si mon colis n'arrive pas ?",
+                "content": [
+                    "Vous pouvez suivre l’état de votre commande ici. Si vous ne pouvez pas consulter l’état de votre commande, veuillez nous contacter et nous vous répondrons dès que possible."
+                ],
+                "id": "id_delivery_not_received"
+            }
+        },
+        "return": {
+            "1": {
+                "question": "",
+                "content": [
+                    "Les articles doivent être retournés dans les 14 jours suivant la réception de votre commande. Vous ne devez pas avoir porté ou lavé les articles.",
+                    "Les produits de beauté, les bijoux pour emplacements percés ou les maillots de bain (si la protection hygiénique a été retirée) ne peuvent être retournés pour des raisons de santé et d’hygiène.",
+                    "Nous ne pouvons pas rembourser les bijoux pour emplacements percés ou les maillots de bain si la protection hygiénique a été retirée, déplacée ou endommagée.",
+                    "<ul><li>Vous devez essayer les chaussures à l’intérieur.</li><li>L’ensemble des étiquettes de l’article doivent y être encore attachées.</li><li>Vous ne pouvez pas retourner les produits et accessoires de beauté.</li></ul>",
+                    "Tous les retours sont effectués à votre charge. Vous devez toutefois conserver votre preuve d’envoi jusqu’à réception de votre remboursement, au cas où votre commande se perdrait en chemin vers Nawoka."
+                ],
+                "id": "id_return_policy"
+            }
+        }
+    }
+}

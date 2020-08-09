@@ -1,0 +1,36 @@
+{# Secondary actions such as prevewing an item, duplicating, activating etc. #}
+
+{% load i18n %}
+
+<div class="row mt-3">
+    <div class="col-auto">
+        <div id="vue_duplication_app">
+            <a v-if="!clicked" v-on:click="sendrequest" class="mr-4 text-muted">
+                <i class="fa fa-copy mr-2"></i>
+                {% trans "Duplicate" %}
+            </a>
+            <div v-else class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            
+            {% if product.active %}
+                {% if product.private %}
+                    <a href="{{ product.get_private_url }}" class="text-muted" target="_blank">
+                        <fa class="fa fa-eye mr-2"></fa>
+                        {% trans "Prévisualiser" %}
+                    </a>                    
+                {% else %}
+                    <a href="{{ product.get_absolute_url }}" class="text-muted" target="_blank">
+                        <fa class="fa fa-eye mr-2"></fa>
+                        {% trans "Prévisualiser" %}
+                    </a>                    
+                {% endif %}
+            {% else %}
+                <a href="{{ product.get_preview_url }}" class="text-muted" target="_blank">
+                    <fa class="fa fa-eye mr-2"></fa>
+                    {% trans "Prévisualiser" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

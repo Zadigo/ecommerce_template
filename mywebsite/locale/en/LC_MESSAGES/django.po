@@ -1,0 +1,1202 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-08-06 12:40+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\accounts\forms.py:17
+msgid "Password"
+msgstr ""
+
+#: .\accounts\forms.py:18
+msgid "Password confirmation"
+msgstr ""
+
+#: .\accounts\forms.py:29
+msgid "Passwords don't match"
+msgstr ""
+
+#: .\accounts\forms.py:57 .\accounts\forms.py:122
+#: .\shop\templates\pages\shipment.html:53
+msgid "Email"
+msgstr "Email"
+
+#: .\accounts\forms.py:63
+#: .\accounts\templates\components\accounts\side_menu.html:7
+msgid "Mot de passe"
+msgstr "Password"
+
+#: .\accounts\forms.py:72
+msgid "Veuillez entrer un email ainsi qu'un mot de passe"
+msgstr ""
+
+#: .\accounts\forms.py:140
+msgid "Nouveau mot de passe"
+msgstr "New password"
+
+#: .\accounts\forms.py:147
+msgid "Nouveau mot de passe confirmation"
+msgstr ""
+
+#: .\accounts\templates\components\accounts\side_menu.html:5
+msgid "Profil"
+msgstr "Profile"
+
+#: .\accounts\templates\components\accounts\side_menu.html:6
+#: .\accounts\templates\pages\accounts\payment_methods.html:4
+msgid "Modes de paiement"
+msgstr ""
+
+#: .\accounts\templates\components\accounts\side_menu.html:8
+#: .\accounts\templates\pages\accounts\data.html:5
+msgid "Mes données"
+msgstr "Personal data"
+
+#: .\accounts\templates\components\accounts\side_menu.html:14
+msgid "Personalisation"
+msgstr ""
+
+#: .\accounts\templates\components\emails\password_reset_email.html:4
+#, python-format
+msgid ""
+"\n"
+"    You're receiving this email because you requested a password reset for "
+"your user account at %(site_name)s.\n"
+"    "
+msgstr ""
+
+#: .\accounts\templates\components\emails\password_reset_email.html:8
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: .\accounts\templates\components\emails\password_reset_email.html:14
+msgid "Your username, in case you’ve forgotten:"
+msgstr ""
+
+#: .\accounts\templates\components\emails\password_reset_email.html:16
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: .\accounts\templates\components\emails\password_reset_email.html:18
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: .\accounts\templates\components\emails\password_reset_subject.txt:4
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\base.html:4
+msgid "Mon compte"
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\change_password.html:16
+#: .\accounts\templates\pages\accounts\profile.html:16
+#: .\accounts\templates\pages\accounts\profile.html:28
+msgid "Valider"
+msgstr "Validate"
+
+#: .\accounts\templates\pages\accounts\data.html:10
+msgid ""
+"\n"
+"                Gérer les comptes connectés avec Kurrikulam :\n"
+"            "
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\data.html:25
+msgid ""
+"\n"
+"                Si vous ne souhaitez plus avoir de compte chez nous, vous "
+"pouvez utiliser le lien ci-dessous.</p>\n"
+"            "
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\data.html:36
+msgid "Suppréssion de votre compte"
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\data.html:38
+msgid ""
+"\n"
+"                    Vous êtes sur le point de supprimer votre compte. Cette "
+"étape\n"
+"                    est irréversible et vous perdrez donc toutes les données "
+"liées à Kurrikulam.\n"
+"                "
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\data.html:45
+msgid "supprimer"
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\personalisation.html:13
+msgid "Jupes"
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\personalisation.html:18
+#: .\accounts\templates\pages\accounts\personalisation.html:23
+msgid "Manteaux"
+msgstr ""
+
+#: .\accounts\templates\pages\accounts\personalisation.html:28
+#: .\accounts\templates\pages\accounts\reset_password.html:15
+msgid "Modifier"
+msgstr "Modify"
+
+#: .\accounts\templates\pages\registration\forgot_password.html:4
+msgid "Récupérer son mot de passe"
+msgstr ""
+
+#: .\accounts\templates\pages\registration\forgot_password_confirm.html:4
+msgid "Récupérer son mot de passe - Confirmation"
+msgstr ""
+
+#: .\accounts\templates\pages\registration\login.html:4
+msgid "Se connecter"
+msgstr ""
+
+#: .\accounts\templates\pages\registration\signup.html:4
+msgid "Créer un compte"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\actions\bottom.html:9
+#: .\dashboard\templates\pages\lists\products.html:50
+msgid "Supprimer"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\actions\bottom.html:14
+#: .\dashboard\templates\pages\edit\update\settings.html:35
+#: .\dashboard\templates\vue\create\form.html:13
+msgid "Sauvegarder"
+msgstr "Save"
+
+#: .\dashboard\templates\components\edit\actions\main.html:9
+msgid "Abandonner"
+msgstr "Cancel"
+
+#: .\dashboard\templates\components\edit\actions\secondary.html:10
+msgid "Duplicate"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\actions\secondary.html:20
+#: .\dashboard\templates\components\edit\actions\secondary.html:25
+#: .\dashboard\templates\components\edit\actions\secondary.html:31
+msgid "Prévisualiser"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\collections\conditions.html:6
+msgid "Type de collection"
+msgstr "Collection type"
+
+#: .\dashboard\templates\components\edit\collections\conditions.html:15
+msgid "Conditions"
+msgstr "Conditions"
+
+#: .\dashboard\templates\components\edit\collections\conditions.html:22
+msgid "Les produits doivent respecter :"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\collections\conditions.html:29
+msgid "Toutes les conditions"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\collections\conditions.html:35
+msgid "Certaines conditions"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\coupon\limitations.html:4
+msgid "Limitations"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\coupon\limitations.html:8
+msgid "Limiter à un nombre d'utilisation totale"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\coupon\minimum.html:4
+msgid "Minimum d'achat"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\coupon\value.html:5
+#: .\dashboard\templates\vue\create\collection.html:35
+msgid "Valeur"
+msgstr "Value"
+
+#: .\dashboard\templates\components\edit\coupon\value.html:10
+msgid "Valeur de la réduction"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\coupon\value.html:19
+msgid "Champs d'application"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\inventory.html:5
+msgid "Inventaire"
+msgstr "Inventory"
+
+#: .\dashboard\templates\components\edit\product\inventory.html:13
+msgid "Référence interne du produit"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\inventory.html:28
+msgid "Nombre de produits disponible"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\media.html:8
+#: .\dashboard\templates\components\edit\product\media2.html:8
+msgid "Media"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\media2.html:17
+msgid ""
+"Le nom de l'image sera utilisé comme nom du fichier lors de son "
+"téléchargement vers AWS :"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\media2.html:60
+msgid "Ajouter une image"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\price.html:5
+#: .\dashboard\templates\vue\create\collection.html:56
+msgid "Prix"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\price.html:15
+msgid "calculer la marge"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\price.html:22
+msgid "Ce produit est actuellement en réduction"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\price.html:37
+msgid "Date de fin de validité du prix"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\price.html:46
+msgid "Afficher le produit en réduction sur le site"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:6
+msgid "Disponibilité"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:12
+msgid "Activer et rendre visible"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:21
+msgid "Marquer comme étant en stock"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:29
+msgid "Attention ce produit n'est pas référencé sur les pages du site"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:36
+msgid "Ce produit est privé"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:47
+msgid "Marquer ce produit comme favori"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:57
+msgid "Activer à une date future"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:70
+msgid "Organisation"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:77
+msgid "Ajouter le produit à une collection"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:85
+msgid "Cible (ex. femme)"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\side.html:98
+msgid "Classification du produit selon les critères Google (ex. 178)"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\product\variants.html:5
+msgid "Variants"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\titles.html:5
+#: .\shop\templates\pages\shipment.html:39
+#: .\shop\templates\vue\products.html:11
+msgid "Nom"
+msgstr ""
+
+#: .\dashboard\templates\components\edit\titles.html:8
+#: .\shop\templates\pages\preview.html:94
+#: .\shop\templates\pages\product.html:129
+msgid "Description"
+msgstr ""
+
+#: .\dashboard\templates\components\navs\heading.html:7
+msgid "Accueil"
+msgstr ""
+
+#: .\dashboard\templates\components\navs\navbar.html:24
+msgid "Se déconnecter"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\associate_image.html:7
+msgid "Associer des images"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\base_bottom_modal.html:24
+msgid "Annuler"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\export_csv.html:7
+msgid "Exporter des produits"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\export_csv.html:15
+msgid "Exporter les données pour"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\export_csv.html:24
+msgid "Types de données à exporter"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\export_csv.html:43
+#: .\dashboard\templates\components\others\modals\export_csv.html:51
+msgid "Exporter"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\import_csv.html:7
+msgid "Importer des produits"
+msgstr ""
+
+#: .\dashboard\templates\components\others\modals\margin.html:4
+msgid "Calculer une marge commerciale"
+msgstr ""
+
+#: .\dashboard\templates\components\others\tables\carts.html:34
+msgid "Vous n'avez aucun coupons"
+msgstr ""
+
+#: .\dashboard\templates\components\others\tables\collections.html:26
+msgid "Vous n'avez pas encore de collections"
+msgstr ""
+
+#: .\dashboard\templates\components\others\tables\coupons.html:21
+msgid "Vous n'avez pas encore de coupons"
+msgstr ""
+
+#: .\dashboard\templates\components\others\tables\products.html:73
+msgid "Nous n'avons pas trouvé de produits correspondants"
+msgstr ""
+
+#: .\dashboard\templates\components\others\tables\products.html:77
+msgid "Vous n'avez pas encore de produits"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\base_edit.html:21
+msgid ""
+"\n"
+"                        "
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\collection.html:5
+msgid "Création d'une nouvelle collection"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\collection.html:30
+#: .\dashboard\templates\pages\edit\update\collection.html:36
+msgid "Image de la collection"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\collection.html:35
+#: .\dashboard\templates\pages\edit\update\collection.html:41
+msgid "Choisir une image"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:4
+msgid "Modication de"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:10
+#: .\dashboard\templates\pages\edit\update\coupon.html:10
+#: .\dashboard\templates\pages\lists\coupons.html:4
+msgid "Coupons"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:18
+#: .\dashboard\templates\vue\create\others\activate_coupon.html:26
+#: .\dashboard\templates\vue\list\table.html:11
+msgid "Activer"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:22
+#: .\dashboard\templates\pages\edit\update\coupon.html:22
+msgid "Promouvoir"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:31
+#: .\dashboard\templates\pages\edit\update\coupon.html:38
+msgid "Code promotionnel"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:34
+#: .\dashboard\templates\pages\edit\update\coupon.html:41
+msgid "Générer une nouveau code"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:39
+#: .\dashboard\templates\pages\edit\update\coupon.html:46
+msgid "L'utilisateur utilisera le code à l'écran final"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:46
+#: .\dashboard\templates\pages\edit\update\coupon.html:53
+msgid "Types"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:51
+#: .\dashboard\templates\pages\edit\update\coupon.html:58
+msgid "Le type de coupon"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:69
+#: .\dashboard\templates\pages\edit\update\coupon.html:76
+msgid "Dates"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:74
+#: .\dashboard\templates\pages\edit\update\coupon.html:81
+msgid "Date de début"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:82
+#: .\dashboard\templates\pages\edit\update\coupon.html:89
+msgid "Date de fin"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\coupon.html:94
+#: .\dashboard\templates\pages\edit\update\coupon.html:101
+msgid "Résumé"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\create\product.html:4
+msgid "Création d'un nouveau produit"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\collection.html:4
+#: .\dashboard\templates\pages\edit\update\settings.html:4
+msgid "Modification de"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\collection.html:11
+#: .\dashboard\templates\pages\lists\collections.html:4
+msgid "Collections"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\coupon.html:4
+msgid "Création d'un nouveau coupon"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\coupon.html:28
+msgid "Promouvoire le code -"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:4
+msgid "Commande"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:32
+#: .\dashboard\templates\pages\edit\update\product.html:25
+#: .\dashboard\templates\pages\edit\update\product.html:30
+#: .\dashboard\templates\pages\lists\products.html:4
+msgid "Produits"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:46
+#: .\templates\project_components\customer_care\help_card.html:26
+msgid "Envoyer un email"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:50
+msgid "Envover"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:59
+msgid "Actions"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:64
+msgid "Commande en attente"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:69
+msgid "En attente de livraison"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:74
+msgid "Remboursement demandée"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:80
+msgid "Accepter la commande"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:89
+msgid "Marquer comme complétée"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:95
+msgid "Remboursement demandé"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:104
+msgid "Suivi"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\order.html:107
+msgid "Le numéro de suivi pour la commande"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\product.html:4
+msgid "Mise à jour de"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings.html:17
+#: .\dashboard\templates\pages\edit\update\settings\index.html:15
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:17
+msgid "Général"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings.html:30
+msgid "Delete"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\analytics.html:4
+#: .\dashboard\templates\pages\edit\update\settings\general.html:4
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:4
+msgid "Réglages généraux"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\general.html:17
+msgid "Entreprise"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\general.html:20
+msgid "Nom légal"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\general.html:24
+#: .\shop\templates\pages\shipment.html:58
+msgid "Téléphone"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\index.html:5
+msgid "Réglages de la boutique"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\index.html:25
+msgid "Boutique"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\index.html:35
+msgid "Analytics"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\index.html:49
+msgid ""
+"\n"
+"                                        Il semblerait que vous n'ayez pas "
+"encore de boutique ou que celle-ci ne\n"
+"                                        soit pas encore active. Veuillez "
+"contacter votre administrateur afin de pouvoir\n"
+"                                        changer les paramètres de la "
+"boutique.\n"
+"                                    "
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\index.html:60
+msgid "contacter Nawoka"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:20
+msgid "Nom de la boutique"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:28
+msgid "Contact"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:31
+msgid "Email de contact"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:35
+msgid "Email du service client"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:43
+msgid "Achive"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:46
+msgid "Archiver automatiquement toute les commandes"
+msgstr ""
+
+#: .\dashboard\templates\pages\edit\update\settings\shop.html:49
+msgid "Archivage automatique"
+msgstr ""
+
+#: .\dashboard\templates\pages\home.html:26
+msgid "Dernières commandes"
+msgstr ""
+
+#: .\dashboard\templates\pages\home.html:41
+msgid "Terminer"
+msgstr ""
+
+#: .\dashboard\templates\pages\home.html:45
+msgid "En attente"
+msgstr ""
+
+#: .\dashboard\templates\pages\lists\carts.html:4
+msgid "Paniers"
+msgstr ""
+
+#: .\dashboard\templates\pages\lists\orders.html:4
+msgid "Commandes"
+msgstr ""
+
+#: .\dashboard\templates\pages\lists\products.html:32
+msgid "Dupliquer"
+msgstr ""
+
+#: .\dashboard\templates\pages\lists\search\products.html:4
+msgid "Recherche pour"
+msgstr ""
+
+#: .\dashboard\templates\pages\lists\users.html:4
+msgid "Utilisateurs"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\collection.html:48
+msgid "Ajouter une condition"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\collection.html:55
+msgid "Nom du produit"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\collection.html:91
+msgid "Manuel"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\collection.html:92
+msgid "Automatique"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\coupon.html:28
+msgid "Active from today"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\coupon.html:33
+msgid "Active today"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\coupon.html:46
+msgid "Toute la commande"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\coupon.html:47
+msgid "Une collection spécifique"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\coupon.html:88
+msgid "Aucun"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\coupon.html:89
+msgid "Minimum en valeur (€)"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\coupon.html:90
+msgid "Minimum en quantité"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\images.html:31
+msgid "Associer au produit"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\images.html:47
+msgid "Type de téléchargement"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\images.html:52
+msgid "Images existantes"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\images.html:56
+msgid "Image locale"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\images.html:60
+msgid "Vidéo YouTube"
+msgstr ""
+
+#: .\dashboard\templates\vue\create\others\activate_coupon.html:24
+#: .\dashboard\templates\vue\list\table.html:12
+msgid "Désactiver"
+msgstr ""
+
+#: .\dashboard\templates\vue\list\export_csv.html:11
+msgid "Page actuelle"
+msgstr ""
+
+#: .\dashboard\templates\vue\list\export_csv.html:12
+msgid "Tous les produits"
+msgstr ""
+
+#: .\dashboard\templates\vue\list\export_csv.html:13
+msgid "Exporter une collection spécifique"
+msgstr ""
+
+#: .\dashboard\templates\vue\list\table.html:13
+msgid "Archiver"
+msgstr ""
+
+#: .\dashboard\views.py:868
+msgid "Une erreur s'est produite - IMG-UN"
+msgstr ""
+
+#: .\mywebsite\settings.py:141
+msgid "English"
+msgstr ""
+
+#: .\mywebsite\settings.py:142
+msgid "Français"
+msgstr ""
+
+#: .\shop\payment.py:21
+msgid "You should install Stripe in order to use the payment logic."
+msgstr ""
+
+#: .\shop\payment.py:26
+msgid ""
+"You should provide live and secret keys in STRIPE_API_KEYS to use the "
+"payment logic"
+msgstr ""
+
+#: .\shop\payment.py:263
+msgid "You should provide a cart ID number to identify the user's cart"
+msgstr ""
+
+#: .\shop\payment.py:268
+msgid ""
+"In order to create a payment, you need to provide user informations such as "
+"firstname, lastname..."
+msgstr ""
+
+#: .\shop\payment.py:533
+msgid ""
+"You should provide a valid Orders model if you wish to update your model "
+"after purchase"
+msgstr ""
+
+#: .\shop\payment.py:539
+msgid ""
+"Your model should have a total or payment field to which we can write the "
+"total payment for the the order"
+msgstr ""
+
+#: .\shop\sizes.py:16
+msgid "La taille du buste n'est pas valide"
+msgstr ""
+
+#: .\shop\templates\components\cart\heading.html:4
+msgid "Votre panier"
+msgstr ""
+
+#: .\shop\templates\components\cart\promo\form.html:15
+msgid "Ajouter"
+msgstr ""
+
+#: .\shop\templates\components\cart\promo\info.html:5
+msgid "Code promo"
+msgstr ""
+
+#: .\shop\templates\components\cart\side.html:20
+msgid ""
+"\n"
+"                    Les frais de livraison vous sont offerts\n"
+"                "
+msgstr ""
+
+#: .\shop\templates\components\cart\side.html:24
+msgid ""
+"\n"
+"                    Les frais de livraison à hauteur de <strong>2.95€</"
+"strong> \n"
+"                    sont inclus dans le prix final\n"
+"                "
+msgstr ""
+
+#: .\shop\templates\components\cart\side.html:37
+msgid "Total à régler"
+msgstr ""
+
+#: .\shop\templates\components\emails\confirmation_email.html:4
+#: .\shop\templates\components\emails\expedition_email.html:4
+msgid "Bonjour"
+msgstr ""
+
+#: .\shop\templates\components\emails\confirmation_email.html:6
+#, python-format
+msgid ""
+"\n"
+"    Nous vous remercions de votre commande. Nous vous tiendrons informé par "
+"e-mail lorsque les articles de votre commande\n"
+"    auront été expédiés. Votre date de livraison estimée entre le "
+"%(estimated_order_date)s et le %(estimated_order_date)s. \n"
+"    Vous pouvez suivre l’état de votre commande ou modifier celle-ci dans "
+"https://mywebsite.fr/customer-care/.\n"
+"    "
+msgstr ""
+
+#: .\shop\templates\components\emails\confirmation_email.html:14
+#: .\shop\templates\components\emails\expedition_email.html:18
+msgid "Récapitulatif de votre commande"
+msgstr ""
+
+#: .\shop\templates\components\emails\email_subject.txt:4
+#, python-format
+msgid ""
+"\n"
+"        Votre commande Nawoka.fr numéro %(order_reference)s\n"
+"    "
+msgstr ""
+
+#: .\shop\templates\components\emails\expedition_email.html:6
+msgid ""
+"\n"
+"        Nous vous informons que votre commande a été expédiée. Votre colis "
+"est en cours d'acheminement et cette commande ne peut\n"
+"        donc plus être modifiée. Si vous souhaitez retourner un article, "
+"visualiser ou modifier une autre commande, veuillez\n"
+"        consulter http://mywebsite.fr.\n"
+"    "
+msgstr ""
+
+#: .\shop\templates\components\modals\delivery.html:8
+msgid "Estimation de la date de livraison"
+msgstr ""
+
+#: .\shop\templates\components\modals\delivery.html:18
+msgid "Comptez aussi 2 jours de traitement (week-end inclus)."
+msgstr ""
+
+#: .\shop\templates\components\product\actions.html:44
+msgid "Ce produit n'est pas actif"
+msgstr ""
+
+#: .\shop\templates\components\product\cart.html:25
+#: .\shop\templates\pages\no_cart.html:17
+msgid "Votre panier est vide"
+msgstr ""
+
+#: .\shop\templates\components\product\cart.html:32
+msgid "Panier"
+msgstr ""
+
+#: .\shop\templates\components\product\more.html:8
+msgid "Vous allez aussi adorer"
+msgstr ""
+
+#: .\shop\templates\components\products\cards.html:25
+#: .\shop\templates\vue\products.html:52
+msgid "nouveau"
+msgstr ""
+
+#: .\shop\templates\components\products\cards.html:29
+#: .\shop\templates\vue\products.html:56
+msgid "favori"
+msgstr ""
+
+#: .\shop\templates\components\products\cards.html:33
+#: .\shop\templates\vue\products.html:60
+msgid "epuise"
+msgstr ""
+
+#: .\shop\templates\components\products\filterbar.html:14
+msgid "Tout"
+msgstr ""
+
+#: .\shop\templates\components\products\filterbar.html:20
+msgid "Promotions"
+msgstr ""
+
+#: .\shop\templates\components\products\filterbar.html:25
+msgid "Favoris"
+msgstr ""
+
+#: .\shop\templates\pages\cart.html:4
+msgid "Mon panier"
+msgstr ""
+
+#: .\shop\templates\pages\cart.html:101
+msgid "Continuer"
+msgstr ""
+
+#: .\shop\templates\pages\no_cart.html:4
+msgid "Pas de panier"
+msgstr ""
+
+#: .\shop\templates\pages\no_cart.html:23
+#: .\shop\templates\pages\success.html:83
+msgid "Retourner à la boutique"
+msgstr ""
+
+#: .\shop\templates\pages\payment.html:4
+msgid "Paiement"
+msgstr ""
+
+#: .\shop\templates\pages\payment.html:73
+msgid "Payer"
+msgstr ""
+
+#: .\shop\templates\pages\payment.html:81
+msgid "Nous acceptons"
+msgstr ""
+
+#: .\shop\templates\pages\payment.html:106
+msgid "Assistance"
+msgstr ""
+
+#: .\shop\templates\pages\preview.html:4
+msgid "Prévisualisation"
+msgstr ""
+
+#: .\shop\templates\pages\preview.html:15
+msgid "Ce produit est affiché en mode prévisualisation."
+msgstr ""
+
+#: .\shop\templates\pages\preview.html:17
+msgid "Retourner au dashboard"
+msgstr ""
+
+#: .\shop\templates\pages\preview.html:88
+#: .\shop\templates\pages\product.html:123
+msgid "Livraison standard"
+msgstr ""
+
+#: .\shop\templates\pages\search.html:106
+msgid "Aucun article ne correspond à votre recherche"
+msgstr ""
+
+#: .\shop\templates\pages\search.html:109
+msgid ""
+"\n"
+"                                    Mais vous pouvez toujours retenter votre "
+"chance : vérifiez l'orthographe \n"
+"                                    ou essayez des termes de recherche moins "
+"spécifiques.\n"
+"                                "
+msgstr ""
+
+#: .\shop\templates\pages\search.html:120
+msgid "Nouveautés"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:4
+msgid "Livraison"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:45
+msgid "Prénom"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:64
+msgid "Addresse"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:76
+msgid "Pays..."
+msgstr "Country"
+
+#: .\shop\templates\pages\shipment.html:78
+msgid "France"
+msgstr "France"
+
+#: .\shop\templates\pages\shipment.html:79
+msgid "Belgique"
+msgstr "Belgium"
+
+#: .\shop\templates\pages\shipment.html:82
+msgid "Please select a valid country."
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:87
+msgid "Région"
+msgstr "Region"
+
+#: .\shop\templates\pages\shipment.html:89
+msgid "Île de France"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:90
+msgid "Nord"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:91
+msgid "PACA"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:92
+msgid "Rhône Alpes"
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:95
+msgid "Please provide a valid state."
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:103
+msgid "Zip code required."
+msgstr ""
+
+#: .\shop\templates\pages\shipment.html:131
+msgid "Procéder au paiement"
+msgstr ""
+
+#: .\shop\templates\pages\success.html:4
+msgid "Commande réussie"
+msgstr ""
+
+#: .\shop\templates\pages\success.html:50
+msgid "Commande enregistrée"
+msgstr ""
+
+#: .\shop\templates\pages\success.html:56
+msgid ""
+"\n"
+"                    Merci d'avoir acheté chez Nawoka. Un email te sera "
+"envoyé d'ici peu confirmant que ta\n"
+"                    commande a bien été pris en charge. Nous espérons que "
+"votre expérience \n"
+"                    client a été parfait avec nous et espérons vous revoir "
+"très bientôt.\n"
+"                "
+msgstr ""
+
+#: .\shop\templates\vue\lookbook.html:19
+msgid "Acheter le look"
+msgstr ""
+
+#: .\shop\templates\vue\product.html:185
+msgid "Ajouter au panier"
+msgstr ""
+
+#: .\shop\templates\vue\products.html:12
+msgid "Prix croissant"
+msgstr ""
+
+#: .\shop\templates\vue\products.html:13
+msgid "Prix décroissant"
+msgstr ""
+
+#: .\shop\templates\vue\products.html:14
+msgid "Les mieux notés"
+msgstr ""
+
+#: .\shop\views.py:535 .\shop\views.py:542
+msgid "Une erreur s'est produite - CHE-DE"
+msgstr ""
+
+#: .\shop\views.py:567
+msgid "Quelque chose c'est mal passé - CX-ATOC"
+msgstr ""
+
+#: .\shop\views.py:576
+msgid "Le panier n'existe pas"
+msgstr ""
+
+#: .\shop\views.py:599
+msgid "Ce panier n'existe pas"
+msgstr ""
+
+#: .\templates\pages\customer_care\customer_service.html:4
+msgid "Service client"
+msgstr ""
+
+#: .\templates\pages\customer_care\customer_service.html:69
+msgid ""
+"Nawoka et son service client fera au mieux pour répondre au moindre de vos "
+"attentes."
+msgstr ""
+
+#: .\templates\pages\customer_care\faq\contact.html:4
+msgid "Nous contacter"
+msgstr "Contact us"
+
+#: .\templates\pages\customer_care\faq\orders.html:4
+msgid "Mes commandes"
+msgstr "My orders"
+
+#: .\templates\pages\customer_care\faq\returns.html:9
+msgid "Quelle est notre politique de retours ?"
+msgstr ""
+
+#: .\templates\pages\home\hero.html:5
+msgid "Mode chic et fun"
+msgstr ""
+
+#: .\templates\pages\legal\cgv.html:4
+msgid "Conditions générales de vente"
+msgstr ""
+
+#: .\templates\pages\legal\who_are_we.html:4
+msgid "Qui sommes nous"
+msgstr "About us"
+
+#: .\templates\project_components\customer_care\help_card.html:8
+msgid "Toujours besoin d'aide ?"
+msgstr ""
+
+#: .\templates\project_components\customer_care\help_card.html:10
+msgid ""
+"Envoyez-nous un message en utilisant l'une des options ci-dessous. Nous vous "
+"répondrons au plus vite."
+msgstr ""
+
+#: .\templates\project_components\customer_care\help_card.html:18
+msgid "Envoyer un Tweet"
+msgstr "Send us a Tweet"
+
+#: .\templates\project_components\customer_care\help_card.html:22
+msgid "Envoyer une message Facebook"
+msgstr "Send us a Facebook message"
+
+#: .\templates\project_components\customer_care\help_card.html:38
+msgid "Envoyer une ticket"
+msgstr ""
+
+#: .\templates\vue\send_email.html:88
+msgid "Créer"
+msgstr ""

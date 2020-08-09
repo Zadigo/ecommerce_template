@@ -1,0 +1,235 @@
+{% load i18n %}
+
+<script>
+    var simpleinputtext = {
+        props: ["index", "type", "name", "placeholder", "value", "newfield"],
+        template: `
+        <input :type="type" :value="value" :id="inputname() + '_' + index"
+             :name="inputname()" :placeholder="placeholder"
+                class="form-control" autocomplete="off">
+        `,
+        methods: {
+            doshow: function () {
+                this.$emit("doshow", this.$props.name)
+            },
+            inputname: function () {
+                if (this.$props.newfield) {
+                    return "new-" + this.$props.name
+                } else {
+                    return this.$props.name
+                }
+            }
+        }
+    }
+
+    var confirmbutton = {
+        props: ["hasselection"],
+        name: "ConfirmButton",
+        template: `
+        <a @click="associateimages" role="button" data-dismiss="modal"
+                class="btn btn-danger waves-effect waves-light" :class="{'disabled': hasselection}">
+            {% trans "Associer au produit" %}
+        </a>
+        `,
+        methods: {
+            associateimages: function () {
+                this.$emit("associateimages")
+            }
+        }
+    }
+
+    Vue.component("upload-type-dropdown", {
+        name: "UploadSelection",
+        template: `
+        <div class="dropdown">
+            <a class="dropdown-toggle" type="button" id="dropdownMenuButton"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% trans "Type de téléchargement" %}
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a @click="selectdropdown('fromurl')" class="dropdown-item">
+                    {% trans "Images existantes" %}
+                </a>
+
+                <a @click="selectdropdown('fromlocal')" class="dropdown-item">
+                    {% trans "Image locale" %}
+                </a>
+
+                <a @click="selectdropdown('fromvideo')" class="dropdown-item">
+                    {% trans "Vidéo YouTube" %}
+                </a>
+            </div>
+        </div>
+        `,
+        methods: {
+            selectdropdown: function (value) {
+                $("#associate_new_image").modal('show');
+                this.$emit("selectdropdown", value)
+            }
+        }
+    })
+
+    var allimagescomponent = {
+        props: ["allimages"],
+        name: "AllImages",
+        template: `
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <input v-model="search" type="search" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-12">
+                <transition-group name="all-images" tag=div class="row">
+                    <div v-for="image in filteredimages" :key="image.pk" class="col-2">
+                        <div class="custom-control custom-checkbox image-selector">
+                            <input @click="selectimage(image)" type="checkbox" :id="'id_' + image.pk" class="custom-control-input">
+                            
+                            <label class="custom-control-label" :for="'id_' + image.pk">
+                                <img v-if="image.image_url" :src="image.image_url" class="img-fluid mt-1">
+                                <img v-else :src="image.url" class="img-fluid mt-1">
+                            </label>
+                        </div>
+                    </div>
+                </transition-group>
+            </div>
+        </div>
+        `,
+        data() {
+            return {
+                search: ""
+            }
+        },
+        computed: {
+            filteredimages() {
+                if (this.$data.search !== "") {
+                    return _.filter(this.images, (image) => {
+                        return image.name.includes(this.$data.search) | image.variant.includes(this.$data.search)
+                    })
+                } else {
+                    return this.images
+                }
+            },
+            images() {
+                return this.$props.allimages
+            }
+        },
+        methods: {
+            selectimage: function (image) {
+                this.$emit("selectimage", image)
+            }
+        }
+    }
+
+    Vue.component("media-section", {
+        props: ["editmode", "allimages"],
+        name: "UploadImages",
+        components: { 
+            "simple-input-text": simpleinputtext, 
+            "list-images-component":  allimagescomponent,
+            "modal-confirm-button": confirmbutton
+        },
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                images: [
+                    { id: 1, pk: 1, name: "", url: "", variant: "", newfield: true }
+                ],
+                showwarning: false,
+                unlinkclicked: false,
+
+                temp: []
+            }
+        },
+        beforeMount() {
+            var images = []
+            try {
+                images = product.images
+            } catch {
+                // DO NOTHING
+            }
+            if (images.length > 0) {
+                _.forEach(images, (image) => {
+                    image["id"] = image.pk
+                })
+                this.$data.images = images
+            }
+        },
+        computed: {
+            hasselection() {
+                return this.$data.temp.length > 0 ? false : true
+            }
+        },
+        methods: {
+            template: function (id) {
+                return { id: id, pk: id, name: "", url: "", variant: "", newfield: true }
+            },
+            add: function () {
+                var lastcondition = _.last(this.$data.images)
+                this.$data.images.push(
+                    this.template(lastcondition.id + 1)
+                )
+            },
+            remove: function (index) {
+                var currentlength = this.$data.images.length
+                if (currentlength !== 1) {
+                    this.$data.images.pop(index)
+                } else {
+                    _.first(this.$data.images, (image) => {
+                        image.value = ""
+                        image.url = ""
+                        image.variant = ""
+                    })
+                }
+            },
+            unlinkimage: function (index, id) {
+                var self = this
+                var data = new FormData()
+                data.append("image", id)
+                data.append("method", self.$props.editmode)
+
+                var xhr = new XMLHttpRequest()
+                xhr.responseType = "json"
+                xhr.onloadstart = (e) => {
+                    self.$data.unlinkclicked = true
+                }
+                xhr.onloadend = (e) => {
+                    if (xhr.status === 200) {
+                        setTimeout(() => {
+                            if (self.$data.images.length === 1) {
+                                self.$data.images.pop(index)
+                                self.$data.images.push(self.template(1))
+                            } else {
+                                self.$data.images.pop(index)
+                            }
+                            self.$data.unlinkclicked = false
+                        }, 2000);
+                    }
+                    if (xhr.status === 400 || xhr.status === 500) {
+                        window.location.reload()
+                    }
+                }
+                xhr.open("POST", "{{ vue_unlink_image_url }}")
+                xhr.send(data)
+            },
+            confirmassociation: function () {
+                _.forEach(this.$data.temp, (image) => {
+                    image["id"] = image.pk
+                    image["to_link"] = true
+                    this.$data.images.push(image)
+                })
+                this.$data.temp = []
+            },
+            temporaryselection: function (image) {
+                var hasimage = _.filter(this.temp, (image) => { return image.pk === image.pk })
+                if (hasimage.lenth > 0) {
+                    this.$data.temp.pop(image)
+                } else {
+                    this.$data.temp.push(image)
+                }
+            }
+        }
+    })
+</script>

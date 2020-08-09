@@ -1,0 +1,20 @@
+{% extends "pages/lists/base_lists.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Commandes" %}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Commandes" %}
+{% endblock %}
+
+{% block card_header %}
+    {{ block.super }}
+{% endblock %}
+
+{% block card_body %}
+    {% include "components/others/tables/orders.html" %}
+{% endblock %}
+
+{% block pagination %}
+    {% include "components/navs/pagination.html" with href="dashboard:customer_orders" %}
+{% endblock %}

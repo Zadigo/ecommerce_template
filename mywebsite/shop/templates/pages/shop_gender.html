@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static aws_images %}
+
+{% block title %}Collections pour {{ collection.gender|default:"femme" }} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block share_metatags %}
+    <meta name="twitter:card" content="Découvrez toute notre ollection pour {{ collection.gender }} et plus encore" />
+    <meta name="twitter:site" content="@mywebsitefashion" />
+    <meta name="twitter:creator" content="@mywebsitefashion" />
+
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka : Découvrez les dernières tendances mode pour {{ collection.gender }}." />
+    
+    {% block og_description %}
+        <meta property="og:description" content="Découvrez les dernières tendances mode pour {{ collection.gender }} et beauté chez Nawoka. 
+        Achetez nos meilleurs collections de vêtements, chaussures et plus encore." />
+    {% endblock %}
+
+    <meta property="og:image" content="{% create_aws_image_url 'banner1.jpg' %}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:height" content="1200">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:alt" content="Nawoka" />
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'images_grid.css' %}">
+{% endblock %}
+
+{% block container %}
+    <section class="collections">
+        <div class="row wow fadeIn">
+            {% include "project_components/headers/picture.html" with image="banner1.jpg" alt="mywebsite-shop" %}
+        </div>
+
+        <div class="row wow fadeIn mt-4">
+            {% for collection in collections %}
+                <div class="col-md-4">
+                    <a href="{% url 'collection' collection.gender collection.view_name %}" id="link_collection_item">
+                        <img src="{{ collection.image }}" class="img-fluid" alt="Nawoka {{ collection.view_name }}">
+                        <h5 class="text-center black-text mt-3 font-weight-bold">
+                            {{ collection.name }}
+                        </h5>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

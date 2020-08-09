@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% load i18n %}
+
+{% block title %}{% endblock %}
+
+{% block content %}
+    <div class="row wow fadeIn">
+        {% block page_header %}{% endblock %}
+    </div>
+
+    {% block other_action_buttons %}{% endblock %}
+    
+    <div class="row wow fadeIn">
+        <div class="col-12">
+            <form action="{% block form_url %}{% endblock %}" method="POST" enctype="multipart/form-data" class="{% block class %}{% endblock %}" id="general_form">
+                {% csrf_token %}
+
+                {% for error in form.errors %}
+                    <div class="alert alert-danger mb-4 alert-dismissible fade show" role="alert">
+                        Le champs <span class="font-weight-bold">{{ error|upper }}</span> est vide
+                        {% blocktrans  %}
+                        {% endblocktrans %}
+                    </div>
+                {% endfor %}
+                
+                {% block top_form_buttons %}{% endblock %}
+                
+                <div class="form-row">
+                    <div class="col-8">
+                        {% block left_content %}{% endblock %}
+                    </div>
+                    
+                    <div class="col-4">
+                        {% block right_content %}{% endblock %}
+                    </div>
+                </div>
+
+                {% block bottom_form_buttons %}{% endblock %}
+            </form>
+        </div>
+    </div>
+
+    {% block modals %}{% endblock %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <!-- GLOBAL -->
+    {% include "vue/global_components.html" %}
+{% endblock %}

@@ -1,0 +1,115 @@
+{% load i18n %}
+
+<script>
+    var conditionscriteria = {
+        name: "Conditions",
+        delimiters: ["[[", "]]"],
+        template: `
+        <div class="form-group">
+            <transition-group name="conditions" tag="div">
+                <div v-for="(condition, index) in conditions" :key="condition.id" class="form-row">
+                    <div class="col-3">
+                        <div class="form-group">
+                            <select name="condition1" class="form-control" id="condition1">
+                                <option v-for="characteristic in characteristics" 
+                                        :key="characteristics.id" 
+                                            :value="characteristic.id">
+                                    [[ characteristic.name ]]
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <div class="form-group">
+                            <select name="condition2" class="form-control" id="condition2">
+                                <option v-for="rule in rulestomatch" :key="rule.id" :value="rule.id">
+                                    [[ rule.name ]]
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                
+                    <div class="col-3">
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="value" id="value" placeholder="{% trans 'Valeur' %}">
+                        </div>
+                    </div>
+
+                    <div class="col-3">
+                        <a @click="remove(index)" class="btn grey btn-sm ligthen-4 m-0 z-depth-0">
+                            <i class="fa fa-trash black"></i>
+                        </a>
+                    </div>
+                </div>
+            </transition-group>
+
+            <a @click="add" class="btn btn-large white black-text z-depth-0 ml-0">
+                {% trans "Ajouter une condition" %}
+            </a>
+        </div>
+        `,
+        data() {
+            return {
+                characteristics: [
+                    { id: 1, name: "{% trans 'Nom du produit' %}" },
+                    { id: 2, name: "{% trans 'Prix' %}" },
+                ],
+                rulestomatch: [],
+                conditions: [
+                    {id: 1}
+                ]
+            }
+        },
+        beforeMount() {
+            this.$data.rulestomatch = JSON.parse($("#vue_second_conditions").text())
+        },
+        methods: {
+            add: function () {
+                var lastcondition = _.last(this.$data.conditions)
+                this.$data.conditions.push(
+                    { id: lastcondition.id + 1 }
+                )
+            },
+            remove: function (index) {
+                var currentlength = this.$data.conditions.length
+                if (currentlength !== 1) {
+                    this.$data.conditions.pop(index)
+                }
+            }
+        }
+    }
+
+    Vue.component("conditions-section", {
+        name: "ToggleConditions",
+        components: { 'conditions-component': conditionscriteria },
+        data() {
+            return {
+                show: true,
+                triggerid: "automatic2",
+                fields: [
+                    { id: "automatic1", label: "{% trans 'Manuel' %}", value: true, checked: true },
+                    { id: "automatic2", label: "{% trans 'Automatique' %}", value: false, checked: false },
+                ],
+            }
+        },
+        methods: {
+            doshow: function (id, triggered) {
+                this.reset()
+                if (id === this.$data.triggerid) {
+                    this.$data.show = true
+                } else {
+                    this.$data.show = false
+                }
+
+                var field = _.find(this.$data.fields, { id: this.$data.triggerid })
+                field.value = !field.value
+            },
+            reset: function () {
+                _.forEach(this.$data.fields, (field) => {
+                    field.checked = false
+                })
+            }
+        }
+    })
+</script>

@@ -1,0 +1,122 @@
+{% extends "pages/edit/base_edit.html" %}
+{% load prices i18n %}
+
+{% block title %}{% trans "Commande" %} {{ order.reference }}{% endblock %}
+
+{% block form_url %}
+    {% url 'dashboard:customer_order' order.id %}
+{% endblock %}
+
+{% block page_header %}
+    <div class="col-12 pl-0">
+        <div class="col-12 mb-1 mt-2">
+            <h3 class="font-weight-bold">
+                {{ order.reference }}
+            </h3>
+        </div>
+    </div>
+{% endblock %}
+
+{% block left_content %}
+    <div class="card">
+        <div class="card-body">            
+            <p class="grey lighten-4 p-3 m-0 mb-4">{{ order.user.email }}</p>
+            {% with profile=order.user.myuserprofile_set.get %}
+                <p class="grey lighten-4 p-3 m-0 mb-4">{{ profile.address }}, {{ profile.city }}, {{ profile.zip_code }}</p>
+            {% endwith %}
+            <p class="grey lighten-4 p-3 m-0 mb-4">{{ order.created_on }}</p>
+        </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-body">
+            <p class="font-weight-bold text-uppercase">{% trans "Produits" %}</p>
+            <table class="table">
+                {% for cart in order.cart.filter %}
+                    <tr role="row">
+                        <td>{{ cart.quantity }} x {{ cart.product.name }}</td>
+                        <td>{{ cart.product.sku|default:"No SKU" }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <p class="font-weight-bold text-uppercase">{% trans "Envoyer un email" %}</p>
+            <textarea class="form-control" name="message" id="message" cols="10" rows="2"></textarea>
+            <button class="btn btn-primary float-right mr-0">
+                <i class="fa fa-envelope pull-left"></i>
+                {% trans "Envover" %}
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block right_content %}
+    <div class="card">
+        <div class="card-header">
+            <h4>{% trans "Actions" %}</h4>
+        </div>
+        <div class="card-body">
+            {% if not order.accepted %}
+                <div class="alert alert-warning">
+                    {% trans "Commande en attente" %}
+                </div>
+            {% endif %}
+            {% if not order.completed %}
+                <div class="alert alert-info">
+                    {% trans "En attente de livraison" %}
+                </div>
+            {% endif %}
+            {% if order.refund %}
+                <div class="alert alert-danger">
+                    {% trans "Remboursement demandée" %}
+                </div>
+            {% endif %}
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    {{ form.accepted }}
+                    <label class="custom-control-label" for="id_accepted">{% trans "Accepter la commande" %}</label>
+                </div>
+            </div>                
+
+            {% if order.accepted %}
+                <hr>
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        {{ form.completed }}
+                        <label class="custom-control-label" for="id_completed">{% trans "Marquer comme complétée" %}</label>
+                    </div>
+                </div>                
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                        {{ form.refund }}
+                        <label class="custom-control-label" for="id_refund">{% trans "Remboursement demandé" %}</label>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card grey lighten-4 mt-3">
+        <div class="card-body">
+            <p>{% trans "Suivi" %}</p>
+            <div class="form-group">
+                <label for="id_tracking_number">
+                    {% trans "Le numéro de suivi pour la commande" %}
+                </label>
+                {{ form.tracking_number }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block bottom_form_buttons %}
+    {% include "components/edit/actions/bottom.html" %}
+{% endblock %}
+
+
+{% block vuejs_scripts %}
+    {{ block.super }}
+{% endblock %}

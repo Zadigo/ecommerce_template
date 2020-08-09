@@ -1,0 +1,75 @@
+{% extends "../customer_service.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes commandes" %}{% endblock %}
+
+{% block accordion_content %}
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Comment puis-je payer ma commande ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                Nous avons ce qu'il vous faut ! Nous acceptons les cartes de paiement suivantes : Visa, Mastercard,
+                Maestro et Électron. Nous n'acceptons pas pour l'instant les paiements par PayPal.
+            </div>
+        </div>
+    </div>
+
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                    Dois-je payer des frais de douanes pour ma commande ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                Nawoka n’est malheureusement pas en mesure d’indiquer les charges qui peuvent
+                s’appliquer aux clients pour les envois internationaux. Toute charge s’applique en
+                fonction du transporteur, des lois locales et des frais de douanes. Ces frais devront être pris
+                en charge par le client et ne seront pas couverts par Nawoka.
+                Pour plus d’information, nous vous invitons à prendre contact avec votre bureau local
+                de douanes afin de savoir si des charges supplémentaires vous sont demandées.
+            </div>
+        </div>
+    </div>
+    
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                    Que faire si je n'ai pas reçu une partie de commande ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseThree" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                Navrés d'apprendre que vous n'avez pas reçu une partie de votre commande ! Notez que pendant
+                la période allant de juillet à septembre, il est possible que votre commande arrive en deux parties.
+                <br><br>
+                S'il vous manque une partie de votre commande, pourriez-vous vérifier :
+                <br><br>
+                Le mail d'envoi de votre commande car si l'arrivée de votre commande est prévue en plusieurs fois,
+                le mail d'envoi inclut seulement une partie des articles que vous avez commandés, vous recevrez ensuite
+                un autre mail d'envoi de commande. De plus, vous recevrez plusieurs numéros de suivi.
+                <br><br>
+                Le reçu/la facture à l'intérieur du paquet qui indique les articles contenus dans le colis. Si tous les articles
+                indiqués sur la facture sont dans le colis, vous recevrez le reste de votre commande séparément.
+                L'emballage de votre colis PLT, si vos articles sont envoyés en plusieurs colis vous trouverez un autocollant sur le sac
+                pour vous indiquer que votre commande arrivera séparément.
+                Si vous n'avez pas reçu tous les articles de votre commande et qu'ils sont inscrits dans
+                votre email de confirmation d'envoi et la facture, prenez contact avec notre service client ICI.
+                Assurez-vous de nous indiquer votre numéro de commande ainsi que les articles manquants.
+            </div>
+        </div>
+    </div>
+{% endblock %}

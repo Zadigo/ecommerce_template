@@ -1,5 +1,0 @@
-{% for link in links %}
-    <a href="{{ link.href }}" class="list-group-item {% if link.attrs.active %}active{% endif %} waves-effect">
-        <i class="{{ link.attrs.icon }} mr-3"></i>{{ link.attrs.name }}
-    </a>
-{% endfor %}

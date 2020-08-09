@@ -1,0 +1,103 @@
+{% load i18n %}
+
+<!-- AVAILABILITY -->
+<div class="card">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Disponibilité" %}</p>
+        
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                {{ form.active }}
+                <label class="custom-control-label" for="id_active">
+                    {% trans "Activer et rendre visible" %}
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                {{ form.in_stock }}
+                <label class="custom-control-label" for="id_in_stock">
+                    {% trans "Marquer comme étant en stock" %}
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            {% if product.private %}
+                <div class="bg-warning p-3 mb-3">
+                    {% trans "Attention ce produit n'est pas référencé sur les pages du site" %}
+                </div>                
+            {% endif %}
+
+            <div class="custom-control custom-checkbox">
+                {{ form.private }}
+                <label class="custom-control-label" for="id_private">
+                    {% trans "Ce produit est privé" %}
+                </label>
+            </div>
+        </div>
+
+        <hr class="mt-3 mb-3">
+
+        <div class="form-group">
+            <div class="custom-control custom-checkbox">
+                {{ form.our_favorite }}
+                <label class="custom-control-label" for="id_our_favorite">
+                    {% trans "Marquer ce produit comme favori" %}
+                </label>
+            </div>
+        </div>
+
+        {% comment "Activate on a future date" %}
+        <hr class="mt-3 mb-3">
+
+        <div class="form-group">
+            <label for="future-date">
+                {% trans "Activer à une date future" %}
+            </label>
+            <!-- <input type="date" class="form-control" name="future-date" id="future-date"> -->
+            {{ form.to_be_published_on }}
+        </div>
+        {% endcomment %}
+    </div>
+</div>
+
+<!-- ORGANIZATION -->
+<div class="card grey lighten-4 mt-2">
+    <div class="card-header">
+        <p class="text-uppercase text-muted font-weight-bold mb-1">
+            {% trans "Organisation" %}
+        </p>
+    </div>
+
+    <div class="card-body">
+        <div class="form-group">
+            <label for="id_collection">
+                {% trans "Ajouter le produit à une collection" %}
+            </label>
+            {{ form.collection }}
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+            <label for="gender">{% trans "Cible (ex. femme)" %}</label>
+            {{ form.gender }}
+        </div>
+    </div>
+</div>
+
+<div class="card grey lighten-4 mt-2">
+    <div class="card-header">
+        <p class="text-uppercase text-muted font-weight-bold mb-1">Google Product Category</p>
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <label for="gender">
+                {% trans "Classification du produit selon les critères Google (ex. 178)" %}
+            </label>
+            {{ form.google_category }}
+        </div>
+    </div>
+</div>

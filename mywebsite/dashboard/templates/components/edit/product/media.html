@@ -1,0 +1,40 @@
+{% load i18n %}
+
+<div class="card mt-2">
+    <media-section inline-template>
+        <div class="card-body">
+            <div class="d-flex flex-direction-row justify-content-between">
+                <p class="text-uppercase text-muted font-weight-bold mb-1">
+                    {% trans "Media" %}
+                </p>
+
+                <uploadselection />
+            </div>
+            
+            <div class="card-body">
+                <div class="row">
+                    <div v-for="image in images" :key="image.pk" class="col-4 mt-1">
+                        <div class="custom-control custom-checkbox image-selector">
+                            <input v-model="selected[image.pk]" :id="'id_' + image.pk" :value="image.pk" type="checkbox" class="custom-control-input">
+                            
+                            <label class="custom-control-label" :for="'id_' + image.pk">
+                                <img v-if="image.image_url !== null" :src="image.image_url" class="img-fluid mt-1">
+                                <img v-else :src="image.url" class="img-fluid">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label for="exampleFormControlFile1"></label>
+                            <input type="file" name="upload-image" class="form-control-file" id="exampleFormControlFile1">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODAL -->
+            {% include "components/others/modals/associate_image.html" %}
+        </div>        
+    </media-section>
+</div>

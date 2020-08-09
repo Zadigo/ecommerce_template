@@ -1,0 +1,75 @@
+{% load i18n %}
+
+<script>
+    // var exportcsvapp = new Vue({
+    Vue.component("export-csv-component", {
+        name: "ExportCSV",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                fields: [
+                    // {id: "current", name: "current", value: "current", label: "{% trans 'Page actuelle' %}", checked: true},
+                    {id: "all", name: "all", value: "all", label: "{% trans 'Tous les produits' %}", checked: true},
+                    {id: 'collection', name: "collection", value: "collection", label: "{% trans 'Exporter une collection spécifique' %}"}
+                ],
+
+                selected: "all",
+
+                show: false,
+
+                collectionname: "",
+                oncurrentpage: [],
+
+                export: "general",
+            }
+        },
+        beforeMount() {
+            var products = JSON.parse($("#on_current_page").text())
+            var ids = []
+            _.forEach(products, (product) => {
+                ids.push(product.pk)
+            })
+            this.$data.oncurrentpage =ids
+        },
+        computed: {
+            constructurl() {
+                var base = "{% url 'dashboard:products:download_csv' %}"
+                var url = base + "?method=" + this.$data.selected
+
+                if (this.$data.selected === "collection") {
+                    url += "&using=" + this.$data.collectionname 
+                }
+                return url + "&export_for=" + this.$data.export
+            },
+            disablebutton() {
+                return {
+                    "disabled": this.$data.selected === "collection" 
+                                        & this.$data.collectionname === ""
+                }
+            }
+        },
+        methods: {
+            exportfor: function (value) {
+                this.$data.export = value
+            },
+            showcollecitonname: function (name, value) {
+                this.$data.selected = name
+                this.$data.show = value
+            },
+            closemodal: function () {
+                $("#export_csv_modal").modal("hide")
+            },
+            getcurrentpage: function () {
+                var formdata = new FormData()
+                formdata.append("method", "current")
+                formdata.append("products", this.$data.oncurrentpage)
+
+                var xhr = new XMLHttpRequest()
+                xhr.open("POST", "{% url 'dashboard:products:download_csv' %}")
+                xhr.onloadstart = () => {}
+                xhr.onloadend = () => { this.closemodal() }
+                xhr.send(formdata)
+            }
+        }
+    })
+</script>

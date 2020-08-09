@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load aws_images static %}
+
+{% block title %}Boutique - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block share_metatags %}
+    <meta name="twitter:card" content="Découvrez toute notre collection pour femme et plus encore" />
+    <meta name="twitter:site" content="@mywebsitefashion" />
+    <meta name="twitter:creator" content="@mywebsitefashion" />
+
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Nawoka : Découvrez les dernières tendances mode pour femme." />
+    
+    {% block og_description %}
+        <meta property="og:description" content="Découvrez les dernières tendances mode et beauté pour femme chez Nawoka. 
+        Achetez nos meilleur vêtements, chaussures et plus encore." />
+    {% endblock %}
+
+    <meta property="og:image" content="{% create_aws_image_url 'banner1.jpg' %}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:height" content="1200">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:alt" content="Nawoka" />
+{% endblock %}
+
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'images_grid.css' %}">
+{% endblock %}
+
+{% block container %}
+    <section class="collections">
+        <div class="row wow fadeIn">
+            <div class="row wow fadeIn">
+                <a href="{% url 'shop_gender' 'femme' %}">
+                    {% include "project_components/headers/picture.html" with image="banner1.jpg" alt="mywebsite shop" %}
+                </a>
+            </div>
+
+            {% comment %}
+            <div class="row wow fadeIn mt-3">
+                <a href="{% url 'shop_gender' 'homme' %}" class="disabled">
+                    {% include "components/headers/picture.html" with image="banner1.jpg" alt="mywebsite shop" %}
+                </a>
+            </div>                
+            {% endcomment %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

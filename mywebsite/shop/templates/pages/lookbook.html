@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load aws_images %}
+
+{% block title %}Lookbook - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block page_description %}
+    <meta name="description" content="{% trans 'Découvrez toutes les dernières tendances mode 2020 du moment
+    ainsi que les tendances du mois de Juillet' %}">
+{% endblock %}
+
+{% block container %}
+    <section class="section" id="lookbook">
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <div class="card" style="background-image: url('https://images.unsplash.com/photo-1509631179647-0177331693ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80');height: 1000px;background-position: center;background-repeat: no-repeat;">
+                    <!-- <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80" class="card-img-top" alt=""> -->
+                    <div class="d-flex align-items-right">
+                        <a href="" class="btn btn-large btn-primary">Acheter le look</a>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <img src="{% create_aws_image_url 'banner1.jpg' %}" alt="lookbook" class="img-fluid">
+                    <!-- <a href="{% url 'product' 'femme' 'tops' 20 'bustier-tubulaire-femme' %}" target="_blank" class="badge badge-primary">Haut</a>
+                    <a href="#" class="badge badge-primary">Bas</a>
+                    <a href="#" class="badge badge-primary">Sac</a>
+                    <a href="#" class="badge badge-primary">Chaussure</a> -->
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                        Adipisci necessitatibus inventore suscipit et iste corporis,
+                        vitae voluptatem recusandae praesentium aliquid, fuga perspiciatis
+                        rerum atque quo ipsa, totam minus optio rem.
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <img src="https://images.unsplash.com/photo-1554141220-83411835a60b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80" class="img-fluid" alt="">
+                </div>
+                <div class="card mt-3">
+                    <img src="https://images.unsplash.com/photo-1538331269258-6c97a6bdeae0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80"
+                        alt="lookbook" class="img-fluid">
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <div class="card">
+                    <img src="{% create_aws_image_url 'banner1.jpg' %}" alt="lookbook" class="img-fluid">
+                </div>
+                <div class="card mt-3">
+                    <div class="card-body">
+                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. 
+                        Adipisci necessitatibus inventore suscipit et iste corporis, 
+                        vitae voluptatem recusandae praesentium aliquid, fuga perspiciatis 
+                        rerum atque quo ipsa, totam minus optio rem.
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <img src="https://images.unsplash.com/photo-1548549557-dbe9946621da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80" alt="lookbook" class="img-fluid">
+                </div>
+                <div class="card mt-3">
+                    <img src="https://images.unsplash.com/photo-1538331269258-6c97a6bdeae0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80" alt="lookbook" class="img-fluid">
+                </div>
+                <div class="card mt-3">
+                    <img src="https://images.unsplash.com/photo-1538331269258-6c97a6bdeae0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1000&q=80" alt="lookbook" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

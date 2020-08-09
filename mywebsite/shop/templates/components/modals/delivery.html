@@ -1,0 +1,20 @@
+{% extends "components/modals/modals.html" %}
+{% load i18n delivery %}
+
+{% block modal_id %}delivery{% endblock %}
+{% block modal_aria %}delivery{% endblock %}
+
+{% block title %}
+    {% trans "Estimation de la date de livraison" %}
+{% endblock %}
+
+{% block modal_body %}
+    <p>
+        Commandez maintement et recevez votre colis entre
+        <span class="font-weight-bold blue-text">{% estimated_delivery_date 15 %}</span>
+        avec la livraison standard.
+    </p>
+    <p>
+        {% trans "Comptez aussi 2 jours de traitement (week-end inclus)." %}
+    </p>
+{% endblock %}

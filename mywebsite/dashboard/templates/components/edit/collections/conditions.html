@@ -1,0 +1,45 @@
+{% load i18n %}
+
+<conditions-section inline-template>
+    <div class="card mt-3">
+        <div class="card-body">
+            <p class="font-weight-bold mb-4">{% trans "Type de collection" %}</p>
+
+            <radio-component @showfield="doshow" :name="'automatic'"
+                v-bind:fields="fields" :triggerid="'automatic2'">
+            </radio-component>
+        </div>
+    
+        <div v-if="show" class="card-footer">
+            <p class="font-weight-bold mb-4">
+                {% trans "Conditions" %}
+            </p>
+    
+            <div class="form-group d-flex flex-direction-row">
+                <div class="form-row">
+                    <div class="col-12">
+                        <p>
+                            {% trans "Les produits doivent respecter :" %}
+                        </p>
+                    </div>
+                    <div class="col-12 d-flex flex-direction-row">
+                        <div class="custom-control custom-radio mr-3">
+                            <input type="radio" name="has_to_respect" class="custom-control-input" id="id_all" value="all" checked>
+                            <label class="custom-control-label" for="id_all">
+                                {% trans "Toutes les conditions" %}
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio">
+                            <input type="radio" name="has_to_respect" class="custom-control-input" value="some" id="id_some">
+                            <label class="custom-control-label" for="id_some">
+                                {% trans "Certaines conditions" %}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <conditions-component />
+        </div>
+    </div>
+</conditions-section>

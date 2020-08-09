@@ -1,0 +1,38 @@
+{% extends "components/others/tables/base.html" %}
+{% load table dates i18n %}
+
+{% block table_header %}
+    {% header "ID" "Produit" "Total" "Complétée" "Depuis" %}
+    <th colspan="1"></th>
+{% endblock %}
+
+{% block table_body %}
+    {% for cart in carts %}
+        <tr>
+            <td>
+                {{ cart.id }}
+            </td>
+            <th scope="row">
+                <a href="{% url 'dashboard:search' %}?s={{ cart.product.name }}">
+                    {{ cart.quantity }} x {{ cart.product.name }}
+                </a>
+            </th>
+            <td>{{ cart.get_total }}</td>
+            <td>
+                {% if cart.has_orders %}
+                    {% include "components/others/badge.html" with type="danger" badge_name="Oui" %}
+                {% else %}
+                    {% include "components/others/badge.html" with type="success" badge_name="Non" %}
+                {% endif %}
+            </td>
+            <td>{{ cart.created_on|in_cart_since }}</td>
+            <td><a href="{% url 'dashboard:delete_item' 'carts' cart.id %}"><i class="fa fa-trash"></i></a></td>
+        </tr>
+    {% empty %}
+        <tr scope="row">
+            <td class="text-center font-weight-bold" colspan="5">
+                {% trans "Vous n'avez aucun coupons" %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

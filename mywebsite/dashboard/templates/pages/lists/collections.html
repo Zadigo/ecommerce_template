@@ -1,0 +1,29 @@
+{% extends "pages/lists/base_lists.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Collections" %}{% endblock %}
+
+{% block heading %}
+    {% include "components/navs/heading.html" with title="Collections" %}
+{% endblock %}
+
+{% block card_header_content %}
+    {% include "components/others/link.html" with href="dashboard:collections:create" position="float-right" btn_name="Nouveau"  %}
+{% endblock %}
+
+{% comment %}
+{% block card_header %}
+    <div class="card-header bg-primary">
+        <button class="btn btn-large btn-white">Supprimer</button>
+        <button class="btn btn-large btn-white">Dupliquer</button>
+    </div>
+{% endblock %}    
+{% endcomment %}
+
+{% block card_body %}
+    {% include "components/others/tables/collections.html" %}
+{% endblock %}
+    
+{% block pagination %}
+    {% include "components/navs/pagination.html" with href="dashboard:collections:home" %}
+{% endblock %}

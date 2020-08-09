@@ -1,0 +1,70 @@
+<footer class="page-footer text-center font-small mt-4 wow fadeIn {% block footer_display %}{% endblock %}">
+    <div class="policies blue lighten-2 p-2">
+        <div class="payments flex-direction-row justify-content-center">
+            <i class="fab fa-cc-visa fa-3x"></i>
+            <i class="fab fa-cc-mastercard fa-3x ml-3"></i>
+            <!-- <i class="fab fa-cc-apple-pay fa-3x ml-3"></i> -->
+            <i class="fab fa-google-pay fa-3x ml-3"></i>
+        </div>
+    </div>
+
+    <div class="pt-4">
+        <div class="row wow fadeIn">
+            <div class="col-sm-12 col-md-4">
+                <h4 class="font-weight-bold">Information</h4>
+                <ul class="list-unstyled mt-3">
+                    <li>
+                        <a href="{% url 'who_are_we' %}">A propos</a>
+                    </li>
+                    <li>
+                        <a href="http://">Guide des tailles</a>
+                    </li>
+                    <li>
+                        <a href="http://">Suivi commande</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'customer_care' %}">FAQ</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-12 col-md-4">
+                <h4 class="font-weight-bold">Service client</h4>
+                <ul class="list-unstyled mt-3">
+                    <li>
+                        <a href="{% url 'customer_care' %}">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <!-- SOCIAL -->
+    <div class="pb-4">
+        <a href="" target="_blank">
+            <i class="fab fa-facebook-f mr-3"></i>
+        </a>
+        <a href="" target="_blank">
+            <i class="fab fa-twitter mr-3"></i>
+        </a>
+        <a href="" target="_blank">
+            <i class="fab fa-instagram mr-3"></i>
+        </a>
+
+        {% comment %}
+        <a href="https://www.youtube.com/watch?v=7MUISDJ5ZZ4" target="_blank">
+            <i class="fab fa-youtube mr-3"></i>
+        </a>            
+        {% endcomment %}
+    </div>
+
+    <div class="footer-copyright py-3">
+        <div class="row">
+            <div class="col-sm-12 col-md-3">Nawoka © 2019</div>
+            <div class="col-sm-12 col-md-3"><a href="{% url 'cgu' %}">CGU</a></div>
+            <div class="col-sm-12 col-md-3"><a href="{% url 'cgv' %}">CGV</a></div>
+            <div class="col-sm-12 col-md-3"><a href="{% url 'confidentialite' %}">Confidentialité</a></div>
+        </div>
+    </div>
+</footer>

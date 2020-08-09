@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static share prices carts i18n %}
+
+{% block title %}{{ product.name }} - {% trans "Prévisualisation" %}{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+
+{% block container %}
+    <div class="row wow fadeIn">
+        <div class="col-12">
+            <div class="bg-success p-4 mb-4 text-center white-text z-depth-1">
+                {% trans "Ce produit est affiché en mode prévisualisation." %}
+                <a onclick="close_window();return false;" class="font-weight-bold">
+                    {% trans "Retourner au dashboard" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="vue_app">
+        <div class="row wow fadeIn">
+            {% if not is_mobile %}
+                <!-- SIDE IMAGES -->
+                <div class="col-md-1">
+                    <side-images @showimage="display" v-bind:images="images" inline-template>
+                        <div class="side-images">
+                            <img @click="showimage(index)" v-for="(image, index) in images" :key="image.pk" :src="image.url"
+                                class="img-fluid" :class="{'mt-2': index !== 0}" :alt="image.name">
+                        </div>
+                    </side-images>
+                </div>
+
+                <!-- MAIN IMAGE -->
+                <div class="col-md-6 mb-4">
+                    <main-image v-bind:image="currentimage" inline-template>
+                        <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
+                    </main-image>
+                </div>
+            {% else %}
+                <div class="col-md-6 mb-4 p-0">
+                    <mobile-slider v-bind:images="images" inline-template>
+                        <div class="interface" style="position: relative;">
+                            <div class="navigation d-flex flex-direction-row justify-content-between"
+                                style="position: absolute;width: 90%;top: 40%;left: 4%;">
+                                <div @click="changeimage('prev')" class="left" :class="leftnavdisabled">
+                                    <i class="fa fa-arrow-left"></i>
+                                </div>
+                                <div @click="changeimage('next')" class="right" :class="rightnavdisabled">
+                                    <i class="fa fa-arrow-right"></i>
+                                </div>
+                            </div>
+                            <transition :name="currentdirection">
+                                <component v-bind:images="images" :is="slides[currentslide]"></component>
+                            </transition>
+                        </div>
+                    </mobile-slider>
+                </div>
+            {% endif %}
+
+            <div class="col-sm-6 col-md-5 mb-4">
+                <div class="p-sm-2 p-lg-4">
+                    {# {% include "components/product/badges.html" %} #}
+
+                    <!-- TITLE -->
+                    <h1 class="product-title">{{ product.name }}</h1>
+
+                    <!-- PRICE -->
+                    <p class="lead">
+                        {% if product.discounted %}
+                            <span class="mr-1">
+                                <del>{{ product.price_ht|price_to_text }}</del>
+                            </span>
+                        {% endif %}
+                        <span>
+                            {{ product.get_price|price_to_text }}
+                        </span>
+                    </p>
+
+                    {% if product.reviews %}
+                        <!-- STARS -->
+                        {% include "components/product/review_stars.html" %}
+                    {% endif %}
+
+                    <!-- DELIVERY -->
+                    <div class="delivery mt-3 mb-3">
+                        <a href data-toggle="modal" data-target="#delivery">{% trans "Livraison standard" %}**</a>
+                        {% include "components/modals/delivery.html" with modal_title=True %}
+                    </div>
+
+                    {% if product.description %}
+                        <!-- DESCRIPTION -->
+                        <p class="lead font-weight-bold">{% trans "Description" %}</p>
+                        <p>{{ product.description }}</p>
+                    {% endif %}
+
+                    <!-- ADD TO CART -->
+                    {# {% include "components/product/actions.html" %} #}
+                </div>
+
+                {% comment %}
+                <!-- POLICIES -->
+                <div class="p-sm-2 p-lg-4">
+                    {% include "components/product/policies.html" %}
+                </div>                    
+                {% endcomment %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <!-- VUEJS -->
+    {% include "vue/product.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        function close_window() {
+            close()
+            window.location.href("{% url 'dashboard:products:home' %}")
+        }
+    </script>
+{% endblock %}

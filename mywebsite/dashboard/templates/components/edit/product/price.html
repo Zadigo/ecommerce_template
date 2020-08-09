@@ -1,0 +1,52 @@
+{% load prices i18n %}
+
+<div class="card mt-3">
+    <div class="card-body">
+        <p class="font-weight-bold mb-4">{% trans "Prix" %}</p>
+
+        <div class="form-row">
+            <div class="col-12">
+                <div class="col-6 pl-0">
+                    <div class="form-group">
+                        {{ form.price_ht }}
+        
+                        <a href class="mt-1" data-toggle="modal" data-target="#margin_modal">
+                            <i class="fa fa-currency"></i>
+                            {% trans "calculer la marge" %}
+                        </a>
+                    </div>
+                </div>
+
+                {% if product.discounted %}
+                    <div class="alert alert-warning">
+                        {% trans "Ce produit est actuellement en réduction" %}
+                    </div>                    
+                {% endif %}
+                
+                <discount-section inline-template>
+                    <div class="form-group">
+                        <checkbox-component @showfield="toggle" :id="'reduction'" :label="'Appliquer une réduction'"></checkbox-component>
+
+                        <div v-if="showdiscountfield" class="form-group mt-3 mb-5">
+                            {{ form.discount_pct }}
+                        </div>
+                    </div>
+                </discount-section>
+
+                <div class="form-group">
+                    <label for="id_valid_until">{% trans "Date de fin de validité du prix" %}</label>
+                    {{ form.price_valid_until }}
+                </div>
+
+                <hr class="mt-4 mb-3">
+
+                <div class="custom-control custom-checkbox">
+                    <div class="custom-control custom-checkbox pl-0">
+                        {{ form.discounted }}
+                        <label class="custom-control-label" for="id_discounted">{% trans "Afficher le produit en réduction sur le site" %}</label>                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

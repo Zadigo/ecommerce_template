@@ -1,0 +1,46 @@
+{% extends "../customer_service.html" %}
+{% load i18n %}
+
+{% block accordion_content %}
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    {% trans "Quelle est notre politique de retours ?" %}
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <p>
+                    Les articles doivent être retournés dans les 14 jours suivant la réception de votre commande.
+                    Vous ne devez pas avoir porté ou lavé les articles.
+                </p>
+                <p>
+                    Les produits de beauté, les bijoux pour emplacements percés ou les maillots de bain (si la protection hygiénique a été
+                    retirée) ne peuvent être retournés pour des raisons de santé et d’hygiène.
+                </p>
+                <p>
+                    Nous ne pouvons pas rembourser les bijoux pour emplacements percés ou les maillots de bain si la protection hygiénique a
+                    été retirée, déplacée ou endommagée.
+                </p>
+                <ul>
+                    <li>
+                        Vous devez essayer les chaussures à l’intérieur.
+                    </li>
+                    <li>
+                        L’ensemble des étiquettes de l’article doivent y être encore attachées.
+                    </li>
+                    <li>
+                        Vous ne pouvez pas retourner les produits et accessoires de beauté.
+                    </li>
+                </ul>
+                <p>
+                    Tous les retours sont effectués à votre charge. Vous devez toutefois conserver votre preuve d’envoi jusqu’à réception de
+                    votre remboursement, au cas où votre commande se perdrait en chemin vers Nawoka.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "pages/customer_care/customer_service.html" %}
+
+{% block accordion_content %}
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                    aria-controls="collapseOne">
+                    Devrais-je payer les droits de douane à l'importation ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <p>
+                    Nous avons ce qu'il vous faut ! Nous acceptons les cartes de paiement suivantes : Visa, Mastercard,
+                    Maestro et Électron. Nous n'acceptons pas pour l'instant les paiements par PayPal.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true"
+                    aria-controls="collapseTwo">
+                    À quelle heure mon colis sera-t-il livré ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <p>
+                    Les livraisons sont effectuées entre 08h00 et 21h00.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                    Puis-je être livré à une adresse différente de mon adresse de facturation ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseThree" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true"
+                    aria-controls="collapseFour">
+                    Dois-je signer à la réception de ma commande ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseFour" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <p>
+                    Nous savons qu'il est possible que vous ne soyez pas chez vous pour signer à la réception
+                    de votre colis, c’est pourquoi il pourra être déposé dans un endroit sûr ou chez un voisin.
+                    Sachez que l’ensemble des instructions que vous avez laissées ne sont que des
+                    demandes et ne peuvent être garanties. Si elles ne sont pas réalisables,
+                    nous laisserons une carte d’appel qui comprendra les informations nécessaires à
+                    l'organisation d'une nouvelle livraison.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card z-depth-0">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseSix" aria-expanded="true"
+                    aria-controls="collapseSix">
+                    Que faire si mon colis n'arrive pas ?
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseSix" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <p>
+                    Vous pouvez suivre l’état de votre commande ici. Si vous ne pouvez
+                    pas consulter l’état de votre commande, veuillez nous contacter et nous vous
+                    répondrons dès que possible.
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "components/others/tables/base.html" %}
+{% load table i18n %}
+
+{% block table_header %}
+    {% header "ID" "Référence" "Somme" "Statut" "Date" %}
+{% endblock %}
+
+{% block table_body %}
+    {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <th scope="row" class="bootrstrap-link">
+                <a href="{% url 'dashboard:customer_order' order.id %}">
+                    {{ order.reference }}
+                </a>
+            </th>
+            <td>{{ order.payment }}</td>
+            <td>
+                
+                {% if order.refund %}
+                    {% include "../badge.html" with type="dark" badge_name="Remboursement" %}
+                {% elif order.accepted %}
+                    {% include "../badge.html" with type="primary" badge_name="Livraison" %}
+                {% elif order.completed %}
+                    {% include "../badge.html" with type="success" badge_name="Terminé" %}
+                {% else %}
+                    {% include "../badge.html" with type="danger" badge_name="En attente" %}										
+                {% endif %}
+            </td>
+            <td>{{ order.created_on }}</td>
+        </tr>
+    {% empty %}
+        <tr scope="row">
+            <td class="text-center font-weight-bold" colspan="6">Vous n'avez pas encore de de commandes</td>
+        </tr>
+    {% endfor %}
+{% endblock %}

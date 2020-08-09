@@ -1,0 +1,14 @@
+{% extends "pages/registration/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Se connecter" %}{% endblock title %}
+
+{% block registration_form %}
+    {% include "components/registration/form.html" with form_id="login_form" button_name="Se connecter" %}
+{% endblock %}
+
+{% block extra_registration_links %}
+    <hr class="mt-3">
+    {% include "components/registration/p_tag.html" with text="Forgot your password?" href="accounts:forgot_password" action_text="Send yourself a new one" %}
+    {% include "components/registration/p_tag.html" with text="Don't have an account?" href="accounts:signup" action_text="Get yours now" %}
+{% endblock %}

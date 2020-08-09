@@ -1,0 +1,116 @@
+<script>
+    var filtercomponent = {
+        template: `
+        <select class="custom-select" name="" class="d-none" id="">
+            <option value="something">
+                Something    
+            </option>
+        </select>
+        `
+    }
+
+    var searchcomponent = {
+        template: `
+        <div class='form-group'>
+            <input v-model="words" @keyup="filterimages" class="form-control" type="text" id="search">
+        </div>
+        `,
+        data() {
+            return {
+                words: "",
+            }
+        },
+        methods: {
+            filterimages: function() {
+                this.$emit("filterimages", this.$data.words)
+            }
+        }
+    }
+    
+    var imagescomponent = {
+        props: ["images", "noresults"],
+        delimiters: ["[[", "]]"],
+        methods: {
+            constructurl: function(id) {
+                var url = new URL(window.location.href)
+                return url.pathname + id
+            },
+            deleteimage: function(image) {
+                var self = this
+                var formdata = new FormData()
+                formdata.append("csrfmiddlewaretoken", csrf)
+                formdata.append("method", "delete")
+                formdata.append("image_id", image.pk)
+
+                var xhr = new XMLHttpRequest()
+                xhr.onloadend = function() {image.deleted = true}
+                xhr.open("POST", window.location.href)
+                xhr.send(formdata)
+            },
+            markasmain: function(image) {
+                var self = this
+                var formdata = new FormData()
+                formdata.append("csrfmiddlewaretoken", csrf)
+                formdata.append("method", "asmain")
+                formdata.append("image_id", image.pk)
+
+                var xhr = new XMLHttpRequest()
+                xhr.onloadend = function() {image.main_image = !image.main_image}
+                xhr.open("POST", window.location.href)
+                xhr.send(formdata)
+            }
+        }
+    }
+
+    var imagesapp = new Vue({
+        el: "#vue_images_app",
+        name: "Images",
+        delimiters: ["[[", "]]"],
+        components: {
+            "images-component": imagescomponent,
+            "filter-input-field": filtercomponent,
+            "search-input-field": searchcomponent
+        },
+        data() {
+            return {
+                images: [],
+                search: "",
+
+                newfromlocal: true
+            }
+        },
+        beforeMount() {
+            try {
+                var allimages = images
+                allimages.forEach((image) => {
+                    image["deleted"] = false
+                })                
+                this.$data.images = allimages
+            } catch (error) {
+                // PASS
+            }
+        },
+        computed: {
+            noresults() {
+                return this.filteredimages.length === 0
+            },
+            filteredimages() {
+                var self = this
+                if (self.$data.search === "") {
+                    return self.imageslist
+                }
+                return _.filter(self.images, (image) => {
+                    return image.name.includes(self.$data.search)
+                })
+            },
+            imageslist() {
+                return this.$data.images
+            }
+        },
+        methods: {
+            dofilter: function(search) {
+                this.$data.search = search
+            }
+        }
+    })
+</script>

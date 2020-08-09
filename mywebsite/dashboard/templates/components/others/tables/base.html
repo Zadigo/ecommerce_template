@@ -1,0 +1,18 @@
+<table class="table table-hover">
+    <thead class="{% block header_color %}blue-grey lighten-4{% endblock %}">            
+        <tr>
+            {% block table_header %}{% endblock %}
+        </tr>
+    </thead>
+
+    <tbody>
+        {% block table_body %}{% endblock %}
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-12">
+        <p class="text-muted text-right">
+            Showing 1 to {% block paginate_number %}{% endblock %} of {{ number_of_items }} entries
+        </p>     
+    </div>
+</div>

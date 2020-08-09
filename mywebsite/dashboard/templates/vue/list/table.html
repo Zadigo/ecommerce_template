@@ -1,0 +1,71 @@
+{% load i18n %}
+
+<script>
+    Vue.component("dropdown-button", {
+        props: [ "selected" ],
+        name: "DropdownButton",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                items: [
+                    {name: "{% trans 'Activer' %}", method: "activate"},
+                    {name: "{% trans 'Désactiver' %}", method: "deactivate"},
+                    {name: "{% trans 'Archiver' %}", method: "archive"},
+                ]
+            }
+        },
+        methods: {
+            submitform: function (method) {
+                $("#id_method").val(method)
+                setTimeout(() => {
+                    $("#table-form").submit()
+                }, 2);
+            }
+        }
+    })
+
+    var tableapp = new Vue({
+        el: "#vue_table_app",
+        name: "TableApplication",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                selections: []
+            }
+        },
+        computed: {
+            selected() {
+                return this.$data.selections.length
+            },
+            allowactions() {
+                return this.$data.selections.length > 0
+            }
+        },
+        methods: {
+            appendselection: function (value, state) {
+                if (this.$data.selections.includes(value)) {
+                    if (state === false) {
+                        this.$data.selections.pop(value)
+                    }
+                } else {
+                    if (state === true) {
+                        this.$data.selections.push(value)
+                    }
+                }
+            },
+            doselection: function (value, state) {
+                if (state) {
+                    this.$data.selections.push(value)
+                } else {
+                    this.$data.selections.pop(value)
+                }
+            },
+            selectall: function (method, state) {
+                // var checkboxes = $("input")
+                // checkboxes.each(function (index) {
+                //     $(checkboxes[index]).prop("checked", state)
+                // })
+            }
+        }
+    })
+</script>
