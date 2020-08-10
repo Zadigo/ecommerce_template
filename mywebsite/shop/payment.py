@@ -75,9 +75,8 @@ class PreprocessPayment:
     Parameters
     ----------
 
-        request: the http request
-
-        set_in_session: set the gathered values in the session
+        - request: the http request
+        - set_in_session: set the gathered values in the session
     """
     def __init__(self, request, set_in_session=False, **kwargs):
         internal_dict = dict()
@@ -116,8 +115,8 @@ class PreprocessPayment:
         required_keys = ['firstname', 'lastname', 'email', 'telephone', 
             'address', 'country', 'city', 'zip_code']
 
-        for key in required_keys:
-            if key not in incoming_keys:
+        for key in incoming_keys:
+            if key not in required_keys:
                 key_errors.append(key)
 
         if key_errors:
