@@ -73,6 +73,9 @@ class FormMixin:
         false_values = list(filterfalse(conditions, links))
         return False if false_values else True, false_values
 
+
+
+
     def _create_new(self, instance, 
                     m2m_field, fields_names: list, 
                     model_to_update: type, model_fields: list,
@@ -122,22 +125,29 @@ class FormMixin:
                         final_dict.update({key: value})
                     list_of_models[i] = model(**final_dict)
                     final_dict = {}
-    
+
+                transaction.set_autocommit(False)
                 try:
-                    with transaction.atomic():
-                        new_items = model_to_update.objects.bulk_create(list_of_models)
+                    # with transaction.atomic():
+                    # new_items = model_to_update.objects.bulk_create(list_of_models)
+                    new_items_primary_keys = []
+                    for item in items:
+                        item.save()
+                        new_items_primary_keys.append(item.pk)
                 except:
-                    return instance
+                    transaction.rollback()
                 else:
-                    instance.save()
+                    new_items_queryset = model_to_update.objects.filter(id__in=new_items_primary_keys)
                     m2m_relation = getattr(instance, m2m_field)
                     if old_items:
-                        new_items = list(old_items) + new_items
-                    m2m_relation.set(new_items)
-                    return instance, new_items
-        return instance
+                        new_items_queryset = list(old_items) + list(new_items_queryset)
+                    m2m_relation.set(new_items_queryset)
+                    return new_items_queryset
+                finally:
+                    transaction.set_autocommit(True)
+        return False
 
-    def _update_old(self, instance, primary_key_name, form_fields: list,
+    def _update_old(self, instance, primary_key_name, m2m_field, form_fields: list,
                     model_fields: list, model_to_update: type, cannot_be_none: str=None, 
                     default_if_none=None, save=False):
         """
@@ -166,20 +176,167 @@ class FormMixin:
                     # Transpose to -> [field, [values]]
                     for i, values in enumerate(incoming_values):
                         transposed_items.append([model_fields[i], values])
-                    
+                    # raise ValueError()
                     for i, item in enumerate(queryset):
                         for values in transposed_items:
                             setattr(item, values[0], values[1][i])
 
                     model_to_update.objects.bulk_update(queryset, model_fields)
-                    return instance, queryset
-        return instance, None
+
+                    m2m_relation = getattr(instance, m2m_field)
+                    m2m_relation.set(queryset)
+                    
+                    return queryset
+        return False
+
+
+
 
     def _automatic_collections_check(self):
         # Now, check that for automatic collections
         # and see if the product can be included
         # automatic_collections = models.ProductCollection.objects.filter(automatic=True)
         pass
+
+
+
+
+    def _update_old_images(self, product):
+        incoming_primary_keys = self.data.getlist('image-key')
+
+        if incoming_primary_keys:
+            existing_image_names = self.data.getlist('image-name')
+            existing_image_urls = self.data.getlist('image-url', [])
+            existing_image_variants = self.data.getlist('image-variant', [])
+
+            all_incoming_images = models.Image.objects.filter(id__in=incoming_primary_keys)
+            product_images = product.images.filter(id__in=incoming_primary_keys)
+            
+            if product_images.exists():
+                for index, image in enumerate(product_images):
+                    image.name = existing_image_names[index]
+                    image.url = existing_image_urls[index]
+                    image.variant = existing_image_variants[index]
+                models.Image.objects.bulk_update(product_images, ['name', 'url', 'variant'])
+
+                # product.images.set(product_images)
+                product.images.set(all_incoming_images)
+                return all_incoming_images
+        return False
+
+    def _update_old_variants(self, product):
+        product_has_size = self.data.get('has-variant')
+
+        if product_has_size == 'on':
+            incoming_primary_keys = self.data.getlist('variant-key')
+
+            if incoming_primary_keys:
+                existing_size_names = self.data.getlist('variant')
+
+                existing_verbose_names = self.data.getlist('verbose-name', [])
+
+                product_variants = product.variant.filter(id__in=incoming_primary_keys)
+                if product_variants.exists():
+                    for index, variant in enumerate(product_variants):
+                        variant.name = existing_size_names[index]
+                        variant.verbose_name = existing_verbose_names[index]
+                    models.Variant.objects.bulk_update(product_variants, ['name', 'verbose_name'])
+                    # product.variant.set(product_variants)
+                    return product_variants
+        return False
+
+    def _create_new_variants(self, product, old_variants=None):
+        items = []
+        new_variant_names = self.data.getlist('new-variant', [])
+        new_verbose_names = self.data.getlist('new-verbose-name')
+        
+        if new_variant_names:
+            for i in range(len(new_variant_names)):
+                try:
+                    name = new_variant_names[i]
+                except KeyError:
+                    name = None
+
+                try:
+                    verbose_name = new_verbose_names[i]
+                except:
+                    verbose_name = None
+
+                if name and verbose_name:
+                    items.append(models.Variant(
+                        name=name, verbose_name=verbose_name)
+                    )
+
+                if name and not verbose_name:
+                    items.append(models.Variant(name=name))
+
+            if items:
+                new_items_ids = []
+                transaction.set_autocommit(False)
+                try:
+                    for item in items:
+                        item.save()
+                        new_items_ids.append(item.pk)
+                except:
+                    transaction.rollback()
+                else:
+                    transaction.commit()
+                    if new_items_ids:
+                        new_variants_queryset = models.Variant.objects.filter(id__in=new_items_ids)
+                        if old_variants:
+                            new_variants_queryset = list(new_variants_queryset) + list(old_variants)
+                        product.variant.set(new_variants_queryset)
+                finally:
+                    transaction.set_autocommit(True)
+            return new_variants_queryset
+        return False
+
+    def _create_new_images(self, product, old_images=None):
+        items = []
+        new_image_names = self.data.getlist('new-image-name', [])
+        if new_image_names:
+            new_image_urls = self.data.getlist('new-image-url')
+            new_image_variants = self.data.getlist('new-image-variant')
+            for i in range(len(new_image_names)):
+                try:
+                    name = new_image_names[i]
+                except KeyError:
+                    name = None
+
+                try:
+                    url = new_image_urls[i]
+                except:
+                    url = None
+
+                try:
+                    variant = new_image_variants[i]
+                except:
+                    variant = None
+
+                if name and url:
+                    items.append(models.Image(name=name, url=url, variant=variant))
+
+            if items:
+                new_items_ids = []
+                transaction.set_autocommit(False)
+                try:
+                    for item in items:
+                        item.save()
+                        new_items_ids.append(item.id)
+                except:
+                    transaction.rollback()
+                else:
+                    transaction.commit()
+                    if new_items_ids:
+                        new_images_queryset = models.Image.objects.filter(id__in=new_items_ids)
+                        if old_images:
+                            new_images_queryset = list(new_images_queryset) + list(old_images)
+                        product.images.set(new_images_queryset)
+                finally:
+                    transaction.set_autocommit(True)
+            return new_images_queryset
+        return False
+
 
 
 class ProductForm(forms.ModelForm):
@@ -230,81 +387,15 @@ class UpdateProductForm(FormMixin, ProductForm):
               fields are created and attached to the product
         """
         product = super().save(commit=False)
-        self._update_old_sizes(product)
-        # images = self._update_old_images()
-        # self._create_new_images(product, old_items=images)
 
-        _, old_items = self._update_old(
-            product,
-            'image-key',
-            ['image-url', 'image-name', 'image-variant'],
-            ['url', 'name', 'variant'],
-            models.Image
-        )
+        existing_variants = self._update_old_variants(product)
+        existing_images = self._update_old_images(product)
 
-        self._create_new(
-            product,
-            'images',
-            ['new-image-url', 'new-image-name', 'new-image-variant'],
-            models.Image,
-            ['url', 'name', 'variant'],
-            old_items=old_items
-        )
-        
+        self._create_new_images(product, old_images=existing_images)
+        self._create_new_variants(product, old_variants=existing_variants)
+
         product.save()
         return self.instance
-
-    def _update_old_sizes(self, product):
-        product_has_size = self.data.get('has-size')
-
-        if product_has_size == 'on':
-            existing_size_names = self.data.getlist('size-name')
-            new_size_names = self.data.getlist('new-size-name', [])
-
-            existing_verbose_names = self.data.getlist('verbose-name', [])
-            new_verbose_names = self.data.getlist('new-verbose-name')
-            # These are keys that are inititally issued
-            # from the database to frontend
-            incoming_primary_keys = self.data.getlist('keys')
-
-            product_variants = product.variant.filter(id__in=incoming_primary_keys)
-            if product_variants.exists():
-                for index, variant in enumerate(product_variants):
-                    variant.name = existing_size_names[index]
-                    variant.verbose_name = existing_verbose_names[index]
-                models.Variant.objects.bulk_update(product_variants, ['name', 'verbose_name'])
-
-            # This section is exclusive for creating
-            # new size fiels in the database
-
-            items = []
-            if new_size_names:
-                for i in range(len(new_size_names)):
-                    try:
-                        name = new_size_names[i]
-                    except KeyError:
-                        name = None
-                    
-                    try:
-                        verbose_name = new_verbose_names[i]
-                    except:
-                        verbose_name = None
-
-                    if name and verbose_name:
-                        items.append(models.Variant(name=name, verbose_name=verbose_name))
-                    
-                    if name and not verbose_name:
-                        items.append(models.Variant(name=name))
-
-                if items:
-                    try:
-                        with transaction.atomic():
-                            new_variants = models.Variant.objects.bulk_create(items)
-                    except:
-                        return self.instance
-                    else:
-                        new_variants = list(product_variants) + new_variants
-                        product.variant.set(new_variants)
                     
     
 class CreateProductForm(FormMixin, ProductForm):
@@ -322,47 +413,11 @@ class CreateProductForm(FormMixin, ProductForm):
 
     def save(self):
         product = super().save(commit=False)
-        product_has_size = self.data.get('has-size')
-        if product_has_size == 'on':
-            items = []
+        product.save()
 
-            new_size_names = self.data.getlist('new-size-name', [])
-            new_verbose_names = self.data.getlist('new-verbose-name')
+        self._create_new_images(product)
+        self._create_new_variants(product)
 
-            if new_size_names:
-                for i in range(len(new_size_names)):
-                    try:
-                        name = new_size_names[i]
-                    except KeyError:
-                        name = None
-                    
-                    try:
-                        verbose_name = new_verbose_names[i]
-                    except:
-                        verbose_name = None
-
-                    if name and verbose_name:
-                        items.append(models.Variant(name=name, verbose_name=verbose_name))
-                    
-                    if name and not verbose_name:
-                        items.append(models.Variant(name=name))
-
-                if items:
-                    new_variants = models.Variant.objects.bulk_create(items)
-
-                product.save()
-                product.variant.set(new_variants)
-                return self.instance
-
-        # product.save()
-
-        self._create_new(
-            product,
-            'images',
-            ['new-image-url', 'new-image-name', 'new-image-variant'],
-            models.Image,
-            ['url', 'name', 'variant']
-        )
         return self.instance
 
 

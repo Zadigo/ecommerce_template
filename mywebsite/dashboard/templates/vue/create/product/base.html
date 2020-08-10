@@ -39,153 +39,136 @@
     
     // SIZE
     
-    var textinput = {
-        props: ["id", "name", "value", "placeholder"],
+    var simpleinputtext = {
+        props: ["index", "type", "name", "placeholder", "value", "newfield"],
         template: `
-        <input type="text" :name="name" 
-            class="form-control" :id="'id_' + id" :value="value" :placeholder="placeholder">
-        `
+        <input :type="type" :value="value" :id="inputname() + '_' + index"
+             :name="inputname()" :placeholder="placeholder"
+                class="form-control" autocomplete="off">
+        `,
+        methods: {
+            doshow: function () {
+                this.$emit("doshow", this.$props.name)
+            },
+            inputname: function () {
+                if (this.$props.newfield) {
+                    return "new-" + this.$props.name
+                } else {
+                    return this.$props.name
+                }
+            }
+        }
     }
     
-    var addsizecomponent = {
-        props: ["initialsizes"],
-        name: "AddSizeComponent",
-        components: { textinput },
+    var addvariantcomponent = {
+        props: ["variants"],
+        name: "SizeInputFields",
+        components: { 
+            "simple-input-text": simpleinputtext 
+        },
         delimiters: ["[[", "]]"],
         template: `
         <div class="form-group">
-            <div v-for="(size, index) in sizes" :key="size.id" class="form-row mt-3">
+            <div v-for="(variant, index) in variants" :key="variant.pk" class="form-row mt-3">
                 <div class="col-2">
-                    <textinput :key="size.id" :name="sizefieldname(size.type)" 
-                        :id="size.id" :value="size.value" :placeholder="'Taille'" />
-                    <input v-if="size.type==='existing'" type="hidden" name="keys" :value="size.id">
+                    <input v-if="!variant.newfield" type="hidden" :value="variant.pk" name="variant-key">
+                    <simple-input-text :type ="'text'" :name="'variant'" :key="variant.pk" :index="index"
+                        :value="variant.name" :newfield="variant.newfield" :placeholder="'Taille'" />
                 </div>
 
                 <div class="col-5">
-                    <textinput :name="verbosefieldname(size.type)" :id="'id_verbose_name'" 
-                            :value="size.verbosename" :placeholder="'Nom'" />
+                    <simple-input-text :type="'text'" :name="'verbose-name'" :key="variant.pk" :index="index"
+                        :value="variant.verbose_name" :newfield="variant.newfield" :placeholder="'Nom'" />
                 </div>
                     
                 <div class="col-5">
-                    <a @click="add" class="btn btn-sm btn-primary m-0" style="height: 35px;">
+                    <a @click="startadd" class="btn btn-sm btn-primary m-0" style="height: 35px;">
                         <i class="fas fa-plus"></i>
                     </a>
 
-                    <a @click="remove(index)" class="btn btn-sm btn-primary m-0 mr-1" style="height: 35px;">
+                    <a @click="startremove(index)" class="btn btn-sm btn-primary m-0 mr-1" style="height: 35px;">
                         <i class="fas fa-minus"></i>
                     </a>
                 </div>
             </div>
         </div>
         `,
-        data() {
-            return {
-                sizes: [],
-                fieldcount: 1
-            }
-        },
-        created() {
-            if (this.$props.initialsizes.length > 0) {
-                var initialsizes = this.$props.initialsizes
-                this.$data.sizes = _.sortBy(initialsizes, ["id"])
-            } else {
-                this.$data.sizes = [
-                    {id: 1, value: "", type: "non-existing"}
-                ]
-            }
-            this.$data.fieldcount = this.$props.initialsizes.length
-        },
         computed: {
             keys() {
                 var primarykeys = []
-                _.forEach(this.$data.sizes, (size) => {
-                    primarykeys.push(size.id)
+                _.forEach(this.$data.variants, (variant) => {
+                    primarykeys.push(variant.id)
                 })
                 return primarykeys
             }
         },
         methods: {
+            startadd: function () {
+                this.$emit("startadd")
+            },
+            startremove: function () {
+                this.$emit("startremove")
+            }
+        }
+    }
+
+    Vue.component("variant-section", {
+        name: "VariantSection",
+        components: { addvariantcomponent },
+        data() {
+            return {
+                showvariantfields: false,
+                selectedvariantid: 1,
+                fieldcount: 1,
+                variants: [
+                    { id: 1, pk: 1, name: "", verbose_name: "", in_stock: true, active: true, newfield: true }
+                ]
+            }
+        },
+        beforeMount() {
+            var variants = []
+            try {
+                variants = product.variant
+            } catch (error) {
+                // DO NOTHING
+            }
+            if (variants.length > 0) {
+                _.forEach(variants, (variant) => {
+                    variant["newfield"] = false
+                })
+                this.$data.variants = variants
+                this.$data.showvariantfields = true
+                this.$data.fieldcount = this.$data.variants.length
+            }
+        },
+        methods: {
+            template: function (id) {
+                return { id: id, pk: id, name: "", verbose_name: "", in_stock: true, active: true, newfield: true }
+            },
+            toggle: function () {
+                this.$data.showvariantfields = !this.$data.showvariantfields
+            },
             add: function () {
-                var lastsize = _.last(this.$data.sizes)
-                this.$data.sizes.push(
-                    { id: lastsize.id + 1, value: "", type: "non-existing" }
+                var lastvariant = _.last(this.$data.variants)
+                this.$data.variants.push(
+                    this.template(lastvariant.id + 1)
                 )
-                this.addtofieldcount("add")
+                this.alterfieldcount("add")
             },
             remove: function (index) {
-                var currentlength = this.$data.sizes.length
+                var currentlength = this.$data.variants.length
                 if (currentlength !== 1) {
-                    this.$data.sizes.pop(index)
+                    this.$data.variants.pop(index)
                 }
-                this.addtofieldcount("sub")
+                this.alterfieldcount("sub")
             },
-            addtofieldcount: function (method) {
+            alterfieldcount: function (method) {
                 if (method === "add") {
                     this.$data.fieldcount = this.$data.fieldcount + 1
                 }
                 if (method === "sub") {
                     this.$data.fieldcount = this.$data.fieldcount - 1
-                }                    
-            },
-            sizefieldname: function (type) {
-                if (type === "existing") {
-                    return "size-name"
-                } else {
-                    return "new-size-name"
                 }
-            },
-            verbosefieldname: function (type) {
-                if (type === "existing") {
-                    return "verbose-name"
-                } else {
-                    return "new-verbose-name"
-                }
-            }
-        }
-    }
-
-    Vue.component("size-section", {
-        name: "ToggleSize",
-        components: { addsizecomponent },
-        data() {
-            return {
-                showsizefield: false,
-                selectedsizeid: 1,
-                initialsizes: []
-            }
-        },
-        created() {
-            var self = this
-            try {
-                var variants = product.variant
-                _.forEach(variants, (variant) => {
-                    this.$data.initialsizes.push(
-                        {
-                            id: variant.pk,
-                            value: variant.name,
-                            name: variant.name,
-                            verbosename: variant.verbose_name,
-                            type: "existing"
-                        }
-                    )
-                })
-                if (variants.length > 0) {
-                    this.$data.showsizefield = true
-                }
-            } catch (error) {
-                console.log('Create.')
-            }
-        },
-        methods: {
-            toggle: function () {
-                this.$data.showsizefield = !this.$data.showsizefield
-            },
-            selectsizetype: function (value) {
-                this.$data.selectedsizeid = value
-                
-                var size = _.filter(this.$data.sizetypes, (type) => {
-                    return type.value === value
-                })
             }
         }
     })

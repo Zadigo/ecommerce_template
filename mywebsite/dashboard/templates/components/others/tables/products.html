@@ -69,11 +69,11 @@
     {% empty %}
         <tr scope="row">
             {% if request.path == "/dashboard/search/" %}
-                <td class="text-center font-weight-bold" colspan="5">
+                <td class="text-center font-weight-bold" colspan="7">
                     {% trans "Nous n'avons pas trouvé de produits correspondants" %}
                 </td>
             {% else %}
-                <td class="text-center font-weight-bold" colspan="5">
+                <td class="text-center font-weight-bold" colspan="7">
                     {% trans "Vous n'avez pas encore de produits" %}
                 </td>
             {% endif %}

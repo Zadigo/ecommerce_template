@@ -107,6 +107,9 @@ class ProductCollection(models.Model):
     objects = models.Manager()
     collection_manager = managers.CollectionManager.as_manager()
 
+    class Meta:
+        ordering = ['-pk']
+
     def __str__(self):
         return self.name
 

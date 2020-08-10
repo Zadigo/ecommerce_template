@@ -125,7 +125,7 @@
 
     Vue.component("media-section", {
         props: ["editmode", "allimages"],
-        name: "UploadImages",
+        name: "MediaSection",
         components: { 
             "simple-input-text": simpleinputtext, 
             "list-images-component":  allimagescomponent,
@@ -140,7 +140,9 @@
                 showwarning: false,
                 unlinkclicked: false,
 
-                temp: []
+                temp: [],
+
+                // fieldcount: 0
             }
         },
         beforeMount() {
@@ -153,14 +155,23 @@
             if (images.length > 0) {
                 _.forEach(images, (image) => {
                     image["id"] = image.pk
+                    image["newfield"] = false
                 })
                 this.$data.images = images
+                // this.$data.fieldcount = this.$props.initialsizes.length
             }
         },
         computed: {
             hasselection() {
                 return this.$data.temp.length > 0 ? false : true
-            }
+            },
+            // keys() {
+            //     var primarykeys = []
+            //     _.forEach(this.$data.sizes, (size) => {
+            //         primarykeys.push(size.id)
+            //     })
+            //     return primarykeys
+            // }
         },
         methods: {
             template: function (id) {
@@ -174,14 +185,23 @@
             },
             remove: function (index) {
                 var currentlength = this.$data.images.length
-                if (currentlength !== 1) {
+
+                console.log(currentlength)
+
+                if (currentlength > 1) {
                     this.$data.images.pop(index)
-                } else {
-                    _.first(this.$data.images, (image) => {
-                        image.value = ""
-                        image.url = ""
-                        image.variant = ""
-                    })
+                }                 
+
+                if (currentlength == 1) {
+                    this.$data.images = [this.template(1)]
+                }
+            },
+            addtofieldcount: function (method) {
+                if (method === "add") {
+                    this.$data.fieldcount = this.$data.fieldcount + 1
+                }
+                if (method === "sub") {
+                    this.$data.fieldcount = this.$data.fieldcount - 1
                 }
             },
             unlinkimage: function (index, id) {
@@ -223,11 +243,11 @@
                 this.$data.temp = []
             },
             temporaryselection: function (image) {
-                var hasimage = _.filter(this.temp, (image) => { return image.pk === image.pk })
-                if (hasimage.lenth > 0) {
-                    this.$data.temp.pop(image)
-                } else {
+                var index = _.findIndex(this.$data.temp, (tempimage) => { return tempimage.pk === image.pk })
+                if (index === -1) {
                     this.$data.temp.push(image)
+                } else {
+                    this.$data.temp.pop(index)
                 }
             }
         }

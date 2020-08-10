@@ -20,9 +20,11 @@
                     <div v-for="(image, index) in images" :key="image.id" class="form-row">
                         <div class="col-3">
                             <div class="form-group">
+                                <input v-if="!image.newfield | image.to_link" type="hidden" :value="image.pk" name="image-key">
+                                <!-- <input v-if="!image.to_link" type="hidden" :value="image.pk" name="image-to-link-key"> -->
+
                                 <simple-input-text :type="'text'" :name="'image-name'" :key="image.id" :placeholder="'Nom'"
                                         :value="image.name" :newfield="image.newfield" :index="index" />
-                                <input v-if="!image.newfield | image.to_link" type="hidden" :value="image.pk" name="image-key">
                             </div>
                         </div>
             
@@ -41,13 +43,13 @@
                         </div>
             
                         <div class="col-auto text-right">
-                            <a v-if="editmode==='update' & !image.newfield" @click="unlinkimage(index, image.id)" 
+                            <a v-if="editmode==='update' & !image.newfield & !image.to_link" @click="unlinkimage(index, image.id)" 
                                             class="btn btn-sm blue m-0" style="height: 38px;line-height: 2.25;">
                                 <i v-if="unlinkclicked==false" class="fa fa-unlink"></i>
                                 <spinner-component v-if="unlinkclicked==true" />
                             </a>
             
-                            <a v-if="editmode==='create' | image.newfield" @click="remove(index)" 
+                            <a v-if="editmode==='create' | image.newfield | image.to_link" @click="remove(index)" 
                                             class="btn red btn-sm ligthen-4 m-0" style="height: 38px;line-height: 2.25;">
                                 <i class="fa fa-trash"></i>
                             </a>

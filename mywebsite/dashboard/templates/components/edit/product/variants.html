@@ -4,16 +4,16 @@
     <div class="card-body">
         <p class="font-weight-bold mb-4">{% trans "Variants" %}</p>
 
-        <size-section inline-template>
+        <variant-section inline-template>
             <div class="form-group">
-                <checkbox-submit-component @showfield="toggle" :checked="showsizefield" 
-                    :id="'size'" :name="'has-size'" :label="'Ce produit possède une taille'">
+                <checkbox-submit-component @showfield="toggle" :checked="showvariantfields" 
+                    :id="'id_variant'" :name="'has-variant'" :label="'Ce produit possède une taille'">
                 </checkbox-submit-component>
                 
-                <div v-if="showsizefield" class="form-group mt-3 mb-5">     
-                    <addsizecomponent :initialsizes="initialsizes" />
+                <div v-if="showvariantfields" class="form-group mt-3 mb-5">     
+                    <addvariantcomponent @startadd="add" @startremove="remove" :variants="variants" />
                 </div>
             </div>
-        </size-section>
+        </variant-section>
     </div>
 </div>
