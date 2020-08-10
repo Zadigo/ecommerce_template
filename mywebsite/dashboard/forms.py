@@ -219,9 +219,9 @@ class FormMixin:
                     image.variant = existing_image_variants[index]
                 models.Image.objects.bulk_update(product_images, ['name', 'url', 'variant'])
 
-                # product.images.set(product_images)
-                product.images.set(all_incoming_images)
-                return all_incoming_images
+            # product.images.set(product_images)
+            product.images.set(all_incoming_images)
+            return all_incoming_images
         return False
 
     def _update_old_variants(self, product):
