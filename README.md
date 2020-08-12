@@ -18,7 +18,13 @@ While Django is the best web framework ever and Python the greatest language to 
 
 So by creating these free to use templates, you can have your ecommerce plateform without the hassle of coding the majority of the thing and you will be ready to go very fast.
 
+![Ecommerce1](./assets/myecommerce2.jpg)
+![Ecommerce2](./assets/myecommerce3.jpg)
+![Ecommerce3](./assets/myecommerce4.jpg)
+![Ecommerce4](./assets/myecommerce1.jpg)
+
 [![Alt text](https://via.placeholder.com/1000)](https://www.youtube.com/watch?v=SpeDK1TPbew)
+
 
 # Dependencies
 
