@@ -265,16 +265,16 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         collection_name = self.collection.name.lower()
-        return reverse('product', args=['femme', collection_name, self.pk, self.slug])
+        return reverse('shop:product', args=['femme', collection_name, self.pk, self.slug])
 
     def get_preview_url(self):
-        return reverse('preview', args=[self.pk, self.slug])
+        return reverse('shop:preview', args=[self.pk, self.slug])
     
     def get_private_url(self):
-        return reverse('private', args=[self.pk, self.slug])
+        return reverse('shop:private', args=[self.pk, self.slug])
 
     def get_collection_url(self):
-        return reverse('collection', args=[self.gender, self.collection.view_name])
+        return reverse('shop:collection', args=[self.gender, self.collection.view_name])
     
     # @utils.functional.cached_property
     def get_product_images(self):
@@ -331,7 +331,7 @@ class Discount(models.Model):
         been marked as a special offer
         """
         if self.product:
-            return reverse('special_offer', args=[self.code, self.product.reference])
+            return reverse('shop:special_offer', args=[self.code, self.product.reference])
         return None
 
     @property
@@ -383,10 +383,10 @@ class Cart(models.Model):
         return self.price_ht * self.quantity
 
     def get_increase_quantity_url(self):
-        return reverse('alter_quantity', args=['add'])
+        return reverse('shop:alter_quantity', args=['add'])
 
     def get_decrease_quantity_url(self):
-        return reverse('alter_quantity', args=['reduce'])
+        return reverse('shop:alter_quantity', args=['reduce'])
 
     def has_coupon(self):
         return self.coupon is not None

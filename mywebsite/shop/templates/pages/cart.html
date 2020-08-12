@@ -58,17 +58,17 @@
                                         </td>
                                         <td>{{ product.name }}</td>
                                         <td>
-                                            <a href="{% url 'alter_quantity' product.cart_id 'reduce' %}" id="btn_alter_cart_reduce">
+                                            <a href="{% url 'shop:cart:alter_quantity' product.cart_id 'reduce' %}" id="btn_alter_cart_reduce">
                                                 <i class="fa fa-minus"></i>
                                             </a>
                                             {{ product.quantity }}
-                                            <a href="{% url 'alter_quantity' product.cart_id 'add' %}" id="btn_alter_cart_add">
+                                            <a href="{% url 'shop:cart:alter_quantity' product.cart_id 'add' %}" id="btn_alter_cart_add">
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </td>
                                         <td class="{% if product.is_discounted %}red-text lighten-2{% endif %}">{{ product.total|price_to_text }}</td>
                                         <td>
-                                            <a href="{% url 'delete_from_cart' product.cart_id %}" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.price_ht }}', '{{ product.name }}', '{{ product.quantity }}')">
+                                            <a href="{% url 'shop:cart:delete_from_cart' product.cart_id %}" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.price_ht }}', '{{ product.name }}', '{{ product.quantity }}')">
                                                 <i class="fa fa-trash fa-1x"></i>
                                             </a>
                                         </td>
@@ -96,7 +96,7 @@
         <div class="col-md-12 mb-12">
             <div class="card">
                 <div class="card-body">
-                    <a href="{% url 'shipment' %}" class="btn btn-large blue float-right" id="btn_proceed_to_shipment">
+                    <a href="{% url 'shop:cart:shipment' %}" class="btn btn-large blue float-right" id="btn_proceed_to_shipment">
                         {% trans "Continuer" %}
                     </a>
                 </div>

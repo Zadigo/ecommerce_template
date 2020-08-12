@@ -41,7 +41,7 @@
         <div class="row wow fadeIn mt-4">
             {% for collection in collections %}
                 <div class="col-md-4">
-                    <a href="{% url 'collection' collection.gender collection.view_name %}" id="link_collection_item">
+                    <a href="{% url 'shop:collection' collection.gender collection.view_name %}" id="link_collection_item">
                         <img src="{{ collection.image }}" class="img-fluid" alt="Nawoka {{ collection.view_name }}">
                         <h5 class="text-center black-text mt-3 font-weight-bold">
                             {{ collection.name }}

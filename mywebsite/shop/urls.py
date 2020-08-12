@@ -3,6 +3,8 @@ from django.urls import include, path
 
 from shop import views
 
+app_name='shop'
+
 cartpatterns = [
     url(r'^success$', views.CartSuccessView.as_view(), name='success'),
     url(r'^payment/process$', views.ProcessPayment.as_view(), name='payment_process'),
@@ -16,7 +18,7 @@ cartpatterns = [
 ]
 
 urlpatterns = [
-    path('cart/', include(cartpatterns)),
+    path('cart/', include((cartpatterns, app_name), namespace='cart')),
 
     url(r'^lookbook$', views.LookBookView.as_view(), name='lookbook'),
     url(r'^search$', views.SearchView.as_view(), name='search'),
@@ -27,7 +29,7 @@ urlpatterns = [
     
     url(r'^collections/(?P<gender>(femme|homme))/(?P<collection>[a-z]+)/(?P<pk>\d+)/(?P<slug>[a-z\-]+)$', views.ProductView.as_view(), name='product'),
     url(r'^collections/(?P<gender>(femme|homme))/(?P<collection>[a-z]+)$', views.ProductsView.as_view(), name='collection'),
-    url(r'^collections/(?P<gender>(femme|homme))$', views.ShopGenderView.as_view(), name='shop_gender'),
+    url(r'^collections/(?P<gender>(femme|homme))$', views.ShopGenderView.as_view(), name='gender'),
 
-    url(r'^$', views.IndexView.as_view(), name='shop')
+    url(r'^$', views.IndexView.as_view(), name='home')
 ]

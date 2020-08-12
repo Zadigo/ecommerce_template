@@ -30,7 +30,7 @@
 <div class="row">
 	<div class="col-md-6 mb-4 offset-md-1">
 		<div class="card">
-			<form method="POST" action="{% url 'payment' %}" class="card-body" id="form_shipping">
+			<form method="POST" action="{% url 'shop:cart:payment' %}" class="card-body" id="form_shipping">
 				{% csrf_token %}
 
 				<div class="row">
@@ -78,12 +78,14 @@
 							<option>{% trans "Belgique" %}</option>
 						</select>
 						<div class="invalid-feedback">
-							{% trans "Please select a valid country." %}
+							{% trans "Veuillez choisir un pays dans la liste" %}
 						</div>
 					</div>
 
 					<div class="col-lg-4 col-md-6 mb-4">
-						<label for="state">{% trans "Région" %}</label>
+						<label for="state">
+							{% trans "Région" %}
+						</label>
 						<select name="city" class="custom-select d-block w-100" id="city" required>
 							<option>{% trans "Île de France" %}</option>
 							<option>{% trans "Nord" %}</option>
@@ -96,7 +98,9 @@
 					</div>
 
 					<div class="col-lg-4 col-md-6 mb-4">
-						<label for="zip">Code postale</label>
+						<label for="zip">
+							{% trans "Code postale" %}
+						</label>
 						<input name="zip_code" type="text" class="form-control" id="zip" placeholder="" required>
 						<div class="invalid-feedback">
 							{% trans "Zip code required." %}

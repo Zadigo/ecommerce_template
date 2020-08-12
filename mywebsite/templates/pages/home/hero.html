@@ -11,7 +11,7 @@
 {% block hero %}
 <div class="row">
     <div class="col-12">
-        <a href="{% url 'shop_gender' 'femme' %}">
+        <a href="{% url 'shop:gender' 'femme' %}">
             <div class="hero mt-4" style="background-image: url('{% create_aws_image_url 'hero.jpg' %}');height: 70vh;">
                 <div class="hero-wrapper">
                     <div class="call-to-action"></div>
@@ -23,12 +23,12 @@
 
 <div class="row wow fadeIn mt-2">
     <div class="col-sm-12 col-md-5 p-0 mr-2 offset-md-1">
-        <a href="{% url 'shop_gender' 'femme' %}">
+        <a href="{% url 'shop:gender' 'femme' %}">
             <img class="img-fluid" src="{% create_aws_image_url 'feature1.jpg' %}" alt="shop-gender">
         </a>
     </div>
     <div class="col-sm-12 col-md-5 mt-2 mt-sm-2 mt-md-0 p-0">
-        <a href="{% url 'shop_gender' 'femme' %}">
+        <a href="{% url 'shop:gender' 'femme' %}">
             <img class="img-fluid" src="{% create_aws_image_url 'feature2.jpg' %}" alt="shop-gender">
         </a>
     </div>
@@ -36,7 +36,7 @@
 
 <div class="row wow fadeIn mt-2">
     <div class="col md-12">
-        <a href="{% url 'shop_gender' 'femme' %}">
+        <a href="{% url 'shop:gender' 'femme' %}">
             <img class="img-fluid" src="{% create_aws_image_url 'middle1.jpg' %}" alt="mywebsite-offers">
         </a>
     </div>

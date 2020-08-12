@@ -34,10 +34,10 @@
 			<div class="row">
 				<div class="col-6 col-sm-12 col-md-6">
 					<h2 class="text-uppercase font-weight-bold m-0">
-						<a class="text-muted" href="{% url 'shop' %}" id="link_payment_to_shop">Nawoka</a>
+						<a class="text-muted" href="{% url 'shop:home' %}" id="link_payment_to_shop">Nawoka</a>
 					</h2>
 				</div>
-				<div class="col-6 col-sm-12 col-md-6 text-sm-center text-md-right">
+				<div class="col-6 col-sm-12 col-md-6 text-sm-left text-md-right">
 					<a href="https://stripe.com" target="_blank">
 						<img src="{% static 'logos/stripe.png' %}" alt="stripe">
 					</a>
@@ -112,6 +112,15 @@
 		<div class="col-md-4 mb-4">
 			<!-- SIDE -->
 			{% include "components/cart/side.html" %}
+
+			<div class="row">
+				<div class="col-12">
+					<p class="text-center text-muted">
+						<i class="fa fa-lock"></i>
+						{% trans "Paiement sécurisé" %}
+					</p>
+				</div>
+			</div>
 		</div>
 	</div>
 {% endblock %}

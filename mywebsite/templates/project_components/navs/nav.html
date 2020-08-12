@@ -21,7 +21,7 @@
 
             <!-- RIGHT -->
             <ul class="navbar-nav">
-                {% icon_links "search" "checkout" %}
+                {% icon_links "shop:search" "shop:cart:checkout" %}
 
                 {% if user.is_admin %}
                     {% icon_links "accounts:login" "accounts:logout" %}

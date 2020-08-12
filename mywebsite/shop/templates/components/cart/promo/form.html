@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<form action="{% url 'add_coupon' %}" method="POST" class="card p-2">
+<form action="{% url 'shop:cart:add_coupon' %}" method="POST" class="card p-2">
     {% csrf_token %}
     {% for error in coupon_form.errors %}
         <li>{{ error }}</li>

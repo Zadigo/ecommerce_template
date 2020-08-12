@@ -348,11 +348,11 @@ class PaymentView(generic.ListView):
 
         cart_id = self.request.session.get('cart_id')
         if cart_id is None:
-            return redirect(reverse('no_cart'))
+            return redirect(reverse('shop:no_cart'))
             
         queryset = super().get_queryset().filter(cart_id=cart_id)
         if not queryset.exists():
-            return redirect('no_cart')
+            return redirect(reverse('shop:no_cart'))
         return get_request
 
     def post(self, request, **kwargs):
@@ -435,11 +435,11 @@ class CartSuccessView(generic.TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = {}
-        data = request.session.get('conversion')
 
         backend = payment.PostProcessPayment(request)
 
         if backend.is_authorized:
+            data = request.session.get('conversion')
             customer_order = models.CustomerOrder.objects.get(reference=data['reference'])
             products = customer_order.cart.all()
             context['products'] = creat_cart_products_from_queryset(products)
