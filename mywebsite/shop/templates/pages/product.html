@@ -197,6 +197,11 @@
 
 {% block vuejs_scripts %}
     {{ vue_product|json_script:"vue_product" }}
+
+    <script>
+        var product = JSON.parse($("#vue_product").text())
+    </script>
+    
     {# {{ serialized_images|json_script:"serialized_images" }} #}
 
     <!-- VUEJS -->

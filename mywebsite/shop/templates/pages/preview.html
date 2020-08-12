@@ -115,6 +115,12 @@
 {% endblock %}
 
 {% block vuejs_scripts %}
+    {{ vue_product|json_script:"vue_product" }}
+    
+    <script>
+        var product = JSON.parse($("#vue_product").text())
+    </script>
+    
     <!-- VUEJS -->
     {% include "vue/product.html" %}
 {% endblock %}

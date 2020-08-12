@@ -270,7 +270,7 @@
         }
     }
     
-    var product = new Vue({
+    var productapp = new Vue({
         el: "#vue_app",
         name: "Product",
         components: {addtocart},
@@ -286,7 +286,7 @@
             }
         },
         beforeMount() {
-            var product = JSON.parse($("#vue_product").text())
+            // var product = JSON.parse($("#vue_product").text())
             var images = product.images
             var colors = []
 
