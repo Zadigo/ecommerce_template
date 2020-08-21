@@ -273,11 +273,11 @@ class CheckoutView(generic.ListView):
 
         cart_id = self.request.session.get('cart_id')
         if cart_id is None:
-            return redirect('no_cart')
+            return redirect(reverse('shop:cart:no_cart'))
 
         queryset = super().get_queryset().filter(cart_id=cart_id)
         if not queryset.exists():
-            return redirect('no_cart')
+            return redirect(reverse('shop:cart:no_cart'))
         return get_request
 
     def post(self, request, **kwargs):
@@ -312,11 +312,11 @@ class ShipmentView(generic.ListView):
 
         cart_id = self.request.session.get('cart_id')
         if cart_id is None:
-            return redirect('no_cart')
+            return redirect(reverse('shop:cart:no_cart'))
             
         queryset = super().get_queryset().filter(cart_id=cart_id)
         if not queryset.exists():
-            return redirect('no_cart')
+            return redirect(reverse('shop:cart:no_cart'))
         return get_request
 
     def get_queryset(self, **kwargs):
@@ -348,11 +348,11 @@ class PaymentView(generic.ListView):
 
         cart_id = self.request.session.get('cart_id')
         if cart_id is None:
-            return redirect(reverse('shop:no_cart'))
+            return redirect(reverse(reverse('shop:cart:no_cart')))
             
         queryset = super().get_queryset().filter(cart_id=cart_id)
         if not queryset.exists():
-            return redirect(reverse('shop:no_cart'))
+            return redirect(reverse(reverse('shop:cart:no_cart')))
         return get_request
 
     def post(self, request, **kwargs):
@@ -448,7 +448,7 @@ class CartSuccessView(generic.TemplateView):
             context['reference'] = data['reference']
             return render(request, 'pages/success.html', context=context)
         else:
-            return redirect('no_cart')
+            return redirect(reverse('shop:cart:no_cart'))
 
 
 class EmptyCartView(generic.TemplateView):
@@ -518,7 +518,7 @@ class SpecialOfferView(generic.DetailView):
         try:
             product = offer.product.get(reference=self.kwargs['product_reference'])
         except exceptions.ObjectDoesNotExist:
-            return redirect('shop_gender', 'femme')
+            return redirect(reverse('shop_gender', args=['femme']))
         else:
             return product
             
@@ -533,14 +533,14 @@ def delete_product_from_cart(request, **kwargs):
                 product = products.get(pk=kwargs['pk'])
             except:
                 messages.error(request, _("Une erreur s'est produite - CHE-DE"))
-                return redirect('checkout')
+                return redirect(reverse('shop:cart:checkout'))
 
             try:
                 with atomic_transactions.atomic():
                     product.delete()
             except:
                 messages.error(request, _("Une erreur s'est produite - CHE-DE"))
-                return redirect('checkout')
+                return redirect(reverse('shop:cart:checkout'))
 
             products_count = models.Cart.cart_manager.number_of_products(
                 cart_id)
@@ -550,12 +550,12 @@ def delete_product_from_cart(request, **kwargs):
             # throws a TypeError becaause None cannot
             # be compared to int
             if not products_count['quantity__sum']:
-                return redirect('no_cart')
+                return redirect(reverse('shop:cart:no_cart'))
 
             if products_count['quantity__sum'] > 1:
-                return redirect('checkout')
+                return redirect(reverse('shop:cart:checkout'))
 
-    return redirect('no_cart')
+    return redirect(reverse('shop:cart:no_cart'))
 
 
 @http_decorator.require_GET
@@ -574,7 +574,7 @@ def alter_item_quantity(request, **kwargs):
             cart_to_alter = user_carts.get(id=kwargs['pk'])
         except:
             messages.error(request, _("Le panier n'existe pas"), extra_tags='alert-warning')
-            return redirect('checkout')
+            return redirect(reverse('shop:cart:checkout'))
         else:
             quantity = cart_to_alter.quantity
             if method == 'add':
@@ -588,13 +588,13 @@ def alter_item_quantity(request, **kwargs):
                 # there is nothing left
                 if quantity < 1 and user_carts.count() == 1:
                     cart_to_alter.delete()
-                    return redirect('no_cart')
+                    return redirect(reverse('shop:cart:no_cart'))
 
             cart_to_alter.quantity = quantity
             cart_to_alter.save()
 
-        return redirect('checkout')
+        return redirect(reverse('shop:cart:checkout'))
     else:
         messages.error(
             request, _("Ce panier n'existe pas"), extra_tags='alert-warning')
-    return redirect('checkout')
+    return redirect(reverse('shop:cart:checkout'))

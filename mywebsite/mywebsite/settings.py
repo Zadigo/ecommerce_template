@@ -67,7 +67,7 @@ TEMPLATES = [
 
                 'shop.payment.stripe_context_processor',
                 'mywebsite.responsive.responsive_context_processor',
-                'dashboard.context_processor.dashboard'
+                # 'dashboard.context_processor.dashboard'
             ],
             'libraries': {
                 'aws_images': 'templatetags.aws_images',
