@@ -132,21 +132,25 @@ class PostProcessPayment:
     and adds a `transaction token` that can be used later on.
     """
     def __init__(self, request, enforce_comparision=False, 
-                 token_name=None, *models_to_update):
+                token_name=None, debug=False, *models_to_update):
         self.is_authorized = False
+        self.debug = debug
 
-        order_reference = request.session.get('conversion')['reference']
-
-        if enforce_comparision:
-            result = self.compare(
-                request.GET.get('transaction_token'),
-                request.session.get('transaction_token')
-            )
-            if result:
-                self.is_authorized = True
-
-        if order_reference:
+        if debug:
             self.is_authorized = True
+        else:
+            order_reference = request.session.get('conversion')['reference']
+
+            if enforce_comparision:
+                result = self.compare(
+                    request.GET.get('transaction_token'),
+                    request.session.get('transaction_token')
+                )
+                if result:
+                    self.is_authorized = True
+
+            if order_reference:
+                self.is_authorized = True
 
     @staticmethod
     def compare(url_token, session_token):

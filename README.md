@@ -153,6 +153,10 @@ Caching is done with Python Memcached. You can decide to use another caching sys
 
 By default, mostly items on the collection's pages are cached for optimization and so as data in the dashboard.
 
+# Standalone apps
+
+You can also use a standalone version of the dashboard [here](https://example.com) and a standalone version of the payment system [here](https://example.com). Finally, a standalone version of the shop is also availabl via these two links: [version 1](https://example.com) - [version 2](https://example.com).
+
 # Support / Development
 
 I will be updating and pushing new features on the different templates on a regular basis. Do not hesitate to watch and star :heart:

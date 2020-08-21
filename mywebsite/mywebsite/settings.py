@@ -64,8 +64,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
                 'shop.payment.stripe_context_processor',
-                'mywebsite.responsive.responsive_context_processor'
+                'mywebsite.responsive.responsive_context_processor',
+                'dashboard.context_processor.dashboard'
             ],
             'libraries': {
                 'aws_images': 'templatetags.aws_images',
@@ -79,6 +81,7 @@ TEMPLATES = [
                 'delivery': 'shop.templatetags.delivery',
                 'prices': 'shop.templatetags.prices',
                 'seo': 'shop.templatetags.seo',
+                'dropdowns': 'shop.templatetags.dropdowns',
 
                 'dates': 'dashboard.templatetags.dates',
                 'sidebar': 'dashboard.templatetags.sidebar',
