@@ -10,17 +10,35 @@
         </div>
 
         <div class="card-body">
-            <ul class="list-group">
-                {% for subscription in subscriptions %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        {{ subscription.name }}
-                        
-                        <a href="{% url 'subscription:cancel' %}">
-                            {% trans "Annuler" %}
-                            </a href="{% url 'subscription:cancel' %}">
-                    </li>
-                {% endfor %}
-            </ul>
+            <div class="row">
+                <div class="col-12">
+                    <ul class="list-group">
+                        {% for subscription in subscriptions %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ subscription.name }}
+                                
+                                <a href="{% url 'subscription:cancel' %}">
+                                    {% trans "Annuler" %}
+                                    </a href="{% url 'subscription:cancel' %}">
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <add-payment-button @showform="doshow" name="{% trans 'Ajouter un moyen de paiement' %}" />
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- ADD NEW PAYMENT -->
+    {% include "components/profile/payments/add_card.html" %}
 {% endblock profile_content %}
+
+{% block vuejs_scripts %}
+    {% include "vue/global.html" %}
+    {% include "vue/payment.html" %}
+{% endblock %}

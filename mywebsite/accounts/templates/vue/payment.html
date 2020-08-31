@@ -1,0 +1,48 @@
+<script>
+    var paymentform = {
+        props: ["showaddform"],
+        name: "PaymentForm",
+        delimiters: ["[[", "]]"],
+        methods: {
+            submitform: function () {
+                
+                this.$emit("submitform")
+            }
+        }
+    }
+
+    var newpaymentmethod = {
+        props: ["name"],
+        name: "AddPayment",
+        delimiters: ["[[", "]]"],
+        template: `
+        <button @click="showform" class="btn btn-md btn-primary">
+            [[ name ]]
+        </button>
+        `,
+        methods: {
+            showform: function () {
+                this.$emit("showform")
+            }
+        }
+    }
+
+    var paymentmanagement = new Vue({
+        el: "#vue_profile",
+        name: "Payments",
+        components: {
+            "add-payment-button": newpaymentmethod,
+            "payment-form": paymentform
+        },
+        data() {
+            return {
+                showaddform: false
+            }
+        },
+        methods: {
+            doshow: function () {
+                this.$data.showaddform = !this.$data.showaddform
+            }
+        }
+    })
+</script>

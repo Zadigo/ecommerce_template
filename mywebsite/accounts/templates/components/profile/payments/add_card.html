@@ -1,0 +1,42 @@
+{% load i18n %}
+
+<payment-form @submitform="doshow" :showaddform="showaddform" inline-template>
+    <div v-if="showaddform" class="card mt-3">
+        <div class="card-body">
+            <form @submit.prevent="submitform" role="form" id="new-card">
+                <div class="form-row">
+                    <div class="col-xs-7 col-md-7">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="card-number" placeholder="{% trans 'Numéro de carte' %}" required autofocus />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-xs-7 col-md-7">
+                        <div class="form-group">
+                            <div class="col-xs-6 col-lg-6 pl-ziro">
+                                <input type="text" class="form-control" id="expiry-month" placeholder="MM" required />
+                            </div>
+
+                            <div class="col-xs-6 col-lg-6 pl-ziro">
+                                <input type="text" class="form-control" id="expiry-year" placeholder="YY" required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-5 col-md-5 pull-right">
+                        <div class="form-group">
+                            <input type="password" class="form-control" id="cvv" placeholder="CV" required />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-md btn-primary">
+                    <i class="fa fa-check mr-3"></i>
+                    {% trans "Valider" %}
+                </button>
+            </form>
+        </div>
+    </div>
+</payment-form>
