@@ -1,0 +1,26 @@
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="p-3 text-center">
+                                {% blocktrans  %}
+                                    Il semblerait que vous n'ayez pas encore de boutique ou que celle-ci ne
+                                    soit pas encore active. Veuillez contacter votre administrateur afin de pouvoir
+                                    changer les paramètres de la boutique.
+                                {% endblocktrans %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <button class="btn btn-danger waves-effect waves-light">
+                                {% trans "contacter Nawoka" %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

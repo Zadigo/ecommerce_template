@@ -15,7 +15,7 @@ LINKS = [
     ['images:home', {'name': 'Images', 'icon': 'fas fa-images'}],
     ['coupons:home', {'name': 'Coupons', 'icon': 'fas fa-tag'}],
     # ['dashboard_users', {'name': 'Utilisateurs', 'icon': 'fas fa-user'}],
-    # ['settings:home', {'name': 'Settings', 'icon': 'fas fa-cog'}],
+    ['settings:home', {'name': 'Settings', 'icon': 'fas fa-cog'}],
 ]
 
 @register.inclusion_tag('components/navs/sidenav_link.html')

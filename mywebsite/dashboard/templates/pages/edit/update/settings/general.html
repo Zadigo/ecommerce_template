@@ -1,33 +1,99 @@
-{% extends "pagpages/edit/base_edit.html" %}
+{% extends "pages/edit/base_edit.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Réglages généraux" %}{% endblock %}
+
+{% block form_url %}
+    {% url 'dashboard:settings:general' %}
+{% endblock %}
 
 {% block page_header %}
 
 {% endblock %}
 
 {% block left_content %}
+    <div class="card z-depth-0">
+        <div class="card-body">
+            <h3>{% trans "Réglages générales" %}</h3>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maiores animi labore, harum at dolore doloremque vero praesentium officiis. Repudiandae at nesciunt eligendi sunt quibusdam dolorum sed assumenda aperiam qui!
+            </p>
+        </div>
+    </div>
 
+    <hr>
+
+    <div class="card z-depth-0">
+        <div class="card-body">
+            <h3>{% trans "Réglages générales" %}</h3>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur maiores animi labore, harum at dolore
+                doloremque vero praesentium officiis. Repudiandae at nesciunt eligendi sunt quibusdam dolorum sed assumenda
+                aperiam qui!
+            </p>
+        </div>
+    </div>
 {% endblock %}
 
 {% block right_content %}
-<div class="card">
-    <div class="card-body">
-        <p class="font-weight-bold mb-4">{% trans "Entreprise" %}</p>
+    <div class="card">
+        <div class="card-body">
+            <p class="font-weight-bold mb-4">
+                {% trans "Entreprise" %}
+            </p>
+            
+            <div class="form-group">
+                <label for="id_name">{% trans "Nom" %}</label>
+                {{ form.name }}
+            </div>                
 
-        <div class="form-group">
-            <label for="id_name">{% trans "Nom légal" %}</label>
-            {{ form.legal_name }}
-        </div>
-        <div class="form-group">
-            <label for="id_name">{% trans "Téléphone" %}</label>
-            {{ form.telephone }}
+            <div class="form-group">
+                <label for="id_name">{% trans "Nom légal" %}</label>
+                {{ form.legal_name }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_name">{% trans "Téléphone" %}</label>
+                {{ form.telephone }}
+            </div>
         </div>
     </div>
-</div>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="form-group">
+                <label for="id_name">{% trans "Email de contact" %}</label>
+                {{ form.contact_email }}
+            </div>
+        
+            <div class="form-group">
+                <label for="id_name">{% trans "Email service client" %}</label>
+                {{ form.customer_care_email }}
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            {% comment %}
+            <div class="form-group">
+                <label class="custom-control-label" for="id_automatic">{% trans "Automatic archive" %}</label>
+                {{ form.automatic_archive }}
+            </div>                
+            {% endcomment %}
+
+            <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                    <label class="custom-control-label" for="id_automatic_archive">
+                        {% trans "Archive automatique" %}
+                    </label>
+                    {{ form.automatic_archive }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block bottom_form_buttons %}
-        {% include "components/edit/actions_bottom.html" %}
+    {% include "components/edit/actions/bottom.html" %}
 {% endblock %}

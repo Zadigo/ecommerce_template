@@ -51,12 +51,12 @@ class DashboardSetting(models.Model):
     automatic_archive = models.BooleanField(
         default=False, help_text='Archive an order automatically after it has been fulfilled and paid')
 
-    #     google_analytics        = models.CharField(max_length=50, blank=True, null=True)
-    #     google_tag_manager  = models.CharField(max_length=50, blank=True, null=True)
-    #     google_optimize     = models.CharField(max_length=50, blank=True, null=True)
-    #     google_ads      = models.CharField(max_length=50, blank=True, null=True)
-    #     facebook_pixels       = models.CharField(max_length=50, blank=True, null=True)
-    #     mailchimp      = models.CharField(max_length=50, blank=True, null=True)
+    google_analytics        = models.CharField(max_length=50, blank=True, null=True)
+    google_tag_manager  = models.CharField(max_length=50, blank=True, null=True)
+    google_optimize     = models.CharField(max_length=50, blank=True, null=True)
+    google_ads      = models.CharField(max_length=50, blank=True, null=True)
+    facebook_pixels       = models.CharField(max_length=50, blank=True, null=True)
+    mailchimp      = models.CharField(max_length=50, blank=True, null=True)
 
     allow_coupons = models.BooleanField(default=False)
     allow_accounts = models.BooleanField(default=False)

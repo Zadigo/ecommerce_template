@@ -317,12 +317,44 @@ class SettingsView(LoginRequiredMixin, generic.TemplateView):
     #     return context
 
 
-class GeneralSettingsView(LoginRequiredMixin, generic.UpdateView):
-    model = dashboard_models.DashboardSetting
-    form_class = forms.DashboardSettingsForm
-    success_url = '/dashboard/settings'
-    context_object_name = 'store'
-    template_name = 'pages/edit/update/settings/general.html'
+class DashboardSettingsMixin:
+    def custom_post(self, request, redirect_url, form, **kwargs):
+        form = form(request.POST)
+        if form.errors:
+            messages.error(request, f'Le formulaire possède des erreurs: {[error for error in form.errors.keys()]}', extra_tags='alert-danger')
+        if form.is_valid():
+            item = dashboard_models.DashboardSetting.objects.filter(id=request.user.id)
+            item.update(**form.cleaned_data)
+        return redirect(reverse(redirect_url))
+
+
+class GeneralSettingsView(LoginRequiredMixin, generic.View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        setting = dashboard_models.DashboardSetting.objects.get(myuser=user)
+        context = {
+            'store': dashboard_models.DashboardSetting.objects.get(myuser=user),
+            'form': forms.DashboardSettingsForm(
+                initial={
+                    'name': setting.name,
+                    'legal_name': setting.legal_name,
+                    'telephone': setting.telephone,
+                    'contact_email': setting.contact_email,
+                    'customer_care_email': setting.customer_care_email,
+                    'automatic_archives': setting.automatic_archive
+                }
+            )
+        }
+        return render(request, 'pages/edit/update/settings/general.html', context)
+
+    def post(self, request, **kwargs):
+        form = forms.DashboardSettingsForm(request.POST)
+        if form.errors:
+            messages.error(request, f'Le formulaire possède des erreurs: {[error for error in form.errors.keys()]}', extra_tags='alert-danger')
+        if form.is_valid():
+            item = dashboard_models.DashboardSetting.objects.filter(id=request.user.id)
+            item.update(**form.cleaned_data)
+        return redirect(reverse('dashboard:settings:general'))
 
 
 class StoreSettingsView(LoginRequiredMixin, generic.UpdateView):
@@ -333,12 +365,28 @@ class StoreSettingsView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'pages/edit/update/settings/shop.html'
 
 
-class AnalyticsSettingsView(LoginRequiredMixin, generic.UpdateView):
-    model = dashboard_models.DashboardSetting
-    form_class = forms.DashboardSettingsForm
-    success_url = '/dashboard/settings'
-    context_object_name = 'store'
-    template_name = 'pages/edit/update/settings/shop.html'
+class AnalyticsSettingsView(LoginRequiredMixin, DashboardSettingsMixin, generic.View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        setting = dashboard_models.DashboardSetting.objects.get(myuser=user)
+        context = {
+            'store': dashboard_models.DashboardSetting.objects.get(myuser=user),
+            'form': forms.AnalyticsSettingsForm(
+                initial={
+                    'google_analytics': setting.google_analytics,
+                    'google_tag_manager': setting.google_tag_manager,
+                    'google_optimize': setting.google_optimize,
+                    'google_ads': setting.google_ads,
+                    'facebook_pixels': setting.facebook_pixels,
+                    'mailchimp': setting.mailchimp
+                }
+            )
+        }
+        return render(request, 'pages/edit/update/settings/analytics.html', context)
+
+    def post(self, request, **kwargs):
+        return self.custom_post(request, 'dashboard:settings:analytics', forms.AnalyticsSettingsForm, **kwargs)
+
 
 
 

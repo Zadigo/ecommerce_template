@@ -18,8 +18,6 @@
                 {% for error in form.errors %}
                     <div class="alert alert-danger mb-4 alert-dismissible fade show" role="alert">
                         Le champs <span class="font-weight-bold">{{ error|upper }}</span> est vide
-                        {% blocktrans  %}
-                        {% endblocktrans %}
                     </div>
                 {% endfor %}
                 
