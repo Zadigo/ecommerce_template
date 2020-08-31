@@ -87,6 +87,8 @@ TEMPLATES = [
 
                 'dates': 'dashboard.templatetags.dates',
                 'sidebar': 'dashboard.templatetags.sidebar',
+
+                'sidemenu': 'accounts.templatetags.sidemenu',
             },
         },
     },

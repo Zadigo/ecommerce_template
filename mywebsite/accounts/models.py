@@ -14,8 +14,8 @@ from accounts import managers
 class MyUser(AbstractBaseUser):
     """Base user model for those user accounts"""
     email       = models.EmailField(max_length=255, unique=True)
-    surname      = models.CharField(max_length=100, null=True, blank=True)
-    name         = models.CharField(max_length=100, null=True, blank=True)
+    firstname      = models.CharField(max_length=100, null=True, blank=True)
+    lastname         = models.CharField(max_length=100, null=True, blank=True)
     
     is_active        = models.BooleanField(default=True)
     is_admin            = models.BooleanField(default=False)
@@ -42,11 +42,11 @@ class MyUser(AbstractBaseUser):
 
     @property
     def get_full_name(self):
-        return f'{self.name} {self.surname}' 
+        return f'{self.firstname} {self.lastname}' 
 
     @property
     def get_short_name(self):
-        return self.name
+        return self.firstname
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
@@ -54,11 +54,9 @@ class MyUser(AbstractBaseUser):
 
 class MyUserProfile(models.Model):
     """User profile model used to complete the base user model"""
-    myuser              = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    # avatar              = models.ImageField(verbose_name='Avater', width_field=50, height_field=50)
+    myuser              = models.OneToOneField(MyUser, on_delete=models.CASCADE)
     stripe_id           = models.CharField(max_length=100, blank=True, null=True)
     birthdate         = models.DateField(default=timezone.now, blank=True, null=True)
-    # telephone_validator = RegexValidator(regex=r'\+\d+0?\d+{4, 6}', message='Invalid number')
     telephone           = models.CharField(max_length=20, blank=True, null=True)
     address            = models.CharField(max_length=150, blank=True, null=True)
     city               = models.CharField(max_length=100, blank=True, null=True)

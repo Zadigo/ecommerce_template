@@ -1,24 +1,22 @@
 from django import forms
-from django.contrib.admin import AdminSite
 from django.contrib.auth import authenticate
 from django.contrib.auth import forms as auth_forms
-from django.contrib.auth import get_user_model, password_validation
-from django.forms import fields, widgets
+from django.contrib.auth import password_validation
 from django.contrib.auth.tokens import default_token_generator
+from django.forms import fields, widgets
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
-from accounts.models import MyUserProfile
+from accounts import widgets as custom_widgets
+from accounts.models import MyUser, MyUserProfile
 
-
-MYUSER = get_user_model()
 
 class MyUserCreationForm(forms.ModelForm):
     password1 = fields.CharField(label=_('Password'), widget=widgets.PasswordInput)
     password2 = fields.CharField(label=_('Password confirmation'), widget=widgets.PasswordInput)
 
     class Meta:
-        model = MYUSER
+        model = MyUser
         fields = ['email', 'is_staff', 'product_manager']
 
     def clean_password2(self):
@@ -44,7 +42,7 @@ class MyUserChangeForm(forms.ModelForm):
     password = auth_forms.ReadOnlyPasswordHashField()
 
     class Meta:
-        model = MYUSER
+        model = MyUser
         fields = ['email', 'password']
 
     def clean_password(self):
@@ -93,11 +91,11 @@ class UserSignupForm(auth_forms.UserCreationForm):
     )
 
     class Meta:
-        model = MYUSER
-        fields = ['name', 'surname', 'email']
+        fields = ['firstname', 'lastname', 'email']
+        model = MyUser
         widgets = {
-            'surname': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
-            'name': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
+            'firstname': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
+            'lastname': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
             'email': widgets.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
         }
 
@@ -152,34 +150,34 @@ class CustomSetPasswordForm(auth_forms.SetPasswordForm):
     )
 
 
+class CustomChangePasswordForm(CustomSetPasswordForm):
+    old_password = forms.CharField(
+        label=_("Old password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Ancien mot de passe',
+                                          'autocomplete': 'current-password', 'autofocus': True}),
+    )
 
-# #####################
-#   Profile forms
-# #####################
+
+
 
 class BaseProfileForm(forms.ModelForm):
     class Meta:
-        model   = MYUSER
-        fields  = ['name', 'surname']
+        model   = MyUser
+        fields  = ['firstname', 'lastname']
         widgets = {
-            'name': widgets.TextInput(attrs={'placeholder': 'John'}),
-            'surname': widgets.TextInput(attrs={'placeholder': 'Doe'}),
+            'firstname': custom_widgets.FirstNameInput(attrs={'placeholder': 'John'}),
+            'lastname': custom_widgets.LastNameInput(attrs={'placeholder': 'Doe'}),
         }
 
 
 class AddressProfileForm(forms.ModelForm):
     class Meta:
         model   = MyUserProfile
-        fields  = ['address', 'city', 'zip_code']
+        fields  = ['telephone', 'address', 'city', 'zip_code']
         widgets = {
-            'address': widgets.TextInput(attrs={'placeholder': '173 rue de Rivoli'}),
-            'city': widgets.TextInput(attrs={'placeholder': 'Paris'}),
-            'zip_code': widgets.TextInput(attrs={'placeholder': '59120'})
+            'telephone': custom_widgets.TelephoneInput(attrs={'placeholder': '06000000'}),
+            'address': custom_widgets.AddressLineOne(attrs={'placeholder': '173 rue de Rivoli'}),
+            'city': custom_widgets.TextInput(attrs={'placeholder': 'Paris'}),
+            'zip_code': custom_widgets.TextInput(attrs={'placeholder': '59120'})
         }
-
-
-class AnonymousUserForm(forms.Form):
-    address = fields.CharField(max_length='100', required=True, widget=widgets.TextInput(attrs={'autocomplete': 'address-line-1', 'placeholder': '34 rue de Paris'}))
-    city = fields.CharField(max_length='45', required=True, widget=widgets.TextInput(attrs={'autocomplete': 'city', 'placeholder': 'Lille'}))
-    zip_code = fields.CharField(max_length='100', required=True, widget=widgets.TextInput(attrs={'autocomplete': 'zip-code', 'placeholder': '59000'}))
-    country = fields.CharField(max_length='45', widget=widgets.Select(attrs={'autocomplete': 'country', 'placeholder': 'France'}, choices=(('france', 'France'),)))

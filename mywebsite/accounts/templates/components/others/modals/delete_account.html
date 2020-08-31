@@ -1,0 +1,20 @@
+{% extends "components/others/modals/modal.html" %}
+{% load i18n %}
+
+{% block modal_id %}delete-account{% endblock %}
+{% block modal_aria %}delete-account{% endblock %}
+
+{% block modal_title %}
+    {% trans "Suppréssion de votre compte" %}
+{% endblock %}
+
+{% block modal_body %}
+    <p>
+        {% blocktrans %}
+            Vous êtes sur le point de supprimer votre compte. Cette étape
+            est irréversible et vous perdrez donc toutes les données liées à ...
+        {% endblocktrans %}
+    </p>
+
+    <a href="{% url 'accounts:profile:delete' %}" class="btn btn-sm btn-danger">{% trans 'supprimer' %}</a>
+{% endblock %}

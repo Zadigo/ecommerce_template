@@ -1,0 +1,26 @@
+{% extends "pages/profile/base.html" %}
+{% load static i18n %}
+
+{% block title %}{% trans "Modes de paiement" %}{% endblock %}
+
+{% block profile_content %}
+    <div class="card">
+        <div class="card-header">
+            <h4>{% trans "Moyens de paiement" %}</h4>
+        </div>
+
+        <div class="card-body">
+            <ul class="list-group">
+                {% for subscription in subscriptions %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ subscription.name }}
+                        
+                        <a href="{% url 'subscription:cancel' %}">
+                            {% trans "Annuler" %}
+                            </a href="{% url 'subscription:cancel' %}">
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock profile_content %}

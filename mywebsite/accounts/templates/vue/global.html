@@ -1,0 +1,36 @@
+{% load i18n %}
+
+<script>
+    Vue.component("form-component", {
+        props: ["id", "position"],
+        template: `
+            <form @submit.prevent="submitform" method="POST" :id="id">
+                {% csrf_token %}
+
+                <slot></slot>
+
+                <div class="form-group">
+                    <input type="hidden" name="position" :value="position">
+                </div>
+
+                <div class="form-row">
+                    <div class="col-12 text-right">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-check mr-3"></i>
+                            {% trans 'Valider' %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+            `,
+        methods: {
+            submitform: function () {
+                // var xhr = new XMLHttpRequest()
+                // xhr.responseType = "json"
+                // xhr.open("POST", window.location.href)
+                // xhr.send($(this.$el).serialize())
+                this.$el.submit()
+            }
+        }
+    })
+</script>

@@ -1,8 +1,9 @@
 import datetime
 import re
 
+import stripe
+from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
@@ -10,81 +11,65 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import View
 
-from accounts.forms import AddressProfileForm, BaseProfileForm
+from accounts import forms
 from accounts.models import MyUser, MyUserProfile
 
 
 class ProfileView(LoginRequiredMixin, View):
-    """Index page of the profile
-    """
+    forms = {
+        'form1': forms.BaseProfileForm,
+        'form2': forms.AddressProfileForm
+    }
+
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(MyUser, id=request.user.id)
-        profile = user.myuserprofile_set.get(myuser=request.user.id)
+        profile = user.myuserprofile
 
         context = {
-            'base_profile_form': BaseProfileForm(
-                initial = {
-                    'name': user.name,
-                    'surname': user.surname
+            'form1': self.forms['form1'](
+                initial={
+                    'firstname': user.firstname,
+                    'lastname': user.lastname
                 }
             ),
-            'address_profile_form': AddressProfileForm(
-                initial = {
+            'form2': self.forms['form2'](
+                initial={
+                    'telephone': profile.telephone,
                     'address': profile.address,
                     'city': profile.city,
                     'zip_code': profile.zip_code
                 }
-            ),
-            'forms': {
-                'userform': {
-                    'name': user.name,
-                    'surname': user.surname
-                }
-            }
+            )
         }
-
-        if 'vue' in request.GET:
-            if request.GET.get('vue') == 'true':
-                return render(request, 'pages/accounts/vue/profile.html', context)
-
-        return render(request, 'pages/accounts/profile.html', context)
+        return render(request, 'pages/profile/home.html', context)
 
     def post(self, request, **kwargs):
-        form = None
-        user_id = request.user
-        user = MyUser.objects.get(id=user_id.id)
-        user_profile = user.myuserprofile_set.get(myuser=user_id.id)
+        user = MyUser.objects.get(id=request.user.id)
+        user_profile = user.myuserprofile
 
-        form_id = request.POST.get('form_id')
+        position = int(request.POST.get('position'))
 
-        if form_id == 'userform':
-            form = BaseProfileForm(request.POST, instance=user)
+        if position == 0:
+            form = self.forms['form1'](request.POST, instance=user)
 
-        if form_id == 'detailsform':
-            form = AddressProfileForm(request.POST, instance=user_profile)
-            # VUE
-            # data = self.correct_vue_post_data(request.POST)
-            # MyUserProfile.objects.update(**data)
+        if position == 1:
+            form = self.forms['form2'](request.POST, instance=user_profile)
 
         if not form:
-            return JsonResponse({'error': 'Form not identified'}, status=500)
+            messages.error(request, _("An error occured - FOR-NR"),
+                           extra_tags='alert-danger')
+            # return JsonResponse(data={'state': False})
+            return redirect(reverse('accounts:profile:home'))
         else:
             if form.is_valid():
                 form.save()
 
-        return JsonResponse({'success': 'success'}, status=200)
-    
-    def correct_vue_post_data(self, data):
-        """Corrects the query dict in order to be saved correctly
-        to the database"""
-        data = data.dict()
-        data.pop('form_id')
-        data.pop('csrfmiddlewaretoken')
-        return {key: value for key, value in data.items()}
+        # return JsonResponse(data={'state': True})
+        messages.success(request, _("Informations modifiées"), extra_tags='alert-success')
+        return redirect(reverse('accounts:profile:home'))
+
 
 class ProfileDataView(LoginRequiredMixin, View):
-    """Help the user manage his data
-    """
     def get(self, request, *args, **kwargs):
         current_user = self.request.user
 
@@ -99,54 +84,46 @@ class ProfileDataView(LoginRequiredMixin, View):
         except:
             context = {}
 
-        return render(request, 'pages/accounts/data.html', context)
+        return render(request, 'pages/profile/data.html', context)
+
 
 class ProfileDeleteView(LoginRequiredMixin, View):
     """Help the user delete his account
     """
+
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(MyUser, id=request.user.id)
         user.delete()
         return redirect('/')
 
+
 class PaymentMethodsView(LoginRequiredMixin, View):
     """Allows the customer to update his/her payment method"""
-    
-    def get(self, request, *args, **kwargs):
-        return render(request, 'pages/accounts/payment_methods.html', {})
 
-    def post(self, request, *kwargs):
+    def get(self, request, *args, **kwargs):
+        myprofile = MyUserProfile.objects.get(myuser=request.user.id)
         try:
-            import stripe
-        except ImportError:
-            raise Http404('An error has occured')
-        else:
-            # We can update the customer's cards here
-            # using the stripe api
-            params = {
-                'source': 'source'
-            }
-            stripe.Customer.update(**params)
-        finally:
-            response = {
-                'status': ''
-            }
-        return JsonResponse(response)
+            details = stripe.Customer.retrieve(myprofile.stripe_id)
+        except Exception:
+            details = {}
+            messages.error(request, _("Une erreur s'est produite - STR-PA"), extra_tags='alert-danger')
+        return render(request, 'pages/profile/payments.html', {'details': details})
+
 
 class ChangePasswordView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = {
-            'form': PasswordChangeForm(request.user),
+            'form': forms.CustomChangePasswordForm(request.user),
         }
-        return render(request, 'pages/accounts/reset_password.html', context)
+        return render(request, 'pages/profile/change_password.html', context)
 
     def post(self, request, **kwargs):
-        form = PasswordChangeForm(request.user, request.POST)
+        form = forms.CustomChangePasswordForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            # IMPORTANT: to allow the user to stay logged
             update_session_auth_hash(request, user)
         return redirect('/profile/')
+
 
 # class PersonalisationView(LoginRequiredMixin, View):
 #     def get(self, request, *args, **kwargs):

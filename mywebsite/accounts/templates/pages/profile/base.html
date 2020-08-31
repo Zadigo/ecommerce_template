@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block title %}{% trans "Mon compte" %}{% endblock %}
+
+{% block container %}
+    <section class="section">
+        <div class="row">
+            {% block base_profile_content %}
+                <div class="col-sm-12 col-lg-4 col-xl-4">
+                    <!-- SIDE MENU -->
+                    {% include "components/profile/sidemenu.html" %}
+                </div>
+
+                <div class="col-sm-12 col-lg-8 col-xl-8">
+                    <div id="vue_profile">
+                        {% block profile_content %}{% endblock %}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

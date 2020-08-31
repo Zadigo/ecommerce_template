@@ -1,0 +1,5 @@
+{% for href, link in links %}
+    <a href="{{ link.href }}" class="list-group-item list-group-item-action" tabindex="-1" aria-disabled="true">
+        {{ link.name }}
+    </a>
+{% endfor %}

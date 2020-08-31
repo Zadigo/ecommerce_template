@@ -1,0 +1,40 @@
+{% extends "pages/profile/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes données" %}{% endblock %}
+
+{% block profile_content %}
+    <div class="card">
+        <div class="card-header">
+            {% blocktrans %}
+            Gérer les comptes connectés avec Kurrikulam :
+            {% endblocktrans %}
+        </div>
+        <div class="card-body">
+            <a href="#!" class="btn {% if provider != 'google-oauth2' %}disabled{% endif %}">
+                <i class="fab fa-google left"></i>Google
+            </a>
+            <a href="#!" class="btn disabled"><i class="fab fa-twitter left"></i>Twitter</a>
+            <a href="#!" class="btn disabled"><i class="fab fa-linkedin left"></i>LinkedIn</a>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <p>
+                {% blocktrans %}
+                    Si vous ne souhaitez plus avoir de compte chez nous, vous pouvez utiliser le lien ci-dessous.
+                {% endblocktrans %}
+            </p>
+        </div>
+        <div class="card-footer text-right">
+            <a class="btn btn-sm btn-danger" data-toggle="modal" data-target="#delete-account">
+                <i class="fa fa-stop mr-3"></i>
+                {% trans "Supprimer mon compte" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    {% include "components/others/modals/delete_account.html" with modal_title="Suppréssion de votre compte" %}
+{% endblock profile_content %}
