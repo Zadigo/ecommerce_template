@@ -9,7 +9,7 @@ from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import View
+from django.views.generic import View, TemplateView
 
 from accounts import forms
 from accounts.models import MyUser, MyUserProfile
@@ -29,12 +29,12 @@ class ProfileView(LoginRequiredMixin, View):
             'form1': self.forms['form1'](
                 initial={
                     'firstname': user.firstname,
-                    'lastname': user.lastname
+                    'lastname': user.lastname,
+                    'email': user.email
                 }
             ),
             'form2': self.forms['form2'](
                 initial={
-                    'telephone': profile.telephone,
                     'address': profile.address,
                     'city': profile.city,
                     'zip_code': profile.zip_code
@@ -125,18 +125,8 @@ class ChangePasswordView(LoginRequiredMixin, View):
         return redirect('/profile/')
 
 
-# class PersonalisationView(LoginRequiredMixin, View):
-#     def get(self, request, *args, **kwargs):
-#         context = {
-#             'user_profile':self.get_user_profile,
-#             'form': PersonalizationProfileForm
-#         }
-#         return render(request, 'accounts/profile_personalisation.html', context)
+class ContactPreferencesView(LoginRequiredMixin, TemplateView):
+    template_name = 'pages/profile/contact.html'
 
-#     def post(self, request, **kwargs):
-#         user_profile = self.get_user_profile
-#         redirect('personalisation')
-
-#     @property
-#     def get_user_profile(self):
-#         return MyUserProfile.objects.get(myuser_id_id=self.request.user.id)
+    def post(self, request, **kwargs):
+        pass

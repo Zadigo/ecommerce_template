@@ -11,12 +11,12 @@
     <section class="section">
         <div class="row">
             {% block base_profile_content %}
-                <div class="col-sm-12 col-lg-4 col-xl-4">
+                <div class="col-sm-12 col-lg-4 col-xl-4 offset-lg-1 offset-xl-1">
                     <!-- SIDE MENU -->
                     {% include "components/profile/sidemenu.html" %}
                 </div>
 
-                <div class="col-sm-12 col-lg-8 col-xl-8">
+                <div class="col-sm-12 col-lg-6 col-xl-6">
                     <div id="vue_profile">
                         {% block profile_content %}{% endblock %}
                     </div>

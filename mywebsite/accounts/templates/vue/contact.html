@@ -1,0 +1,38 @@
+<script>
+    Vue.component("contact-preference-component", {
+        name: "ContactPreferences",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                sections: [
+                    {id: 1, name: "kendall", paragraph: "Soyez les premiers à choper vos coups de cœur pour moins cher", checkboxes: [{id: "email", label: "Email"}]},
+                    {id: 2, name: "kylie", paragraph: "Dernières tendances, nouveautés et conseils de style : vous les avez vus en premier, vous serez les premiers à les porter.", checkboxes: [{id: "novelties", label: "Email"}]},
+                    {id: 3, name: "partners", paragraph: "Restez à l'affût des collabs exclusives et des offres triées sur le volet.", checkboxes: [{id: "partners", label: "Email"}]},
+                ],
+                selecteditems: {}
+            }
+        },
+        computed: {
+            hasmorethanone() {
+                return this.$data.sections.length > 1
+            },
+            hasselecteditems() {
+                // var selectionarray = []
+                // Object.keys(this.$data.selecteditems).forEach((key) => {
+                //     selectionarray.push(this.$data.selecteditems[key])
+                // })
+                // if (selectionarray.length === 0) {
+                //     return false
+                // } else {
+                //     return selectionarray.every((item) => {return item == true})
+                // }
+                return _.includes(this.$data.selecteditems, true)
+            }
+        },
+        methods: {
+            submitdata: function () {
+                console.log("Submitting data")
+            }
+        }
+    })
+</script>

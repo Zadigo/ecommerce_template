@@ -33,4 +33,22 @@
             }
         }
     })
+
+    Vue.component("confirm-button", {
+        props: ["state"],
+        name: "ConfirmButton",
+        delimiters: ["[[", "]]"],
+        template: `
+        <button @click="sendconfirmation" class="btn btn-md btn-primary" :class="{'disabled': !state}">
+            <i class="fa fa-check mr-3"></i>
+            <slot></slot>
+        </button>
+        `,
+        methods: {
+            sendconfirmation: function () {
+                this.$emit("sendconfirmation")
+            }
+        }
+    })
+
 </script>

@@ -164,19 +164,19 @@ class CustomChangePasswordForm(CustomSetPasswordForm):
 class BaseProfileForm(forms.ModelForm):
     class Meta:
         model   = MyUser
-        fields  = ['firstname', 'lastname']
+        fields  = ['firstname', 'lastname', 'email']
         widgets = {
             'firstname': custom_widgets.FirstNameInput(attrs={'placeholder': 'John'}),
             'lastname': custom_widgets.LastNameInput(attrs={'placeholder': 'Doe'}),
+            'email': custom_widgets.TextInput(attrs={'placeholder': 'john.doe@gmail.com'}),
         }
 
 
 class AddressProfileForm(forms.ModelForm):
     class Meta:
         model   = MyUserProfile
-        fields  = ['telephone', 'address', 'city', 'zip_code']
+        fields  = ['address', 'city', 'zip_code']
         widgets = {
-            'telephone': custom_widgets.TelephoneInput(attrs={'placeholder': '06000000'}),
             'address': custom_widgets.AddressLineOne(attrs={'placeholder': '173 rue de Rivoli'}),
             'city': custom_widgets.TextInput(attrs={'placeholder': 'Paris'}),
             'zip_code': custom_widgets.TextInput(attrs={'placeholder': '59120'})

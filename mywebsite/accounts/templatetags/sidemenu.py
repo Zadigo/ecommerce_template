@@ -9,6 +9,7 @@ LINKS = [
     ['accounts:profile:home', {'name': 'Profil'}],
     ['accounts:profile:payment', {'name': 'Mode de paiement'}],
     ['accounts:profile:change_password', {'name': 'Mot de passe'}],
+    ['accounts:profile:contact', {'name': 'Préférences de contact'}],
     ['accounts:profile:data', {'name': 'Mes données'}],
 ]
 

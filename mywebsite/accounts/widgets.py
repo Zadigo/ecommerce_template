@@ -15,6 +15,10 @@ class TextInput(CustomInput):
     input_type = 'text'
 
 
+class EmailInput(CustomInput):
+    input_type = 'email'
+
+
 class TelephoneInput(TextInput):
     input_type = 'tel'
 
