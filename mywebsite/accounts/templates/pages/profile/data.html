@@ -6,16 +6,37 @@
 {% block profile_content %}
     <div class="card">
         <div class="card-header">
-            {% blocktrans %}
-            Gérer les comptes connectés avec Kurrikulam :
-            {% endblocktrans %}
+            <h3>
+                {% blocktrans %}
+                    Gérer les comptes connectés
+                {% endblocktrans %}
+            </h3>
         </div>
+
         <div class="card-body">
-            <a href="#!" class="btn {% if provider != 'google-oauth2' %}disabled{% endif %}">
-                <i class="fab fa-google left"></i>Google
-            </a>
-            <a href="#!" class="btn disabled"><i class="fab fa-twitter left"></i>Twitter</a>
-            <a href="#!" class="btn disabled"><i class="fab fa-linkedin left"></i>LinkedIn</a>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="fab fa-google"></i>
+                        Google
+                    </span>
+                    <button class="btn btn-sm btn-outline-primary z-depth-0 disabled">{% trans "Se déconnecter" %}</button>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="fab fa-twitter"></i>
+                        Twitter
+                    </span>
+                    <button class="btn btn-sm btn-outline-primary z-depth-0 disabled">{% trans "Se déconnecter" %}</button>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="fab fa-linkedin"></i>
+                        Linkedin
+                    </span>
+                    <button class="btn btn-sm btn-outline-primary z-depth-0 disabled">{% trans "Se déconnecter" %}</button>
+                </li>
+            </ul>
         </div>
     </div>
 
