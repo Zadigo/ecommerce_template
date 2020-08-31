@@ -65,6 +65,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
+                'django.template.context_processors.debug',
+
                 'shop.payment.stripe_context_processor',
                 'mywebsite.responsive.responsive_context_processor',
                 # 'dashboard.context_processor.dashboard'
