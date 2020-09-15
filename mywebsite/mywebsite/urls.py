@@ -6,8 +6,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 
-from mywebsite import sitemaps, views
-from mywebsite import rss
+from mywebsite import rss, sitemaps, views
 
 customer_cart_patterns = [
     # path('orders', TemplateView.as_view(template_name='others/faq/orders.html'), name='customer_care_orders'),
@@ -19,21 +18,24 @@ customer_cart_patterns = [
 ]
 
 urlpatterns = [
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
+    # path('sitemap.xml', sitemap, {'sitemaps': sitemaps.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
 
-    re_path(r'^who-we-are$', TemplateView.as_view(template_name='pages/legal/who_are_we.html'), name='who_are_we'),
+    # re_path(r'^who-we-are$', TemplateView.as_view(template_name='pages/legal/who_are_we.html'), name='who_are_we'),
 
     path('customer-care/<page_name>/', views.CustomerServiceView.as_view(), name='customer_care_additional_pages'),
     path('customer-care/', include(customer_cart_patterns)),
     
-    url(r'^conditions-generales-utilisation$', views.CGU.as_view(), name='cgu'),
-    url(r'^conditions-generales-ventes$', views.CGV.as_view(), name='cgv'),
-    url(r'^confidentialite-et-cookies$', views.Confidentialite.as_view(), name='confidentialite'),
+    # url(r'^conditions-generales-utilisation$', views.CGU.as_view(), name='cgu'),
+    # url(r'^conditions-generales-ventes$', views.CGV.as_view(), name='cgv'),
+    # url(r'^confidentialite-et-cookies$', views.Confidentialite.as_view(), name='confidentialite'),
     
     url(r'^subscribe/', views.subscribe_user, name='subscribe_user'),
 
+    path('legal/', include('legal.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('accounts.urls')),
+    path('store/', include('store.urls')),
+    path('cart/', include('cart.urls')),
     path('shop/', include('shop.urls')),
 
     url(r'^$', views.HeroView.as_view(), name='home'),
