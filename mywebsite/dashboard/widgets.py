@@ -48,7 +48,6 @@ class CheckBoxInput(widgets.CheckboxInput):
             attrs = {**(attrs or {}), 'checked': True}
         attrs['class'] = 'custom-control-input'
         context = super().get_context(name, value, attrs)
-        context['label_name'] = 'Fast'
         return context
 
 
@@ -64,8 +63,8 @@ class DateInput(CustomInput):
     input_type = 'date'
 
 
-class FileInput(widgets.FileInput):
-    template_name = 'widgets/file.html'
+class CustomFileInput(widgets.FileInput):
+    template_name = 'widgets/input.html'
     input_type = 'file'
 
     def get_context(self, name, value, attrs):

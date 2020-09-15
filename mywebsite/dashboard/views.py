@@ -22,21 +22,21 @@ from django.views import generic
 from django.views.decorators import http as views_decorators
 from django.views.decorators.csrf import csrf_exempt
 
+from cart import models as cart_models
 from dashboard import forms
 from dashboard import models as dashboard_models
 from shop import choices, models, serializers, utilities
+from discounts import models as discount_models
 
 MYUSER = get_user_model()
 
 class IndexView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         context = {
-            'carts_without_orders': models.Cart.statistics.carts_without_orders(),
-            'orders_count': models.CustomerOrder.statistics.total_count(),
-            'latest_orders': models.CustomerOrder.statistics.latest_orders(),
-            'revenue': models.CustomerOrder.statistics.revenue(),
-            'awaiting': models.CustomerOrder.statistics.awaiting_revenue(),
-            'refunded': models.CustomerOrder.statistics.total_refunded_orders()
+            'carts_without_orders': cart_models.Cart.statistics.carts_without_orders(),
+            'orders_count': cart_models.CustomerOrder.statistics.total_count(),
+            'latest_orders': cart_models.CustomerOrder.statistics.latest_orders(),
+            'revenue': cart_models.CustomerOrder.statistics.total_refunded_orders()
         }
         return render(request, 'pages/home.html', context)
 
@@ -197,8 +197,8 @@ class UserView(LoginRequiredMixin, generic.DetailView):
 class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
     """Show all the orders made by customers
     """
-    model   = models.CustomerOrder
-    queryset = models.CustomerOrder.objects.all()
+    model   = cart_models.CustomerOrder
+    queryset = cart_models.CustomerOrder.objects.all()
     template_name = 'pages/lists/orders.html'
     context_object_name = 'orders'
     paginate_by = 10
@@ -207,7 +207,7 @@ class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
 class CustomerOrderView(LoginRequiredMixin, generic.UpdateView):
     """Orders for one single product
     """
-    model   = models.CustomerOrder
+    model = cart_models.CustomerOrder
     form_class = forms.CustomerOrderForm
     template_name = 'pages/edit/update/order.html'
     context_object_name = 'order'
@@ -220,8 +220,8 @@ class CustomerOrderView(LoginRequiredMixin, generic.UpdateView):
 
 
 class CartsView(LoginRequiredMixin, generic.ListView):
-    model = models.Cart
-    queryset = models.Cart.objects.all()
+    model = cart_models.Cart
+    queryset = cart_models.Cart.objects.all()
     template_name = 'pages/lists/carts.html'
     context_object_name = 'carts'
     paginate_by = 5
@@ -392,24 +392,24 @@ class AnalyticsSettingsView(LoginRequiredMixin, DashboardSettingsMixin, generic.
 
 
 class CouponsView(LoginRequiredMixin, generic.ListView):
-    model = models.Discount
-    queryset = models.Discount.objects.all()
+    model = discount_models.Discount
+    queryset = discount_models.Discount.objects.all()
     template_name = 'pages/lists/coupons.html'
     context_object_name = 'coupons'
 
 
 class CreateCouponsView(LoginRequiredMixin, generic.CreateView):
-    model = models.Discount
+    model = discount_models.Discount
     form_class = forms.DiscountForm
-    queryset = models.Discount.objects.all()
+    queryset = discount_models.Discount.objects.all()
     template_name = 'pages/edit/create/coupon.html'
     context_object_name = 'coupon'
 
 
 class UpdateCouponsView(LoginRequiredMixin, generic.UpdateView):
-    model = models.Discount
+    model = discount_models.Discount
     form_class = forms.DiscountForm
-    queryset = models.Discount.objects.all()
+    queryset = discount_models.Discount.objects.all()
     template_name = 'pages/edit/update/coupon.html'
     context_object_name = 'coupon'
 
@@ -421,15 +421,15 @@ class UpdateCouponsView(LoginRequiredMixin, generic.UpdateView):
 
 
 class CollectionsView(LoginRequiredMixin, generic.ListView):
-    model = models.ProductCollection
-    queryset = models.ProductCollection.objects.all()
+    model = models.Collection
+    queryset = models.Collection.objects.all()
     template_name = 'pages/lists/collections.html'
     context_object_name = 'collections'
     paginate_by = 10
 
 
 class CreateCollectionView(LoginRequiredMixin, generic.CreateView):
-    model = models.ProductCollection
+    model = models.Collection
     form_class = forms.CollectionForm
     template_name = 'pages/edit/create/collection.html'
     context_object_name = 'collection'
@@ -437,7 +437,7 @@ class CreateCollectionView(LoginRequiredMixin, generic.CreateView):
 
 
 class UpdateCollectionView(LoginRequiredMixin, generic.UpdateView):
-    model = models.ProductCollection
+    model = models.Collection
     form_class = forms.CollectionForm
     template_name = 'pages/edit/update/collection.html'
     context_object_name = 'collection'
@@ -477,7 +477,7 @@ class PurchaseOrderView(LoginRequiredMixin, generic.TemplateView):
 @views_decorators.require_GET
 def activate_coupon(request, **kwargs):
     state = False
-    coupon = models.Discount.objects.get(id=kwargs['pk'])
+    coupon = cart_models.Discount.objects.get(id=kwargs['pk'])
     if coupon:
         if coupon.active:
             coupon.active = False
@@ -709,7 +709,7 @@ def delete_item_via_table(request, **kwargs):
         item = get_object_or_404(models.Product, id=kwargs['pk'])
 
     if method == 'carts':
-        item = get_object_or_404(models.Cart, id=kwargs['pk'])
+        item = get_object_or_404(cart_models.Cart, id=kwargs['pk'])
         # Check if the cart has orders and if so,
         # mark them as terminated or completed
         item.customerorder_set.all().update(completed=True)

@@ -13,6 +13,8 @@ from accounts.utils import get_user_profile_model
 from dashboard import models as dashboard_models
 from dashboard import widgets as custom_widgets
 from shop import choices, models, utilities, validators
+from cart import models as cart_models
+from discounts import models as discount_models
 
 
 class FormMixin:
@@ -319,22 +321,22 @@ class FormMixin:
 
             if items:
                 new_items_ids = []
-                transaction.set_autocommit(False)
+                # transaction.set_autocommit(False)
                 try:
                     for item in items:
                         item.save()
                         new_items_ids.append(item.id)
                 except:
-                    transaction.rollback()
+                    pass
+                    # transaction.rollback()
                 else:
-                    transaction.commit()
+                    # transaction.commit()
                     if new_items_ids:
                         new_images_queryset = models.Image.objects.filter(id__in=new_items_ids)
                         if old_images:
                             new_images_queryset = list(new_images_queryset) + list(old_images)
                         product.images.set(new_images_queryset)
-                finally:
-                    transaction.set_autocommit(True)
+                # transaction.set_autocommit(True)
             return new_images_queryset
         return False
 
@@ -423,7 +425,7 @@ class CreateProductForm(FormMixin, ProductForm):
 
 class DiscountForm(forms.ModelForm):
     class Meta:
-        model = models.Discount
+        model = discount_models.Discount
         fields = ['code', 'value_type', 'value', 'collection', 'on_entire_order',\
          'minimum_purchase', 'minimum_quantity', 'usage_limit', 'start_date', 'end_date']
 
@@ -448,12 +450,13 @@ class DiscountForm(forms.ModelForm):
 
 class CollectionForm(forms.ModelForm):
     class Meta:
-        model = models.ProductCollection
-        fields = ['name', 'presentation_text', 'google_description', 'show_presentation']
+        model = models.Collection
+        fields = ['name', 'image', 'presentation_text', 'google_description', 'show_presentation']
 
         widgets = {
             'name': custom_widgets.TextInput(attrs={'placeholder': 'Nom de la collection'}),
             'presentation_text': forms.widgets.Textarea(attrs={'class': 'form-control'}),
+            'image': custom_widgets.CustomFileInput(),
         }
 
     # def save(self):
@@ -498,7 +501,7 @@ class CustomerForm(forms.ModelForm):
 
 class CustomerOrderForm(forms.ModelForm):
     class Meta:
-        model = models.CustomerOrder
+        model = cart_models.CustomerOrder
         fields = ['accepted', 'shipped',
                   'completed', 'refund', 'tracking_number']
 

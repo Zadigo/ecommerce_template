@@ -1,5 +1,5 @@
 {% extends "pages/edit/base_edit.html" %}
-{% load i18n %}
+{% load i18n aws_images %}
 
 {% block title %}{% trans "Modification de" %}{{ collection.name }}{% endblock %}
 
@@ -30,38 +30,39 @@
 {% endblock %}
 
 {% block right_content %}
-    {% comment "Upload an image to a collection" %}
     <div class="card">
         <div class="card-body">
-            <p class="font-weight-bold mb-4">{% trans "Image de la collection" %}</p>
+            <p class="font-weight-bold mb-4">
+                {% trans "Image de la collection" %}
+            </p>
             
             <div class="form-group">
                 <div class="custom-file">
-                    <input type="file" name="image" class="custom-file-input" id="image">
-                    <label class="custom-file-label" for="image">{% trans "Choisir une image" %}</label>
+                    {{ form.image }}
+                    <label class="custom-file-label" for="id_image">
+                        {% trans "Choisir une image" %}
+                    </label>
                 </div>
             </div>
         </div>
     </div>    
-    {% endcomment %}
 
     {% if collection.image %}
-        <div class="card">
+        <div class="card mt-3">
             <div class="view overlay">
-                <img class="card-img-top" src="{{ collection.image }}" alt="Card image cap">
+                <img class="card-img-top" src="{% get_aws_prefix_url %}{{ collection.image }}" alt="Card image cap">
                 <a href="#!">
                     <div class="mask rgba-white-slight"></div>
                 </a>
             </div>
-
-            {% comment %}
-            <div class="card-body">
-                <h4 class="card-title">Card title</h4>
-                <button type="button" class="btn btn-light-blue btn-md">
-                    {% trans "Modifier" %}
-                </button>
-            </div>        
-            {% endcomment %}
+        </div>
+    {% else %}
+        <div class="card mt-3 text-center font-weight-bold">
+            <div class="card-body red lighten-4">
+                {% blocktrans %}
+                    Cette collection n'a pas d'image
+                {% endblocktrans %}
+            </div>
         </div>
     {% endif %}
 {% endblock %}
