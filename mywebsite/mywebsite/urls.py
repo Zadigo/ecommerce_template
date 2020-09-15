@@ -23,16 +23,14 @@ urlpatterns = [
     path('customer-care/<page_name>/', views.CustomerServiceView.as_view(), name='customer_care_additional_pages'),
     path('customer-care/', include(customer_cart_patterns)),
     
-    url(r'^subscribe/', views.subscribe_user, name='subscribe_user'),
-
+    path('subscribers/', include('subscribers.urls')),
     path('legal/', include('legal.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('accounts/', include('accounts.urls')),
     path('store/', include('store.urls')),
     path('cart/', include('cart.urls')),
     path('shop/', include('shop.urls')),
-
-    url(r'^$', views.HeroView.as_view(), name='home'),
+    path('', include('hero.urls')),
 
     path('admin/', admin.site.urls),
 ]

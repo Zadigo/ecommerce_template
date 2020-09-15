@@ -1,0 +1,2 @@
+class MailChimp:
+    pass

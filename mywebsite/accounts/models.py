@@ -71,19 +71,6 @@ class MyUserProfile(models.Model):
         return f'{self.address}, {self.city}, {self.zip_code}'
 
 
-class SubscribedUser(models.Model):
-    """People who subscribed to the website"""
-    email       = models.EmailField(blank=True, null=True)
-    created_on  = models.DateField(auto_now_add=True)
-
-    objects = models.Manager()
-
-    def __str__(self):
-        return self.email
-
-
-
-
 # #####################
 #       SIGNALS
 # #####################

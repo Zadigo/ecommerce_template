@@ -43,11 +43,4 @@ class MyUserProfileAdmin(admin.ModelAdmin):
     def deactivate_account(self, request, queryset):
         queryset.update(actif=False)
 
-
-@admin.register(models.SubscribedUser)
-class SubscribedUserAdmin(admin.ModelAdmin):
-    list_display = ['email', 'created_on']
-    date_hierarchy = 'created_on'
-    list_filter = ['created_on']
-
 admin.site.unregister(Group)
