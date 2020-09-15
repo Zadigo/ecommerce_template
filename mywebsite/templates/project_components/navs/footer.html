@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <footer class="page-footer text-center font-small mt-4 wow fadeIn {% block footer_display %}{% endblock %}">
     <div class="policies blue lighten-2 p-2">
         <div class="payments flex-direction-row justify-content-center">
@@ -23,7 +25,7 @@
                         <a href="http://">Suivi commande</a>
                     </li>
                     <li>
-                        <a href="{% url 'customer_care' %}">FAQ</a>
+                        <a href="{}">FAQ</a>
                     </li>
                 </ul>
             </div>
@@ -31,7 +33,9 @@
                 <h4 class="font-weight-bold">Service client</h4>
                 <ul class="list-unstyled mt-3">
                     <li>
-                        <a href="{% url 'customer_care' %}">Contact</a>
+                        <a href="{% url 'customer_care:home' %}">
+                            {% trans "Contact" %}
+                        </a>
                     </li>
                 </ul>
             </div>

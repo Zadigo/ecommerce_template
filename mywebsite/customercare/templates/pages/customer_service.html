@@ -44,7 +44,7 @@
         <div class="row wow fadeIn mt-3">
             {% for link in links %}
                 <div class="col-4">
-                    <a href="{% url 'customer_care_additional_pages' link.page %}#faq">
+                    <a href="{% url 'customer_care:customer_care_additional_pages' link.page %}#faq">
                         <div class="card grey lighten-4">
                             <div class="card-body">
                                 <i class="material-icons" style="font-size: 44px;">{{ link.icon }}</i>
@@ -75,7 +75,7 @@
     </section>
 
     <!-- HELP -->
-    {% include "project_components/customer_care/help_card.html" %}
+    {% include "components/help_card.html" %}
 {% endblock %}
 
 {% block footer %}

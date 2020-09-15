@@ -68,7 +68,7 @@
         name: "CustomerCareEmail",
         delimiters: ["[[", "]]"],
         template: `
-        <form action="{% url 'customer_care' %}" method="POST">
+        <form action="{ url 'customer_care:home' }" method="POST">
             {% csrf_token %}
             <div class="form-row">
                 <reasons-column :width="'col-12'" />
