@@ -20,14 +20,8 @@ customer_cart_patterns = [
 urlpatterns = [
     # path('sitemap.xml', sitemap, {'sitemaps': sitemaps.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
 
-    # re_path(r'^who-we-are$', TemplateView.as_view(template_name='pages/legal/who_are_we.html'), name='who_are_we'),
-
     path('customer-care/<page_name>/', views.CustomerServiceView.as_view(), name='customer_care_additional_pages'),
     path('customer-care/', include(customer_cart_patterns)),
-    
-    # url(r'^conditions-generales-utilisation$', views.CGU.as_view(), name='cgu'),
-    # url(r'^conditions-generales-ventes$', views.CGV.as_view(), name='cgv'),
-    # url(r'^confidentialite-et-cookies$', views.Confidentialite.as_view(), name='confidentialite'),
     
     url(r'^subscribe/', views.subscribe_user, name='subscribe_user'),
 
