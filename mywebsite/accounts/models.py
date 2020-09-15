@@ -55,7 +55,7 @@ class MyUser(AbstractBaseUser):
 class MyUserProfile(models.Model):
     """User profile model used to complete the base user model"""
     myuser              = models.OneToOneField(MyUser, on_delete=models.CASCADE)
-    stripe_id           = models.CharField(max_length=100, blank=True, null=True)
+    stripe_customer_id           = models.CharField(max_length=100, blank=True, null=True)
     birthdate         = models.DateField(default=timezone.now, blank=True, null=True)
     telephone           = models.CharField(max_length=20, blank=True, null=True)
     address            = models.CharField(max_length=150, blank=True, null=True)

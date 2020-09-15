@@ -1,9 +1,9 @@
-{% load i18n navbar %}
+{% load i18n navbar dropdowns %}
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar {% block nav_display %}{% endblock %}">
     <div class="container">
         <!-- BRAND -->
-        <a class="navbar-brand waves-effect" href="{% url 'home' %}">
+        <a class="navbar-brand waves-effect" href="{% url 'hero:home' %}">
             <strong class="blue-text text-uppercase">Nawoka</strong>
         </a>
 
@@ -17,11 +17,11 @@
             {# {% include "offcanvas.html" %} #}
 
             <!-- DROP LARGE -->
-            {% include "./dropdowns/medium1.html" %}
-
+            {% collections_dropdown_block %}
+            
             <!-- RIGHT -->
             <ul class="navbar-nav">
-                {% icon_links "shop:search" "shop:cart:checkout" %}
+                {% icon_links "shop:search" "cart:checkout" %}
 
                 {% if user.is_admin %}
                     {% icon_links "accounts:login" "accounts:logout" %}

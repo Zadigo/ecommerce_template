@@ -33,8 +33,8 @@ class MyUserAdmin(auth_admin.UserAdmin):
 
 @admin.register(models.MyUserProfile)
 class MyUserProfileAdmin(admin.ModelAdmin):
-    actions      = ('activate_account', 'deactivate_account',)
-    list_display = ('myuser', 'telephone',)
+    list_display = ['myuser', 'telephone']
+    actions = ['activate_account', 'deactivate_account']
     search_fields = ['myuser__firstname', 'myuser__lastname', 'myuser__email']
 
     def activate_account(self, request, queryset):
