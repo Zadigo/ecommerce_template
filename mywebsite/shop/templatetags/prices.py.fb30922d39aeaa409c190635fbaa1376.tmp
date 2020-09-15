@@ -20,6 +20,6 @@ def number_to_percentage(number):
 def discount_as_text(price):
     return f'-{price}%'
 
-@register.filter
-def discounted_price_as_text(price, currency):
-    return mark_safe(f"""<strike>{price} €</strike>""")
+
+def discounted_price_as_text(price):
+    return mark_safe"""<strike></strike"""

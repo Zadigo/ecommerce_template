@@ -1,0 +1,10 @@
+{% load i18n %}
+
+{% for collection in collections %}
+    <li>
+        <a href="{% url 'shop:collection' collection.gender collection.view_name %}" class="p-0 pb-1"
+            id="link_collection_item">
+            {{ collection.name }}
+        </a>
+    </li>
+{% endfor %}

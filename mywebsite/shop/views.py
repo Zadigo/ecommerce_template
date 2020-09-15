@@ -41,8 +41,8 @@ from django.views.decorators.cache import (cache_control, cache_page,
 from django.views.decorators.csrf import csrf_exempt
 
 from accounts import models as accounts_models
-from shop import (emailing, forms, models, payment, serializers, tasks,
-                  utilities)
+from cart import models as cart_models
+from shop import models, serializers, tasks, utilities
 
 
 def create_products_impressions(queryset):
@@ -55,35 +55,6 @@ def create_products_impressions(queryset):
                 name=product.name, price=product.get_price(), brand='Nawoka', \
                     category=product.collection.name, position=index, \
                         list=f'{product.collection.gender}/{product.collection.name}'))
-    return impressions
-
-def create_cart_impressions(constructed_products):
-    impressions = []
-    if isinstance(constructed_products, dict):
-        constructed_products = constructed_products['constructed_products']
-
-    for index, product in enumerate(constructed_products):
-        item = {
-            'cart_id': product['cart_id'], 
-            'brand': 'Nawoka', 
-            'position': index, 
-            'price': product['price_ht']
-        }
-        impressions.append(item)
-    return impressions
-
-def creat_cart_products_from_queryset(queryset):
-    impressions = []
-    for cart in queryset:
-        item = {
-                'id': cart.product.reference,
-                'name': cart.product.name,
-                'brand': 'Nawoka',
-                'category': cart.product.collection.name,
-                'price': cart.product.get_price(),
-                'quantity': cart.quantity
-            }
-        impressions.append(item)
     return impressions
 
 
@@ -99,7 +70,7 @@ class LookBookView(generic.TemplateView):
 
 class ShopGenderView(generic.View):
     def get(self, request, *args, **kwargs):
-        collections = models.ProductCollection.objects.filter(gender=kwargs['gender'])
+        collections = models.Collection.objects.filter(gender=kwargs['gender'])
         context = {
             'collections': collections[:3]
         }
@@ -107,7 +78,7 @@ class ShopGenderView(generic.View):
 
 
 class ProductsView(generic.ListView):
-    model = models.ProductCollection
+    model = models.Collection
     template_name = 'pages/collections.html'
     context_object_name = 'products'
     paginate_by = 12
@@ -118,7 +89,7 @@ class ProductsView(generic.ListView):
         gender = self.kwargs['gender']
 
         try:
-            collection = models.ProductCollection.objects.get(view_name__exact=collection_name, gender=gender)
+            collection = models.Collection.objects.get(view_name__exact=collection_name, gender=gender)
         except:
             raise http.Http404("La collection n'existe pas")
         else:
@@ -176,7 +147,7 @@ class ProductView(generic.DetailView):
         # TODO: Add a method function that prevent
         # triggering the rest of the method with 
         # any kinds of post requests
-        cart = models.Cart.cart_manager.add_to_cart(request, product)
+        cart = cart_models.Cart.cart_manager.add_to_cart(request, product)
         if cart:
             return http.JsonResponse(data={'success': 'success'})
         else:
@@ -243,7 +214,7 @@ class PrivateProductView(generic.DetailView):
         # TODO: Add a method function that prevent
         # triggering the rest of the method with 
         # any kinds of post requests
-        cart = models.Cart.cart_manager.add_to_cart(request, product)
+        cart = cart_models.Cart.cart_manager.add_to_cart(request, product)
         if cart:
             return http.JsonResponse(data={'success': 'success'})
         else:
@@ -257,222 +228,6 @@ class PrivateProductView(generic.DetailView):
         context['vue_product'] = serialized_product.data
         
         return context    
-
-
-class CheckoutView(generic.ListView):
-    model = models.Cart
-    template_name = 'pages/cart.html'
-    context_object_name = 'constructed_products'
-
-    def get(self, request, **kwargs):
-        # TODO: Make sure when the customer
-        # reduces the cart and it goes to
-        # zero to delete the cart ID from
-        # his session
-        get_request = super().get(request)
-
-        cart_id = self.request.session.get('cart_id')
-        if cart_id is None:
-            return redirect(reverse('shop:cart:no_cart'))
-
-        queryset = super().get_queryset().filter(cart_id=cart_id)
-        if not queryset.exists():
-            return redirect(reverse('shop:cart:no_cart'))
-        return get_request
-
-    def post(self, request, **kwargs):
-        return http.JsonResponse({'success': 'success'})
-    
-    def get_queryset(self, **kwargs):
-        cart_id = self.request.session.get('cart_id')
-        return models.Cart.cart_manager.cart_products(cart_id)
-
-    def get_context_data(self, **kwargs):
-        products = super().get_queryset()
-        context = super().get_context_data()
-
-        context['vue_products'] = self.get_queryset()
-
-        products = self.get_queryset(**kwargs)['constructed_products']
-        context['impressions'] = create_cart_impressions(products)
-
-        cart_id = self.request.session.get('cart_id')
-        context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
-        return context
-
-
-@method_decorator(cache_control(private=True), name='dispatch')
-class ShipmentView(generic.ListView):
-    model = models.Cart
-    template_name = 'pages/shipment.html'
-    context_object_name = 'products'
-
-    def get(self, request, **kwargs):
-        get_request = super().get(request)
-
-        cart_id = self.request.session.get('cart_id')
-        if cart_id is None:
-            return redirect(reverse('shop:cart:no_cart'))
-            
-        queryset = super().get_queryset().filter(cart_id=cart_id)
-        if not queryset.exists():
-            return redirect(reverse('shop:cart:no_cart'))
-        return get_request
-
-    def get_queryset(self, **kwargs):
-        cart_id = self.request.session.get('cart_id')
-        return models.Cart.cart_manager.cart_products(cart_id)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        products = self.get_queryset(**kwargs)
-        cart_id = self.request.session.get('cart_id')
-
-        context['cart_id'] = cart_id
-        context['coupon_form'] = forms.CouponForm
-        # context['has_coupon'] = self.get_queryset().first().coupon.has_coupon
-        context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
-
-        context['impressions'] = create_cart_impressions(products)
-        return context
-
-
-@method_decorator(never_cache, name='dispatch')
-class PaymentView(generic.ListView):
-    model = models.Cart
-    template_name = 'pages/payment.html'
-    context_object_name = 'products'
-
-    def get(self, request, **kwargs):
-        get_request = super().get(request)
-
-        cart_id = self.request.session.get('cart_id')
-        if cart_id is None:
-            return redirect(reverse(reverse('shop:cart:no_cart')))
-            
-        queryset = super().get_queryset().filter(cart_id=cart_id)
-        if not queryset.exists():
-            return redirect(reverse(reverse('shop:cart:no_cart')))
-        return get_request
-
-    def post(self, request, **kwargs):
-        context = self.get_context_data(object_list=self.get_queryset(), **kwargs)
-        payment.PreprocessPayment(request, set_in_session=True, shipping='standard')
-        return render(request, self.template_name, context)
-
-    def get_queryset(self, **kwargs):
-        cart_id = self.request.session.get('cart_id')
-        return models.Cart.cart_manager.cart_products(cart_id)
-
-    def get_context_data(self, object_list=None, **kwargs):
-        context = super().get_context_data(object_list=object_list, **kwargs)
-        products = self.get_queryset(**kwargs)
-        cart_id = self.request.session.get('cart_id')
-        context['cart_id'] = cart_id
-        context['cart_total'] = self.model.cart_manager.cart_total(cart_id)['cart_total']
-        context['impressions'] = create_cart_impressions(products)
-        return context
-
-
-class ProcessPayment(generic.View):
-    def post(self, request, **kwargs):
-        backend = payment.SessionPaymentBackend(request)
-        backend.cart_model = models.Cart
-        # state, data = backend.process_payment(payment_debug=False)
-        state, data = backend.create_customer_and_process_payment()
-        
-        confirmation_email = emailing.OrderConfirmationEmail()
-        
-        if state:
-            details = {
-                'reference': data['order_reference'],
-                'transaction': data['transaction'],
-                'payment': data['total']
-            }
-            
-            try:
-                order = models.CustomerOrder.objects.create(**details)
-                order.cart.add(*list(backend.cart_queryset))
-            except:
-                return http.JsonResponse(data={'state': state, 'redirect_url': '/shop/payment'})
-            else:
-                backend.set_session_for_post_process()
-
-                user, _ = accounts_models.MyUser.objects.get_or_create(email=backend.user_infos['email'])
-
-                user.name = backend.user_infos['firstname']
-                user.surname = backend.user_infos['lastname']
-                user.save()
-
-                profile = user.myuserprofile_set.get()
-                profile.telephone = backend.user_infos['telephone']
-                profile.address = backend.user_infos['address']
-                profile.city = backend.user_infos['city']
-                profile.zip_code = backend.user_infos['zip_code']
-
-                profile.save()
-
-                order.user = user
-                order.save()
-
-                # confirmation_email.process(
-                #     request, 'contact.mywebsite@gmail.com',
-                #     user.email,
-                #     '', 
-                #     profile.get_full_address(), 
-                #     order.reference, 1, 
-                #     user.name,
-                #     order_total=order.payment
-                # )
-        else:
-            return http.JsonResponse(data={'state': state, 'redirect_url': data['redirect_url'], 'code': data['errors'][0]['code']})
-        return http.JsonResponse(data={'state': state, 'redirect_url': data['redirect_url']})
-
-
-@method_decorator(cache_control(private=True), name='dispatch')
-class CartSuccessView(generic.TemplateView):
-    template_name = 'pages/success.html'
-
-    def get(self, request, *args, **kwargs):
-        context = {}
-
-        backend = payment.PostProcessPayment(request)
-
-        if backend.is_authorized:
-            data = request.session.get('conversion')
-            customer_order = models.CustomerOrder.objects.get(reference=data['reference'])
-            products = customer_order.cart.all()
-            context['products'] = creat_cart_products_from_queryset(products)
-            context['payment'] = data['payment']
-            context['transaction'] = data['transaction']
-            context['reference'] = data['reference']
-            return render(request, 'pages/success.html', context=context)
-        else:
-            return redirect(reverse('shop:cart:no_cart'))
-
-
-class EmptyCartView(generic.TemplateView):
-    template_name = 'pages/no_cart.html'
-
-
-@http_decorator.require_POST
-def apply_coupon(request, **kwargs):
-    coupon = request.POST.get('coupon')
-    
-    form = forms.CouponForm(request.POST)
-    
-    if form.is_valid():
-        try:
-            coupon = models.Discount.objects.get(code=coupon)
-        except:
-            return redirect('shipment')
-        else:
-            # cart_id = request.session.get('cart_id')
-            # cart = models.Cart.objects.filter(cart_id=cart_id)
-            # cart.update(coupon=coupon)
-            return redirect('shipment')
-    else:
-        return redirect('shipment')
 
 
 class SearchView(generic.ListView):
@@ -499,102 +254,9 @@ class SearchView(generic.ListView):
         # TODO
         collections = ['tops', 'pantalons']
         random_collection = random.choice(collections)
-        collection = models.ProductCollection.objects.get(view_name=random_collection)
+        collection = models.Collection.objects.get(view_name=random_collection)
         proposed_products = collection.product_set.all()[:4]
         context['proposed_products'] = proposed_products
 
         context['impressions'] = create_products_impressions(products)
         return context
-  
-  
-class SpecialOfferView(generic.DetailView):
-    model = models.Discount
-    template_name = 'pages/product.html'
-    context_object_name = 'product'
-
-    def get_queryset(self):
-        offer = models.Discount.\
-            objects.get(reference=self.kwargs['pk'])
-        try:
-            product = offer.product.get(reference=self.kwargs['product_reference'])
-        except exceptions.ObjectDoesNotExist:
-            return redirect(reverse('shop_gender', args=['femme']))
-        else:
-            return product
-            
-
-@http_decorator.require_GET
-def delete_product_from_cart(request, **kwargs):
-    cart_id = request.session.get('cart_id')
-    if cart_id:
-        products = models.Cart.objects.filter(cart_id__iexact=cart_id)
-        if products.exists():
-            try:
-                product = products.get(pk=kwargs['pk'])
-            except:
-                messages.error(request, _("Une erreur s'est produite - CHE-DE"))
-                return redirect(reverse('shop:cart:checkout'))
-
-            try:
-                with atomic_transactions.atomic():
-                    product.delete()
-            except:
-                messages.error(request, _("Une erreur s'est produite - CHE-DE"))
-                return redirect(reverse('shop:cart:checkout'))
-
-            products_count = models.Cart.cart_manager.number_of_products(
-                cart_id)
-
-            # When the cart is completely empty,
-            # this returns None which in return
-            # throws a TypeError becaause None cannot
-            # be compared to int
-            if not products_count['quantity__sum']:
-                return redirect(reverse('shop:cart:no_cart'))
-
-            if products_count['quantity__sum'] > 1:
-                return redirect(reverse('shop:cart:checkout'))
-
-    return redirect(reverse('shop:cart:no_cart'))
-
-
-@http_decorator.require_GET
-def alter_item_quantity(request, **kwargs):
-    accepted_methods = ['add', 'reduce']
-    if 'method' in kwargs:
-        if kwargs['method'] not in accepted_methods:
-            messages.error(
-                request, _("Quelque chose c'est mal passé - CX-ATOC"), extra_tags='alert-danger')
-
-    cart_id = request.session.get('cart_id')
-    if cart_id:
-        method = kwargs['method']
-        user_carts = models.Cart.objects.filter(cart_id=cart_id)
-        try:
-            cart_to_alter = user_carts.get(id=kwargs['pk'])
-        except:
-            messages.error(request, _("Le panier n'existe pas"), extra_tags='alert-warning')
-            return redirect(reverse('shop:cart:checkout'))
-        else:
-            quantity = cart_to_alter.quantity
-            if method == 'add':
-                quantity = quantity + 1
-            elif method == 'reduce':
-                quantity = quantity - 1
-
-                # If the user only had one
-                # thing in his cart, by deleting
-                # that single thing we know that
-                # there is nothing left
-                if quantity < 1 and user_carts.count() == 1:
-                    cart_to_alter.delete()
-                    return redirect(reverse('shop:cart:no_cart'))
-
-            cart_to_alter.quantity = quantity
-            cart_to_alter.save()
-
-        return redirect(reverse('shop:cart:checkout'))
-    else:
-        messages.error(
-            request, _("Ce panier n'existe pas"), extra_tags='alert-warning')
-    return redirect(reverse('shop:cart:checkout'))

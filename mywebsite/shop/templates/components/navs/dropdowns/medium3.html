@@ -1,0 +1,36 @@
+<ul class="navbar-nav mr-auto">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Femme</a>
+        <div class="dropdown-menu dropdown-large fade-up">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="text-muted text-uppercase font-weight-bold">Collection</p>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'shop:collection' 'femme' 'robes' %}" class="p-0 pb-1" id="link_collection_item">Robes</a></li>
+                        <li><a href="{% url 'shop:collection' 'femme' 'tops' %}" class="p-0 pt-1 pb-1" id="link_collection_item">Tops</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <a href="{% url 'shop:collection' 'femme' 'tops' %}">
+                        <img src="https://ae01.alicdn.com/kf/HTB1tAiYj9YTBKNjSZKbq6xJ8pXa4/CDJLFH-2019-t-femmes-mode-Crop-chemise-haute-couleur-unie-o-cou-manches-courtes-T-shirt.jpg" alt="nav-image" class="img-fluid">
+                        <p class="m-0 mt-3 text-center text-uppercase">Crop tops</p>
+                    </a>
+                </div>
+                
+                {% comment %}
+                    <div class="col-md-6">
+                        <h6 class="title">Title Menu Two</h6>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Custom Menu</a></li>
+                            <li><a href="#">Custom Menu</a></li>
+                            <li><a href="#">Custom Menu</a></li>
+                            <li><a href="#">Custom Menu</a></li>
+                            <li><a href="#">Custom Menu</a></li>
+                            <li><a href="#">Custom Menu</a></li>
+                        </ul>
+                    </div>                    
+                {% endcomment %}
+            </div>
+        </div>
+    </li>
+</ul>

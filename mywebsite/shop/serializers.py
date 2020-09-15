@@ -37,22 +37,7 @@ class ProductSerializer(Serializer):
     price_ht = fields.DecimalField(5, 2)
     discounted_price = fields.DecimalField(5, 2)
     slug        = fields.SlugField()
-
-
-class AnonymousCartSerializer(Serializer):
-    pass
-
-
-class CartSerializer(Serializer):
-    pass
-
-
-class DiscountSerializer(Serializer):
-    product  = ProductSerializer(many=True)
-    collection  = CollectionSerializer(many=True)
-    code      = fields.CharField()
-    value   = fields.IntegerField()
-
+    
 
 class SimpleProductSerializer(Serializer):
     pk  = fields.IntegerField()

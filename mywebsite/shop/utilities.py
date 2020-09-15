@@ -8,49 +8,6 @@ import string
 from django.core import exceptions
 
 
-def create_transaction_token(n=1, salt='mywebsite'):
-    """Create a payment token for Google enhanced ecommerce"""
-    tokens = [secrets.token_hex(2) for _ in range(0, n)]
-    # Append the salt that allows us to identify
-    # if the payment method is a valid one
-    tokens.append(hashlib.sha256(salt.encode('utf-8')).hexdigest())
-    return '-'.join(tokens)
-
-
-def validate_payment_id(token, salt='mywebsite'):
-    """Validate a payment ID"""
-    parts = token.split('-')
-    hashed_salt = hashlib.sha256(salt.encode('utf-8')).hexdigest()
-    
-    # The salt should always theoretically
-    # be the last component of the array
-    incoming_hashed_part = parts.pop(-1)
-
-    truth_array = []
-
-    # Compare incoming salt to salt
-    if hashed_salt == incoming_hashed_part:
-        truth_array.append(True)
-    else:
-        truth_array.append(False)
-
-    # We should only have 5
-    # parts in the array outside
-    # of the salt
-    if len(parts) == 5:
-        truth_array.append(True)
-    else:
-        truth_array.append(False)
-    
-    # Each part should have a
-    # maximum of 5 characters
-    for part in parts:
-        if len(part) != 4:
-            truth_array.append(False)
-
-    return all(truth_array)
-
-
 def create_reference(n=5, append_prefix=True):
     """Create a basic reference: `NAW201906126011b0e0b8`
     """
@@ -116,23 +73,6 @@ def create_image_slug(name, reverse=False):
     return f'{image_name.strip().lower()}.jpg'
     
     
-def create_cart_id(n=12):
-    """Creates an iD for the Anonymous cart so that we can
-    easily get all the items registered by an anonymous user
-    in the cart.
-
-    This iD is saved in the session and in the local storage.
-
-    Description
-    -----------
-
-        2019_01_02_token
-    """
-    token = secrets.token_hex(n)
-    date = datetime.datetime.now().date()
-    return f'{date.year}_{date.month}_{date.day}_' + token
-
-
 def calculate_discount(price, pct):
     """Calculates a discount price
 
@@ -144,6 +84,7 @@ def calculate_discount(price, pct):
         return round(float(price) * (1 - (pct / 100)), 2)
     except:
         raise exceptions.ValidationError('Price should be an integer or a float')
+
 
 def calculate_tva(price, tva=20):
     """Calculates the tax on a product
@@ -233,8 +174,3 @@ def create_product_slug(word:str):
             non_accentuated_word = non_accentuated_word + letter            
 
     return non_accentuated_word
-
-def create_discount_code():
-    n = random.randrange(1000, 9000)
-    s = random.choice(string.ascii_uppercase)
-    return f'NAW{n}{s}'

@@ -10,7 +10,6 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from mywebsite import aws_manager
 from shop import managers, utilities, validators
 
 MYUSER = get_user_model()
@@ -84,7 +83,7 @@ class AutomaticCollectionCriteria(models.Model):
         return self.reference
 
 
-class ProductCollection(models.Model):
+class Collection(models.Model):
     """
     Represents a collection of products
     """
@@ -96,7 +95,8 @@ class ProductCollection(models.Model):
     gender = models.CharField(max_length=50, choices=GenderChoices.choices, default=GenderChoices.FEMME)
     
     view_name   = models.CharField(max_length=50)
-    image       = models.URLField(blank=True, null=True)
+    # image       = models.URLField(blank=True, null=True)
+    image        = models.FileField(upload_to='collections', blank=True, null=True)
     presentation_text = models.TextField(max_length=300, blank=True, null=True)
     google_description = models.CharField(max_length=160, blank=True, null=True)
     show_presentation  = models.BooleanField(default=False)
@@ -165,7 +165,7 @@ class Product(models.Model):
     gender = models.CharField(max_length=50, choices=GenderChoices.choices, default=GenderChoices.FEMME)
 
     images          = models.ManyToManyField(Image)
-    collection      = models.ForeignKey(ProductCollection, on_delete=models.DO_NOTHING)
+    collection      = models.ForeignKey(Collection, on_delete=models.CASCADE, blank=True, null=True)
     variant        = models.ManyToManyField(Variant, blank=True)
 
     description   = models.TextField(max_length=280, blank=True, null=True)
@@ -188,8 +188,7 @@ class Product(models.Model):
         BRAS = '214'
         ACCESSORIES = '178'
         FLYINGTOYACCESSORIES = '7366'
-    google_category = models.CharField(max_length=5,
-        choices=GoogleProductCategory.choices, default=GoogleProductCategory.TOPS)
+    google_category = models.CharField(max_length=5, choices=GoogleProductCategory.choices, default=GoogleProductCategory.TOPS)
 
     # is_top_garment       = models.BooleanField(default=True)
     # is_lower_garment   = models.BooleanField(default=False)
@@ -235,9 +234,10 @@ class Product(models.Model):
     @cached_property
     def get_main_image_url(self):
         """Returns the url of the image marked as main"""
-        images = self.images.filter(main_image=True)
-        if images.exists():
-            image = images.first()
+        images = self.images.all()
+        main_images = images.filter(main_image=True)
+        if main_images.exists():
+            image = main_images.first()
             return image.url
         else:
             try:
@@ -292,189 +292,6 @@ class Product(models.Model):
             return self.price_ht
 
 
-class Discount(models.Model):
-    """
-    A set of discounts applicable for a collection, a product
-    or  a purchase
-    """
-    code        = models.CharField(max_length=10, default=utilities.create_discount_code())
-    value       = models.IntegerField(default=5)
-    class ValueTypes(models.Choices):
-        PERCENTAGE      = 'percentage'
-        FIXED_AMOUNT     = 'fixed amount'
-        FREE_SHIPPING = 'free shipping'
-    value_type  = models.CharField(max_length=50, choices=ValueTypes.choices, default=ValueTypes.PERCENTAGE)
-
-    product     = models.ForeignKey(Product, blank=True, null=True, on_delete=models.SET_NULL, help_text='Apply on a specific product')
-    collection = models.ForeignKey(ProductCollection, help_text='Apply on an entire collection', on_delete=models.SET_NULL, blank=True, null=True)
-    on_entire_order =   models.BooleanField(default=False, help_text='Apply on an entire order')
-
-    minimum_purchase = models.IntegerField(default=0)
-    minimum_quantity = models.IntegerField(default=0)
-
-    usage_limit  = models.IntegerField(default=0, help_text='Number of times a code can be used in total')
-
-    active      = models.BooleanField(default=False)
-
-    start_date  = models.DateTimeField()
-    end_date    = models.DateTimeField()
-
-    created_on = models.DateField(auto_now_add=True)
-
-    objects = models.Manager()
-
-    def __str__(self):
-        return self.code
-
-    def get_promotion_url(self):
-        """Returns a special link for a product that would have
-        been marked as a special offer
-        """
-        if self.product:
-            return reverse('shop:special_offer', args=[self.code, self.product.reference])
-        return None
-
-    @property
-    def is_valid(self):
-        if self.end_date >= utils.timezone.now():
-            return all([False, self.active])
-        return all([True, self.active])
-
-
-class Cart(models.Model):
-    """
-    Represents a customer's cart
-    """
-    cart_id         = models.CharField(max_length=80)
-    product     = models.ForeignKey(Product, blank=True, null=True, on_delete=models.CASCADE)
-    coupon      = models.ForeignKey(Discount, on_delete=models.SET_NULL, blank=True, null=True)
-    
-    price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
-    # discounted_price    = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    price_ttc   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
-    
-    color       = models.CharField(max_length=50)
-    size       = models.CharField(max_length=5, validators=[validators.generic_size_validator], blank=True, null=True)
-    quantity    = models.IntegerField(default=1, validators=[validators.quantity_validator])
-    anonymous   = models.BooleanField(default=False)
-
-    created_on = models.DateField(auto_now_add=True)
-
-    objects = models.Manager()
-    cart_manager = managers.CartManager.as_manager()
-    statistics  = managers.CartsStatisticsManager.as_manager()
-
-    class Meta:
-        ordering = ['-created_on', '-pk']
-        indexes = [
-            models.Index(fields=['price_ht', 'quantity']),
-        ]
-
-    def __str__(self):
-        return self.cart_id
-
-    def clean(self):
-        if self.price_ht > 0:
-            self.price_ttc = utilities\
-                    .calculate_tva(self.price_ht, tva=20)
-
-    @property
-    def get_product_total(self):
-        return self.price_ht * self.quantity
-
-    def get_increase_quantity_url(self):
-        return reverse('shop:alter_quantity', args=['add'])
-
-    def get_decrease_quantity_url(self):
-        return reverse('shop:alter_quantity', args=['reduce'])
-
-    def has_coupon(self):
-        return self.coupon is not None
-
-    def get_total(self):
-        if self.price_ht and self.quantity:
-            return self.price_ht * self.quantity
-        return 0
-
-    def has_orders(self):
-        orders = self.customerorder_set.all()
-        if orders:
-            return True
-        return False
-
-
-class CustomerOrder(models.Model):
-    """
-    Reprensents a customer's order
-    """
-    user        = models.ForeignKey(MYUSER, blank=True, null=True, on_delete=models.SET_NULL)
-    cart             = models.ManyToManyField(Cart, blank=True)
-    reference  = models.CharField(max_length=50)
-    transaction   = models.CharField(max_length=200, default=utilities.create_transaction_token())
-    payment           = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-
-    accepted        = models.BooleanField(default=False)
-    # TODO: Maybe move this field to shipment
-    shipped       = models.BooleanField(default=False)
-    # TODO: change to delivered or use the completed
-    # field in the Shipment model
-    completed       = models.BooleanField(default=False)
-    refund        = models.BooleanField(default=False)
-
-    comment       = models.TextField(max_length=500, blank=True, null=True)
-
-    tracking_number     = models.CharField(max_length=50, blank=True, null=True)
-
-    class DeliveryChoices(models.Choices):
-        STANDARD = 'standard'
-        # PRIME = 'prime'
-    delivery    = models.CharField(max_length=50, choices=DeliveryChoices.choices, default=DeliveryChoices.STANDARD)
-
-    created_on  = models.DateField(auto_now_add=True)
-
-    objects = models.Manager()
-    statistics  = managers.OrdersStatisticsManager.as_manager()
-
-    class Meta:
-        ordering = ['-created_on', '-pk']
-        indexes = [
-            models.Index(fields=['payment'])
-        ]
-
-    def __str__(self):
-        return self.transaction
-
-
-class Shipment(models.Model):
-    """
-    Tracking orders that are shipped
-    """
-    customer_order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE)
-    tracking_number = models.CharField(max_length=100, blank=True, null=True)
-    completed       = models.BooleanField(default=False)
-
-    created_on = models.DateField(auto_now_add=True)
-
-    objects = models.Manager()
-
-    def __str__(self):
-        return self.customer_order.transaction
-
-
-class Review(models.Model):
-    """
-    Represents a customer review
-    """
-    user    = models.ForeignKey(MYUSER, blank=True, null=True, on_delete=models.SET_NULL)
-    customer_order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE ,blank=True, null=True)
-    rating  = models.IntegerField(default=1)
-    text    = models.TextField(max_length=300)
-    created_on  = models.DateField(auto_now_add=True)
-
-    def __str__(self):
-        return self.customer_order
-
-
 class LookBook(models.Model):
     """
     Lookbook for the store
@@ -485,17 +302,6 @@ class LookBook(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# class Supplier(models.Model):
-#     store   = models.ForeignKey(Store, on_delete=models.CASCADE)
-#     name      = models.CharField(max_length=100, blank=True, null=True)
-#     country     = models.CharField(max_length=80, blank=True, null=True)
-#     email      = models.EmailField(max_length=100, blank=True, null=True)
-#     website      = models.URLField(max_length=100, blank=True, null=True)
-
-#     def __str__(self):
-#         return self.name
 
 
 @receiver(post_save, sender=Product)
