@@ -1,0 +1,19 @@
+{% load i18n %}
+
+{% autoescape off %}
+    {% blocktrans %}Bonjour{% endblocktrans %},
+
+    {% blocktrans %}
+    Nous vous remercions de votre commande. Nous vous tiendrons informé par e-mail lorsque les articles de votre commande
+    auront été expédiés. Votre date de livraison estimée entre le {{ estimated_order_date }} et le {{ estimated_order_date }}. 
+    Vous pouvez suivre l’état de votre commande ou modifier celle-ci dans https://mywebsite.fr/customer-care/.
+    {% endblocktrans %}
+
+    Votre commande sera expédiée à : {{ customer_delivery_address }}
+    
+    {% trans "Récapitulatif de votre commande" %}   
+
+    Sous-total des articles : {{ order_total }}€
+    {% if shipping %}Frais d'envoi : 2.99€{% endif %}
+    Montant total de la commande : {{ order_total }}€
+{% endautoescape %}

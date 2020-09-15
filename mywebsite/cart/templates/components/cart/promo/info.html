@@ -1,0 +1,9 @@
+{% load i18n prices %}
+
+<li class="list-group-item d-flex justify-content-between bg-light">
+    <div class="text-success">
+        <h6 class="my-0">{% trans "Code promo" %}</h6>
+        <small>{{ coupon_code }}</small>
+    </div>
+    <span class="text-success">{{ coupon_value|number_to_percentage }}</span>
+</li>

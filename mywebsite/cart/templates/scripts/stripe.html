@@ -1,0 +1,113 @@
+<script>
+    (function() {
+        var paymentform = $("#form_payment")
+        
+        var publisheablekey = "{{ publishable_key }}"
+        var stripe = Stripe(publisheablekey)
+        var elements = stripe.elements()
+        var style = {
+            base: {
+                fontWeight: 500,
+                fontFamily: "Roboto, Raleway, Open Sans",
+                fontSize: "16px",
+                fontSmoothing: 'antialiased',
+                iconColor: '#c4f0ff',
+
+                // ':-webkit-autofill': {
+                //     color: '#fce883',
+                // },
+
+                // '::placeholder': {
+                //     color: '#87BBFD',
+                // },
+            }
+        }
+
+        var card = elements.create("card", {style: style})
+        card.mount("#card-element")
+
+        paymentform.on("submit", (e) => {
+            e.preventDefault()
+
+            var processurl = "{% url 'cart:pay' %}"
+            var csrf = paymentform.find("input[type='hidden']").val()
+            var button = paymentform.find("button[type='submit']")
+            var messagecard = $("#card-errors")
+            
+            stripe.createToken(card).then((result) => {
+                if (result.error) {
+                    messagecard.removeClass("d-none")
+                    messagecard.text(result.error.message)
+                } else {
+                    var formdata = new FormData()
+                    formdata.append("csrfmiddlewaretoken", csrf)
+                    formdata.append("token", result.token.id)
+
+                    var xhr = new XMLHttpRequest()
+
+                    xhr.responseType = "json"
+
+                    xhr.onloadstart = function() {
+                        button.find("div.spinner-grow").removeClass("d-none")
+                        button.find(".payment-button-text").addClass("d-none")
+                        button.addClass("disabled")
+                    }
+
+                    xhr.onloadend = function() {
+                        var response = xhr.response
+                        if (xhr.status === 500 | xhr.status === 400) {
+                            setTimeout(() => {
+                                messagecard.text("Une erreur interne s'est produite")
+                                messagecard.removeClass("d-none")
+
+                                button.find("div.spinner-grow").addClass("d-none")
+                                button.find(".payment-button-text").removeClass("d-none")
+                                button.removeClass("disabled")
+                            }, 3000)
+                        }
+                        
+                        if (xhr.status === 200) {
+                            if (response.state == true) {
+                                setTimeout(() => {
+                                    window.location.href = response.redirect_url
+                                }, 3000);
+                            }
+
+                            if (response.state == false) {
+                                dataLayer.push({
+                                    "event": "Payment",
+                                    "PaymentState": false,
+                                    "PaymentFailedSum": "{{ cart_total }}"
+                                })
+                                if (response.code === "card_declined") {
+                                    messagecard.text("Le paiement a été refusé")
+                                } else if (response.code === "expired_card") {
+                                    messagecard.text("Le carte n'est plus valide")
+                                } else if (response.code === "incorrect_cvc") {
+                                    messagecard.text("Le cvc est incorrect")
+                                } else {
+                                    messagecard.text("Le paiement n'a pas pu aboutir")
+                                }
+                                messagecard.removeClass("d-none")
+
+                                button.find("div.spinner-grow").addClass("d-none")
+                                button.find(".payment-button-text").removeClass("d-none")
+                                button.removeClass("disabled")
+                            }
+                        }
+
+                        if (response.context_errors) {
+                            $("#context-errors").removeClass("d-none")
+                            response.context_errors.forEach((error) => {
+                                $("#context-errors .errors").append(error)
+                            })
+                        }
+                    }
+                    
+                    xhr.open("POST", processurl)
+                    xhr.send(formdata)
+                }
+            })
+        })
+    })()
+</script>

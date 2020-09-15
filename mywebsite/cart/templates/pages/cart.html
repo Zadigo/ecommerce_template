@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load i18n static prices table %}
+
+{% block title %}{% trans "Mon panier" %} - Nawoka{% endblock %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block datalayer_push %}
+    {% include "scripts/datalayer.html" with event="checkout" step=1 %}
+{% endblock %}
+
+{% block remarketing %}
+    <script>
+        gtag("event", "conversion", {
+            "send_to": "AW-701852005/xTa9CP_dt8oBEOXS1c4C",
+            "value": "{{ cart_total.true_price__sum }}",
+            "currency": "EUR"
+        });
+    </script>
+{% endblock %}
+
+{% block container %}
+    <div class="row wow fadeIn">
+        <div class="col-md-12 mb-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover table-bordered">
+                            <thead class="grey lighten-4">
+                                {% header "Produit" "Quantité" %}
+                                <th colspan="2">
+                                    {% trans "Total" %}
+                                </th>
+                            </thead>
+
+                            </tbody>
+                                {% for product in cart_products %}
+                                    <tr>
+                                        <td>
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <div class="cart-image">
+                                                        <img class="img-fluid" src="{{ product.product.get_main_image_url }}" alt="{{ product.slug }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-auto">
+                                                    {{ product.product.name }}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'cart:alter_quantity' product.id 'reduce' %}" id="btn_alter_cart_reduce">
+                                                <i class="fa fa-minus"></i>
+                                            </a>
+                                            {{ product.quantity }}
+                                            <a href="{% url 'cart:alter_quantity' product.id 'add' %}" id="btn_alter_cart_add">
+                                                <i class="fa fa-plus"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if product.product.discounted %}
+                                                <p>
+                                                    {{ product.product.discounted_price|discounted_price_as_text:"€" }}
+                                                    {{ product.total|price_to_text }}
+                                                </p>
+                                                <p class="red-text">
+                                                    {{ product.product.discount_pct|discount_as_text }}
+                                                </p>
+                                            {% else %}
+                                                <p>
+                                                    {{ product.total|price_to_text }}                                                
+                                                </p>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'cart:delete' product.id %}" class="btn btn-sm btn-transparent z-depth-0" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.product.price_ht }}', '{{ product.product.name }}', '{{ product.quantity }}')">
+                                                <i class="fa fa-trash fa-1x"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+
+                            {% comment %}
+                            <tbody>
+                                <div id="vue_app">
+                                    <listcomponent @mathoperation="hideproduct" v-bind:products="products" />
+                                </div>
+                            </tbody>
+                            {% endcomment %}
+                            
+                        </table>
+                        <div class="csrf">{% csrf_token %}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row wow fadeIn mt-3">
+        <div class="col-md-12 mb-12">
+            <div class="card">
+                <div class="card-body">
+                    <a href="{% url 'cart:shipment' %}" class="btn btn-large blue float-right" id="btn_proceed_to_shipment">
+                        {% trans "Continuer" %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+    <script>
+        var deleteProduct = function(index, price, name, quantity) {
+            dataLayer.push({
+                "event": "removeFromCart",
+                "ecommerce": {
+                    "currencyCode": "EUR",
+                    "remove": {
+                    "products": [{
+                            "id": "",
+                            "price": price,
+                            "name": name,
+                            "category": "",
+                            "variant": "",
+                            "brand": "Nawoka",
+                            "quantity": quantity
+                        }]
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}

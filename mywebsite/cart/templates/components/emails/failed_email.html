@@ -1,0 +1,10 @@
+{% load i18n %}
+
+{% autoescape off %}
+    {% blocktrans %}ORDER CREATION FAILED - {{ transaction }} {{ order_reference }}{% endblocktrans %},
+
+    {% blocktrans %}
+        The creation for the order {{ order_reference }} / {{ transaction }} was not created in the database
+        for the following customer {{ customer_name }} with the following cart ID {{ cart_id }}.
+    {% endblocktrans %}
+{% endautoescape %}

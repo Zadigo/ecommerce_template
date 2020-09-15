@@ -1,0 +1,13 @@
+<script>
+    dataLayer.push({
+        "event": "{{ event }}",
+        "ecommerce": {
+            "checkout": {
+                "actionField": {
+                    "step": "{{ step }}"
+                },
+                "products": {{ impressions|safe }}
+                }
+            }
+        })
+</script>

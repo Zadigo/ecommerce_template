@@ -1,0 +1,77 @@
+<script>
+    const baseRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0
+    }
+
+    const tokenizationSpecification = {
+        type: "PAYMENT_GATEWAY",
+        parameters: {
+            "gateway": "stripe",
+            "stripe:version": "2018-10-31",
+            "stripe:publishableKey": "{{ publishable_key }}"
+        }
+    }
+
+    const allowedCardNetworks = ["MASTERCARD", "VISA"];
+    const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"]
+
+    const baseCardPaymentMethod = {
+        type: "CARD",
+        parameters: {
+            allowedAuthMethods: allowedCardAuthMethods,
+            allowedCardNetworks: allowedCardNetworks
+        }
+    }
+
+    const cardPaymentMethod = Object.assign(
+        { tokenizationSpecification: tokenizationSpecification },
+        baseCardPaymentMethod
+    )
+
+    // const paymentsClient = new google.payments.api.PaymentsClient(
+    //     {
+    //         environment: 'TEST',
+    //         // paymentDataCallbacks: {
+    //         //     onPaymentAuthorized: onPaymentAuthorized
+    //         // }
+    //     },
+    // )
+
+    // const isReadyToPayRequest = Object.assign({}, baseRequest);
+    // isReadyToPayRequest.allowedPaymentMethods = [baseCardPaymentMethod]
+
+    // paymentsClient.isReadyToPay(isReadyToPayRequest)
+    //     .then(function (response) {
+    //         if (response.result) {
+    //             paymentsClient.createButton({ onClick: () => console.log('TODO: click handler') })
+    //             document.getElementById('container').appendChild(button);
+    //         }
+    //     })
+    //     .catch(function (err) {
+    //         // show error in developer console for debugging
+    //         console.error(err);
+    //     });
+
+    // const paymentDataRequest = Object.assign({}, baseRequest)
+    // paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod]
+    // paymentDataRequest.transactionInfo = {
+    //     totalPriceStatus: "FINAL",
+    //     totalPrice: "{{ cart_total }}",
+    //     currencyCode: "EUR",
+    //     countryCode: "FR"
+    // }
+
+    // paymentDataRequest.merchantInfo = {
+    //     merchantName: 'Example Merchant',
+    //     merchantId: '12345678901234567890'
+    // }
+
+    // paymentsClient.loadPaymentData(paymentDataRequest).then(function (paymentData) {
+    //         paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+    //     }).catch(function (err) {
+    //         console.error(err);
+    //     });
+</script>
+
+<script async src="https://pay.google.com/gp/p/js/pay.js" onload="console.log('TODO: add onload function')"></script>

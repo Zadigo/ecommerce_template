@@ -67,7 +67,7 @@ TEMPLATES = [
 
                 'django.template.context_processors.debug',
 
-                'shop.payment.stripe_context_processor',
+                'cart.payment.stripe_context_processor',
                 'mywebsite.responsive.responsive_context_processor',
                 # 'dashboard.context_processor.dashboard'
             ],
@@ -79,7 +79,7 @@ TEMPLATES = [
                 'share': 'templatetags.share',
                 'navbar': 'templatetags.navbar',
 
-                'carts': 'shop.templatetags.carts',
+                'carts': 'cart.templatetags.carts',
                 'delivery': 'shop.templatetags.delivery',
                 'prices': 'shop.templatetags.prices',
                 'seo': 'shop.templatetags.seo',
@@ -89,6 +89,8 @@ TEMPLATES = [
                 'sidebar': 'dashboard.templatetags.sidebar',
 
                 'sidemenu': 'accounts.templatetags.sidemenu',
+
+                'conversions': 'cart.templatetags.conversions',
             },
         },
     },
@@ -102,8 +104,12 @@ WSGI_APPLICATION = 'mywebsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'princess_ecommerce'),
+        'USER': os.environ.get('DB_USER', 'princess_ecommerce'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'princess_ecommerce'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': '5432',
     }
 }
 
@@ -153,17 +159,76 @@ LANGUAGES = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+USE_S3 = False
 
-# STATIC_ROOT = 'static'
+if USE_S3:
+    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = 'media/'
+    STATICFILES_STORAGE = 'mywebsite.storage.StaticFilesStorage'
 
-MEDIA_ROOT = 'media'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+
+    AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+
+    AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')
+
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
+
+    AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+
+    # AWS_QUERYSTRING_AUTH = False
+
+    AWS_DEFAULT_ACL = 'public-read'
+
+    AWS_LOCATION = 'nawoka/static'
+
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+
+    STATIC_ROOT = 'staticfiles'
+
+    # MEDIA
+
+    AWS_MEDIA_LOCATION = 'nawoka/media'
+
+    # PUBLIC MEDIA    
+
+    DEFAULT_FILE_STORAGE = 'mywebsite.storage.PublicMediaStorage'
+
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_MEDIA_LOCATION}/'
+    
+    PUBLIC_MEDIA_LOCATION = 'nawoka/media'
+else:
+    DEFAULT_FILE_STORAGE = 'mywebsite.storage.CustomeFileSystemStorage'
+
+    STATIC_URL = '/static/'
+
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+    ]
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'allstatic')
+
+    MEDIA_URL = '/media/'
+
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AWS_IMAGES_FOLDER = ''
+
+# STATIC_URL = '/static/'
+
+# # STATIC_ROOT = 'static'
+
+# MEDIA_URL = 'media/'
+
+# MEDIA_ROOT = 'media'
+
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static')
+# ]
 
 
 # AUTHENTICATION BACKENDS
@@ -206,50 +271,6 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
 EMAIL_USE_LOCALTIME = True
-
-
-# AMAZON S3
-
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY')
-
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY')
-
-AWS_STORAGE_BUCKET_NAME = ''
-
-AWS_S3_REGION_NAME = ''
-
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
-
-AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400'
-}
-
-AWS_QUERYSTRING_AUTH = False
-
-AWS_DEFAULT_ACL = None
-
-if not DEBUG:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-    AWS_LOCATION = ''
-
-    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
-
-    STATIC_ROOT = 'staticfiles'
-
-    AWS_MEDIA_LOCATION = ''
-
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_MEDIA_LOCATION}/'
-
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-    PRODUCTS_FOLDER_LOCATION = ''
-
-    PRODUCTS_FOLDER_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PRODUCTS_FOLDER_LOCATION}'
-
-AWS_IMAGES_FOLDER = ''
 
 
 # SITE
