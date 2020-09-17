@@ -1,11 +1,11 @@
-{{ impressions|json_script:"impressions" }}
+{% load shop_impressions %}
+
 <script>
-    var impressions = JSON.parse(document.getElementById("impressions").innerText)
     dataLayer.push({
         "ecommerce": {
-            "impressions": impressions,
+            "impressions": '{% impressions_for_shop queryset=more %}',
             "detail": {
-                "actionField": { "list": "Product list" },
+                "actionField": { "list": "Collections List" },
                 "products": [
                     {
                         "name:": "{{ product.name }}",

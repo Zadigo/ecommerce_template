@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static prices seo %}
+{% load i18n static shop_impressions %}
 
 {% block title %}{{ collection.name }} - {{ collection.gender|capfirst }} - Nawoka{% endblock %}
 
@@ -12,20 +12,14 @@
 {% endblock %}
 
 {% block datalayer_push %}
-    {{ impressions|json_script:"impressions" }}
-
     <script>
-        var impressions = JSON.parse(document.getElementById("impressions").innerText)
-
         dataLayer.push({
             "ecommerce": {
-                "impressions": impressions
+                "impressions": '{% impressions_for_shop queryset=products %}'
             },
             "event": "productImpressions"
         })
     </script>
-
-    {# {% impressions products %} #}
 {% endblock %}
 
 {% block structured_data %}

@@ -1,3 +1,4 @@
+import numpy
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -15,15 +16,39 @@ class BraCalculator:
         if bust < 63 or bust > 87:
             raise ValidationError(_("La taille du buste n'est pas valide"))
 
-        index, size = self.find_size(bust)
-        cup = self.find_cup(index, chest)
-        self.bra_size = f'{size}{cup}'
+        index, size = self._find_size(bust)
+        cup = self._find_cup(index, chest)
+
+        self.size = size
+        self.cup = cup
+
+    @property
+    def get_full_bra_size(self):
+        return f'{self.size}{self.cup}'
 
     def _sizes(self, index=None):
+        """
+        Based on the index provided, this picks the correct
+        row in the sizes columns.
+
+        Result
+        ------
+
+            [size1, size2, ...]
+        """
         sizes = [size[0] for size in self.size_columns]
         return sizes if not index else sizes[index]
 
-    def find_size(self, bust):
+    def _find_size(self, bust):
+        """
+        This method finds the correct bracket based on the
+        size of a person's bust
+
+        Result
+        ------
+
+            Returns the index of th
+        """
         busts = [
             [63, 67],
             [68, 72],
@@ -32,29 +57,32 @@ class BraCalculator:
             [83, 87]
         ]
         for index, limits in enumerate(busts):
-            is_found = self.compare(bust, limits[0], limits[1])
+            is_found = self._compare(bust, limits[0], limits[1])
             if is_found:
                 return index, self._sizes(index=index)
 
-    def find_cup(self, index, chest):
+    def _find_cup(self, index, chest):
+        """
+        Returns the correct cup based on 
+        """
         column = self.size_columns[index]
 
         letters = ['A', 'B', 'C', 'D', 'E', 'F']
 
         for i, size in enumerate(column[1]):
-            is_match = self.compare(chest, size[0], size[1])
+            is_match = self._compare(chest, size[0], size[1])
             if is_match:
                 if i == 4:
                     # There is no cup A for size 100,
-                    # in which case, we have increase
-                    # the index by one to avoir 'A'
+                    # in which case, we have to increase
+                    # the index by one to have 'A'
                     i = i + 1 
                 else:
                     letter = letters[i]
                 return letter
     
     @staticmethod
-    def compare(value, upper, lower):
+    def _compare(value, upper, lower):
         return all([value >= upper, value <= lower])
 
 class TSizeTranslator(BraCalculator):

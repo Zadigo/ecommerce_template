@@ -19,43 +19,21 @@
 """
 
 import random
-from ast import literal_eval
 
 from django import http, shortcuts
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core import cache, exceptions, paginator
-from django.core import serializers as core_serializers
-from django.core.cache import caches
-from django.db import transaction as atomic_transactions
-from django.shortcuts import redirect, render, reverse
+from django.core import cache, paginator
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
-from django.views.decorators import http as http_decorator
-from django.views.decorators import vary
-from django.views.decorators.cache import (cache_control, cache_page,
-                                           never_cache)
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
-from accounts import models as accounts_models
 from cart import models as cart_models
 from shop import models, serializers, tasks, utilities
-
-
-def create_products_impressions(queryset):
-    """Create impressions for Google Analytics"""
-    impressions = []
-    if queryset is None:
-        return []
-    for index, product in enumerate(queryset):
-        impressions.append(dict(id=product.reference, \
-                name=product.name, price=product.get_price(), brand='Nawoka', \
-                    category=product.collection.name, position=index, \
-                        list=f'{product.collection.gender}/{product.collection.name}'))
-    return impressions
 
 
 @method_decorator(cache_page(60 * 30), name='dispatch')
@@ -129,8 +107,6 @@ class ProductsView(generic.ListView):
 
         collection = self.model.objects.get(view_name__exact=self.kwargs['collection'], gender=self.kwargs['gender'])
         context['collection'] = collection
-
-        context['impressions'] = create_products_impressions(products)
         return context
 
 
@@ -163,8 +139,6 @@ class ProductView(generic.DetailView):
         suggested_products = self.model.objects.prefetch_related('images') \
                                     .filter(active=True).exclude(id=product.id)[:3]
         context['more'] = suggested_products
-        context['impressions'] = create_products_impressions(suggested_products)
-
         return context
 
 
@@ -191,7 +165,6 @@ class PreviewProductView(LoginRequiredMixin, generic.DetailView):
 
         serialized_product = serializers.ProductSerializer(instance=product)
         context['vue_product'] = serialized_product.data
-        
         return context
 
 
@@ -257,6 +230,31 @@ class SearchView(generic.ListView):
         collection = models.Collection.objects.get(view_name=random_collection)
         proposed_products = collection.product_set.all()[:4]
         context['proposed_products'] = proposed_products
-
-        context['impressions'] = create_products_impressions(products)
         return context
+
+# @method_decorator(cache_page(3600 * 60), name='dispatch')
+class SizeGuideView(generic.TemplateView):
+    template_name = 'pages/size_guide.html'
+
+
+import json
+from django.http.response import JsonResponse
+from shop import sizes
+@require_POST
+def size_calculator(request):
+    data = json.loads(request.body)
+    bust = data['bust']
+    chest = data['chest']
+    if bust is None and chest is None:
+        return JsonResponse(data={'state': False})
+
+    bust = int(bust)
+    chest = int(chest)
+    calculator = sizes.BraCalculator(bust, chest)
+    data = {
+        'state': True, 
+        'result': calculator.get_full_bra_size,
+        'size': calculator.size, 
+        'cup': calculator.cup
+        }
+    return JsonResponse(data=data)

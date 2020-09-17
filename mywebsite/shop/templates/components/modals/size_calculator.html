@@ -1,0 +1,38 @@
+{% extends "components/modals/modals.html" %}
+{% load i18n %}
+
+{% block modal_id %}size-calculator{% endblock %}
+{% block modal_aria %}size-calculator{% endblock %}
+
+{% block title %}
+    {% trans "Calculer la taille du bas de lingerie" %}
+{% endblock %}
+
+{% block modal_body %}
+    <calculator-component inline-template>
+        <form>
+            <div class="form-row">
+                <div class="col-8">
+                    <div class="form-group">
+                        <input v-model.number="bust" class="form-control" type="number" id="bust" min="63" max="87" step="4" placeholder="La taille de votre buste">
+                    </div>
+                    <div class="form-group">
+                        <input v-model.number="chest" class="form-control" type="number" id="chest" min="75" max="113" step="2" placeholder="La taille de votre poitrine">
+                    </div>
+                </div>
+    
+                <div class="col-4">
+                    <div class="result grey lighten-4 m-0" style="height: auto;">
+                        <h1 class="m-0 p-4 text-center font-weight-bold text-muted">
+                        <span>[[ resultnumber ]]</span>
+                        <small>cm</small></h1>
+                    </div>
+                </div>
+            </div>
+    
+            <button @click.prevent="calculatesize" class="btn btn-md btn-primary">
+                {% trans "Calculer" %}
+            </button>
+        </form>
+    </calculator-component>
+{% endblock %}

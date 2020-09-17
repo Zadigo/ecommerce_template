@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static share prices carts seo %}
+{% load i18n static share nodes_plus shop_impressions %}
 
 {% block title %}{{ product.name }} - Nawoka{% endblock %}
 
@@ -37,11 +37,11 @@
 {% endblock %}
 
 {% block datalayer_push %}
-    {% impression more %}
+    {% include "scripts/product_impression.html" %}
 {% endblock %}
 
 {% block structured_data %}
-    {% include "components/product/seo/structured_data.html" %}
+    {% include "scripts/structured_data.html" %}
 {% endblock %}
 
 {% block container %}
