@@ -18,7 +18,7 @@ class CGV(TemplateView):
     template_name = 'pages/sale.html'
 
 
-# @method_decorator(cache_page(432000 * 60), name='dispatch')
+@method_decorator(cache_page(432000 * 60), name='dispatch')
 class CGU(TemplateView):
     http_method_names = ['get']
     template_name = 'pages/use.html'
