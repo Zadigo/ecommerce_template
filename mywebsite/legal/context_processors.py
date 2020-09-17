@@ -1,7 +1,7 @@
 from django.template.context import RequestContext, Context
 
 
-class Legal(Context):
+class Legal:
     legal_name = None
     address = None
     domain = None
@@ -13,13 +13,15 @@ class Legal(Context):
     shipping_company = None
     return_policy = None
 
-    def __init__(self, **kwargs):
-        super().__init__()
-        print(self.__dict__)
+    def __init__(self, google=None):
+        self.google = google
 
     def cnil(self, url=None):
         return 'https://cnil.fr/'
 
 
-def context(request):
-    return Legal()
+def context_processor(request):
+    context = RequestContext(request)
+    legal = Legal()
+    print(legal.legal_name)
+    return {}

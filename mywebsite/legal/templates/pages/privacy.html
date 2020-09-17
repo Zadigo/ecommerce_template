@@ -33,13 +33,13 @@
 
 {% block container %}
     <section class="section" id="confidentialite">
-        {% include "./return_link.html" %}
+        {% include "components/return_link.html" %}
         
         <div class="row wow fadeIn">
             <div class="col-12">
                 <div class="card mb-3">
                     <div class="card-body">
-                        {% include "./small_title.html" with title="Utilisation des données personnelles" %}
+                        {% include "components/small_title.html" with title="Utilisation des données personnelles" %}
                         <p>
                             Les données personnelles collectées auprès des utilisateurs ont pour objectif 
                             la mise à disposition des services du site web, leur amélioration et le maintien 
@@ -71,7 +71,7 @@
                 
                 <div class="card mb-3">
                     <div class="card-body">
-                        {% include "./small_title.html" with title="Partage des données personnelles avec des tiers" %}
+                        {% include "components/small_title.html" with title="Partage des données personnelles avec des tiers" %}
                         <p>
                             Les données personnelles peuvent être partagées avec des sociétés tierces, dans les cas suivants :
                             <ul>
@@ -112,7 +112,7 @@
             
                 <div class="card mb-3">
                     <div class="card-body">
-                        {% include "./small_title.html" with title="Sécurité et confidentialité" %}
+                        {% include "components/small_title.html" with title="Sécurité et confidentialité" %}
                         <p>
                             Le site web met en oeuvre des mesures organisationnelles, techniques, logicielles 
                             et physiques en matière de sécurité du numérique pour protéger les données personnelles 
@@ -126,7 +126,7 @@
                 
                 <div class="card">
                     <div class="card-body">
-                        {% include "./small_title.html" with title="Mise en oeuvre des droits des utilisateurs" %}
+                        {% include "components/small_title.html" with title="Mise en oeuvre des droits des utilisateurs" %}
                         <p>
                             En application de la réglementation applicable aux données à caractère personnel, 
                             les utilisateurs disposent des droits suivants, qu'ils peuvent exercer 
