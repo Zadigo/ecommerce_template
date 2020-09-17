@@ -22,10 +22,8 @@
             <!-- RIGHT -->
             <ul class="navbar-nav">
                 {% icon_links "shop:search" "cart:checkout" %}
-
-                {% if user.is_admin %}
-                    {% icon_links "accounts:login" "accounts:logout" %}
-                {% endif %}
+                
+                {% icon_links "accounts:login" "accounts:logout" %}
             </ul>
         </div>
     </div>

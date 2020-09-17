@@ -19,13 +19,13 @@
                         <a href="{% url 'legal:who_we_are' %}">A propos</a>
                     </li>
                     <li>
-                        <a href="http://">Guide des tailles</a>
+                        <a href="{% url 'shop:size_guide' %}">Guide des tailles</a>
                     </li>
                     <li>
-                        <a href="http://">Suivi commande</a>
+                        <a href="{% url 'customer_care:home' %}#my_order">Suivi commande</a>
                     </li>
                     <li>
-                        <a href="{}">FAQ</a>
+                        <a href="{% url 'customer_care:home' %}#faq">FAQ</a>
                     </li>
                 </ul>
             </div>
