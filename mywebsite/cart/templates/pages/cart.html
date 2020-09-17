@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static prices table %}
+{% load i18n static nodes_plus table %}
 
 {% block title %}{% trans "Mon panier" %} - Nawoka{% endblock %}
 
@@ -62,15 +62,15 @@
                                         <td>
                                             {% if product.product.discounted %}
                                                 <p>
-                                                    {{ product.product.discounted_price|discounted_price_as_text:"€" }}
+                                                    {{ product.product.discounted_price|price_to_text:"€" }}
                                                     {{ product.total|price_to_text }}
                                                 </p>
                                                 <p class="red-text">
-                                                    {{ product.product.discount_pct|discount_as_text }}
+                                                    {{ product.product.discount_pct|discount_as_html }}
                                                 </p>
                                             {% else %}
                                                 <p>
-                                                    {{ product.total|price_to_text }}                                                
+                                                    {{ product.total|price_to_text:"€" }}                                                
                                                 </p>
                                             {% endif %}
                                         </td>

@@ -53,37 +53,6 @@ def create_impressions(queryset, include_position=False):
     return json.dumps(fit_transformed)
 
 
-def create_cart_impressions(constructed_products):
-    impressions = []
-    if isinstance(constructed_products, dict):
-        constructed_products = constructed_products['constructed_products']
-
-    for index, product in enumerate(constructed_products):
-        item = {
-            'cart_id': product['cart_id'],
-            'brand': 'Nawoka',
-            'position': index,
-            'price': product['price_ht']
-        }
-        impressions.append(item)
-    return impressions
-
-
-def create_cart_products_from_queryset(queryset):
-    impressions = []
-    for cart in queryset:
-        item = {
-            'id': cart.product.reference,
-            'name': cart.product.name,
-            'brand': 'Nawoka',
-            'category': cart.product.collection.name,
-            'price': cart.product.get_price(),
-            'quantity': cart.quantity
-        }
-        impressions.append(item)
-    return impressions
-
-
 class BaseCartView(MultipleObjectTemplateResponseMixin, BaseListView):
     """
     This is the base class for implement functonnalities to views

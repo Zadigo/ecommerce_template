@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static prices %}
+{% load i18n static nodes_plus %}
 
 {% block title %}{% trans "Paiement" %} - Nawoka{% endblock %}
 
@@ -74,8 +74,8 @@
 			<div class="card mt-3 text-muted">
 				<div class="card-body">
 					<p class="mb-0">
-						En passant votre commande, vous acceptez nos <a href="{% url 'cgu' %}" target="_blank">Modalités</a>, 
-						ainsi que <a href="{% url 'cgv' %}" target="_blank">nos politiques de confidentialité et de retour</a>. 
+						En passant votre commande, vous acceptez nos <a href="{% url 'legal:use' %}" target="_blank">Modalités</a>, 
+						ainsi que <a href="{% url 'legal:sale' %}" target="_blank">nos politiques de confidentialité et de retour</a>. 
 						Vous consentez à ce que certaines de vos données, qui seront utilisées 
 						pour améliorer le processus d'achats, soient enregistrées par Nawoka.						
 					</p>
@@ -85,7 +85,7 @@
 			<div class="card mt-1 z-depth-0 grey lighten-5">
 				<div class="card-body pl-0 text-muted">
 					<p>
-						<a href="{% url 'customer_care' %}" target="_blank">
+						<a href="{% url 'customer_care:home' %}" target="_blank">
 							{% trans "Assistance" %}
 						</a>
 					</p>
