@@ -38,15 +38,20 @@ from shop import models, serializers, tasks, utilities
 
 @method_decorator(cache_page(60 * 30), name='dispatch')
 class IndexView(generic.View):
+    """Base view for the website's shop"""
     def get(self, request, *args, **kwargs):
         return render(request, 'pages/shop.html')
 
 
 class LookBookView(generic.TemplateView):
+    """Base view for the website's lookbook"""
     template_name = 'pages/lookbook.html'
 
 
 class ShopGenderView(generic.View):
+    """Base view for discovering the website's shop
+    by category e.g. gender
+    """
     def get(self, request, *args, **kwargs):
         collections = models.Collection.objects.filter(gender=kwargs['gender'])
         context = {
@@ -56,6 +61,7 @@ class ShopGenderView(generic.View):
 
 
 class ProductsView(generic.ListView):
+    """Main product's page"""
     model = models.Collection
     template_name = 'pages/collections.html'
     context_object_name = 'products'
@@ -113,6 +119,7 @@ class ProductsView(generic.ListView):
 @method_decorator(cache_page(60 * 15), name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class ProductView(generic.DetailView):
+    """View the details of a given product"""
     model = models.Product
     queryset = models.Product.objects.all()
     template_name = 'pages/product.html'
@@ -144,7 +151,7 @@ class ProductView(generic.DetailView):
 
 class PreviewProductView(LoginRequiredMixin, generic.DetailView):
     """
-    This is a custom view for previewing on a product
+    This is a custom view for previewing a product
     in the semi-original context of the main product page
     """
     model = models.Product
@@ -172,10 +179,10 @@ class PreviewProductView(LoginRequiredMixin, generic.DetailView):
 @method_decorator(csrf_exempt, name='dispatch')
 class PrivateProductView(generic.DetailView):
     """
-    This is a special custom view for creating products in a non
-    classified manner and one that does not appear in the in the
+    This is a special custom viewing a product in a non
+    classified manner and one that does not appear in the
     urls of the main site --; this can be perfect for testing
-    a product from a marketing perspective.
+    a product from a marketing perspective
     """
     model = models.Product
     queryset = models.Product.product_manager.private_products()
@@ -204,6 +211,7 @@ class PrivateProductView(generic.DetailView):
 
 
 class SearchView(generic.ListView):
+    """Main page for displaying product searches"""
     model = models.Product
     template_name = 'pages/search.html'
     context_object_name = 'products'
@@ -232,8 +240,11 @@ class SearchView(generic.ListView):
         context['proposed_products'] = proposed_products
         return context
 
-# @method_decorator(cache_page(3600 * 60), name='dispatch')
+
+@method_decorator(cache_page(3600 * 60), name='dispatch')
 class SizeGuideView(generic.TemplateView):
+    """View for providing the customer with information
+    on sizes etc."""
     template_name = 'pages/size_guide.html'
 
 
@@ -242,6 +253,8 @@ from django.http.response import JsonResponse
 from shop import sizes
 @require_POST
 def size_calculator(request):
+    """Calcultes from customer's measurements
+    the correct size for him/her"""
     data = json.loads(request.body)
     bust = data['bust']
     chest = data['chest']

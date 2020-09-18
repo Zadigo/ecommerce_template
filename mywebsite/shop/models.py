@@ -95,7 +95,6 @@ class Collection(models.Model):
     gender = models.CharField(max_length=50, choices=GenderChoices.choices, default=GenderChoices.FEMME)
     
     view_name   = models.CharField(max_length=50)
-    # image       = models.URLField(blank=True, null=True)
     image        = models.FileField(upload_to='collections', blank=True, null=True)
     presentation_text = models.TextField(max_length=300, blank=True, null=True)
     google_description = models.CharField(max_length=160, blank=True, null=True)
@@ -153,9 +152,6 @@ class Product(models.Model):
     For better organization, products are enforced as being part of a
     collection. So before creating a product, a collection should already
     exist.
-    
-    NOTE: The Reference field while required has a default that comes from
-    `create_product_reference` definition from the `utilities` module.
     """
     name          = models.CharField(max_length=50, blank=True, null=True)
     reference   = models.CharField(max_length=30, default=utilities.create_product_reference())
@@ -276,7 +272,7 @@ class Product(models.Model):
     def get_collection_url(self):
         return reverse('shop:collection', args=[self.gender, self.collection.view_name])
     
-    # @utils.functional.cached_property
+    # @cached_property
     def get_product_images(self):
         return self.images.all()
 
