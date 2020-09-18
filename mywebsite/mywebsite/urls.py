@@ -9,8 +9,10 @@ from django.views.generic import TemplateView
 from mywebsite import rss, sitemaps, views
 
 urlpatterns = [
-    # path('sitemap.xml', sitemap, {'sitemaps': sitemaps.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
     
+    url(r'^oauth/', include('social_django.urls', namespace='social')),
+
     path('customer-care/', include('customercare.urls')),
     path('subscribers/', include('subscribers.urls')),
     path('legal/', include('legal.urls')),
