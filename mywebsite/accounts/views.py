@@ -61,7 +61,7 @@ class LoginView(View):
         user = auth.authenticate(request, email=email, password=password)
         if user:
             auth.login(request, user)
-            return redirect(request.GET.get('next') or 'home')
+            return redirect(request.GET.get('next') or '/')
         else:
             messages.error(request, "Nous n'avons pas pu trouver votre compte")
             return redirect('accounts:login')
