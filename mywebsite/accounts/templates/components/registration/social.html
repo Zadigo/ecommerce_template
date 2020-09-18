@@ -1,12 +1,21 @@
 <div class="row mb-4">
     <div class="col-5 offset-md-4">
         <div class="card z-depth-0">
-            <a href="{% url 'social:begin' backend='facebook-oauth2' %}" class="btn btn-large m-0 mb-2">
-                <i class="fab fa-facebook"></i>Facebook
-            </a>
             <a href="{% url 'social:begin' backend='google-oauth2' %}" class="btn btn-large m-0 mb-2">
-                <i class="fab fa-google"></i>Google
+                <i class="fab fa-google mr-3"></i>Google
             </a>
+
+            {% if facebook %}
+                <a href="{% url 'social:begin' backend='facebook-oauth2' %}" class="btn btn-large m-0 mb-2">
+                    <i class="fab fa-facebook"></i>Facebook
+                </a>                
+            {% endif %}
+
+            {% if twitter %}
+                <a href="{% url 'social:begin' backend='twitter-oauth2' %}" class="btn btn-large m-0 mb-2">
+                    <i class="fab fa-google"></i>Google
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>
