@@ -1,32 +1,15 @@
-{% extends "base.html" %}
+{% extends "base_site.html" %}
 {% load i18n aws_images %}
 
 {% block title %}{% trans "Service client" %} - Nawoka{% endblock %}
 
-{% block navbar %}
-    {% include "project_components/navs/nav.html" %}
+{% block description %}
+    Pour répondre au mieux à votre demande, notre service client
+    est disponible 5 jours sur 7
 {% endblock %}
 
-{% block share_metatags %}
-    <meta name="twitter:card" content="Service client Nawoka" />
-    <meta name="twitter:site" content="@mywebsitefashion" />
-    <meta name="twitter:creator" content="@mywebsitefashion" />
-
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Nawoka: Pour répondre au mieux à votre demande, notre service client
-    est disponible 5 jours sur 7" />
-    
-    {% block og_description %}
-        <meta property="og:description" content="Nawoka: Pour répondre au mieux à votre demande, notre service client
-        est disponible 5 jours sur 7" />
-    {% endblock %}
-
-    <meta property="og:image" content="{% create_aws_image_url 'banner8.jpg' %}" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:height" content="1200">
-    <meta property="og:image:width" content="800">
-    <meta property="og:image:alt" content="MyWebsite" />
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
 {% endblock %}
 
 {% block structured_data %}

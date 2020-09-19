@@ -74,7 +74,7 @@
         <!-- NAVBAR -->
         {% block navbar %}{% endblock %}
 
-        <main class="mt-4 mt-sm-2 mt-md-5 mt-lg-5">
+        <main class="{% block main_tag_style %}{% endblock %}">
             {% block main %}{% endblock %}
         </main>
 
