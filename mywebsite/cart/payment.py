@@ -14,7 +14,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.db import transaction
 from django.http import QueryDict
 from django.shortcuts import reverse
-from django.utils.html import mark_safe
+from django.utils.html import format_html, mark_safe
 from django.utils.translation import gettext_lazy as _
 
 try:
@@ -582,6 +582,7 @@ class SessionPaymentBackend(PaymentMixin):
             {message}
         </div>
         """
+        new_alert = format_html(base, message=message)
         self.errors.append(message)
         self.context_errors.append(mark_safe(base))
 

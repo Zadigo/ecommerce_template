@@ -80,20 +80,18 @@ Each template folder is organized in this specific manner:
 * Scripts - Very specific scripts binded with the Django template (e.g. Stripe payment, Quill...)
 
 __NOTE:__ Under components there are folders named after the page to which they apply. Global components are stored under some sort of global folder.
-    
-## Urls
-
-## Views
 
 ## Models
 
-
 ### Shop
 
-There are 11 models in the main Shop application as described below.
+There are 7 models in the main Shop application as described below.
 
 ![Models](./assets/models.png)
 
+And, 4 models in the main Payment application:
+
+![Models](./assets/models1.png)
 
 # Getting started
 
@@ -117,7 +115,82 @@ If you do not have PostGres, download at [PostGreSQL](https://www.postgresql.org
 
 Fork the project and run `pipenv install`. Activate the virtual environment with `pipenv shell`, run `python manage.py makemigrations` [make sure the database exits if you are using PostGres] and then `python manage.py migrate`.
 
+If you are planning to use Django Social Authentication, you would be advised to go the provider's webistes (Google, Facebook, Twitter...) in order to get required API keys.
+
 Voilà! You are ready to go :top:
+
+### Overriding the defaults
+
+You an easily override the default the models of certain apps in the settings file. For instance, the shop application uses a default model that is mainly suited for a fahion type of industry.
+
+If you wish to override that, you can easily override this by pointing to your product model.
+
+```
+PRODUCT_MODEL = 'shop.Product'
+
+PRODUCT_COLLECTION_MODEL = 'shop.Collection'
+
+DISCOUNT_MODEL = 'discounts.Discount'
+
+CUSTOMER_ORDERS_MODEL = 'cart.CustomerOrder'
+
+CART_MODEL = 'cart.Cart'
+
+```
+
+### How the payment system works
+
+__The payment system is session based.__ This was done in order to allow none authenticated users to be able to purchase without having to create an account.
+
+When the customer clicks on add to cart, a unique token called `cart_id` is created in his session. At each additional products in the cart, this cart ID is used to regroup these in his cart.
+
+It's important to understand that __desired product does not have the same characteristics as another already present in the cart, a new item is created with these new characteristics.__
+
+For instance, this will create a new product:
+
+```
+product = models.Product.objects.get(id=1, color="Blue")
+
+models.Cart.objects.create(cart_id="cartxxx", product=product, quantity=1)
+
+>> <Cart ....>
+```
+
+However, running the same piece of code will add 1 to the already existing item in the cart:
+
+```
+models.Cart.objects.filter(cart_id="cart_xxx")
+
+>> <QuerySet [Cart(quantity of 2)]>
+```
+
+This technique allows us to keep track of each individual item's quantity even when they share the same product reference but with a different variant.
+
+When the customer tries to purchase the cart, all items having the same cart ID are aggregated.
+
+In order to orchestrate the funnel flow, the system is based on the following class with it's main methods displayed below:
+
+```
+class SessionPaymentBackend(PaymentMixin):
+    def process_payment(self, ...):
+        ...
+
+    def create_stripe_customer_and_process_payment(self, ...):
+        ...
+
+    def create_new_order(self, ...):
+        ...
+
+    def create_new_customer_locally(self, ...):
+        ...
+```
+
+What this does is interract with the database at each step of the funnel by:
+
+    - Pre processing the user information before accessing the payment page
+    - Processing the payment once the customer clicks pay
+    - Create a new order in the CustomerOrder database
+    - Clear the session from any cart ID
 
 ## In Production
 
@@ -171,11 +244,7 @@ The code has all the required tags and functionnalities for SEO already pre-inst
     - Facebook Analytics
     - Sitemamps
 
-Some applications comes with a `sitemap.py` file that are regrouped in the main project's `sitemaps.py`. You can easily change a sitemap by overriding the class that you want in sitemaps and then hook it to the main sitemap global variable.
-
-## The analytics application
-
-It's the main entrypoint for persisting you analytics codes into the project. 
+Some applications comes with their specific `sitemap.py` file that are regrouped in the main project's `sitemaps.py`. You can easily change a sitemap by overriding the class that you want in sitemaps and then hook it to the main sitemap global variable.
 
 # Support / Development
 
