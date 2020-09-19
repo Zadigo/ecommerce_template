@@ -1,0 +1,22 @@
+.sample {
+    width: 70%;
+}
+
+.sample.one input {
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+    width: 50%;
+}
+
+.sample.one input:focus {
+    width: 80%;
+}
+
+.sample.one a.btn {
+    border-radius: 50%;
+    height: 26px;
+    right: 2px;
+    top: 2px;
+    transition: all 0.3s ease-in-out;
+    width: 26px;
+}
