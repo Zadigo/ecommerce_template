@@ -11,13 +11,13 @@
 {% block container %}
     <section class="collections">
         <div class="row wow fadeIn">
-            {% include "project_components/headers/picture.html" with image="banner1.jpg" alt="mywebsite-shop" %}
+            {% include "project_components/headers/picture.html" with image="hero1.jpg" alt="mywebsite-shop" %}
         </div>
 
         <div class="row wow fadeIn mt-4">
             {% for collection in collections %}
                 <div class="col-md-4">
-                    <a href="{% url 'shop:collection' collection.gender collection.view_name %}" id="link_collection_item">
+                    <a href="{% url 'shop:collection' collection.gender collection.view_name %}" class="hoverable" id="link_collection_item">
                         <img src="/media/{{ collection.image }}" class="img-fluid" alt="Nawoka {{ collection.view_name }}">
                         <h5 class="text-center black-text mt-3 font-weight-bold">
                             {{ collection.name }}

@@ -55,7 +55,7 @@ class Image(models.Model):
 
 class AutomaticCollectionCriteria(models.Model):
     """
-    Model that stores conditions of classifying products automatically
+    Stores conditions of classifying products automatically
     under a specific collection
     """
     reference = models.CharField(max_length=50, default=utilities.create_reference())
@@ -302,6 +302,9 @@ class LookBook(models.Model):
 
 
 class Like(models.Model):
+    """
+    Represents products that were liked by customers
+    """
     product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
     user    = models.ForeignKey(MYUSER, on_delete=models.CASCADE, blank=True, null=True)
 

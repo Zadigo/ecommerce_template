@@ -1,7 +1,30 @@
-{# List of scripts for the product page shopping section #}
 {% load i18n %}
 
 <script>
+    Vue.component("custom-button", {
+        props: ["id", "size", "color", "disabled"],
+        name: "Button",
+        template: `
+        <transition name="cart_button">
+            <button @click="startaction" v-if="!disabled" class="btn btn-primary my-0" :class="size, color" :id="id">
+                <slot></slot>
+            </button>
+
+            <button v-else class="btn btn-primary my-0 disabled" :class="size, color" :id="id">
+                <slot></slot>
+            </button>
+        </transition>
+        `,
+        methods: {
+            startaction: function () {
+                this.$emit("startaction")
+            }
+        }
+    })
+
+
+
+
     Vue.component("color-selector", {
         props: ["colors", "initvalue"],
         delimiters: ["[[", "]]"],
@@ -68,26 +91,6 @@
         }
     })
 
-    Vue.component("custom-button", {
-        props: ["id", "size", "color", "disabled"],
-        name: "Button",
-        template: `
-        <transition name="cart_button">
-            <button @click="startaction" v-if="!disabled" class="btn btn-primary my-0" :class="size, color" :id="id">
-                <slot></slot>
-            </button>
-
-            <button v-else class="btn btn-primary my-0 disabled" :class="size, color" :id="id">
-                <slot></slot>
-            </button>
-        </transition>
-        `,
-        methods: {
-            startaction: function () {
-                this.$emit("startaction")
-            }
-        }
-    })
 
 
     Vue.component("side-images", {
@@ -104,7 +107,6 @@
         props: ["image"],
         name: "MainImage"
     })
-
 
     var mixin = {
         computed: {
@@ -167,9 +169,14 @@
         }
     })
 
+
+
+
     Vue.component("dropdown-cart", {
         props: ["clicked"]
     })
+
+
 
 
     var addtocart = {

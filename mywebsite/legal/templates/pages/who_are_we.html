@@ -7,35 +7,15 @@
     {% include "project_components/navs/nav.html" %}
 {% endblock %}
 
-{% block page_description %}
-    <meta name="description" content="Découvrez en quelque ligne notre histoire, 
-    notre vision et notre avenir">
-{% endblock %}
-
-{% block share_metatags %}
-    <meta name="twitter:card" content="Découvrez qui nous sommes" />
-    <meta name="twitter:site" content="@mywebsite" />
-    <meta name="twitter:creator" content="@mywebsite" />
-
-    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Nawoka: notre histoire, notre vision et notre avenir" />
-    
-    {% block og_description %}
-        <meta property="og:description" content="Nawoka: notre histoire, notre vision et notre avenir" />
-    {% endblock %}
-
-    <meta property="og:image" content="{% create_aws_image_url 'banner9.jpg' %}" />
-    <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:height" content="1200">
-    <meta property="og:image:width" content="800">
-    <meta property="og:image:alt" content="MyWebsite" />
+{% block description %}
+    Découvrez en quelque ligne notre histoire, 
+    notre vision et notre avenir
 {% endblock %}
 
 {% block container %}
     <section class="section" id="who-we-are">
         <div class="row wow fadeIn">
-            {% include "project_components/headers/picture.html" with image="banner9.jpg" alt="who we are" %}
+            {% include "project_components/headers/picture.html" with image="hero1.jpg" alt="who we are" %}
         </div>
 
         <div class="row mt-3">

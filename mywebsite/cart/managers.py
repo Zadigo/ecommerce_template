@@ -82,9 +82,12 @@ class CartManager(QuerySet):
 
         pass
 
-    def number_of_products(self, cart_id):
+    def number_of_products(self, cart_id, as_value=False):
         """Number of products in a cart"""
-        return self.my_cart(cart_id).aggregate(Sum('quantity'))
+        total = self.my_cart(cart_id).aggregate(Sum('quantity'))
+        if as_value:
+            return total['quantity__sum']
+        return total
 
     def add_to_cart(self, request, current_product, enforce_color=False):
         cart_id = request.session.get('cart_id')

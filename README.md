@@ -151,11 +151,31 @@ There are many great applications out there for doing this, however, I integrate
 
 Caching is done with Python Memcached. You can decide to use another caching system if you want to by visiting this page: [Django cache framework](https://docs.djangoproject.com/en/3.0/topics/cache/).
 
+An additional settings for caching with Redis is also implemented if you wish to do so.
+
 By default, mostly items on the collection's pages are cached for optimization and so as data in the dashboard.
 
 # Standalone apps
 
-You can also use a standalone version of the dashboard [here](https://example.com) and a standalone version of the payment system [here](https://example.com). Finally, a standalone version of the shop is also availabl via these two links: [version 1](https://example.com) - [version 2](https://example.com).
+You can also use a standalone version of the dashboard [here](https://example.com) and a standalone version of the payment system [here](https://example.com). Finally, a standalone version of the shop is also available via these two links: [version 1](https://example.com) - [version 2](https://example.com).
+
+# SEO
+
+The code has all the required tags and functionnalities for SEO already pre-installed. This includes:
+
+    - Google Analytics
+    - Google Tag Manager
+    - Google Optimize
+    - Meta tags
+    - Mailchimp
+    - Facebook Analytics
+    - Sitemamps
+
+Some applications comes with a `sitemap.py` file that are regrouped in the main project's `sitemaps.py`. You can easily change a sitemap by overriding the class that you want in sitemaps and then hook it to the main sitemap global variable.
+
+## The analytics application
+
+It's the main entrypoint for persisting you analytics codes into the project. 
 
 # Support / Development
 

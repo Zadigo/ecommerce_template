@@ -22,3 +22,9 @@ class CGV(TemplateView):
 class CGU(TemplateView):
     http_method_names = ['get']
     template_name = 'pages/use.html'
+
+
+@method_decorator(cache_page(432000 * 60), name='dispatch')
+class AboutView(TemplateView):
+    http_method_names = ['get']
+    template_name = 'pages/who_are_we.html'

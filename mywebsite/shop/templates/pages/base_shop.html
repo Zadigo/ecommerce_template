@@ -44,7 +44,7 @@
     {% if product %}
         {{ product.get_main_image_url }}
     {% else %}
-        {% create_aws_image_url 'banner1.jpg' %}
+        {% build_aws_image_url 'hero1.jpg' %}
     {% endif %}
 {% endblock %}
 
@@ -65,4 +65,9 @@
 
 {% block footer %}
     {% include "project_components/navs/footer.html" %}
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <!-- GLOBAL-->
+    {% include "vue/global.html" %}
 {% endblock %}

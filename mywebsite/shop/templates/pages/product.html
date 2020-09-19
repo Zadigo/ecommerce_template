@@ -1,5 +1,5 @@
 {% extends "pages/base_shop.html" %}
-{% load i18n cache static share nodes_plus shop_impressions dropdowns %}
+{% load i18n static share nodes_plus shop_impressions dropdowns %}
 
 {% block title %}{{ product.name }} - Nawoka{% endblock %}
 
@@ -158,16 +158,14 @@
 {% endblock %}
 
 {% block vuejs_scripts %}
+    {{ block.super }}
+
     {{ vue_product|json_script:"vue_product" }}
 
     <script>
         var product = JSON.parse($("#vue_product").text())
     </script>
     
-    {# {{ serialized_images|json_script:"serialized_images" }} #}
-
     <!-- VUEJS -->
-    {% include "../vue/product.html" %}
-    <!-- GOOGLEPAY -->
-    {# {% include "components/cart/google_payjs.html" %} #}
+    {% include "vue/product.html" %}
 {% endblock %}

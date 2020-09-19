@@ -1,10 +1,9 @@
-{% with backgound_image="https://mdbootstrap.com/img/Photos/Others/images/78.jpg"  %}
-    <div class="view full-page-intro" style="background-image: url('{{ backgound_image }}'); background-repeat: no-repeat; background-size: cover;">
-        <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
-            <div class="container">
-                {% include "components/hero/with_form.html" with button_name="Start free tutorial" button_icon="fa-graduation-cap" input_height="49px" input_width="50%" %}
-            </div>
+{% load aws_images %}
+
+<div class="view full-page-intro" style="background-image: url('{% get_aws_prefix_url %}hero1.jpg'); background-repeat: no-repeat; background-size: cover;">
+    <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+        <div class="container">
+            {% include "components/hero/with_form.html" with button_name="Start free tutorial" button_icon="fa-graduation-cap" input_height="49px" input_width="50%" %}
         </div>
     </div>
-{% endwith %}
-
+</div>
