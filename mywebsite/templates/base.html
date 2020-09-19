@@ -10,40 +10,29 @@
         <title>{% block title %}{% endblock %}</title>
 
         <!-- META -->
-        <meta name="author" content="Nawoka Fashion" />
+        <meta name="author" content="{% block author %}{% endblock %}" />
 
-        <meta name="theme-color" content="#484848"/>
+        <meta name="theme-color" content="{% block theme_color %}{% endblock %}"/>
+        <meta name="description" content="{% block description %}{% endblock %}">
+        
+        <meta name="twitter:card" content="{% block twitter_card %}{% endblock %}" />
+        <meta name="twitter:site" content="{% block twitter_handle %}{% endblock %}" />
+        <meta name="twitter:creator" content="" />
 
-        {% block page_description %}
-            <meta name="description" content="">
-        {% endblock %}
+        <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="{% block og_title %}{% endblock %}" />        
+        <meta property="og:description" content="{% block og_description %}{% endblock %}" />
+        <meta property="og:image" content="{% block og_image %}{% endblock %}" />            
 
-        {% block share_metatags %}
-            <meta name="twitter:card" content="" />
-            <meta name="twitter:site" content="@mywebsite" />
-            <meta name="twitter:creator" content="@mywebsite" />
-
-            <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-            <meta property="og:type" content="website" />
-            <meta property="og:title" content="" />
-            
-            {% block og_description %}
-                <meta property="og:description" content="" />
-            {% endblock %}
-
-            {% block og_image %}
-                <meta property="og:image" content="{% create_aws_image_url 'hero.jpg' %}" />            
-            {% endblock %}
-
-            <meta property="og:image:type" content="image/jpeg" />
-            <meta property="og:image:height" content="1200">
-            <meta property="og:image:width" content="800">
-            <meta property="og:image:alt" content="MyWebsite" />
-        {% endblock %}
-
-        {% block metatags %}{% endblock %}
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:height" content="1200">
+        <meta property="og:image:width" content="800">
+        <meta property="og:image:alt" content="{% block og_image_alt %}{% endblock %}" />
 
         <meta property="keywords" content="{% block meta_keywords %}{% endblock %}">
+
+        {% block extra_metatags %}{% endblock %}
 
         <!-- PINTEREST -->
         {% include "project_components/analytics/pinterest.html" with verification_code="" %}
@@ -65,18 +54,10 @@
         <!-- MATERIAL DESIGN BOOTSTRAP -->
         <link href="{% static 'mdb.css' %}" rel="stylesheet">
 
-        <!-- MATERIALIZE -->
-        <link href="{% static 'style.css' %}" rel="stylesheet">
-
         <!-- GOOGLE FONT ICONS -->
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        <!-- CUSTOM -->
-        <link href="{% static 'navbars.css' %}" rel="stylesheet">
-        <link href="{% static 'hero.css' %}" rel="stylesheet">
-        <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
-        <link href="{% static 'ecommerce_bars.css' %}" rel="stylesheet">
-
+        <!-- CUSTOM CSS -->
         {% block extra_css %}{% endblock %}
 
         <link rel="alternate" href="mywebsite.fr" hreflang="fr-fr" />
@@ -84,61 +65,17 @@
         <script>window.dataLayer = window.dataLayer || []</script>
         {% block datalayer_push %}{% endblock %}
         
-        <!-- ANALYTICS -->
-        {# This is a specific technique to use Google Optimize with GTM #}
-        {# {% include "project_components/analytics/google_analytics.html" with ga_tag="" optimize_tag="" %} #}
-        
-        {# {% include "project_components/analytics/tag_manager.html" with gtm_id="G" %} #}
-        {# {% include "project_components/analytics/facebook.html" with id="" %} #}
-        {% block facebook_events %}{% endblock %}
-
-        <!-- OPTIMIZE -->
-        {# {% include "project_components/analytics/optimize_anti_flicker.html" with optimize_tag="" %} #}
-
-        <!-- MAILCHIMP -->
-        {# {% include "project_components/analytics/mailchimp.html" %} #}
-
-        <!-- ADWORDS REMARKETING  -->
-        {# {% include "project_components/analytics/remarketing.html" with remarketing_tag="" %} #}
-        {% block remarketing %}{% endblock %}
+        {% block analytics %}{% endblock %}
     </head>
-
+    
     <body class="{% block body_color %}{% endblock %}">
-        {# {% include "project_components/analytics/google_no_script.html" with gtm_id="" %} #}
-        
-        <!-- FACEBOOK PIXELS -->
-        {% block facebook_event %}{% endblock %}
+        {% block extra_analytics %}{% endblock %}
         
         <!-- NAVBAR -->
         {% block navbar %}{% endblock %}
 
-        {% comment %}
-        <div class="top-banner sales-policies green">
-            <div class="container">
-                <div class="row">
-                    <div class="col-4">A</div>
-                    <div class="col-4">B</div>
-                    <div class="col-4">C</div>
-                </div>
-            </div>
-        </div>
-        {% endcomment %}
-
         <main class="mt-4 mt-sm-2 mt-md-5 mt-lg-5">
-            {% block hero %}
-                <div class="container dark-grey-text mt-5">
-                    {% for message in messages %}
-                        <div class="alert {% if message.tags %}{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {% endfor %}
-
-                    {% block container %}{% endblock %}
-                </div>
-            {% endblock %}
+            {% block main %}{% endblock %}
         </main>
 
         <!-- FOOTER -->

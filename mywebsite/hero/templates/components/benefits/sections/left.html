@@ -1,0 +1,15 @@
+<section class="mt-5 wow fadeIn">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <img src="{% block section_image %}{% endblock %}" class="img-fluid z-depth-1-half" alt="{% block section_image_alt %}{% endblock %}">
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <h3 class="h3 mb-3">
+                {% block section_title %}{% endblock %}
+            </h3>
+
+            {% block section_content %}{% endblock %}
+        </div>
+    </div>
+</section>

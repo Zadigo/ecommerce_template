@@ -25,7 +25,7 @@
     </div>
     
     <div class="cart-button">
-        <addtocart @addtocart="cartbuttonclicked" v-bind:details="details" v-bind:product="product" v-bind:disabled="isdisabled" />
+        <addtocart @addtocart="cartbuttonclicked" v-bind:details="details" v-bind:product="product" :disabled="isdisabled" :likesdisabled="likesdisabled" />
     </div>
 
     {% comment %}

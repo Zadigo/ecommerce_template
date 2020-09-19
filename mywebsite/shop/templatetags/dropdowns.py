@@ -43,3 +43,11 @@ def collections_dropdown_block():
         else:
             context['sample_collection']['image'] = collection.image
     return context
+
+
+
+@register.inclusion_tag('components/product/cart.html')
+def cart():
+    context = {}
+    context['cart'] = None
+    return context

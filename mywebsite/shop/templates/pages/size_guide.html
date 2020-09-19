@@ -1,12 +1,17 @@
-{% extends "base.html" %}
+{% extends "pages/base_shop.html" %}
 {% load i18n %}
-
-{% block navbar %}
-    {% include "project_components/navs/nav.html" %}
-{% endblock %}
 
 {% block title %}
     {% trans "Guide des tailles" %}
+{% endblock %}
+
+{% block description %}
+    {% trans "Découvrez notre guide des tailles pour les vêtements et chaussures" %}
+{% endblock %}
+
+{% block meta_keywords %}
+    women, women's, clothing, clothes, accessories, 
+    fashion,  shoes, bags, hats, necklace, rings, jewellery
 {% endblock %}
 
 {% block container %}
@@ -148,10 +153,6 @@
             {% include "components/modals/size_calculator.html" %}
         </div>
     </section>
-{% endblock %}
-
-{% block footer %}
-    {% include "project_components/navs/footer.html" %}
 {% endblock %}
 
 {% block extra_scripts %}

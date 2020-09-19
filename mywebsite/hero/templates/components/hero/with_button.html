@@ -1,0 +1,27 @@
+{% load i18n %}
+
+<div class="row wow fadeIn">
+    <div class="col-md-{{ column_position|default:'12' }} mb-4 white-text text-center {{ lead_align|default:'text-md-left' }}">
+        <h1 class="display-4 font-weight-bold">
+            {% trans "Learn Bootstrap 4 with MDB" %}
+        </h1>
+
+        <hr class="hr-light">
+
+        <p><strong>{% trans "Best & free guide of responsive web design" %}</strong></p>
+
+        <p class="mb-4 d-none d-md-block">
+            <strong>
+                {% blocktrans %}
+                    The most comprehensive tutorial for the Bootstrap 4. Loved by over 500 000 users. Video
+                    and written versions available. Create your own, stunning website.                    
+                {% endblocktrans %}
+            </strong>
+        </p>
+
+        <a target="_blank" href="https://mdbootstrap.com/education/bootstrap/" class="btn btn-indigo btn-lg">
+            <i class="fas {{ button_icon }} mr-3"></i>
+            {% trans button_name %}
+        </a>
+    </div>
+</div>

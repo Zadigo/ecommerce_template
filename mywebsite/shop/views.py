@@ -18,12 +18,15 @@
            done to the SuccessView
 """
 
+import json
 import random
 
 from django import http, shortcuts
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import cache, paginator
-from django.shortcuts import redirect, render
+from django.db import transaction
+from django.http.response import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -33,7 +36,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from cart import models as cart_models
-from shop import models, serializers, tasks, utilities
+from shop import models, serializers, sizes, tasks, utilities
 
 
 @method_decorator(cache_page(60 * 30), name='dispatch')
@@ -143,9 +146,14 @@ class ProductView(generic.DetailView):
         serialized_product = serializers.ProductSerializer(instance=product)
         context['vue_product'] = serialized_product.data
 
-        suggested_products = self.model.objects.prefetch_related('images') \
+        suggested_products = self.model.objects\
+                                .prefetch_related('images') \
                                     .filter(active=True).exclude(id=product.id)[:3]
         context['more'] = suggested_products
+        if self.request.user.is_authenticated:
+            likes = models.Like.objects.filter(
+                product=product, user=self.request.user)
+            context['has_liked'] = likes.exists()
         return context
 
 
@@ -248,9 +256,22 @@ class SizeGuideView(generic.TemplateView):
     template_name = 'pages/size_guide.html'
 
 
-import json
-from django.http.response import JsonResponse
-from shop import sizes
+@require_POST
+@transaction.atomic
+def add_like(request, **kwargs):
+    product = get_object_or_404(models.Product, id=kwargs['pk'])
+    data = {
+        'product': product
+    }
+    if request.user.is_authenticated:
+        data['user'] = request.user
+        likes = models.Like.objects.filter(user=request.user)
+        if product in likes:
+            return JsonResponse(data={'state': False})
+    models.Like.objects.create(**data)
+    return JsonResponse(data={'state': True})
+
+
 @require_POST
 def size_calculator(request):
     """Calcultes from customer's measurements

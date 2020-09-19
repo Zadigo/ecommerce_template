@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block theme_color %}#484848{% endblock %}
+
+{% block extra_css %}
+    <link href="{% static 'style.css' %}" rel="stylesheet">
+    <link href="{% static 'nav.css' %}" rel="stylesheet">
+    <link href="{% static 'dropdowns.css' %}" rel="stylesheet">
+    <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
+    <link href="{% static 'banners.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block analytics %}
+    <!-- ANALYTICS -->
+    {# This is a specific technique to use Google Optimize with GTM #}
+    {# {% include "project_components/analytics/google_analytics.html" with ga_tag="" optimize_tag="" %} #}
+    
+    {# {% include "project_components/analytics/tag_manager.html" with gtm_id="G" %} #}
+    {# {% include "project_components/analytics/facebook.html" with id="" %} #}
+    {% block facebook_events %}{% endblock %}
+
+    <!-- OPTIMIZE -->
+    {# {% include "project_components/analytics/optimize_anti_flicker.html" with optimize_tag="" %} #}
+
+    <!-- MAILCHIMP -->
+    {# {% include "project_components/analytics/mailchimp.html" %} #}
+
+    <!-- ADWORDS REMARKETING  -->
+    {# {% include "project_components/analytics/remarketing.html" with remarketing_tag="" %} #}
+    {% block remarketing %}{% endblock %}
+{% endblock %}
+
+{% block extra_analytics %}
+    {# {% include "project_components/analytics/google_no_script.html" with gtm_id="" %} #}
+        
+    <!-- FACEBOOK PIXELS -->
+    {% block facebook_event %}{% endblock %}
+{% endblock %}
+
+{% comment %}
+<div class="top-banner sales-policies green">
+    <div class="container">
+        <div class="row">
+            <div class="col-4">A</div>
+            <div class="col-4">B</div>
+            <div class="col-4">C</div>
+        </div>
+    </div>
+</div>
+{% endcomment %}
+
+{% block main %}
+    <div class="container dark-grey-text mt-5">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+
+        {% block container %}{% endblock %}
+    </div>
+{% endblock %}

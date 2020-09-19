@@ -1,0 +1,37 @@
+{% extends "components/benefits/sections/latest_products.html" %}
+
+{% block section_title %}Latest product{% endblock %}
+
+{% block section_products %}
+    {% for product in lastest_products %}
+        <div class="col-sm-12 col-md-4">
+            <div class="card">
+                <div class="view overlay">
+                    <img src="https://mdbootstrap.com/img/Photos/Horizontal/E-commerce/Vertical/12.jpg" class="card-img-top" alt="">
+                </div>
+                <a>
+                    <div class="mask rgba-white-slight waves-effect waves-light"></div>
+                </a>
+                <div class="card-body text-center">
+                    <a href="" class="grey-text">
+                        <h5>{{ product.name }}</h5>
+                    </a>
+                    <h5>
+                        <strong>
+                            <a href="{{ product.get_absolute_url  }}" class="dark-grey-text">
+                                {{ product.name }}
+                                <span class="badge badge-pill danger-color">
+                                    NEW
+                                </span>
+                            </a>
+                        </strong>
+                    </h5>
+        
+                    <h4 class="font-weight-bold blue-text">
+                        <strong>{{ product.get_price }}$</strong>
+                    </h4>
+                </div>
+            </div>
+        </div>        
+    {% endfor %}
+{% endblock %}

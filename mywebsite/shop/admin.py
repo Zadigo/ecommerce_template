@@ -34,3 +34,10 @@ class VariantAdmin(admin.ModelAdmin):
     list_display = ['name', 'verbose_name', 'in_stock', 'active']
     search_fields = ['name']
     list_per_page = 10
+
+
+@admin.register(models.Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ['product', 'user']
+    search_fields = ['product', 'user']
+    list_per_page = 10

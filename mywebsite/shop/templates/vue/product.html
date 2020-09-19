@@ -77,7 +77,7 @@
                 <slot></slot>
             </button>
 
-            <button v-else class="btn btn-primary my-0" :class="size, color" :id="id">
+            <button v-else class="btn btn-primary my-0 disabled" :class="size, color" :id="id">
                 <slot></slot>
             </button>
         </transition>
@@ -173,22 +173,20 @@
 
 
     var addtocart = {
-        props: ["product", "details", "disabled"],
+        props: ["product", "details", "disabled", "likesdisabled"],
         name: "AddTocart",
         delimiters: ["[[", "]]"],
         template: `
-        <form @submit.prevent="addtocart" class="d-flex">
-            <input v-model="quantity" type="number" 
+        <form onsubmit="return false;" class="d-flex">
+            <input v-model.number="quantity" type="number" min="1" max="99"
                     aria-label="Search" class="form-control" style="width: 100px">
 
-            <custom-button :method="'cart'" :id="'btn_add_to_cart'" :size="'btn-md'" v-bind:disabled="disabled">
+            <custom-button @startaction="addtocart" :method="'cart'" :id="'btn_add_to_cart'" :size="'btn-md'" v-bind:disabled="disabled">
                 {% trans "Ajouter au panier" %}
             </custom-button>
 
-            <custom-button :method="'like'" :id="'btn_add_to_likes'" :size="'btn-sm red lighten-1'" v-bind:disabled="disabled">
-                <slot>
-                    <i class="fas fa-heart ml-1 text-white"></i>
-                </slot>
+            <custom-button @startaction="addtolikes" :method="'like'" :id="'btn_add_to_likes'" :size="'btn-sm red lighten-1'" :disabled="disabled" :likesdisabled="disabled">
+                <i class="fas fa-heart ml-1 text-white"></i>
             </custom-button>
         </form>
         `,
@@ -225,13 +223,29 @@
                 })
             },
             addtolikes: function() {
-                dataLayer.push({
-                    "event": "ProductLike",
-                    "product": {
-                        "id": "{{ product.reference }}",
-                        "name": "{{ product.name }}",
-                        "price": "{{ product.get_price }}"
-                    }
+                var self = this
+                fetch("{% url 'shop:like' product.id %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    credentials: "same-origin"
+
+                }).then((response) => {
+                    response.json().then((data) => {
+                        dataLayer.push({
+                            "event": "ProductLike",
+                            "product": {
+                                "id": "{{ product.reference }}",
+                                "name": "{{ product.name }}",
+                                "price": "{{ product.get_price }}"
+                            }
+                        })
+                        
+                    })
+                }).catch((error) => {
+
                 })
             },
             addtocart: function() {
@@ -282,7 +296,8 @@
                 details: {},
                 images: [],
                 currentindex: 0,
-                clicked: false
+                clicked: false,
+                likesdisabled: Boolean("{{ has_liked }}")
             }
         },
         beforeMount() {

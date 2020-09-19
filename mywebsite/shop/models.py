@@ -137,6 +137,7 @@ class Variant(models.Model):
     def __str__(self):
         return self.name
 
+
 class Product(models.Model):
     """
     This model represents a product in the database. It is composed
@@ -298,6 +299,16 @@ class LookBook(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Like(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, blank=True, null=True)
+    user    = models.ForeignKey(MYUSER, on_delete=models.CASCADE, blank=True, null=True)
+
+    objects = models.Manager()
+
+    def __str__(self):
+        return self.product.name
 
 
 @receiver(post_save, sender=Product)

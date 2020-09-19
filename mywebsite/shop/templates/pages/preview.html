@@ -1,12 +1,7 @@
-{% extends "base.html" %}
+{% extends "pages/base_shop.html" %}
 {% load static share prices carts i18n %}
 
 {% block title %}{{ product.name }} - {% trans "Prévisualisation" %}{% endblock %}
-
-{% block navbar %}
-    {% include "project_components/navs/nav.html" %}
-{% endblock %}
-
 
 {% block container %}
     <div class="row wow fadeIn">
@@ -108,10 +103,6 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block footer %}
-    {% include "project_components/navs/footer.html" %}
 {% endblock %}
 
 {% block vuejs_scripts %}

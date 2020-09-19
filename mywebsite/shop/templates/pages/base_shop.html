@@ -1,0 +1,68 @@
+{% extends 'base_site.html' %}
+{% load static aws_images %}
+
+{% block navbar %}
+    {% include "project_components/navs/nav.html" %}
+{% endblock %}
+
+{% block description %}
+    {% if product %}
+        {{ product.description }}
+    {% else %}
+        Découvrez les dernières tendances mode pour {{ collection.gender }} et beauté chez Nawoka. 
+        Achetez nos meilleurs collections de vêtements, chaussures et plus encore.
+    {% endif %}
+{% endblock %}
+
+{% block twitter_card %}
+    {% if product %}
+        {{ product.description }}
+    {% else %}
+        Découvrez toute notre collection pour {{ collection.gender }} et plus encore
+    {% endif %}
+{% endblock %}
+
+{% block og_title %}
+    {% if product %}
+        {{ product.name }}
+    {% else %}
+        Découvrez les dernières tendances mode pour {{ collection.gender }}.
+    {% endif %}
+{% endblock %}
+
+
+{% block og_description %}
+    {% if product %}
+        {{ product.description }}
+    {% else %}
+        Découvrez les dernières tendances mode pour {{ collection.gender }} et beauté chez Nawoka. 
+        Achetez nos meilleurs collections de vêtements, chaussures et plus encore.
+    {% endif %}
+{% endblock %}
+
+{% block og_image %}
+    {% if product %}
+        {{ product.get_main_image_url }}
+    {% else %}
+        {% create_aws_image_url 'banner1.jpg' %}
+    {% endif %}
+{% endblock %}
+
+{% block og_image_alt %}
+    {{ product.slug|default:"Nawoka" }}
+{% endblock og_image_alt %}
+
+{% block share_metatags %}
+    <meta name="twitter:site" content="@mywebsitefashion" />
+    <meta name="twitter:creator" content="@mywebsitefashion" />
+{% endblock %}
+
+{% if product %}
+    {% block extra_metatags %}
+        <link rel="canonical" href="{{ product.get_absolute_url }}">
+    {% endblock %}
+{% endif %}
+
+{% block footer %}
+    {% include "project_components/navs/footer.html" %}
+{% endblock %}

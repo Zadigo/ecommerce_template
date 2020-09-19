@@ -1,0 +1,19 @@
+<section>
+    <h2 class="my-5 h3 text-center">
+        {% block section_title %}{% endblock %}
+    </h2>
+
+    <div class="row features-small mb-5 mt-3 wow fadeIn">
+        <div class="col-md-4">
+            {% block section_left_content %}{% endblock %}
+        </div>
+
+        <div class="col-md-4 flex-center">
+            {% block section_media %}{% endblock %}
+        </div>
+
+        <div class="col-md-4 mt-2">
+            {% block section_right_content %}{% endblock %}
+        </div>
+    </div>
+</section>

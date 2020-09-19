@@ -96,35 +96,6 @@ def calculate_tva(price, tva=20):
     return round(float(price) * (1 + (tva / 100)), 2)
 
 
-def impressions_helper(queryset):
-    """A helper function that helps create an impressions
-    datalayer for a list of products
-    """
-    items = []
-    position = 1
-    try:
-        for product in queryset:
-            if product.discount_price > 0:
-                price = product.discount_price
-            else:
-                price = product.price_ht
-
-            items.append(
-                {
-                    'id': product.reference,
-                    'name': product.name,
-                    'price': price,
-                    'brand': "Nawoka",
-                    'category': product.collection.collection_name,
-                    'position': position 
-                }
-            )
-            position = position + 1
-    except:
-        return []
-    return items
-
-
 def add_to_current_date(d=15, use_timezone=False):
     """Adds d-days to a current date"""
     if use_timezone:

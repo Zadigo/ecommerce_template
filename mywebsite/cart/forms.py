@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import widgets
 from django.forms import fields
-from cart import validators
+from cart import validators, choices
 
 class CouponForm(forms.Form):
     coupon = fields.CharField(max_length=5, widget=widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Coupon'}))
@@ -21,15 +21,8 @@ class ShipmentForm(forms.Form):
     telephone = forms.CharField(widget=widgets.TextInput())
 
     address   = forms.CharField()
-    COUNTRIES = [('france', 'France'), ('belgique', 'Belgique')]
-    country     = forms.CharField(widget=widgets.Select(choices=COUNTRIES))
-    CITIES = [
-        ('île de france', 'Île de France'),
-        ('nord', 'Nord'),
-        ('paca', 'PACA'),
-        ('rhônes alpes', 'Rhônes Alpes'),
-    ]
-    city        = forms.CharField(widget=widgets.Select(choices=CITIES))
+    country     = forms.CharField(widget=widgets.Select(choices=choices.Countries.choices))
+    city        = forms.CharField(widget=widgets.Select(choices=choices.Cities.choices))
     zip_code    = forms.CharField(validators=[validators.zip_code_validator])
 
     billing_equals_shipping = forms.BooleanField(required=False, initial=False)

@@ -27,8 +27,9 @@
                         {% endfor %}
                     </div>
                 </div>
+
                 <div class="card-footer">
-                    <a href="{% url 'checkout' %}" class="btn btn-large btn-primary btn-block z-depth-0">
+                    <a href="{% url 'cart:checkout' %}" class="btn btn-large btn-primary btn-block z-depth-0">
                         {% trans "Panier" %}
                     </a>
                 </div>

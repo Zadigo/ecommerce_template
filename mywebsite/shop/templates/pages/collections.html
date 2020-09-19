@@ -1,15 +1,7 @@
-{% extends "base.html" %}
+{% extends "pages/base_shop.html" %}
 {% load i18n static shop_impressions %}
 
 {% block title %}{{ collection.name }} - {{ collection.gender|capfirst }} - Nawoka{% endblock %}
-
-{% block navbar %}
-    {% include "project_components/navs/nav.html" %}
-{% endblock %}
-
-{% block page_description %}
-    <meta name="description" content="{{ collection.google_description|default:collection.presentation_text|truncatechars:160 }}">
-{% endblock %}
 
 {% block datalayer_push %}
     <script>
@@ -58,10 +50,6 @@
 
     <!-- PAGINATION -->
     {% include "components/products/pagination.html" %}
-{% endblock %}
-
-{% block footer %}
-    {% include "project_components/navs/footer.html" %}
 {% endblock %}
 
 {% block extra_scripts %}

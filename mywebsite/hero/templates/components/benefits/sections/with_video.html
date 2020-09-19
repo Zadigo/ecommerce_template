@@ -1,0 +1,17 @@
+<section>
+    <h3 class="h3 text-center mb-5">{% block section_title %}{% endblock %}</h3>
+
+    <div class="row wow fadeIn">
+        <div class="col-lg-6 col-md-12 px-4">
+            {% block section_content %}{% endblock %}
+        </div>
+
+        <!-- MEDIA -->
+        <div class="col-lg-6 col-md-12">
+            <p class="h5 text-center mb-4">Watch our "5 min Quick Start" tutorial</p>
+            <div class="embed-responsive embed-responsive-16by9">
+                {% block section_media %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</section>
