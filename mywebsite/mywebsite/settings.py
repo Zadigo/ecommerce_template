@@ -352,3 +352,19 @@ DISCOUNT_MODEL = 'discounts.Discount'
 # CART_MODEL = None
 
 
+# STRIPE
+
+STRIPE_DEBUG = True
+
+STRIPE_API_KEYS = {
+    'test': {
+        'publishable': '',
+        'secret': ''
+    },
+    'live': {
+        'publishable': '',
+        'secret': ''
+    }
+}
+
+# PAYMENT_BACKEND = 'cart.payment.SessionPaymentBackend'
