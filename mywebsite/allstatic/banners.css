@@ -1,0 +1,81 @@
+.top-banner.promotional a {
+  color: white;
+  cursor: pointer;
+}
+
+.top-banner, .top-banner.mobile-infos {
+  position: relative;
+  top: 0;
+  height: 50px;
+  color: white;
+  background-color: #42a5f5;
+}
+
+.top-banner.mobile-infos {
+  text-align: center;
+  padding: .45rem;
+  line-height: 40px;
+  font-weight: 400;
+}
+
+.top-banner.sales-policies p {
+  font-weight: 600;
+}
+
+.top-banner.sales-policies .container {
+  max-height: 100%;
+}
+
+.top-banner.sales-policies .container .row {
+  margin-bottom: 0;
+}
+
+.top-banner.sales-policies .container .row .col {
+  max-height: 50px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.top-banner.sales-policies .container .row .col i {
+  font-size: 2rem;
+  margin-right: .5rem;
+  vertical-align: middle;
+  line-height: 1.75;
+}
+
+.top-banner.promotional {
+  position: relative;
+  top: 0;
+  height: auto;
+  text-align: center;
+  font-size: 32px;
+  font-weight: 700;
+  padding: 2rem;
+  background-color: #00897b;
+}
+
+.top-banner.promotional.smaller {
+  padding: .75rem;
+  font-size: 1rem;
+  color: white;
+}
+
+.top-banner.promotional a .big-title {
+  margin-bottom: .35rem;
+}
+
+.top-banner.promotional a .presentation {
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+.top-banner.promotional a .legal {
+  font-size: .75rem;
+  padding: .25rem;
+  font-weight: 400;
+}

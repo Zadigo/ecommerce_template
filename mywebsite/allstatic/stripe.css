@@ -1,0 +1,139 @@
+.stripe.stripe-styling {
+    /* background-color: #6772e5; */
+    background-color: white;
+}
+  
+.stripe.stripe-styling * {
+    font-family: Roboto, Open Sans, Segoe UI, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .stripe.stripe-styling fieldset {
+    margin: 0 15px 20px;
+    padding: 0;
+    border-style: none;
+    background-color: #7795f8;
+    box-shadow: 0 6px 9px rgba(50, 50, 93, 0.06), 0 2px 5px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 #829fff;
+    border-radius: 4px;
+  }
+
+  
+  .stripe.stripe-styling .row {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-left: 15px;
+  }
+  
+  .stripe.stripe-styling .row + .row {
+    border-top: 1px solid #819efc;
+  }
+  
+  .stripe.stripe-styling label {
+    width: 15%;
+    min-width: 70px;
+    padding: 11px 0;
+    color: #c4f0ff;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  /* .stripe.stripe-styling button, */
+  .stripe.stripe-styling input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: none;
+    border-style: none;
+  }
+  
+  .stripe.stripe-styling input:-webkit-autofill {
+    -webkit-text-fill-color: #fce883;
+    transition: background-color 100000000s;
+    -webkit-animation: 1ms void-animation-out;
+  }
+  
+  .stripe.stripe-styling .StripeElement--webkit-autofill {
+    background: transparent !important;
+  }
+  
+  .stripe.stripe-styling .StripeElement {
+    width: 100%;
+    padding: 11px 15px 11px 0;
+  }
+  
+  .stripe.stripe-styling input {
+    width: 100%;
+    padding: 11px 15px 11px 0;
+    color: #fff;
+    background-color: transparent;
+    -webkit-animation: 1ms void-animation-out;
+  }
+  
+  .stripe.stripe-styling input::-webkit-input-placeholder {
+    color: #87bbfd;
+  }
+  
+  .stripe.stripe-styling input::-moz-placeholder {
+    color: #87bbfd;
+  }
+  
+  .stripe.stripe-styling input:-ms-input-placeholder {
+    color: #87bbfd;
+  }
+  
+  /* .stripe.stripe-styling button {
+    display: block;
+    width: calc(100% - 30px);
+    height: 40px;
+    margin: 40px 15px 0;
+    background-color: #f6a4eb;
+    box-shadow: 0 6px 9px rgba(50, 50, 93, 0.06), 0 2px 5px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 #ffb9f6;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .stripe.stripe-styling button:active {
+    background-color: #d782d9;
+    box-shadow: 0 6px 9px rgba(50, 50, 93, 0.06), 0 2px 5px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 #e298d8;
+  } */
+  
+  .stripe.stripe-styling .error svg .base {
+    fill: #fff;
+  }
+  
+  .stripe.stripe-styling .error svg .glyph {
+    fill: #6772e5;
+  }
+  
+  .stripe.stripe-styling .error .message {
+    color: #fff;
+  }
+  
+  .stripe.stripe-styling .success .icon .border {
+    stroke: #87bbfd;
+  }
+  
+  .stripe.stripe-styling .success .icon .checkmark {
+    stroke: #fff;
+  }
+  
+  .stripe.stripe-styling .success .title {
+    color: #fff;
+  }
+  
+  .stripe.stripe-styling .success .message {
+    color: #9cdbff;
+  }
+  
+  .stripe.stripe-styling .success .reset path {
+    fill: #fff;
+  }
