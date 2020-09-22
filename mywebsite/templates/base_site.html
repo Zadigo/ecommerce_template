@@ -14,25 +14,28 @@
 {% block analytics %}
     <!-- ANALYTICS -->
     {# This is a specific technique to use Google Optimize with GTM #}
-    {# {% include "project_components/analytics/google_analytics.html" with ga_tag="" optimize_tag="" %} #}
+    {# {% include "analytics/google_analytics.html" with ga_tag="" optimize_tag="" %} #}
     
-    {# {% include "project_components/analytics/tag_manager.html" with gtm_id="G" %} #}
-    {# {% include "project_components/analytics/facebook.html" with id="" %} #}
+    {# {% include "analytics/tag_manager.html" with gtm_id="G" %} #}
+    {# {% include "analytics/facebook.html" with id="" %} #}
     {% block facebook_events %}{% endblock %}
-
+    
     <!-- OPTIMIZE -->
-    {# {% include "project_components/analytics/optimize_anti_flicker.html" with optimize_tag="" %} #}
-
+    {# {% include "analytics/optimize_anti_flicker.html" with optimize_tag="" %} #}
+    
     <!-- MAILCHIMP -->
-    {# {% include "project_components/analytics/mailchimp.html" %} #}
-
+    {# {% include "analytics/mailchimp.html" %} #}
+    
     <!-- ADWORDS REMARKETING  -->
-    {# {% include "project_components/analytics/remarketing.html" with remarketing_tag="" %} #}
+    {# {% include "analytics/remarketing.html" with remarketing_tag="" %} #}
     {% block remarketing %}{% endblock %}
+
+    <!-- PINTEREST -->
+    {% include "analytics/pinterest.html" with verification_code="" %}
 {% endblock %}
 
 {% block extra_analytics %}
-    {# {% include "project_components/analytics/google_no_script.html" with gtm_id="" %} #}
+    {# {% include "analytics/google_no_script.html" with gtm_id="" %} #}
         
     <!-- FACEBOOK PIXELS -->
     {% block facebook_event %}{% endblock %}

@@ -33,10 +33,7 @@
         <meta property="keywords" content="{% block meta_keywords %}{% endblock %}">
 
         {% block extra_metatags %}{% endblock %}
-
-        <!-- PINTEREST -->
-        {% include "project_components/analytics/pinterest.html" with verification_code="" %}
-
+        
         <!-- STRUCTURED -->
         {% block structured_data %}
             {% include "scripts/seo/organization.html" %}
