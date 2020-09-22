@@ -1,3 +1,4 @@
+import stripe
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
@@ -19,8 +20,11 @@ class MyUser(AbstractBaseUser):
     
     is_active        = models.BooleanField(default=True)
     is_admin            = models.BooleanField(default=False)
-    product_manager     = models.BooleanField(default=False)
     is_staff            = models.BooleanField(default=False)
+
+    is_guest        = models.BooleanField(default=False)
+    is_intern           = models.BooleanField(default=False)
+    is_product_manager = models.BooleanField(default=False)
     
     objects = managers.MyUserManager()
 
@@ -37,10 +41,6 @@ class MyUser(AbstractBaseUser):
         return True
 
     @property
-    def is_product_manager(self):
-        return self.product_manager
-
-    @property
     def get_full_name(self):
         return f'{self.firstname} {self.lastname}' 
 
@@ -55,7 +55,7 @@ class MyUser(AbstractBaseUser):
 class MyUserProfile(models.Model):
     """User profile model used to complete the base user model"""
     myuser              = models.OneToOneField(MyUser, on_delete=models.CASCADE)
-    stripe_customer_id           = models.CharField(max_length=100, blank=True, null=True)
+    customer_id           = models.CharField(max_length=100, blank=True, null=True, help_text='Stripe customer ID')
     birthdate         = models.DateField(default=timezone.now, blank=True, null=True)
     telephone           = models.CharField(max_length=20, blank=True, null=True)
     address            = models.CharField(max_length=150, blank=True, null=True)
@@ -67,13 +67,21 @@ class MyUserProfile(models.Model):
     def __str__(self):
         return self.myuser.email
 
+    @property
     def get_full_address(self):
         return f'{self.address}, {self.city}, {self.zip_code}'
 
+    def clean(self, *args, **kwargs):
+        try:
+            details = stripe.Customer.create(
+                email=self.myuser.email, 
+                name=self.myuser.get_full_name()
+            )
+        except stripe.error.StripeError as e:
+            pass
+        else:
+            self.customer_id = details['customer_id']
 
-# #####################
-#       SIGNALS
-# #####################
 
 @receiver(post_save, sender=MyUser)
 def create_user_profile(sender, instance, created, **kwargs):

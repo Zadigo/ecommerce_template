@@ -1,10 +1,39 @@
 # from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth import get_user_model
+from django.shortcuts import reverse
 from django.test import RequestFactory, TestCase
+
+from accounts.views import LoginView, SignupView
+
 # from django.test.client import Client
 
 # from accounts.models import AccountsToken, MyUser, MyUserProfile
 
-# from .views import LoginView, SignupView
+
+
+MYUSER = get_user_model()
+
+class LoginTest(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        # self.user = MYUSER.objects.create(
+        #     email='test@gmail.com',
+        #     firstname='Last',
+        #     lastname='Parent',
+        #     password='touparet'
+        # )
+
+    def test_access_login_page(self):
+        request = self.factory.get(reverse('accounts:login'))
+        response = LoginView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_can_login(self):
+        data = {'email': 'test@gmail.com', 'password': 'touparet'}
+        request = self.factory.post(reverse('accounts:login'), data)
+        response = LoginView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.url, 'accounts/login')
 
 
 # class LoginTest(TestCase):

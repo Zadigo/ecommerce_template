@@ -1,5 +1,6 @@
 import json
 
+from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.http import HttpResponseRedirect, JsonResponse
@@ -7,8 +8,8 @@ from django.shortcuts import redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
-from django.views.decorators.http import require_POST, require_GET
 from django.views.decorators.cache import cache_control, never_cache
+from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.list import (BaseListView,
                                        MultipleObjectTemplateResponseMixin)
 
@@ -118,6 +119,8 @@ class PaymentView(BaseCartView):
 
 class ProcessPaymentView(generic.View):
     send_email = False
+    user_fields = ['firstname', 'lastname']
+    profile_fields = ['telephone', 'address', 'city', 'zip_code']
 
     @transaction.atomic
     def post(self, request, **kwargs):
@@ -126,8 +129,12 @@ class ProcessPaymentView(generic.View):
         confirmation_email = emailing.OrderConfirmationEmail()
         failed_email = emailing.FailedOrderEmail()
 
-        state, data = backend.create_stripe_customer_and_process_payment(payment_debug=True)
-        print(backend.errors)
+        try:
+            payment_is_in_debug_mode = settings.STRIPE_DEBUG
+        except:
+            payment_is_in_debug_mode = True
+
+        state, data = backend.create_stripe_customer_and_process_payment(payment_debug=payment_is_in_debug_mode)
         return_data = {
             'state': state, 
             **data
@@ -148,15 +155,13 @@ class ProcessPaymentView(generic.View):
                 # When the customer has been created or retrieved,
                 # we'll update their informations with what they
                 # have provided us in the shipment form
-                user_fields = ['firstname', 'lastname']
-                for field in user_fields:
+                for field in self.user_fields:
                     setattr(user, field, backend.user_infos.get(field, None))
                 user.save()
                 sid = transaction.savepoint()                
                 
                 profile = user.myuserprofile
-                profile_fields = ['telephone', 'address', 'city', 'zip_code']
-                for field in profile_fields:
+                for field in self.profile_fields:
                     setattr(profile, field, backend.user_infos.get(field, None))
                 if created:
                     profile.stripe_customer_id = backend.new_or_existing_customer_id

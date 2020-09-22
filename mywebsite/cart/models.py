@@ -5,8 +5,6 @@ from django.utils.functional import cached_property
 from django.utils import timezone
 
 from cart import validators, utilities, managers
-# from shop.models import Product, Collection
-# from discounts.models import Discount
 
 
 MYUSER = get_user_model()
@@ -192,6 +190,8 @@ class Review(models.Model):
     rating  = models.IntegerField(default=1)
     text    = models.TextField(max_length=300)
     created_on  = models.DateField(auto_now_add=True)
+
+    objects = models.Manager()
 
     def __str__(self):
         return self.customer_order

@@ -12,24 +12,34 @@ from django.utils.translation import gettext_lazy as _
 
 
 def get_product_model():
+    """
+    Get the product model for the project
+    """
     try:
         product_model = settings.PRODUCT_MODEL
     except:
-        raise ImproperlyConfigured(_("You should configure the Product model to use in settings for the cart application"))
+        raise ImproperlyConfigured("You should configure the Product model to use in settings for the cart application")
     else:
         return apps.get_model(product_model, require_ready=False)
 
 
 def get_product_collection_model():
+    """
+    Get the product collection model for the project
+    """
     try:
         model = settings.PRODUCT_COLLECTION_MODEL
     except:
-        raise ImproperlyConfigured(_("You should configure the Product model to use in settings for the cart application"))
+        raise ImproperlyConfigured("You should configure the Product model to use in settings for the cart application")
     else:
         return apps.get_model(model, require_ready=False)
 
 
 def get_discount_model():
+    """
+    Get the discount model for the project
+    """
+
     try:
         model = settings.DISCOUNT_MODEL
     except:
@@ -39,6 +49,10 @@ def get_discount_model():
 
 
 def create_discount_code():
+    """
+    Create a new discount code
+    """
+
     n = random.randrange(1000, 9000)
     s = random.choice(string.ascii_uppercase)
     return f'NAW{n}{s}'
@@ -70,14 +84,15 @@ def create_transaction_token(n=1, salt='mywebsite'):
     return '-'.join(tokens)
 
 
-def calculate_tva(price, tva=20):
-    """Calculates the tax on a product
+def calculate_tva(price, vat=20):
+    """
+    Calculates the tax on a product
 
     Formula
     -------
         price * (1 + (tax / 100))
     """
-    return round(float(price) * (1 + (tva / 100)), 2)
+    return round(float(price) * (1 + (vat / 100)), 2)
 
 
 def validate_payment_id(token, salt='mywebsite'):

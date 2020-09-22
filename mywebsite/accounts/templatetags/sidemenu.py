@@ -6,7 +6,8 @@ register = Library()
 
 
 LINKS = [
-    ['accounts:profile:home', {'name': 'Profil'}],
+    ['accounts:profile:home', {'name': 'Aperçu du compte'}],
+    ['accounts:profile:information', {'name': 'Informations'}],
     ['accounts:profile:payment', {'name': 'Mode de paiement'}],
     ['accounts:profile:change_password', {'name': 'Mot de passe'}],
     ['accounts:profile:contact', {'name': 'Préférences de contact'}],

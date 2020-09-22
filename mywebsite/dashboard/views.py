@@ -359,7 +359,8 @@ class GeneralSettingsView(LoginRequiredMixin, generic.View):
 
 class StoreSettingsView(LoginRequiredMixin, generic.UpdateView):
     model = dashboard_models.DashboardSetting
-    form_class = forms.DashboardSettingsForm
+    # form_class = forms.DashboardSettingsForm
+    form_class = None
     success_url = '/dashboard/settings'
     context_object_name = 'store'
     template_name = 'pages/edit/update/settings/shop.html'

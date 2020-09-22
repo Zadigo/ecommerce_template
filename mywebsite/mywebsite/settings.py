@@ -31,12 +31,22 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.sitemaps',
 
-    'django_celery_beat',
+    'social_django',
+    'analytics',
     'accounts',
+    'legal',
+    'hero',
+    'nodesplus',
+    'django_celery_beat',
     'rest_framework',
     'django_extensions',
     'shop',
+    'discounts',
+    'cart',
+    'store',
     'dashboard',
+    'subscribers',
+    'customercare',
 ]
 
 MIDDLEWARE = [
@@ -65,16 +75,12 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
 
-                'django.template.context_processors.debug',
-
                 'cart.payment.stripe_context_processor',
-                'mywebsite.responsive.responsive_context_processor',
-                # 'dashboard.context_processor.dashboard',
-                # 'legal.context_processors.context',
+                'mywebsite.context_processors.responsive',
+                'analytics.context_processors.analytics'
             ],
             'libraries': {
                 'aws_images': 'templatetags.aws_images',
-                'general_tags': 'templatetags.general_tags',
                 'table': 'templatetags.table',
 
                 'share': 'templatetags.share',
@@ -82,8 +88,6 @@ TEMPLATES = [
 
                 'carts': 'cart.templatetags.carts',
                 'delivery': 'shop.templatetags.delivery',
-                'prices': 'shop.templatetags.prices',
-                'seo': 'shop.templatetags.seo',
                 'dropdowns': 'shop.templatetags.dropdowns',
 
                 'dates': 'dashboard.templatetags.dates',
@@ -91,7 +95,10 @@ TEMPLATES = [
 
                 'sidemenu': 'accounts.templatetags.sidemenu',
 
-                'conversions': 'cart.templatetags.conversions',
+                'nodes_plus': 'nodesplus.templatetags.nodes_plus',
+
+                'shop_impressions': 'shop.templatetags.shop_impressions',
+                'cart_impressions': 'cart.templatetags.cart_impressions',
             },
         },
     },
@@ -104,6 +111,10 @@ WSGI_APPLICATION = 'mywebsite.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'princess_ecommerce'),
@@ -236,14 +247,14 @@ AWS_IMAGES_FOLDER = ''
 
 AUTH_USER_MODEL = 'accounts.MyUser'
 
-AUTHENTICATION_BACKENDS = (
-#     'social_core.backends.twitter.TwitterOAuth',
+AUTHENTICATION_BACKENDS = [
+    'social_core.backends.twitter.TwitterOAuth',
 #     'social_core.backends.open_id.OpenIdAuth',
-#     'social_core.backends.google.GoogleOpenId',
-#     'social_core.backends.google.GoogleOAuth2',
-#     'social_core.backends.facebook.FacebookOAuth2',
-    'accounts.backends.EmailAuthenticationBackend',
-)
+    # 'social_core.backends.google.GoogleOpenId',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'accounts.backends.EmailAuthenticationBackend'
+]
 
 
 # SOCIAL DJANGO
@@ -279,22 +290,6 @@ EMAIL_USE_LOCALTIME = True
 SITE_ID = 1
 
 
-# STRIPE
-
-STRIPE_API_KEYS = {
-    'test': {
-        'publishable': '',
-        'secret': ''
-    },
-    'live': {
-        'publishable': '',
-        'secret': ''
-    }
-}
-
-APPLE_PAY_DOMAIN = 'mywebsite.fr'
-
-
 # CELERY
 
 # redis://redis:6379/0
@@ -326,6 +321,14 @@ CACHES = {
     'inmemcache': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211'
+    },
+    'redis-cache': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+        },
+        'KEY_PREFIX': 'mywebsite'
     }
 }
 
@@ -333,3 +336,19 @@ CACHES = {
 INTERNAL_IPS = [
     '127.0.0.1'
 ]
+
+
+# Use these global variables to dynamically
+# import models within apps e.g. cart etc.
+
+PRODUCT_MODEL = 'shop.Product'
+
+PRODUCT_COLLECTION_MODEL = 'shop.Collection'
+
+DISCOUNT_MODEL = 'discounts.Discount'
+
+# CUSTOMER_ORDERS_MODEL = 'cart.CustomerOrder'
+
+# CART_MODEL = None
+
+

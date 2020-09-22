@@ -17,7 +17,7 @@ class MyUserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ['email', 'is_staff', 'product_manager']
+        fields = ['email', 'is_admin', 'is_staff']
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
@@ -63,19 +63,19 @@ class UserLoginForm(auth_forms.AuthenticationForm):
     )
     
     def clean(self):
-        email    = self.cleaned_data.get('email')
+        email    = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-
+        
         if email is None and password:
             raise forms.ValidationError(_("Veuillez entrer un email ainsi qu'un mot de passe"))    
 
-        if email and password:
-            self.user_cache = authenticate(self.request, email=email, password=password)
+        # if email and password:
+        #     self.user_cache = authenticate(self.request, email=email, password=password)
 
-            if self.user_cache:
-                self.confirm_login_allowed(self.user_cache)
-            else:
-                raise forms.ValidationError("Vous n'êtes pas autorisé à vous connecté")
+        #     if self.user_cache:
+        #         self.confirm_login_allowed(self.user_cache)
+        #     else:
+        #         raise forms.ValidationError("Vous n'êtes pas autorisé à vous connecté")
 
         return self.cleaned_data
 

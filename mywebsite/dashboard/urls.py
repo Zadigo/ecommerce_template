@@ -47,11 +47,11 @@ productpatterns = [
 ]
 
 settingspatterns = [
-    url(r'^analytics$', views.AnalyticsSettingsView.as_view(), name='analytics'),
-    url(r'^store$', views.StoreSettingsView.as_view(), name='store'),
-    url(r'^general$', views.GeneralSettingsView.as_view(), name='general'),
+    # url(r'^analytics$', views.AnalyticsSettingsView.as_view(), name='analytics'),
+    # url(r'^store$', views.StoreSettingsView.as_view(), name='store'),
+    # url(r'^general$', views.GeneralSettingsView.as_view(), name='general'),
 
-    url(r'^$', views.SettingsView.as_view(), name='home'),
+    # url(r'^$', views.SettingsView.as_view(), name='home'),
 ]
 
 

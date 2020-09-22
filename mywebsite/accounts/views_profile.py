@@ -7,15 +7,21 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from django.views.generic import View, TemplateView
+from django.views.decorators.cache import cache_page
+from django.views.generic import TemplateView, View
 
 from accounts import forms
 from accounts.models import MyUser, MyUserProfile
 
 
-class ProfileView(LoginRequiredMixin, View):
+class IndexView(TemplateView):
+    template_name = 'pages/profile/index.html'
+
+
+class InformationView(LoginRequiredMixin, View):
     forms = {
         'form1': forms.BaseProfileForm,
         'form2': forms.AddressProfileForm
@@ -41,7 +47,7 @@ class ProfileView(LoginRequiredMixin, View):
                 }
             )
         }
-        return render(request, 'pages/profile/home.html', context)
+        return render(request, 'pages/profile/information.html', context)
 
     def post(self, request, **kwargs):
         user = MyUser.objects.get(id=request.user.id)

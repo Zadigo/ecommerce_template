@@ -1,10 +1,10 @@
 {% extends "pages/accounts/base.html" %}
 {% load i18n %}
+
 {% block profile_content %}
     <div class="card-panel">
         <form method="POST" enctype="multipart/form-data" id="personalisation-form">
             {% csrf_token %}
-            
             {% for field in form %}
                 <div class="input-field">
                     {{ field }}
