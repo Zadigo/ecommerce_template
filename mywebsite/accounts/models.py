@@ -12,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from accounts import managers
 
 
-class MyUser(AbstractBaseUser):
+class MyUser(AbstractBaseUser, PermissionsMixin):
     """Base user model for those user accounts"""
     email       = models.EmailField(max_length=255, unique=True)
     firstname      = models.CharField(max_length=100, null=True, blank=True)
@@ -34,12 +34,6 @@ class MyUser(AbstractBaseUser):
     def __str__(self):
         return self.email
 
-    def has_perm(self, perm, obj=None):
-        return True
-
-    def has_module_perms(self, app_label):
-        return True
-
     @property
     def get_full_name(self):
         return f'{self.firstname} {self.lastname}' 
@@ -50,6 +44,15 @@ class MyUser(AbstractBaseUser):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_perms(self, perm_list, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
 
 
 class MyUserProfile(models.Model):
