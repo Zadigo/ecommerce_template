@@ -1,0 +1,35 @@
+/* .image-selector label:before {
+    content: " ";
+    display: block;
+    background-color: white;
+    color: white;
+    background-image: url("https://via.placeholder.com/800");
+    width: 200px;
+    height: auto;
+}
+
+.image-selector :checked + label:before {
+    background-image: url("https://via.placeholder.com/800");
+} */
+
+/* 
+ * IMAGE SELECTOR
+ */
+
+.image-selector {
+    transition: all .3s ease;
+}
+
+.image-selector label:hover {
+    cursor: pointer;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.image-selector :checked + label img {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+
+td.bootrstrap-link a {
+    color: #007bff;
+}

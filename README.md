@@ -196,7 +196,19 @@ What this does is interract with the database at each step of the funnel by:
 
 This was built primarily for using Docker in a production environment. However, in case you would want to go serverless, Zappa is included for that purpose. [Read more here](https://github.com/Miserlou/Zappa) if you are interested by that setup.
 
-You can setup your server to use docker quickly by using the [custom script](./docker/management.sh). Once that's done run `docker-compose build` or `docker-compose build <service name>` if you want to start each service individually.
+You can setup your server to use docker quickly by using the [custom script](./docker/management.sh). Once that's done run `docker-compose build` or `docker-compose build <service name>` if you want to start each service individually and then `docker-compose up <service name>`
+
+Create a database once you've created the respective container with `docker exec -it <myconatainer> psql -U postgres` and then:
+
+```
+CREATE USER ... WITH ENCRYPTED PASSWORD '...';
+
+CREATE DATABASE ... OWNER ...;
+
+GRANT ALL PRIVILEGES ON DATABASE ... TO ...;
+```
+
+Finally, do not forget to change the variables in the [environment files](./docker/environment).
 
 ### HTTPS
 
