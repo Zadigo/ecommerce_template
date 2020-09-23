@@ -3,9 +3,9 @@ version: '3'
 services:
   web:
     build: ./mywebsite
-    container_name: web
-    command: gunicorn mywebsite.wsgi -w 4 -b 0.0.0.0:8000 --chdir=/app/mywebsite --log-level=debug --log-file=/app/mywebsite/gunicorn.log
-    # command: python manage.py runserver 0.0.0.0:8000
+    container_name: mywebsite
+    # command: gunicorn mywebsite.wsgi -w 4 -b 0.0.0.0:8000 --chdir=/app/mywebsite --log-level=debug --log-file=/app/mywebsite/gunicorn.log
+    command: python manage.py runserver 0.0.0.0:8000
     env_file:
       - ./docker/environment/env_prod.env
       - ./docker/environment/general.env
