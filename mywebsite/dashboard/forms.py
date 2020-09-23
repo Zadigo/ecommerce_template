@@ -31,7 +31,7 @@ class ProductForm(forms.ModelForm):
             'sku': custom_widgets.TextInput(attrs={'placeholder': 'SKU'}),
             'reference': custom_widgets.TextInput(attrs={'placeholder': 'Référence'}),
             
-            'price_ht': custom_widgets.NumberInput(attrs={'placeholder': 'Prix Hors Taxe', 'min': '0', 'step': 'any'}),
+            'price_pre_tax': custom_widgets.NumberInput(attrs={'placeholder': 'Prix Hors Taxe', 'min': '0', 'step': 'any'}),
             'price_valid_until': custom_widgets.DateInput(),
             'discount_pct': custom_widgets.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Nombre en %', 'min': '5'}),
             'quantity': custom_widgets.NumberInput(attrs={'class': 'form-control', 'step': '5', 'min': '0'}),

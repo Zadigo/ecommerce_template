@@ -70,7 +70,7 @@
                     <p class="lead">
                         {% if product.discounted %}
                             <span class="mr-1">
-                                <del>{{ product.price_ht|price_to_text }}</del>
+                                <del>{{ product.price_pre_tax|price_to_text }}</del>
                             </span>                            
                         {% endif %}
                         <span>

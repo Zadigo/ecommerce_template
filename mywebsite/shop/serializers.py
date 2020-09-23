@@ -34,7 +34,7 @@ class ProductSerializer(Serializer):
     in_stock       = fields.BooleanField()
     our_favorite = fields.BooleanField()
     is_discounted = fields.BooleanField()
-    price_ht = fields.DecimalField(5, 2)
+    price_pre_tax = fields.DecimalField(5, 2)
     discounted_price = fields.DecimalField(5, 2)
     slug        = fields.SlugField()
     

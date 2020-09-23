@@ -28,7 +28,7 @@ class CartManager(QuerySet):
         )
         # Gets the true price of the product
         condition = When(logic, then='product__discounted_price')
-        annotated_cart = cart.annotate(true_price=Case(condition, default='product__price_ht'))
+        annotated_cart = cart.annotate(true_price=Case(condition, default='product__price_pre_tax'))
         
         calculate_total = F('true_price') * F('quantity')
         condition = When(true_price__gt=0, then=calculate_total)
@@ -118,7 +118,7 @@ class CartManager(QuerySet):
 
         new_item_details = {
             'cart_id': cart_id,
-            'price_ht': current_product.get_price(),
+            'price_pre_tax': current_product.get_price(),
             'size': size,
             'color': color,
             'quantity': int(quantity),
@@ -154,7 +154,7 @@ class CartManager(QuerySet):
             items = self.filter(logic)
             if items.exists():
                 item = items.get()
-                item.price_ht = current_product.get_price()
+                item.price_pre_tax = current_product.get_price()
                 item.product = current_product
                 item.color = color
                 item.size = size
@@ -301,7 +301,7 @@ class OrdersStatisticsManager(BaseStatistics):
 
     def average_total_order(self):
         carts = self.select_related('cart')
-        prices = F('cart__price_ttc') * F('cart__quantity')
+        prices = F('cart__price_post_tax') * F('cart__quantity')
         return carts.annotate(average_prices=prices).aggregate(Avg('prices'))
 
     def revenue(self):
@@ -315,6 +315,6 @@ class OrdersStatisticsManager(BaseStatistics):
 
     def profit(self):
         carts = self.prefetch_related('cart')
-        profit = F('cart__price_ttc') - F('cart__price_ht')
+        profit = F('cart__price_post_tax') - F('cart__price_pre_tax')
         total_profit = Sum(profit*F('cart__quantity'), output_field=fields.DecimalField())
         return carts.annotate(total_profit=total_profit).aggregate(Sum('total_profit'))

@@ -8,7 +8,7 @@ from django import http
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core import exceptions
 from django.core.mail import send_mail, send_mass_mail
 from django.core.paginator import Paginator
@@ -29,6 +29,10 @@ from shop import choices, models, serializers, utilities
 from discounts import models as discount_models
 
 MYUSER = get_user_model()
+
+class CustomPermissionRequired(PermissionRequiredMixin):
+    permission_required = ['something']
+
 
 class IndexView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
@@ -542,7 +546,7 @@ def download_csv(request):
                             'link', 'brand', 'price', 'image_link', 'google_product_category', 
                                 'gender', 'is_final_sale', 'return_policy_days', 'inventory']
 
-    general_headers = ['id', 'name', 'description', 'price_ht', 'active']
+    general_headers = ['id', 'name', 'description', 'price_pre_tax', 'active']
 
     if request.GET:
         if method == 'all':
@@ -591,7 +595,7 @@ def download_csv(request):
                         product.id,
                         product.name,
                         product.description,
-                        product.price_ht,
+                        product.price_pre_tax,
                         product.active
                     ]
                 )
@@ -760,7 +764,7 @@ def duplicate_view(request, **kwargs):
         'name': f'Copie de {product.name}',
         'gender': product.gender,
         'description': product.description,
-        'price_ht': product.price_ht,
+        'price_pre_tax': product.price_pre_tax,
         'quantity': product.quantity,
         'slug': f'copie-de-{product.slug}',
         'collection': product.collection,

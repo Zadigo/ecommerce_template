@@ -75,7 +75,7 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <a href="{% url 'cart:delete' product.id %}" class="btn btn-sm btn-transparent z-depth-0" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.product.price_ht }}', '{{ product.product.name }}', '{{ product.quantity }}')">
+                                            <a href="{% url 'cart:delete' product.id %}" class="btn btn-sm btn-transparent z-depth-0" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.product.price_pre_tax }}', '{{ product.product.name }}', '{{ product.quantity }}')">
                                                 <i class="fa fa-trash fa-1x"></i>
                                             </a>
                                         </td>

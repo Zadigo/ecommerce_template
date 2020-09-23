@@ -34,7 +34,7 @@ class TestProdutForm(TestCase):
             'description': 'A simple description',
             'sku': '',
             'reference': '',
-            'price_ht': 14.5,
+            'price_pre_tax': 14.5,
             'discount_pct': 0,
             'quantity': 0,
             'in_stock': True,
@@ -64,9 +64,9 @@ class TestProdutForm(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_cannot_create_product_with_missing_price(self):
-        self.data.update({'price_ht': ''})
+        self.data.update({'price_pre_tax': ''})
         form = forms.ProductForm(data=self.data)
-        self.assertTrue(form.has_error('price_ht'))
+        self.assertTrue(form.has_error('price_pre_tax'))
         with self.assertRaises(TypeError) as ctx:
             print(ctx.msg)
 

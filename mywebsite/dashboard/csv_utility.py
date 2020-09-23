@@ -19,7 +19,7 @@ FACEBOOK_CATALOGUE_HEADER = [
     'gender', 'is_final_sale', 'return_policy_days', 'inventory'
 ]
 
-GENERAL_HEADER = ['id', 'name', 'description', 'price_ht', 'active']
+GENERAL_HEADER = ['id', 'name', 'description', 'price_pre_tax', 'active']
 
 
 def autogenerate_name(prefix):
@@ -63,7 +63,7 @@ def general_iterator(request, queryset, brand, pandas_wrapper=False, *fields):
                 getattr(product, 'id'),
                 getattr(product, 'name'),
                 getattr(product, 'description'),
-                getattr(product, 'price_ht', 'To Improve'),
+                getattr(product, 'price_pre_tax', 'To Improve'),
                 getattr(product, 'active'),
                 [getattr(product, field) for field in fields]
             ]

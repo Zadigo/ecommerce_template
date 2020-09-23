@@ -169,7 +169,7 @@ class Product(models.Model):
     description_html = models.TextField(max_length=800, blank=True, null=True)
     description_objects  = models.TextField(max_length=800, blank=True, null=True)
 
-    price_ht    = models.DecimalField(max_digits=5, decimal_places=2)
+    price_pre_tax    = models.DecimalField(max_digits=5, decimal_places=2)
     discount_pct    = models.IntegerField(default=10, blank=True)
     discounted_price   = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True)
     price_valid_until = models.DateField(default=utilities.add_to_current_date(d=30))
@@ -222,7 +222,7 @@ class Product(models.Model):
             self.discounted_price = 0
         elif self.discount_pct > 0:
             self.discounted_price = utilities.\
-                    calculate_discount(self.price_ht, self.discount_pct)
+                calculate_discount(self.price_pre_tax, self.discount_pct)
         
         if self.name:
             new_slug = utilities.create_product_slug(self.name)
@@ -282,11 +282,11 @@ class Product(models.Model):
         discounted price if there is a discount
         """
         if self.discounted_price is None:
-            return self.price_ht
+            return self.price_pre_tax
         elif self.discounted_price > 0 and self.discounted:
             return self.discounted_price
         else:
-            return self.price_ht
+            return self.price_pre_tax
 
 
 class LookBook(models.Model):
