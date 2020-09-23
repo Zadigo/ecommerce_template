@@ -1,4 +1,4 @@
-{% load prices i18n %}
+{% load i18n %}
 
 <div class="card mt-3">
     <div class="card-body">
@@ -8,7 +8,7 @@
             <div class="col-12">
                 <div class="col-6 pl-0">
                     <div class="form-group">
-                        {{ form.price_ht }}
+                        {{ form.price_pre_tax }}
         
                         <a href class="mt-1" data-toggle="modal" data-target="#margin_modal">
                             <i class="fa fa-currency"></i>

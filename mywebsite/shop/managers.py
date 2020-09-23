@@ -18,7 +18,7 @@ class CollectionManager(QuerySet):
 
     def products_between_price(self, collection_name, a, b):
         products = self.active_products(collection_name)
-        price_between_a_and_b = Q(price_ht__gt=a) & Q(price_ht__lt=b)
+        price_between_a_and_b = Q(price_pre_tax__gt=a) & Q(price_pre_tax__lt=b)
         return products.filter(price_between_a_and_b)
 
 
@@ -39,7 +39,7 @@ class ProductManager(QuerySet):
         """Returns the average price by collection"""
         products = self.values('collection__name')
         return products.order_by('collection__name')\
-                        .annotate(average_price=Count('price_ht'))
+                        .annotate(average_price=Count('price_pre_tax'))
 
     def search_product(self, searched_item):
         """

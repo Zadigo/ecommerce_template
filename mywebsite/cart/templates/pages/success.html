@@ -32,7 +32,7 @@
     {% if request.GET.debug == "True" %}
         <div class="alert alert-danger mb-3 text-center">
             <h3>
-                {% blocktrans %}
+                {% blocktrans trimmed %}
                     Le paiement a été éffectué en mode déboguage
                 {% endblocktrans %}
             </h3>
@@ -50,7 +50,7 @@
             <hr class="mt-3 mb-3">
 
             <p class="mt-4 mb-4">
-                {% blocktrans %}
+                {% blocktrans trimmed %}
                     Merci d'avoir acheté chez Nawoka. Un email te sera envoyé d'ici peu confirmant que ta
                     commande a bien été pris en charge. Nous espérons que votre expérience 
                     client a été parfait avec nous et espérons vous revoir très bientôt.

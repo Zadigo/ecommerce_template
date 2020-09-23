@@ -16,11 +16,11 @@
         <p class="m-0">
             <i class="fas fa-info-circle fa-1x mr-2"></i>
             {% if coupon.value_type == "free shipping" %}
-                {% blocktrans %}
+                {% blocktrans trimmed %}
                     Les frais de livraison vous sont offerts
                 {% endblocktrans %}
             {% else %}
-                {% blocktrans %}
+                {% blocktrans trimmed %}
                     Les frais de livraison à hauteur de <strong>2.95€</strong> 
                     sont inclus dans le prix final
                 {% endblocktrans %}                

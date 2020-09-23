@@ -8,7 +8,9 @@
 {% endblock %}
 
 {% block card_header_content %}
-    {% include "components/others/link.html" with href="dashboard:collections:create" position="float-right" btn_name="Nouveau"  %}
+    {% if perms.shop.add_product %}
+        {% include "components/others/link.html" with href="dashboard:collections:create" position="float-right" btn_name="Nouveau"  %}
+    {% endif %}
 {% endblock %}
 
 {% comment %}

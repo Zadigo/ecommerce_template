@@ -22,4 +22,4 @@ class LatestWomensTops(BaseFeed):
         return item.description
 
     def item_extra_kwargs(self, item):
-        return {'price_ht': item.price_ht}
+        return {'price_pre_tax': item.price_pre_tax}

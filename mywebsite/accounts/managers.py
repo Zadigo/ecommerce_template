@@ -29,7 +29,6 @@ class MyUserManager(BaseUserManager):
         user = self.create_user(email, firstname=firstname, lastname=lastname, password=password)
 
         user.product_manager = True
-        user.staff = True
         user.save(using=self._db)
 
         return user

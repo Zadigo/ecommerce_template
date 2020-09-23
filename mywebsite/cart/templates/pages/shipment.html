@@ -50,18 +50,20 @@
 				</div>
 				
 				{% comment %}
-				<div class="md-form mb-5">
-					<input type="text" id="address-2" class="form-control" placeholder="{% trans 'Apartment or suite' %}">
-				</div>					
+					<div class="md-form mb-5">
+						<input type="text" id="address-2" class="form-control" placeholder="{% trans 'Apartment or suite' %}">
+					</div>					
 				{% endcomment %}
 
 				<div class="row">
 					<div class="col-lg-4 col-md-12 mb-4">
 						<label for="country">{% trans "Pays..." %}</label>
+
 						<select name="country" class="custom-select d-block w-100" id="country" required>
 							<option>{% trans "France" %}</option>
 							<option>{% trans "Belgique" %}</option>
 						</select>
+
 						<div class="invalid-feedback">
 							{% trans "Veuillez choisir un pays dans la liste" %}
 						</div>
@@ -71,12 +73,14 @@
 						<label for="state">
 							{% trans "Région" %}
 						</label>
+
 						<select name="city" class="custom-select d-block w-100" id="city" required>
 							<option>{% trans "Île de France" %}</option>
 							<option>{% trans "Nord" %}</option>
 							<option>{% trans "PACA" %}</option>
 							<option>{% trans "Rhône Alpes" %}</option>
 						</select>
+
 						<div class="invalid-feedback">
 							{% trans "Please provide a valid state." %}
 						</div>
@@ -86,11 +90,12 @@
 						<label for="zip">
 							{% trans "Code postale" %}
 						</label>
+
 						<input name="zip_code" type="text" class="form-control" id="zip" placeholder="" required>
+						
 						<div class="invalid-feedback">
 							{% trans "Zip code required." %}
 						</div>
-
 					</div>
 				</div>
 

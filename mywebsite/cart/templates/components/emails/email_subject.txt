@@ -1,7 +1,7 @@
 {% load i18n %}
 
 {% autoescape off %}
-    {% blocktrans %}
+    {% blocktrans trimmed %}
         Votre commande Nawoka.fr numéro {{ order_reference }}
     {% endblocktrans %}
 {% endautoescape %}

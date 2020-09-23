@@ -69,7 +69,7 @@
                             </h5>                                
                             {% endcomment %}
                             <h4 class="font-weight-bold blue-text mt-1">
-                                <strong>{{ product.price_ht|price_to_text }}</strong>
+                                <strong>{{ product.price_pre_tax|price_to_text }}</strong>
                             </h4>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                                     {% trans "Aucun article ne correspond à votre recherche" %}
                                 </h4>
                                 <p>
-                                    {% blocktrans %}
+                                    {% blocktrans trimmed %}
                                         Mais vous pouvez toujours retenter votre chance : vérifiez l'orthographe 
                                         ou essayez des termes de recherche moins spécifiques.
                                     {% endblocktrans %}

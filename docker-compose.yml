@@ -3,7 +3,7 @@ version: '3'
 services:
   web:
     build: ./mywebsite
-    container_name: mywebsite
+    container_name: web
     command: gunicorn mywebsite.wsgi -w 4 -b 0.0.0.0:8000 --chdir=/app/mywebsite --log-level=debug --log-file=/app/mywebsite/gunicorn.log
     # command: python manage.py runserver 0.0.0.0:8000
     env_file:
@@ -24,7 +24,7 @@ services:
     volumes:
       - ./mywebsite:/app
     depends_on:
-      - mywebsite
+      - web
     networks:
       - mywebsite_network
 
@@ -32,6 +32,8 @@ services:
     build: ./docker/database
     container_name: database
     restart: always
+    environment:
+      - POSTGRES_PASSWORD=''
     ports:
       - "5432:5432"
     volumes:
@@ -47,7 +49,7 @@ services:
       - "443:443"
     environment:
       - PGADMIN_DEFAULT_EMAIL="contact.mywebsite@gmail.com"
-      - PGADMIN_DEFAULT_PASSWORD="EugenieBouchard97170#KlossyKarlie"
+      - PGADMIN_DEFAULT_PASSWORD="princess_ecommerce"
       - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
     #   - PGADMIN_CONFIG_LOGIN_BANNER='Only authorized users are allowed here'
     #   - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
@@ -64,7 +66,7 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - mywebsite
+      - web
     volumes:
       - ./var/nginx_error.log:/etc/nginx/logs/error.log
       - ./var/nginx_access.log:/etc/nginx/logs/access.log
@@ -85,7 +87,7 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
     depends_on:
-      - mywebsite
+      - web
       - enginx
       - db
     networks:
@@ -119,7 +121,7 @@ services:
       - 6379:6379
     restart: always
     depends_on:
-      - mywebsite
+      - web
     volumes:
       - RedisData:/data
     networks:
@@ -134,7 +136,7 @@ services:
       - ./docker/environment/general.env
     depends_on:
       - redis
-      - mywebsite
+      - web
     volumes:
       - ./mywebsite/:/app
     networks:

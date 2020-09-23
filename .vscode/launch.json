@@ -19,7 +19,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Python : My Ecommerce",
+            "name": "Ecommerce Template Debug",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}\\mywebsite\\manage.py",

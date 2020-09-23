@@ -124,16 +124,19 @@
 	<script>
 		$(document).ready(function (e) {
 			// SIDEBAR
-			var links = $(".list-group.list-group-flush").find("a")
+			var links = $(".list-group").find("a")
 
 			links.first().addClass("active")
 
-			links.on("click", function (e) {
-				links.each((link) => {
-					$(links[0]).removeClass("active")
-				})
-				$(this).addClass("active")
-			})
+			var currenturl = window.location.pathname
+
+			links.each(function (index) {
+				if ($(links[index]).attr("href") === currenturl) {
+					$(links[index]).removeClass("active").addClass("active")
+				} else {
+					$(links[index]).removeClass("active")
+				}
+			});
 		})
 	</script>
 

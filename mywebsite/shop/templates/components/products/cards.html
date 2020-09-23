@@ -39,7 +39,7 @@
                             <strong>{{ product.get_price|price_to_text }}</strong>
                         </h4>
                         <h6 class="font-weight-light blue-text mt-1">
-                            <strike>{{ product.price_ht|price_to_text }}</strike>
+                            <strike>{{ product.price_pre_tax|price_to_text }}</strike>
                         </h6>
                     {% else %}
                         <h4 class="font-weight-bold blue-text mt-1">

@@ -66,11 +66,11 @@
                         <strong>[[ product.discounted_price|euro ]]</strong>
                     </h4>
                     <h6 v-if="product.is_discounted" class="font-weight-light blue-text mt-1">
-                        <strike>[[ product.price_ht|euro ]]</strike>
+                        <strike>[[ product.price_pre_tax|euro ]]</strike>
                     </h6>
                                                                             
                     <h4 v-else class="font-weight-bold blue-text mt-1">
-                        <strong>[[ product.price_ht|euro ]]</strong>
+                        <strong>[[ product.price_pre_tax|euro ]]</strong>
                     </h4>                                
                 </div>
             </div>
@@ -148,12 +148,12 @@
             },
             bypricehigh() {
                 return this.list.sort((a, b) => {
-                    return b.price_ht - a.price_ht
+                    return b.price_pre_tax - a.price_pre_tax
                 })
             },
             bypricelow() {
                 return this.list.sort((a, b) => {
-                    return a.price_ht - b.price_ht
+                    return a.price_pre_tax - b.price_pre_tax
                 })
             },
             byname() {

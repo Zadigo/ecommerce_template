@@ -22,14 +22,14 @@
 #     {
 #         'name': 'Kendall Jenner Lipstick',
 #         'description': 'A lipstipck specifically designed for the modern girl',
-#         'price_ht': 45,
+#         'price_pre_tax': 45,
 #         'slug': 'kendall-academy',
 #         'active': False
 #     },
 #     {
 #         'name': 'Hailey Baldwin Lipstick',
 #         'description': 'A lipstipck specifically designed  younger women',
-#         'price_ht': 25,
+#         'price_pre_tax': 25,
 #         'slug': 'hailey-academy',
 #         'active': True
 #     }
@@ -40,7 +40,7 @@
 #         self.test_product = {
 #             'name': 'Kendall Jenner Lipstick',
 #             'description': 'A lipstipck specifically designed for the modern girl',
-#             'price_ht': 45,
+#             'price_pre_tax': 45,
 #             'slug': 'kendall-academy',
 #             'active': True,
 #             'collection': create_collection()
@@ -197,7 +197,7 @@
 #         # something else -; cart reference?
 #         cart_id = cart.cart_id
 
-#         self.assertEqual(str(cart.price_ht), '25.00')
+#         self.assertEqual(str(cart.price_pre_tax), '25.00')
 #         self.assertEqual(cart.product.name, 'Hailey Baldwin Lipstick')
 #         self.assertEqual(cart.color, 'rouge')
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 
 from accounts import forms
 from accounts import models
@@ -74,7 +74,7 @@ class MyUserAdmin(auth_admin.UserAdmin):
     fieldsets = [
         ['Details', {'fields': ['firstname', 'lastname']}],
         ['Credentials', {'fields': ['email', 'password']}],
-        ['Permissions', {'fields': ['is_admin', 'is_staff', 'is_active']}]
+        ['Permissions', {'fields': ['is_admin', 'is_staff', 'is_active', 'groups']}]
     ]
     add_fieldsets = [
         [None, {
@@ -98,4 +98,5 @@ class MyUserProfileAdmin(admin.ModelAdmin):
     def deactivate_account(self, request, queryset):
         queryset.update(actif=False)
 
-admin.site.unregister(Group)
+# admin.site.unregister(Group)
+admin.site.register(Permission)
