@@ -68,7 +68,19 @@ Vue JS is very easy to pick up and if you wish improve the scripts on the variou
 
 # Organization
 
-The template uses three main applications: `shop`, `accounts` and `dashboard`.
+The template uses three main applications: `shop`, `cart`, `accounts` and `dashboard`.
+
+The optional other applications are:
+
+    - Analytics
+    - Discounts
+    - Legal
+    - Hero
+    - Nodes Plus
+    - Store
+    - Subscribers
+    - Customer care
+    - Store
 
 ## Templates folder
 
@@ -251,7 +263,7 @@ You can also use a standalone version of the dashboard [here](https://example.co
 
 # SEO
 
-The code has all the required tags and functionnalities for SEO already pre-installed. This includes:
+The code has all the required tags and functionnalities for SEO pre-installed. This includes:
 
     - Google Analytics
     - Google Tag Manager
@@ -259,9 +271,17 @@ The code has all the required tags and functionnalities for SEO already pre-inst
     - Meta tags
     - Mailchimp
     - Facebook Analytics
-    - Sitemamps
+    - Sitemaps
 
-Some applications comes with their specific `sitemap.py` file that are regrouped in the main project's `sitemaps.py`. You can easily change a sitemap by overriding the class that you want in sitemaps and then hook it to the main sitemap global variable.
+But also [structured data](https://developers.google.com/search/docs/guides/intro-structured-data) both for the organization and the product/products pages.
+
+Take note that some applications come with their specific `sitemap.py` file that are regrouped in the main project's `sitemaps.py`. You can easily change a sitemap by overriding the class that you want in sitemaps and then hook it to the main sitemap global variable.
+
+## Impressions and Google enhanced e-commerce
+
+This template also manages these through the analytics application. Pages such as the product and products page but also those regarding the cart all have scripts that push data to your datalayer variable when a page is viewed or interracted with.
+
+Please make sure you have a [Google Analytics account](https://analytics.google.com/analytics/web/) with enhanced ecommerce activated, a [Google Tag Manager account](https://marketingplatform.google.com/about/tag-manager/), a [Mailchimp account](https://mailchimp.com/) and/or finally a [Facebook Analytics account](https://analytics.facebook.com/) for these to work properly.
 
 # Support / Development
 
