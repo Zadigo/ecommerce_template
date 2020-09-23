@@ -75,6 +75,32 @@
             });
         }
     </script>
+
+    <script>
+        $(document).ready(function () {
+            // FILTERBAR
+            var links = $("#filter-bar").find("li")
+
+            links.first().addClass("active")
+
+            var url = new URL(window.location.href)
+            var currentparam = url.searchParams.get("category")
+
+            links.each(function (index) {
+                var category = $(links[index]).find("a").data("category")
+
+                if (category !== undefined) {
+                    if (category.includes(currentparam)) {
+                        $(links[index]).removeClass("active").addClass("active")
+                    } else {
+                        $(links[index]).removeClass("active")
+                    }
+                } else {
+                    $(links[0]).addClass("active")
+                }
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block vuejs_scripts %}

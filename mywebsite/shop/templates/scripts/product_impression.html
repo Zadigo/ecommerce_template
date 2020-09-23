@@ -5,7 +5,7 @@
         "ecommerce": {
             "impressions": '{% impressions_for_shop queryset=more %}',
             "detail": {
-                "actionField": { "list": "Collections List" },
+                "actionField": { "list": "{{ list_name }}" },
                 "products": [
                     {
                         "name:": "{{ product.name }}",

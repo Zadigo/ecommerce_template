@@ -4,7 +4,7 @@
 {% block title %}{{ product.name }} - Nawoka{% endblock %}
 
 {% block datalayer_push %}
-    {% include "scripts/product_impression.html" %}
+    {% include "scripts/product_impression.html" with list_name="Collections List" %}
 {% endblock %}
 
 {% block structured_data %}
