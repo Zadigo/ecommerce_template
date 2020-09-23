@@ -138,37 +138,42 @@ CART_MODEL = 'cart.Cart'
 
 ```
 
-### How the payment system works
+## How the payment system works
 
-__The payment system is session based.__ This was done in order to allow none authenticated users to be able to purchase without having to create an account.
+__The payment system is session based.__ This was done in order to allow none authenticated users to be able to purchase without having to create any account.
 
-When the customer clicks on add to cart, a unique token called `cart_id` is created in his session. At each additional products in the cart, this cart ID is used to regroup these in his cart.
+When the customer clicks on add to cart, a unique token called `cart_id` is created in his session. At each additional products in the cart, this cart ID is used to regroup all the items present in that cart.
 
-It's important to understand that __desired product does not have the same characteristics as another already present in the cart, a new item is created with these new characteristics.__
+A product is created in cart's database __if it does not have or share the same characteristics as any others present in the cart.__
 
-For instance, this will create a new product:
+For instance, this will add a new item to the cart:
 
 ```
 product = models.Product.objects.get(id=1, color="Blue")
 
 models.Cart.objects.create(cart_id="cartxxx", product=product, quantity=1)
 
->> <Cart ....>
+>> <Cart [new Product in cart]>
 ```
 
-However, running the same piece of code will add 1 to the already existing item in the cart:
+However, running the same piece of code will only just add 1 to the already existing item in the cart. __The product with color blue and ID of 1 will then have its quantity updated to 2.__
 
-```
-models.Cart.objects.filter(cart_id="cart_xxx")
-
->> <QuerySet [Cart(quantity of 2)]>
-```
-
-This technique allows us to keep track of each individual item's quantity even when they share the same product reference but with a different variant.
+This technique allows us to keep track of each individual item's quantity even when they have exact same references but with completely different variants.
 
 When the customer tries to purchase the cart, all items having the same cart ID are aggregated.
 
-In order to orchestrate the funnel flow, the system is based on the following class with it's main methods displayed below:
+### Understanding SessionPaymentBackend class
+
+When a customer comes on an e-commerce platform, the flow is almost exactly the same:
+
+    - Adds product to cart
+    - Goes to cart
+    - Fills in his shipping informations
+    - Goes to payment page
+    - Pays / Payment is processed
+    - Gets redirected to success page
+
+In order to orchestrate all of this efficiently, the system is based on this `SessionPaymentBackend` class which wraps the main Stripe functionnalities.
 
 ```
 class SessionPaymentBackend(PaymentMixin):
@@ -208,7 +213,7 @@ CREATE DATABASE ... OWNER ...;
 GRANT ALL PRIVILEGES ON DATABASE ... TO ...;
 ```
 
-Finally, do not forget to change the variables in the [environment files](./docker/environment).
+Finally, do not forget to change the variables in the [environment files](./docker/environment) to the values that you want.
 
 ### HTTPS
 
