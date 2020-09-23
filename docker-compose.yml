@@ -46,13 +46,12 @@ services:
     container_name: pgadmin
     ports:
       - "5050:80"
-      - "443:443"
     environment:
       - PGADMIN_DEFAULT_EMAIL="contact.mywebsite@gmail.com"
       - PGADMIN_DEFAULT_PASSWORD="princess_ecommerce"
       - PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION=True
-    #   - PGADMIN_CONFIG_LOGIN_BANNER='Only authorized users are allowed here'
-    #   - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
+      - PGADMIN_CONFIG_LOGIN_BANNER='Only authorized users are allowed here'
+      - PGADMIN_CONFIG_CONSOLE_LOG_LEVEL=10
     # volumes:
     #   - ./var/certbot/conf:/certs/server.cert
     #   - ./var/certbot/conf:/certs/server.key
@@ -115,8 +114,9 @@ services:
       - mywebsite_network
 
   redis:
-    build: ./docker/redis
+    image: redis
     container_name: redis_db
+    command: redis-server /usr/local/etc/redis/redis.conf --bind redis --port 6379
     ports:
       - 6379:6379
     restart: always
@@ -124,13 +124,14 @@ services:
       - web
     volumes:
       - RedisData:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       - mywebsite_network
 
   celery:
     build: ./mywebsite
     container_name: celery
-    command: celery worker -A mywebsite -l info -f /app/mywebsite/celery.log
+    command: celery worker -A mywebsite.celery_tasks.app -l info -f /app/mywebsite/celery.log
     env_file:
       - ./docker/environment/env_prod.env
       - ./docker/environment/general.env

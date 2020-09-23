@@ -196,7 +196,7 @@ if USE_S3:
 
     AWS_DEFAULT_ACL = 'public-read'
 
-    AWS_LOCATION = 'nawoka/static'
+    AWS_LOCATION = 'mywebsite/static'
 
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
@@ -204,7 +204,7 @@ if USE_S3:
 
     # MEDIA
 
-    AWS_MEDIA_LOCATION = 'nawoka/media'
+    AWS_MEDIA_LOCATION = 'mywebsite/media'
 
     # PUBLIC MEDIA    
 

@@ -22,9 +22,6 @@ RUN apt update
 
 RUN apt-get install memcached
 
-# For local file storage based cache
-RUN mkdir ~/../var/cache/django_cache
-
 COPY . /app/
 
 EXPOSE 8000

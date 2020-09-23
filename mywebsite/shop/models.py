@@ -201,6 +201,7 @@ class Product(models.Model):
 
     slug        = models.SlugField()
     
+    # monitor_quantity = models.BooleanField(default=False)
     to_be_published_on = models.DateField(default=timezone.now, blank=True)
     last_modified   = models.DateField(auto_now=True)
     created_on = models.DateField(auto_now_add=True)
