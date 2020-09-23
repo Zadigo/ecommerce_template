@@ -43,6 +43,7 @@ def collections_dropdown_block():
                     context['sample_collection']['image'] = image.url
                 except:
                     context['sample_collection']['image'] = SAMPLE_IMAGES[0]
+                    context['sample_collection']['is_url'] = True
         else:
             context['sample_collection']['image'] = collection.image
     return context

@@ -18,7 +18,7 @@
 
                     <div class="col-md-6">
                         <a href="{% url 'shop:collection' sample_collection.gender sample_collection.view_name %}">
-                            <img src="{% get_aws_prefix_url %}{{ sample_collection.image }}" alt="{{ sample_collection.view_name }}" class="img-fluid">
+                            <img src="{% if sample_collection.is_url %}{{ sample_collection.image }}{% else %}{% get_aws_prefix_url %}{{ sample_collection.image }}{% endif %}" alt="{{ sample_collection.view_name }}" class="img-fluid">
                             <p class="m-0 mt-3 text-center text-uppercase">
                                 {{ sample_collection.name }}
                             </p>
