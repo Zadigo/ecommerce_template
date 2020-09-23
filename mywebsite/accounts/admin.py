@@ -98,5 +98,5 @@ class MyUserProfileAdmin(admin.ModelAdmin):
     def deactivate_account(self, request, queryset):
         queryset.update(actif=False)
 
-# admin.site.unregister(Group)
-admin.site.register(Permission)
+admin.site.unregister(Group)
+# admin.site.register(Permission)

@@ -283,6 +283,14 @@ This template also manages these through the analytics application. Pages such a
 
 Please make sure you have a [Google Analytics account](https://analytics.google.com/analytics/web/) with enhanced ecommerce activated, a [Google Tag Manager account](https://marketingplatform.google.com/about/tag-manager/), a [Mailchimp account](https://mailchimp.com/) and/or finally a [Facebook Analytics account](https://analytics.facebook.com/) for these to work properly.
 
+# Known issues
+
+When using the custom user model model with `PermissionsMixin`, migrations adds a `('auth', '0012_alter_user_first_name_max_length')` in the dependencies section of the accounts migration file. This causes issues.
+
+If you delete all the migrations from accounts, you would have to take out the `PermissionsMixin` class from the `MyUser` model, run the migrations and then integrate it again.
+
+I haven't figured any solution for this yet.
+
 # Support / Development
 
 I will be updating and pushing new features on the different templates on a regular basis. Do not hesitate to watch and star :heart:
