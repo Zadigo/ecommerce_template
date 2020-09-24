@@ -25,8 +25,6 @@ urlpatterns = [
     path('profile/', include((profilepatterns, app_name), namespace='profile')),
     path('password/', include((passwordpatterns, app_name), namespace='password')),
 
-    # url(r'^oauth/', include('social_django.urls', namespace='social')),
-
     url(r'^login$', views.LoginView.as_view(), name='login'),
     url(r'^logout$', views.LogoutView.as_view(), name='logout'),
     url(r'^signup$', views.SignupView.as_view(), name='signup'),

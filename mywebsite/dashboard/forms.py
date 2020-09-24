@@ -4,18 +4,14 @@ from itertools import filterfalse
 
 from django import forms
 from django.contrib.auth import get_user_model
-from django.core import exceptions
-from django.db import transaction
-from django.forms import fields, widgets
+from django.forms import widgets
 from django.utils.translation import gettext_lazy as _
 
-from accounts.utils import get_user_profile_model
 from cart import models as cart_models
-from dashboard import models as dashboard_models
 from dashboard import widgets as custom_widgets
 from dashboard.mixins import FormMixin
 from discounts import models as discount_models
-from shop import choices, models, utilities, validators
+from shop import models 
 
 
 class ProductForm(forms.ModelForm):

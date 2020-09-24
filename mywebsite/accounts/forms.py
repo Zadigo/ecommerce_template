@@ -1,8 +1,5 @@
 from django import forms
-from django.contrib.auth import authenticate
 from django.contrib.auth import forms as auth_forms
-from django.contrib.auth import password_validation
-from django.contrib.auth.tokens import default_token_generator
 from django.forms import fields, widgets
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _

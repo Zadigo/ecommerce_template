@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, never_cache
 from django.views.generic import TemplateView, View
 
 from accounts import forms
@@ -34,8 +34,8 @@ class InformationView(LoginRequiredMixin, View):
         context = {
             'form1': self.forms['form1'](
                 initial={
-                    'firstname': user.firstname,
-                    'lastname': user.lastname,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
                     'email': user.email
                 }
             ),

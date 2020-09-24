@@ -149,12 +149,12 @@
                                 {% block code_text %}{% endblock %}
                             </h5>
                             <div class="links">
-                                <a href="{% url 'home' %}">Accueil</a>
-                                <a href="{% url 'shop_gender' 'femme' %}">Femme</a>
+                                <a href="/">Accueil</a>
+                                <a href="{% url 'shop:gender' 'femme' %}">Femme</a>
                             </div>
                         </div>
                         <div class="filter"></div>
-                        <img src="{% create_aws_image_url 'error1.jpg' %}" class="responsive-img" alt="Nawoka">
+                        <img src="{% get_aws_prefix_url 'error1.jpg' %}" class="responsive-img" alt="Nawoka">
                     </div>
                 </div>
             </div>
