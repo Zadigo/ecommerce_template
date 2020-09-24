@@ -4,11 +4,14 @@ import json
 import random
 import re
 
+from cart import models as cart_models
+from discounts import models as discount_models
 from django import http
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import (GroupAuthorizationMixin,
+                                        PermissionRequiredMixin)
 from django.core import exceptions
 from django.core.mail import send_mail, send_mass_mail
 from django.core.paginator import Paginator
@@ -21,20 +24,18 @@ from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from django.views.decorators import http as views_decorators
 from django.views.decorators.csrf import csrf_exempt
+from shop import choices, models, serializers, utilities
 
-from cart import models as cart_models
 from dashboard import forms
 from dashboard import models as dashboard_models
-from shop import choices, models, serializers, utilities
-from discounts import models as discount_models
+from dashboard.mixins import GroupAuthorizationMixin
 
 MYUSER = get_user_model()
 
-class CustomPermissionRequired(PermissionRequiredMixin):
-    permission_required = ['something']
 
+class IndexView(GroupAuthorizationMixin, generic.View):
+    authorized_except_for_groups = ['Customer']
 
-class IndexView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         context = {
             'carts_without_orders': cart_models.Cart.statistics.carts_without_orders(),
@@ -45,7 +46,8 @@ class IndexView(LoginRequiredMixin, generic.View):
         return render(request, 'pages/home.html', context)
 
 
-class ProductsView(LoginRequiredMixin, generic.ListView):
+class ProductsView(GroupAuthorizationMixin, generic.ListView):
+    authorized_except_for_groups = ['Customer']
     model = models.Product
     queryset = models.Product.objects.all()
     template_name = 'pages/lists/products.html'
@@ -76,7 +78,8 @@ class ProductsView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-class SearchView(LoginRequiredMixin, generic.ListView):
+class SearchView(GroupAuthorizationMixin, generic.ListView):
+    authorized_except_for_groups = ['Customer']
     model = models.Product
     template_name = 'pages/lists/search/products.html'
     context_object_name = 'products'
@@ -93,7 +96,8 @@ class SearchView(LoginRequiredMixin, generic.ListView):
         return self.model.product_manager.advanced_search(searched_terms)
 
 
-class CreateProductView(LoginRequiredMixin, generic.CreateView):
+class CreateProductView(GroupAuthorizationMixin, generic.CreateView):
+    authorized_except_for_groups = ['Customer']
     model = models.Product
     queryset = models.Product.objects.all()
     form_class = forms.CreateProductForm
@@ -115,7 +119,8 @@ class CreateProductView(LoginRequiredMixin, generic.CreateView):
         return context
 
 
-class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
+class UpdateProductView(GroupAuthorizationMixin, generic.UpdateView):
+    authorized_except_for_groups = ['Customer']
     model = models.Product
     template_name = 'pages/edit/update/product.html'
     form_class = forms.UpdateProductForm
@@ -171,7 +176,8 @@ class UpdateProductView(LoginRequiredMixin, generic.UpdateView):
 
 
 
-class UsersView(LoginRequiredMixin, generic.ListView):
+class UsersView(GroupAuthorizationMixin, generic.ListView):
+    authorized_except_for_groups = ['Customer']
     model = MYUSER
     queryset = MYUSER.objects.all()
     template_name = 'pages/lists/users.html'
@@ -179,7 +185,8 @@ class UsersView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
 
-class UserView(LoginRequiredMixin, generic.DetailView):
+class UserView(GroupAuthorizationMixin, generic.DetailView):
+    authorized_except_for_groups = ['Customer']
     model = MYUSER
     queryset = MYUSER.objects.all()
     template_name = 'pages/edit/update/profile.html'
@@ -198,9 +205,10 @@ class UserView(LoginRequiredMixin, generic.DetailView):
 
 
 
-class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
+class CustomerOrdersView(GroupAuthorizationMixin, generic.ListView):
     """Show all the orders made by customers
     """
+    authorized_except_for_groups = ['Customer']
     model   = cart_models.CustomerOrder
     queryset = cart_models.CustomerOrder.objects.all()
     template_name = 'pages/lists/orders.html'
@@ -208,9 +216,10 @@ class CustomerOrdersView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
 
-class CustomerOrderView(LoginRequiredMixin, generic.UpdateView):
+class CustomerOrderView(GroupAuthorizationMixin, generic.UpdateView):
     """Orders for one single product
     """
+    authorized_except_for_groups = ['Customer']
     model = cart_models.CustomerOrder
     form_class = forms.CustomerOrderForm
     template_name = 'pages/edit/update/order.html'
@@ -223,7 +232,8 @@ class CustomerOrderView(LoginRequiredMixin, generic.UpdateView):
 
 
 
-class CartsView(LoginRequiredMixin, generic.ListView):
+class CartsView(GroupAuthorizationMixin, generic.ListView):
+    authorized_except_for_groups = ['Customer']
     model = cart_models.Cart
     queryset = cart_models.Cart.objects.all()
     template_name = 'pages/lists/carts.html'
@@ -232,7 +242,8 @@ class CartsView(LoginRequiredMixin, generic.ListView):
 
 
 
-class ImagesView(LoginRequiredMixin, generic.ListView):
+class ImagesView(GroupAuthorizationMixin, generic.ListView):
+    authorized_except_for_groups = ['Customer']
     model = models.Image
     queryset = models.Image.objects.all()
     template_name = 'pages/lists/images.html'
@@ -292,7 +303,8 @@ class ImagesView(LoginRequiredMixin, generic.ListView):
         return context
 
 @method_decorator(atomic_transactions.atomic, name='post')
-class ImageView(LoginRequiredMixin, generic.UpdateView):
+class ImageView(GroupAuthorizationMixin, generic.UpdateView):
+    authorized_except_for_groups = ['Customer']
     model = models.Image
     queryset = models.Image.objects.all()
     form_class = forms.ImageForm
@@ -304,7 +316,8 @@ class ImageView(LoginRequiredMixin, generic.UpdateView):
         return reverse('dashboard:images:update', args=[image.id])
 
 
-class SettingsView(LoginRequiredMixin, generic.TemplateView):
+class SettingsView(GroupAuthorizationMixin, generic.TemplateView):
+    authorized_except_for_groups = ['Customer']
     template_name = 'pages/edit/update/settings/index.html'
     
     # def get_context_data(self, **kwargs):
@@ -332,7 +345,8 @@ class DashboardSettingsMixin:
         return redirect(reverse(redirect_url))
 
 
-class GeneralSettingsView(LoginRequiredMixin, generic.View):
+class GeneralSettingsView(GroupAuthorizationMixin, generic.View):
+    authorized_except_for_groups = ['Customer']
     def get(self, request, *args, **kwargs):
         user = request.user
         setting = dashboard_models.DashboardSetting.objects.get(myuser=user)
@@ -361,7 +375,8 @@ class GeneralSettingsView(LoginRequiredMixin, generic.View):
         return redirect(reverse('dashboard:settings:general'))
 
 
-class StoreSettingsView(LoginRequiredMixin, generic.UpdateView):
+class StoreSettingsView(GroupAuthorizationMixin, generic.UpdateView):
+    authorized_except_for_groups = ['Customer']
     model = dashboard_models.DashboardSetting
     # form_class = forms.DashboardSettingsForm
     form_class = None
@@ -370,7 +385,8 @@ class StoreSettingsView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'pages/edit/update/settings/shop.html'
 
 
-class AnalyticsSettingsView(LoginRequiredMixin, DashboardSettingsMixin, generic.View):
+class AnalyticsSettingsView(GroupAuthorizationMixin, DashboardSettingsMixin, generic.View):
+    authorized_except_for_groups = ['Customer']
     def get(self, request, *args, **kwargs):
         user = request.user
         setting = dashboard_models.DashboardSetting.objects.get(myuser=user)
@@ -396,14 +412,16 @@ class AnalyticsSettingsView(LoginRequiredMixin, DashboardSettingsMixin, generic.
 
 
 
-class CouponsView(LoginRequiredMixin, generic.ListView):
+class CouponsView(GroupAuthorizationMixin, generic.ListView):
+    authorized_except_for_groups = ['Customer']
     model = discount_models.Discount
     queryset = discount_models.Discount.objects.all()
     template_name = 'pages/lists/coupons.html'
     context_object_name = 'coupons'
 
 
-class CreateCouponsView(LoginRequiredMixin, generic.CreateView):
+class CreateCouponsView(GroupAuthorizationMixin, generic.CreateView):
+    authorized_except_for_groups = ['Customer']
     model = discount_models.Discount
     form_class = forms.DiscountForm
     queryset = discount_models.Discount.objects.all()
@@ -411,7 +429,8 @@ class CreateCouponsView(LoginRequiredMixin, generic.CreateView):
     context_object_name = 'coupon'
 
 
-class UpdateCouponsView(LoginRequiredMixin, generic.UpdateView):
+class UpdateCouponsView(GroupAuthorizationMixin, generic.UpdateView):
+    authorized_except_for_groups = ['Customer']
     model = discount_models.Discount
     form_class = forms.DiscountForm
     queryset = discount_models.Discount.objects.all()
@@ -425,7 +444,8 @@ class UpdateCouponsView(LoginRequiredMixin, generic.UpdateView):
 
 
 
-class CollectionsView(LoginRequiredMixin, generic.ListView):
+class CollectionsView(GroupAuthorizationMixin, generic.ListView):
+    authorized_except_for_groups = ['Customer']
     model = models.Collection
     queryset = models.Collection.objects.all()
     template_name = 'pages/lists/collections.html'
@@ -433,7 +453,8 @@ class CollectionsView(LoginRequiredMixin, generic.ListView):
     paginate_by = 10
 
 
-class CreateCollectionView(LoginRequiredMixin, generic.CreateView):
+class CreateCollectionView(GroupAuthorizationMixin, generic.CreateView):
+    authorized_except_for_groups = ['Customer']
     model = models.Collection
     form_class = forms.CollectionForm
     template_name = 'pages/edit/create/collection.html'
@@ -441,7 +462,8 @@ class CreateCollectionView(LoginRequiredMixin, generic.CreateView):
     success_url = '/dashboard/collections'
 
 
-class UpdateCollectionView(LoginRequiredMixin, generic.UpdateView):
+class UpdateCollectionView(GroupAuthorizationMixin, generic.UpdateView):
+    authorized_except_for_groups = ['Customer']
     model = models.Collection
     form_class = forms.CollectionForm
     template_name = 'pages/edit/update/collection.html'
@@ -463,14 +485,16 @@ class UpdateCollectionView(LoginRequiredMixin, generic.UpdateView):
 
 
 
-class CreateCustomerView(LoginRequiredMixin, generic.CreateView):
+class CreateCustomerView(GroupAuthorizationMixin, generic.CreateView):
+    authorized_except_for_groups = ['Customer']
     model = MYUSER
     form_class = forms.CustomerForm
     template_name = 'pages/edit/create/customer.html'
     context_object_name = 'customer'
 
 
-class PurchaseOrderView(LoginRequiredMixin, generic.TemplateView):
+class PurchaseOrderView(GroupAuthorizationMixin, generic.TemplateView):
+    authorized_except_for_groups = ['Customer']
     template_name = 'pages/edit/create/purchase_order.html'
 
 

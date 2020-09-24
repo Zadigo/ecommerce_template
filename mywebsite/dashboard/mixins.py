@@ -1,4 +1,7 @@
-from shop import models
+from django.contrib.auth.mixins import AccessMixin
+from django.http.response import HttpResponseRedirect
+from django.shortcuts import reverse
+
 
 class FormMixin:
     """
@@ -327,3 +330,61 @@ class FormMixin:
                     # transaction.set_autocommit(True)
                 return new_images_queryset
         return False
+
+
+class GroupAuthorizationMixin(AccessMixin):
+    """
+    This class runs both a login required and group check
+    on the current user
+    """
+    permission_denied_message = 'You are not authorized on this page'
+    authorized_for_groups = []
+    authorized_except_for_groups = []
+    authorize_admins = True
+
+    def handle_authorization(self, group):
+        if (self.authorized_for_groups and 
+                self.authorized_except_for_groups):
+            return all([
+                group in self.authorized_for_groups,
+                group not in self.authorized_except_for_groups
+            ])
+
+        if self.authorized_for_groups:
+            if group in self.authorized_for_groups:
+                return True
+        
+        if self.authorized_except_for_groups:
+            if group in self.authorized_except_for_groups:
+                return False
+        
+        return False
+
+    def has_authorizations(self):
+        checked_authorizations = []
+        user_groups = self.request.user.groups.all()
+        if user_groups.exists():
+            groups = user_groups.values_list('name', flat=True)
+            for name in groups:
+                checked_authorizations.append(self.handle_authorization(name))
+        return all(checked_authorizations)
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('accounts:login'))
+
+        template_view = super().dispatch(request, *args, **kwargs)
+
+        if self.authorize_admins:
+            # Skip the group check and just
+            # return the view for the admins -;
+            # This is done in case authorized_for_groups
+            # and authorized_except_for_groups
+            # are not provided and is stricter
+            # on who can access certain pages or not
+            if request.user.is_admin:
+                return template_view
+
+        if not self.has_authorizations():
+            return self.handle_no_permission()
+        return template_view
