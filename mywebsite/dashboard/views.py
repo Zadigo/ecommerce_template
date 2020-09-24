@@ -10,16 +10,10 @@ from django import http
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import (GroupAuthorizationMixin,
-                                        PermissionRequiredMixin)
-from django.core import exceptions
-from django.core.mail import send_mail, send_mass_mail
 from django.core.paginator import Paginator
 from django.db import transaction as atomic_transactions
-from django.db.models.expressions import F, Q
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
-from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.views import generic
 from django.views.decorators import http as views_decorators
@@ -31,7 +25,6 @@ from dashboard import models as dashboard_models
 from dashboard.mixins import GroupAuthorizationMixin
 
 MYUSER = get_user_model()
-
 
 class IndexView(GroupAuthorizationMixin, generic.View):
     authorized_except_for_groups = ['Customer']
