@@ -1,8 +1,6 @@
 import stripe
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.core.exceptions import ValidationError
+from django.contrib.auth.models import AbstractBaseUser, Permission, Group
 from django.core.mail import send_mail
-from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -12,11 +10,11 @@ from django.utils.translation import gettext_lazy as _
 from accounts import managers
 
 
-class MyUser(AbstractBaseUser, PermissionsMixin):
+class MyUser(AbstractBaseUser):
     """Base user model for those user accounts"""
-    email       = models.EmailField(max_length=255, unique=True)
-    firstname      = models.CharField(max_length=100, null=True, blank=True)
-    lastname         = models.CharField(max_length=100, null=True, blank=True)
+    email       = models.EmailField(max_length=255, unique=True, error_messages={'unique': _("A user with this email already exists")})
+    first_name      = models.CharField(max_length=100, null=True, blank=True)
+    last_name         = models.CharField(max_length=100, null=True, blank=True)
     
     is_active        = models.BooleanField(default=True)
     is_admin            = models.BooleanField(default=False)
@@ -25,6 +23,26 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     is_guest        = models.BooleanField(default=False)
     is_intern           = models.BooleanField(default=False)
     is_product_manager = models.BooleanField(default=False)
+
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name=_('groups'),
+        blank=True,
+        help_text=_(
+            'The groups this user belongs to. A user will get all permissions '
+            'granted to each of their groups.'
+        ),
+        related_name="user_set",
+        related_query_name="user",
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name=_('user permissions'),
+        blank=True,
+        help_text=_('Specific permissions for this user.'),
+        related_name="user_set",
+        related_query_name="user",
+    )
     
     objects = managers.MyUserManager()
 
@@ -36,11 +54,11 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
     @property
     def get_full_name(self):
-        return f'{self.firstname} {self.lastname}' 
+        return f'{self.first_name} {self.last_name}' 
 
     @property
     def get_short_name(self):
-        return self.firstname
+        return self.first_name
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)

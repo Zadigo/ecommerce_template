@@ -91,11 +91,11 @@ class UserSignupForm(auth_forms.UserCreationForm):
     )
 
     class Meta:
-        fields = ['firstname', 'lastname', 'email']
+        fields = ['first_name', 'last_name', 'email']
         model = MyUser
         widgets = {
-            'firstname': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
-            'lastname': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
+            'first_name': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
+            'last_name': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
             'email': widgets.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
         }
 
@@ -164,10 +164,10 @@ class CustomChangePasswordForm(CustomSetPasswordForm):
 class BaseProfileForm(forms.ModelForm):
     class Meta:
         model   = MyUser
-        fields  = ['firstname', 'lastname', 'email']
+        fields  = ['first_name', 'last_name', 'email']
         widgets = {
-            'firstname': custom_widgets.FirstNameInput(attrs={'placeholder': 'John'}),
-            'lastname': custom_widgets.LastNameInput(attrs={'placeholder': 'Doe'}),
+            'first_name': custom_widgets.FirstNameInput(attrs={'placeholder': 'John'}),
+            'last_name': custom_widgets.LastNameInput(attrs={'placeholder': 'Doe'}),
             'email': custom_widgets.TextInput(attrs={'placeholder': 'john.doe@gmail.com'}),
         }
 

@@ -66,13 +66,13 @@ class MyUserAdmin(auth_admin.UserAdmin):
     add_form = forms.MyUserCreationForm
     model = models.MyUser
 
-    list_display = ['email', 'firstname', 'lastname', 'is_active', 'is_admin']
+    list_display = ['email', 'first_name', 'last_name', 'is_active', 'is_admin']
     list_filter = ()
     filter_horizontal = ()
     ordering = ['email']
-    search_fields = ['firstname', 'lastname', 'email']
+    search_fields = ['first_name', 'last_name', 'email']
     fieldsets = [
-        ['Details', {'fields': ['firstname', 'lastname']}],
+        ['Details', {'fields': ['first_name', 'last_name']}],
         ['Credentials', {'fields': ['email', 'password']}],
         ['Permissions', {'fields': ['is_admin', 'is_staff', 'is_active', 'groups']}]
     ]
@@ -90,7 +90,7 @@ class MyUserAdmin(auth_admin.UserAdmin):
 class MyUserProfileAdmin(admin.ModelAdmin):
     actions      = ('activate_account', 'deactivate_account',)
     list_display = ('myuser', 'telephone',)
-    search_fields = ['myuser__firstname', 'myuser__lastname', 'myuser__email']
+    search_fields = ['myuser__first_name', 'myuser__last_name', 'myuser__email']
 
     def activate_account(self, request, queryset):
         queryset.update(actif=True)
@@ -98,5 +98,5 @@ class MyUserProfileAdmin(admin.ModelAdmin):
     def deactivate_account(self, request, queryset):
         queryset.update(actif=False)
 
-admin.site.unregister(Group)
-# admin.site.register(Permission)
+# admin.site.unregister(Group)
+admin.site.register(Permission)
