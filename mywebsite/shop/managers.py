@@ -83,10 +83,21 @@ class ProductManager(QuerySet):
         return queryset.filter(searched_terms)
 
     def to_be_published_today(self):
+        """Return a queryset of products that are
+        not published on the current date"""
         current_date = datetime.datetime.now()
         products = self.filter(to_be_published_on__date=current_date, active=False)
-        return products        
+        return products
 
+    def out_of_stock(self, threshold=5):
+        """Return a queryset of products that are
+        out of stock or nearly out of stock"""
+        logic = (
+            Q(active=True) &
+            Q(monitor_quantity=True) &
+            Q(quantity__lte=threshold)
+        )
+        return self.filter(logic)
 
 ##############
 #

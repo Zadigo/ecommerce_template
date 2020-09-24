@@ -211,6 +211,8 @@ What this does is interract with the database at each step of the funnel by:
 
 ## In Production
 
+__IMPORTANT:__ This template uses a lot of token crendentials (passwords, username) for templating purposes. Please __thoroughly__ review your code especially in [settings.py](./mywebsite/mywebsite/settings.py), [production environment file](./docker/environment/env_prod.env) and [docker-compose](./docker-compose.yml) file before running anything in production -; if so is your intention.
+
 This was built primarily for using Docker in a production environment. However, in case you would want to go serverless, Zappa is included for that purpose. [Read more here](https://github.com/Miserlou/Zappa) if you are interested by that setup.
 
 You can setup your server to use docker quickly by using the [custom script](./docker/management.sh). Once that's done run `docker-compose build` or `docker-compose build <service name>` if you want to start each service individually and then `docker-compose up <service name>`

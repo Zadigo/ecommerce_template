@@ -14,10 +14,10 @@ def publish_product():
     Publish products marked as 'to be published'
     in a future date as published
     """
-    # products = models.Product.product_manager.to_be_published_today()
-    # if products.exists():
-    #     products.update(active=True)
-    print('Product was published')
+    products = models.Product.product_manager.to_be_published_today()
+    if products.exists():
+        products.update(active=True)
+    return products.count()
 
 
 @shared_task
@@ -35,4 +35,8 @@ def product_is_out_of_stock():
     Put products which quantity has reached
     zero as out of stock
     """
+    # queryset = models.Product.product_manager.out_of_stock()
+    # if queryset.exists():
+    #       queryset.update(in_stock=False)
+    # return queryset.values('id', 'reference')
     pass
