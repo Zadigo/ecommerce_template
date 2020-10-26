@@ -274,7 +274,6 @@ class Product(models.Model):
     def get_collection_url(self):
         return reverse('shop:collection', args=[self.gender, self.collection.view_name])
     
-    # @cached_property
     def get_product_images(self):
         return self.images.all()
 

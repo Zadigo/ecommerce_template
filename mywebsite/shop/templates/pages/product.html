@@ -51,8 +51,8 @@
                                 </div>
                             </div>
 
-                            <transition :name="currentdirection">
-                                <component v-bind:images="images" v-bind:cursor="currentslide" :is="slides[currentslide]"></component>
+                            <transition :name="currentdirection" mode="out-in">
+                                <component v-bind:images="images" v-bind:cursor="currentslide" :is="slides[currentslide]" />
                             </transition>
                         </div>
                     </mobile-slider>

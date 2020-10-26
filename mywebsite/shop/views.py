@@ -21,7 +21,9 @@
 import json
 import random
 
+from cart import models as cart_models
 from django import http, shortcuts
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import cache, paginator
 from django.db import transaction
@@ -35,7 +37,6 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from cart import models as cart_models
 from shop import models, serializers, sizes, tasks, utilities
 
 
@@ -129,15 +130,17 @@ class ProductView(generic.DetailView):
     context_object_name = 'product'
 
     def post(self, request, **kwargs):
+        data = {'state': False}
         product = super().get_object()
         # TODO: Add a method function that prevent
         # triggering the rest of the method with 
         # any kinds of post requests
         cart = cart_models.Cart.cart_manager.add_to_cart(request, product)
         if cart:
-            return http.JsonResponse(data={'success': 'success'})
+            data.update({'state': True})
         else:
-            return http.JsonResponse(data={'failed': 'missing parameters'}, status=400)
+            messages.error(request, 'Product was not added to cart - ADD-CA', extra_tags='alert-danger')
+        return JsonResponse(data=data)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -150,10 +153,12 @@ class ProductView(generic.DetailView):
                                 .prefetch_related('images') \
                                     .filter(active=True).exclude(id=product.id)[:3]
         context['more'] = suggested_products
+        context['has_liked'] = False
         if self.request.user.is_authenticated:
             likes = models.Like.objects.filter(
                 product=product, user=self.request.user)
-            context['has_liked'] = likes.exists()
+            if likes.exists():
+                context.update({'has_liked': True})
         return context
 
 

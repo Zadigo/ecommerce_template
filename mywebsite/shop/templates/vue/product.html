@@ -1,30 +1,6 @@
 {% load i18n %}
 
 <script>
-    Vue.component("custom-button", {
-        props: ["id", "size", "color", "disabled"],
-        name: "Button",
-        template: `
-        <transition name="cart_button">
-            <button @click="startaction" v-if="!disabled" class="btn btn-primary my-0" :class="size, color" :id="id">
-                <slot></slot>
-            </button>
-
-            <button v-else class="btn btn-primary my-0 disabled" :class="size, color" :id="id">
-                <slot></slot>
-            </button>
-        </transition>
-        `,
-        methods: {
-            startaction: function () {
-                this.$emit("startaction")
-            }
-        }
-    })
-
-
-
-
     Vue.component("color-selector", {
         props: ["colors", "initvalue"],
         delimiters: ["[[", "]]"],
@@ -91,8 +67,29 @@
         }
     })
 
+    Vue.component("custom-button", {
+        props: ["id", "size", "color", "disabled"],
+        name: "Button",
+        template: `
+        <transition name="cart_button">
+            <button @click="startaction" v-if="!disabled" class="btn btn-primary my-0" :class="size, color" :id="id">
+                <slot></slot>
+            </button>
 
+            <button v-else class="btn btn-primary my-0 disabled" :class="size, color" :id="id">
+                <slot></slot>
+            </button>
+        </transition>
+        `,
+        methods: {
+            startaction: function () {
+                this.$emit("startaction")
+            }
+        }
+    })
+</script>
 
+<script>
     Vue.component("side-images", {
         props: ["images"],
         name: "SideImages",
@@ -169,19 +166,73 @@
         }
     })
 
-
-
-
     Vue.component("dropdown-cart", {
         props: ["clicked"]
     })
+</script>
 
+<script>
+    var addtolikes = {
+        props: ["product", "details", "likesdisabled"],
+        name: "AddToLikes",
+        delimiters: ["[[", "]]"],
+        template: `
+        <custom-button @startaction="addproduct" :method="'like'" 
+                :id="'btn_add_to_likes'" :size="'btn-sm red lighten-1'" 
+                        :disabled="disabled">
+            <i class="fas fa-heart ml-1 text-white"></i>
+        </custom-button>        
+        `,
+        data() {
+            return {
+                disabled: false
+            }
+        },
+        beforeMount() {
+            if (this.$props.likesdisabled === "True") {
+                this.disabled = true
+            } else {
+                this.disabled = false
+            }
+        },
+        methods: {
+            addproduct: function () {
+                var self = this
+                fetch("{% url 'shop:like' product.id %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    credentials: "same-origin"
 
+                })
+                .then((response) => {
+                    response.json().then((data) => {
+                        dataLayer.push({
+                            "event": "ProductLike",
+                            "product": {
+                                "id": "{{ product.reference }}",
+                                "name": "{{ product.name }}",
+                                "price": "{{ product.get_price }}"
+                            }
+                        })
 
+                    })
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+            },
+        }
+    }
 
-    var addtocart = {
+    var cartactions = {
         props: ["product", "details", "disabled", "likesdisabled"],
-        name: "AddTocart",
+        name: "CartActions",
+        components: {
+            "add-to-likes": addtolikes
+        },
         delimiters: ["[[", "]]"],
         template: `
         <form onsubmit="return false;" class="d-flex">
@@ -192,9 +243,7 @@
                 {% trans "Ajouter au panier" %}
             </custom-button>
 
-            <custom-button @startaction="addtolikes" :method="'like'" :id="'btn_add_to_likes'" :size="'btn-sm red lighten-1'" :disabled="disabled" :likesdisabled="disabled">
-                <i class="fas fa-heart ml-1 text-white"></i>
-            </custom-button>
+            <add-to-likes :product="product" :details="details" :likesdisabled="likesdisabled" />
         </form>
         `,
         data() {
@@ -229,72 +278,68 @@
                     }
                 })
             },
-            addtolikes: function() {
-                var self = this
-                fetch("{% url 'shop:like' product.id %}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    },
-                    credentials: "same-origin"
-
-                }).then((response) => {
-                    response.json().then((data) => {
-                        dataLayer.push({
-                            "event": "ProductLike",
-                            "product": {
-                                "id": "{{ product.reference }}",
-                                "name": "{{ product.name }}",
-                                "price": "{{ product.get_price }}"
-                            }
-                        })
-                        
-                    })
-                }).catch((error) => {
-
-                })
-            },
             addtocart: function() {
                 var self = this
                 var formdata = new FormData()
 
                 formdata.append("quantity", this.$data.quantity)
-                // formdata.append("csrfmiddlewaretoken", $(".csrf input").val())
 
                 _.forEach(Object.keys(this.$props.details), (key) => {
                     formdata.append(key, this.$props.details[key])
                 })
 
-                var promise = new Promise((resolve, reject) => {
-                    var xhr = new XMLHttpRequest()
-                    xhr.responseType = "json"
-                    xhr.onloadend = function() {
-                        if (xhr.status == 200) {
-                            resolve(xhr.response)
-                        }
-                        if (xhr.status === 400 | xhr.status === 500) {
+                fetch(window.location.href, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    credentials: "same-origin",
+                    body: formdata
+                })
+                .then((response) => {
+                    response.json().then((data) => {
+                        if (!data.state) {
                             window.location.reload()
                         }
-                        if (xhr.status === 405) {
+                    })
+                })
+                .catch((error) => {
+
+                })
+
+                // var promise = new Promise((resolve, reject) => {
+                //     var xhr = new XMLHttpRequest()
+                //     xhr.responseType = "json"
+                //     xhr.onloadend = function() {
+                //         if (xhr.status == 200) {
+                //             resolve(xhr.response)
+                //         }
+                //         if (xhr.status === 400 | xhr.status === 500) {
+                //             window.location.reload()
+                //         }
+                //         if (xhr.status === 405) {
                             
-                        }
-                    }
-                    xhr.open("POST", window.location.href)
-                    xhr.send(formdata)
-                })
-                promise.then(response => {
-                    self.sendanalytics()
-                    self.$emit("addtocart")
-                })
+                //         }
+                //     }
+                //     xhr.open("POST", window.location.href)
+                //     xhr.send(formdata)
+                // })
+                // promise.then(response => {
+                //     self.sendanalytics()
+                //     self.$emit("addtocart")
+                // })
             }
         }
     }
-    
+</script>
+
+<script>
     var productapp = new Vue({
         el: "#vue_app",
         name: "Product",
-        components: {addtocart},
+        components: {
+            "cart-actions": cartactions
+        },
         data() {
             return {
                 product: {},
@@ -311,7 +356,7 @@
             // var product = JSON.parse($("#vue_product").text())
             var images = product.images
             var colors = []
-
+    
             this.$data.images = images
             this.$data.currentimage = images[0]
             if (images.length > 0) {
@@ -328,7 +373,7 @@
                 this.$data.colors = _.uniqBy(colors, "value")
                 this.$data.details["color"] = product.images[0].variant
             }
-
+    
             var initialsizes = []
             var variants = product.variant
             if (variants.length > 0) {
@@ -342,7 +387,7 @@
                     {id: 1, name: "Taille unique", value: "Taille unique"}
                 ]
             }
-
+    
             this.$data.product = product
         },
         computed: {
@@ -370,5 +415,5 @@
                 }, 3000);
             }
         }
-    })
+    })    
 </script>
