@@ -32,14 +32,15 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
 
     'social_django',
+    'django_extensions',
+    'django_celery_beat',
+    'rest_framework',
+
     'analytics',
     'accounts',
     'legal',
     'hero',
     'nodesplus',
-    'django_celery_beat',
-    'rest_framework',
-    'django_extensions',
     'shop',
     'discounts',
     'cart',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'dashboard',
     'subscribers',
     'customercare',
+    'reviews',
 ]
 
 MIDDLEWARE = [

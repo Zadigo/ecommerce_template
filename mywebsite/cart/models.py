@@ -42,7 +42,10 @@ class AbstractCart(models.Model):
 
     @cached_property
     def get_product_total(self):
-        return self.price_incl_taxes * self.quantity
+        try:
+            return self.price_post_tax * self.quantity
+        except:
+            return 0
 
     def get_increase_quantity_url(self):
         return reverse('cart:alter_quantity', args=['add'])
@@ -80,7 +83,7 @@ class Cart(AbstractCart):
         if self.price_pre_tax is not None:
             if self.price_pre_tax > 0:
                 self.price_post_tax = utilities\
-                    .calculate_tva(self.price_pre_tax, tva=20)
+                    .calculate_vat(self.price_pre_tax, vat=20)
         return 0
 
 
@@ -140,19 +143,3 @@ class Shipment(models.Model):
 
     def __str__(self):
         return self.customer_order.transaction
-
-
-class Review(models.Model):
-    """
-    Represents a customer review
-    """
-    user    = models.ForeignKey(MYUSER, blank=True, null=True, on_delete=models.SET_NULL)
-    customer_order = models.ForeignKey(CustomerOrder, on_delete=models.CASCADE ,blank=True, null=True)
-    rating  = models.IntegerField(default=1)
-    text    = models.TextField(max_length=300)
-    created_on  = models.DateField(auto_now_add=True)
-
-    objects = models.Manager()
-
-    def __str__(self):
-        return self.customer_order

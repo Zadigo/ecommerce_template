@@ -3,7 +3,7 @@ from cart import models
 
 @admin.register(models.Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['cart_id', 'get_product_total', 'paid_for']
+    list_display = ['cart_id', 'get_product_total', 'paid_for', 'created_on']
     search_fields = ['product__name']
 
 
@@ -15,16 +15,19 @@ class CustomerOrderAdmin(admin.ModelAdmin):
     sortable_by = ['payment']
     filter_horizontal = ['cart']
     list_per_page = 20
+    actions = ['mark_accepted', 'mark_completed']
+
+    def mark_accepted(self, queryset):
+        queryset.update(accepted=True)
+        return queryset
+    
+    def mark_completed(self, queryset):
+        queryset.update(completed=True)
+        return queryset
 
 
 @admin.register(models.Shipment)
 class ShipmentAdmin(admin.ModelAdmin):
     list_display = ['customer_order']
     search_fields = ['customer_code']
-    # date_hierarchy = 'created_on'
-
-
-@admin.register(models.Review)
-class ReviewsAdmin(admin.ModelAdmin):
-    list_display = ['customer_order', 'rating']
-    search_fields = ['product']
+    date_hierarchy = 'created_on'

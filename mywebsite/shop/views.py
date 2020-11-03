@@ -27,6 +27,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import cache, paginator
 from django.db import transaction
+from django.db.models.aggregates import Avg
 from django.http.response import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.decorators import method_decorator
@@ -36,6 +37,7 @@ from django.views import generic
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from reviews.models import Review
 
 from shop import models, serializers, sizes, tasks, utilities
 
@@ -121,11 +123,9 @@ class ProductsView(generic.ListView):
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
-@method_decorator(csrf_exempt, name='dispatch')
 class ProductView(generic.DetailView):
     """View the details of a given product"""
     model = models.Product
-    queryset = models.Product.objects.all()
     template_name = 'pages/product.html'
     context_object_name = 'product'
 
@@ -139,8 +139,16 @@ class ProductView(generic.DetailView):
         if cart:
             data.update({'state': True})
         else:
-            messages.error(request, 'Product was not added to cart - ADD-CA', extra_tags='alert-danger')
+            messages.error(
+                request, 
+                "Une erreur s'est produite - ADD-CA", 
+                extra_tags='alert-danger'
+            )
         return JsonResponse(data=data)
+
+    def get_queryset(self, **kwargs):
+        queryset = self.model.objects.all()
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -159,6 +167,10 @@ class ProductView(generic.DetailView):
                 product=product, user=self.request.user)
             if likes.exists():
                 context.update({'has_liked': True})
+
+        reviews = Review.objects.reviews(product.id)
+        context['reviews'] = reviews
+        context['reviews_avg'] = reviews.aggregate(Avg('rating'))
         return context
 
 

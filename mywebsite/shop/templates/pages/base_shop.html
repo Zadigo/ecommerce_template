@@ -1,6 +1,11 @@
 {% extends 'base_site.html' %}
 {% load static aws_images %}
 
+{% block extra_css %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'transition.css' %}">
+{% endblock %}
+
 {% block navbar %}
     {% include "project_components/navs/nav.html" %}
 {% endblock %}

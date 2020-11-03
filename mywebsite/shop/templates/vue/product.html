@@ -1,72 +1,6 @@
 {% load i18n %}
 
 <script>
-    Vue.component("color-selector", {
-        props: ["colors", "initvalue"],
-        delimiters: ["[[", "]]"],
-        template: `
-        <select v-model="selectedcolor" @change="selectcolor" class='custom-select custom-select-md mb-3'>
-            <option v-for="color in colors" :key="color.name" :value="color.value">
-                [[ color.name ]]
-            </option>
-        </select>
-        `,
-        data() {
-            return {
-                selectedcolor: ""
-            }
-        },
-        mounted() {
-            this.$data.selectedcolor = this.$props.initvalue
-        },
-        computed: {
-            hascolors() {
-                var istrue = this.$props.colors.length > 0
-                if (!istrue) {
-                    this.$data.selectcolor = "Couleur unique"
-                }
-                return {
-                    'disabled': istrue ? false : true,
-                }
-            }
-        },
-        methods: {
-            selectcolor: function () {
-                this.$emit("selectcolor", "color", this.$data.selectedcolor)
-            }
-        }
-    })
-
-    Vue.component("size-selector", {
-        props: ["sizes", "initvalue"],
-        delimiters: ["[[", "]]"],
-        template: `
-        <select v-show="hassizes" v-model="selectedsize" @change="selectsize" class='custom-select custom-select-md mb-3'>
-            <option v-for="size in sizes" :key="size.id" :value="size.name">
-                [[ size.name ]]
-            </option>
-        </select>
-        `,
-        data() {
-            return {
-                selectedsize: ""
-            }
-        },
-        computed: {
-            hassizes() {
-                return this.$props.sizes.length > 0 ? true : false
-            }
-        },
-        beforeMount() {
-            this.$data.selectedsize = this.$props.initvalue
-        },
-        methods: {
-            selectsize: function () {
-                this.$emit("selectsize", "size", this.$data.selectedsize)
-            }
-        }
-    })
-
     Vue.component("custom-button", {
         props: ["id", "size", "color", "disabled"],
         name: "Button",
@@ -90,6 +24,80 @@
 </script>
 
 <script>
+    var selectormixins = {
+        delimiters: ["[[", "]]"],
+    }
+
+    var colorselector = {
+        props: ["colors"],
+        mixins: [selectormixins],
+        template: `
+        <select @change="selectcolor()" v-model="selectedcolor" class='custom-select custom-select-md mb-3'>
+            <option v-for="color in colors" :key="color.name" :value="color.value">
+                [[ color.name ]]
+            </option>
+        </select>
+        `,
+        data() {
+            return {
+                selectedcolor: null
+            }
+        },
+        mounted() {
+            var first = _.first(this.$props.colors)
+            this.selectedcolor = first.name
+        },
+        computed: {
+            hascolors() {
+                var istrue = this.$props.colors.length > 0
+                if (!istrue) {
+                    this.selectedcolor = "Couleur unique"
+                }
+                return {
+                    "disabled": istrue ? false : true,
+                }
+            }
+        },
+        methods: {
+            selectcolor: function () {
+                this.$emit("selectcolor", "color", this.selectedcolor)
+            }
+        }
+    }
+
+    var sizeselector = {
+        props: ["sizes"],
+        mixins: [selectormixins],
+        template: `
+        <select @change="selectsize()" v-model="selectedsize" v-show="hassizes" class='custom-select custom-select-md mb-3'>
+            <option v-for="size in sizes" :key="size.id" :value="size.name">
+                [[ size.name ]]
+            </option>
+        </select>
+        `,
+        data() {
+            return {
+                selectedsize: null
+            }
+        },
+        computed: {
+            hassizes() {
+                return this.$props.sizes.length > 0 ? true : false
+            }
+        },
+        mounted() {
+            var first = _.first(this.$props.sizes)
+            this.selectedsize = first.name
+        },
+        methods: {
+            selectsize: function () {
+                this.$emit("selectsize", "size", this.selectedsize)
+            }
+        }
+    }
+</script>
+
+<script>
     Vue.component("side-images", {
         props: ["images"],
         name: "SideImages",
@@ -105,67 +113,77 @@
         name: "MainImage"
     })
 
-    var mixin = {
-        computed: {
-            image() {
-                return this.$props.images[this.$props.cursor]
-            }
-        }
+    var imagemixin = {
+        props: ["image"],
+        template: `
+        <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
+        `
     }
 
-    Vue.component("image-slideC", {
-        props: ["images", "cursor"],
+    var thirdslide = {
         name: "SlideC",
-        mixins: [mixin],
-        template: `
-        <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
-        `
-    })
+        mixins: [imagemixin]
+    }
 
-    Vue.component("image-slideB", {
-        props: ["images", "cursor"],
+    var secondslide = {
         name: "SlideB",
-        mixins: [mixin],
-        template: `
-        <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
-        `
-    })
+        mixins: [imagemixin]
+    }
 
-    Vue.component("image-slideA", {
-        props: ["images", "cursor"],
+    var firstslide = {
         name: "SlideA",
-        mixins: [mixin],
-        template: `
-        <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
-        `
-    })
+        mixins: [imagemixin]
+    }
 
-    Vue.component("mobile-slider", {
+    var mobileslider = {
         props: ["images"],
         name: "MobileSlider",
+        components: {
+            "first-slide": firstslide,
+            "second-slide": secondslide,
+            "third-slide": thirdslide
+        },
         data() {
             return {
-                currentslide: 0,
-                currentdirection: "",
-                slides: ["image-slideA", "image-slideB", "image-slideC"]
+                cursor: 0,
+                maxslides: 0,
+                slides: ["first-slide", "second-slide", "third-slide"]
+            }
+        },
+        beforeMount() {
+            this.maxslides = this.$props.images.length
+        },
+        computed: {
+            currentslide() {
+                return this.slides[this.cursor]
+            },
+            currentimage() {
+                return this.$props.images[this.cursor]
             }
         },
         methods: {
-            changeimage: function (method) {
-                var currentslide = method === "next" ? this.$data.currentslide + 1 : this.$data.currentslide - 1
-                // console.log(currentslide)
-                if (currentslide >= this.$props.images.length) {
-                    currentslide = 0
+            gotoprevious: function () {
+                var nextvalue = this.cursor - 1
+                if (nextvalue < 0) {
+                    // this.cursor = 0
+                    this.gotonext()
+                } else {
+                    this.cursor = nextvalue
                 }
-                if (currentslide < 0) {
-                    currentslide = this.$props.images.length - 1
+            },
+            gotonext: function (method) {
+                var nextvalue = this.cursor + 1
+                if (this.cursor === this.maxslides - 1) {
+                    this.cursor = 0
+                } else {
+                    this.cursor = nextvalue
                 }
-                this.$data.currentdirection = method
-                this.$data.currentslide = currentslide
             }
         }
-    })
+    }
+</script>
 
+<script>
     Vue.component("dropdown-cart", {
         props: ["clicked"]
     })
@@ -227,9 +245,9 @@
         }
     }
 
-    var cartactions = {
+    var buttonactions = {
         props: ["product", "details", "disabled", "likesdisabled"],
-        name: "CartActions",
+        name: "ProductActions",
         components: {
             "add-to-likes": addtolikes
         },
@@ -272,7 +290,7 @@
                                 "category": "{{ product.collection.gender }}/{{ product.collection.name }}",
                                 "variant": "{{ product.images.first.variant }}",
                                 "position": 0,
-                                "quantity": this.$data.quantity || 1
+                                "quantity": this.quantity || 1
                             }]
                         }
                     }
@@ -282,7 +300,7 @@
                 var self = this
                 var formdata = new FormData()
 
-                formdata.append("quantity", this.$data.quantity)
+                formdata.append("quantity", this.quantity)
 
                 _.forEach(Object.keys(this.$props.details), (key) => {
                     formdata.append(key, this.$props.details[key])
@@ -300,34 +318,77 @@
                     response.json().then((data) => {
                         if (!data.state) {
                             window.location.reload()
+                        } else {
+                            self.$emit("addtocart")
                         }
                     })
                 })
                 .catch((error) => {
-
+                    console.log(error)
                 })
+            }
+        }
+    }
 
-                // var promise = new Promise((resolve, reject) => {
-                //     var xhr = new XMLHttpRequest()
-                //     xhr.responseType = "json"
-                //     xhr.onloadend = function() {
-                //         if (xhr.status == 200) {
-                //             resolve(xhr.response)
-                //         }
-                //         if (xhr.status === 400 | xhr.status === 500) {
-                //             window.location.reload()
-                //         }
-                //         if (xhr.status === 405) {
-                            
-                //         }
-                //     }
-                //     xhr.open("POST", window.location.href)
-                //     xhr.send(formdata)
-                // })
-                // promise.then(response => {
-                //     self.sendanalytics()
-                //     self.$emit("addtocart")
-                // })
+    var cartactionsinterface = {
+        props: ["product", "colors", "sizes", "isdisabled"],
+        name: "ActionsInterface",
+        components: {
+            "color-selector": colorselector,
+            "size-selector": sizeselector,
+            "button-actions": buttonactions,
+        },
+        data() {
+            return {
+                cliked: false,
+                details: {
+                    color: null,
+                    size: null
+                },
+                likesdisabled: Boolean("{{ has_liked }}")
+            }
+        },
+        beforeMount() {
+            this.details.color = _.first(this.$props.colors).name
+        },
+        methods: {
+            doselection: function (method, item) {
+                this.details[method] = item
+            },
+            cartbuttonclicked: function () {
+                this.clicked = true
+                setTimeout(() => {
+                    this.clicked = false
+                }, 3000);
+            }
+        }
+    }
+</script>
+
+<script>
+    var starscomponent = {
+        props: ["rating"],
+        template: `
+        <div class="stars">
+            <span v-for="(star, index) in totalscore" :key="star" class="fa" :class="getstar(index)"></span>
+        </div>
+        `,
+        data() {
+            return {
+                score: 1,
+                totalscore: 5
+            }
+        },
+        beforeMount() {
+            this.score = this.$props.rating * 1
+        },
+        methods: {
+            getstar: function (index) {
+                if (index + 1 <= this.score) {
+                    return "fa-star"
+                } else {
+                    return "fa-star-o"
+                }
             }
         }
     }
@@ -338,18 +399,21 @@
         el: "#vue_app",
         name: "Product",
         components: {
-            "cart-actions": cartactions
+            "review-stars": starscomponent,
+            "mobile-slider": mobileslider,
+            "cart-actions-interface": cartactionsinterface
         },
         data() {
             return {
                 product: {},
                 colors: [],
                 sizes: [],
-                details: {},
                 images: [],
                 currentindex: 0,
-                clicked: false,
-                likesdisabled: Boolean("{{ has_liked }}")
+
+                selectedimage: null,
+
+                averageproductrating: "{{ reviews_avg.rating__avg }}"
             }
         },
         beforeMount() {
@@ -357,8 +421,8 @@
             var images = product.images
             var colors = []
     
-            this.$data.images = images
-            this.$data.currentimage = images[0]
+            this.images = images
+            this.selectedimage = images[0]
             if (images.length > 0) {
                 _.forEach(images, (image) => {
                     colors.push(
@@ -369,9 +433,7 @@
                         }
                     )
                 })
-                // Init
-                this.$data.colors = _.uniqBy(colors, "value")
-                this.$data.details["color"] = product.images[0].variant
+                this.colors = _.uniqBy(colors, "value")
             }
     
             var initialsizes = []
@@ -383,36 +445,24 @@
                     )
                 })
             } else {
-                this.$data.sizes = [
+                this.sizes = [
                     {id: 1, name: "Taille unique", value: "Taille unique"}
                 ]
             }
     
-            this.$data.product = product
+            this.product = product
         },
         computed: {
-            currentimage() {
-                return this.$data.images[this.$data.currentindex]
-            },
             isdisabled() {
                 return this.instock ? false : true
             },
             instock() {
-                return this.$data.product.in_stock ? true : false
+                return this.product.in_stock ? true : false
             }
         },
         methods: {
-            doselection: function(method, item) {
-                this.$data.details[method] = item
-            },
-            display: function(index) {
-                this.$data.currentindex = index
-            },
-            cartbuttonclicked: function() {
-                this.$data.clicked = true
-                setTimeout(() => {
-                    this.$data.clicked = false
-                }, 3000);
+            display: function(image) {
+                this.selectedimage = image
             }
         }
     })    

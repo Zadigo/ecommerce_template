@@ -84,7 +84,7 @@ def create_transaction_token(n=1, salt='mywebsite'):
     return '-'.join(tokens)
 
 
-def calculate_tva(price, vat=20):
+def calculate_vat(price, vat=20):
     """
     Calculates the tax on a product
 

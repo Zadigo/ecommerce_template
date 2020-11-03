@@ -98,6 +98,7 @@ class ProductManager(QuerySet):
             Q(quantity__lte=threshold)
         )
         return self.filter(logic)
+        
 
 ##############
 #
