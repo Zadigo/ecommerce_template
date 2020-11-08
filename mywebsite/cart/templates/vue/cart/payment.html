@@ -1,0 +1,132 @@
+<script>
+    var stripepayment = new Vue({
+        el: "#vue-payment",
+        name: "Payment",
+        delimiters: ["[[", "]]"],
+        template: `
+        <form class="card-body stripe stripe-styling" id="payment-form">
+            <div v-if="haserrors" class="alert alert-danger">
+                <ul>
+                    <li v-for="message in errormessages">
+                        [[ message ]]
+                    </li>
+                </ul>
+            </div>
+        
+            <div id="card-element"></div>
+        
+            <button @click.prevent="dopayment()" type="submit" class="btn btn-lg btn-primary btn-block mt-4">
+                <span v-if="!submitted">Paiement</span>
+                
+                <div v-else class="spinner-border" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </button>
+        </form>
+        `,
+        data() {
+            return {
+                stripe: null,
+                card: null,
+                submitted: false,
+                haserrors: false,
+                errormessages: [],
+                publishablekey: null
+            }
+        },
+        beforeMunt() {
+            this.publishablekey = "{{ publishable_key }}"
+        },
+        mounted() {
+            var stripe = Stripe(this.publishablekey)
+            var elements = stripe.elements()
+            var style = {
+                base: {
+                    fontWeight: 500,
+                    fontFamily: "Roboto, Raleway, Open Sans",
+                    fontSize: "16px",
+                    fontSmoothing: 'antialiased',
+                    iconColor: '#c4f0ff',
+
+                    // ':-webkit-autofill': {
+                    //     color: '#fce883',
+                    // },
+
+                    // '::placeholder': {
+                    //     color: '#87BBFD',
+                    // },
+                }
+            }
+            var card = elements.create("card", { style: style })
+            card.mount("#card-element")
+            this.stripe = stripe
+            this.card = card
+        },
+        methods: {
+            pusherror: function () {
+                dataLayer.push({
+                    "event": "Payment",
+                    "PaymentState": false,
+                    "PaymentFailedSum": "{{ cart_total }}"
+                })
+            },
+            dopayment: function () {
+                var processurl = "{% url 'cart:pay' %}"
+                this.submitted = true
+
+                this.stripe.createToken(this.card).then((result) => {
+                    if (result.error) {
+                        this.haserrors = true
+                        this.submitted = false
+                        this.errormessages.push(result.error.message)
+                    } else {
+                        var formdata = new FormData()
+                        formdata.append("token", result.token.id)
+
+                        fetch("{% url 'cart:pay' %}", {
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}"
+                            },
+                            credentials: "same-origin",
+                            body: JSON.stringify(formdata)
+                        })
+                            .then((response) => {
+                                var data = response.json().then((data) => {
+                                    this.haserrors = data.state
+                                    if (data.state === false) {
+                                        this.pusherror()
+                                        if (data.code === "card_declined") {
+                                            this.errormessages.push("Le paiement a été refusé")
+                                        } else if (data.code === "expired_card") {
+                                            this.errormessages.push("Le carte n'est plus valide")
+                                        } else if (data.code === "incorrect_cvc") {
+                                            this.errormessages.push("Le cvc est incorrect")
+                                        } else {
+                                            this.errormessages.push("Le paiement n'a pas pu aboutir")
+                                        }
+
+                                        if (data.context_errors) {
+                                            this.errormessages.push(data.context_errors)
+                                        }
+
+                                        this.submitted = false
+                                    } else {
+                                        setTimeout(() => {
+                                            window.location.href = response.redirect_url
+                                        }, 3000);
+                                    }
+                                })
+                            })
+                            .catch((error) => {
+                                this.pusherror()
+                                this.haserrors = true
+                                this.errormessages.push(error)
+                                this.submitted = false
+                                console.log(error, "This is an error")
+                            })
+                    }
+                })
+            }
+        }
+    })
+</script>

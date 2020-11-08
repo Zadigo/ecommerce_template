@@ -40,7 +40,7 @@
 	<div class="row wow fadeIn">
 		<div class="col-md-5 offset-md-2">
 			<div class="card">
-				<form method="POST" class="card-body stripe stripe-styling" id="form_payment">	
+				<!-- <form method="POST" class="card-body stripe stripe-styling" id="form_payment">	
 					{% csrf_token %}
 					
 					<div class="alert alert-danger text-center d-none" role="alert" id="card-errors"></div>
@@ -56,7 +56,11 @@
 							{% trans "Payer" %} {{ cart_total|price_to_text }}
 						</span>
 					</button>
-				</form>
+				</form> -->
+
+				<div id="vue-payment">
+					<stripepayment />
+				</div>
 
 				<div class="card-footer">
 					<div class="d-flex flex-row justify-content-between">
@@ -132,4 +136,10 @@
 			});
 		}
 	</script>
+{% endblock %}
+
+
+{% block vuejs_scripts %}
+	<!-- Payment -->
+	{% include "vue/cart/payment.html" %}
 {% endblock %}

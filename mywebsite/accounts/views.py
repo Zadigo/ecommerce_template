@@ -2,49 +2,76 @@ import datetime
 import re
 
 from django.contrib import auth, messages
+from django.contrib.auth.models import Group
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages import add_message, error, success
 from django.core.mail import BadHeaderError, send_mail
 from django.http.response import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, RedirectView, View
 
-from accounts import forms, models
+from accounts import forms, models, mixins
 
 MYUSER = auth.get_user_model()
 
-class SignupView(FormView):
+
+@method_decorator(sensitive_post_parameters('password'), name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+class SignupView(mixins.IsAlreadyAuthenticatedMixin, FormView):
     form_class = forms.UserSignupForm
     template_name = 'pages/registration/signup.html'
     success_url = '/login/'
 
-    @never_cache
-    def post(self, request, *args, **kwargs):
-        old_form = super().post(request, *args, **kwargs)
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            user = MYUSER.objects.filter(email__iexact=email)
-            if user.exists():
-                messages.error(request, _("Vous possédez déjà un compte chez nous"), extra_tags='alert-danger')
-                return redirect('accounts:login')
-            else:
-                new_user = form.save()
-                if new_user:
-                    password = form.cleaned_data.get('password2')
-                    auth.login(request, auth.authenticate(request, email=email, password=password))
-                    return self.get_redirect_url(request)
-        else:
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        user = MYUSER.objects.filter(email__iexact=email)
+        if user.exists():
             message = {
-                'message': _("Une erreur est arrivée - SIG-ER"),
-                'level': messages.ERROR,
-                'extra_tags': 'alert-danger'
+                'message': _("Vous possédez déjà un compte chez nous"),
+                'extra_tags': 'alert_danger'
             }
-        messages.add_message(request, **message)
-        return old_form
+            messages.error(self.request, **message)
+            return HttpResponseRedirect(reverse('accounts:signup'))
+        new_user = form.save()
+        auth.login(self.request, new_user, 'EmailAuthenticationBackend')
+        try:
+            group = Group.objects.get(name='Customer')
+        except:
+            pass
+        else:
+            new_user.groups.add(group)
+        return HttpResponseRedirect('/')
+
+
+    # def post(self, request, *args, **kwargs):
+    #     old_form = super().post(request, *args, **kwargs)
+    #     form = self.form_class(request.POST)
+    #     if form.is_valid():
+    #         email = form.cleaned_data['email']
+    #         user = MYUSER.objects.filter(email__iexact=email)
+    #         if user.exists():
+    #             messages.error(request, _("Vous possédez déjà un compte chez nous"), extra_tags='alert-danger')
+    #             return redirect('accounts:login')
+    #         else:
+    #             new_user = form.save()
+    #             if new_user:
+    #                 password = form.cleaned_data.get('password2')
+    #                 auth.login(request, auth.authenticate(request, email=email, password=password))
+    #                 return self.get_redirect_url(request)
+    #     else:
+    #         message = {
+    #             'message': _("Une erreur est arrivée - SIG-ER"),
+    #             'level': messages.ERROR,
+    #             'extra_tags': 'alert-danger'
+    #         }
+    #     messages.add_message(request, **message)
+    #     return old_form
 
     def get_redirect_url(self, request, intermediate_view=None, user=None):
         if intermediate_view is None:
@@ -55,22 +82,25 @@ class SignupView(FormView):
         return redirect(intermediate_view)
 
 
-class LoginView(FormView):
+@method_decorator(sensitive_post_parameters('password'), name='dispatch')
+@method_decorator(never_cache, name='dispatch')
+class LoginView(mixins.IsAlreadyAuthenticatedMixin, FormView):
     form_class = forms.UserLoginForm
     template_name = 'pages/registration/login.html'
     success_url = '/'
 
-    @never_cache
-    def post(self, request, *args, **kwargs):        
-        email = request.POST.get('username')
-        password = request.POST.get('password')
-
-        user = auth.authenticate(request, email=email, password=password)
+    def form_valid(self, form):
+        email = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+        user = auth.authenticate(self.request, email=email, password=password)
         if user:
-            auth.login(request, user)
-            return redirect(request.GET.get('next') or '/')
-        messages.error(request, _("Nous n'avons pas pu trouver votre compte"), extra_tags='alert-danger')
+            auth.login(self.request, user)
+            return HttpResponseRedirect(self.get_success_url())
+        messages.error(self.request, _("Nous n'avons pas pu trouver votre compte"), extra_tags='alert-danger')
         return redirect('accounts:login')
+
+    def get_success_url(self):
+        return self.request.GET.get('next') or self.success_url
 
 
 class LogoutView(RedirectView):

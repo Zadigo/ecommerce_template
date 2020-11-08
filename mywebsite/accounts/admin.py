@@ -5,14 +5,7 @@ from django.contrib.auth.models import Group, Permission
 from accounts import forms
 from accounts import models
 
-from django.contrib.admin.sites import AdminSite
-from django.http import HttpResponseRedirect
-from django.views.decorators.cache import never_cache
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.shortcuts import reverse
 from django.utils.translation import gettext_lazy as _
-
-
 
 from django.contrib.auth import authenticate
 from django.contrib.admin.forms import AdminAuthenticationForm

@@ -14,7 +14,6 @@ from django.views.generic.list import (BaseListView,
                                        MultipleObjectTemplateResponseMixin)
 
 from cart import emailing, forms
-from cart import generic as cart_generic_views
 from cart import models, payment, utilities
 from cart.tasks import purchase_complete_email
 

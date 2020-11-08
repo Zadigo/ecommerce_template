@@ -1,3 +1,4 @@
+import debug_toolbar
 from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
@@ -9,6 +10,8 @@ from django.views.generic import TemplateView
 from mywebsite import rss, sitemaps, views
 
 urlpatterns = [
+    path('__debug__/', include(debug_toolbar.urls)),
+
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
     
     url(r'^oauth/', include('social_django.urls', namespace='social')),
