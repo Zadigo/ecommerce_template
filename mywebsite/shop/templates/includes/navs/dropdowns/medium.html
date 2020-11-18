@@ -3,7 +3,9 @@
 {% if has_collections %}
     <ul class="navbar-nav mr-auto">
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Femme</a>
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                {% trans "Femme" %}
+            </a>
 
             <div class="dropdown-menu dropdown-large fade-up">
                 <div class="row">
@@ -12,7 +14,15 @@
                             {% trans "Collection" %}
                         </p>
                         <ul class="list-unstyled">
-                            {% include "components/navs/dropdowns/links.html" %}
+                            {% for collection in collections %}
+                                <li>
+                                    <a href="{% url 'shop:collection' collection.gender collection.view_name %}" class="p-0 pb-1"
+                                        id="link_collection_item">
+                                        {{ collection.name }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+
                         </ul>
                     </div>
 

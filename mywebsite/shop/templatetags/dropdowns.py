@@ -20,7 +20,7 @@ def get_collections():
     return collections
 
 
-@register.inclusion_tag('components/navs/dropdowns/medium.html')
+@register.inclusion_tag('includes/navs/dropdowns/medium.html')
 def collections_dropdown_block():
     collections = get_collections()
     collection = collections.first()
@@ -50,7 +50,7 @@ def collections_dropdown_block():
 
 
 
-@register.inclusion_tag('components/product/cart.html')
+@register.inclusion_tag('includes/product/cart.html')
 def cart():
     context = {}
     context['cart'] = None

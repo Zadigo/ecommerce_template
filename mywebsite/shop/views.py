@@ -117,7 +117,10 @@ class ProductsView(generic.ListView):
         # serialized_products = serializers.ProductSerializer(instance=klass.object_list, many=True)
         # context['vue_products'] = serialized_products.data
 
-        collection = self.model.objects.get(view_name__exact=self.kwargs['collection'], gender=self.kwargs['gender'])
+        collection = self.model.objects.get(
+            view_name__exact=self.kwargs['collection'], 
+            gender=self.kwargs['gender']
+        )
         context['collection'] = collection
         return context
 

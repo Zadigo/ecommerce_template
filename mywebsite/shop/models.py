@@ -10,7 +10,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 
-from shop import managers, utilities, validators
+from shop import choices, managers, utilities, validators
 
 MYUSER = get_user_model()
 
@@ -154,12 +154,14 @@ class Product(models.Model):
     collection. So before creating a product, a collection should already
     exist.
     """
+    # store       = models.ForeignKey(Store, on_delete=models.SET_NULL, blank=True, null=True)
     name          = models.CharField(max_length=50, blank=True, null=True)
     reference   = models.CharField(max_length=30, default=utilities.create_product_reference())
-    class GenderChoices(models.Choices):
-        FEMME = 'femme'
-        HOMME = 'homme'
-    gender = models.CharField(max_length=50, choices=GenderChoices.choices, default=GenderChoices.FEMME)
+    gender = models.CharField(
+        max_length=50, 
+        choices=choices.GenderChoices.choices, 
+        default=choices.GenderChoices.FEMME
+    )
 
     images          = models.ManyToManyField(Image)
     collection      = models.ForeignKey(Collection, on_delete=models.CASCADE, blank=True, null=True)
@@ -177,21 +179,11 @@ class Product(models.Model):
 
     sku      = models.CharField(max_length=50, blank=True, null=True, help_text='ex. BCLOGO-GRIS-SMA')
 
-    class GoogleProductCategory(models.Choices):
-        SKIRTS = '5424'
-        TOPS = '212'
-        SHORTS = '207'
-        DRESSES = '2271'
-        BRAS = '214'
-        ACCESSORIES = '178'
-        FLYINGTOYACCESSORIES = '7366'
-    google_category = models.CharField(max_length=5, choices=GoogleProductCategory.choices, default=GoogleProductCategory.TOPS)
-
-    # is_top_garment       = models.BooleanField(default=True)
-    # is_lower_garment   = models.BooleanField(default=False)
-    # is_bra        = models.BooleanField(default=False)
-    # is_shoe       = models.BooleanField(default=False)
-    # is_underwear  = models.BooleanField(default=False)
+    google_category = models.CharField(
+        max_length=5, 
+        choices=choices.GoogleProductCategory.choices, 
+        default=choices.GoogleProductCategory.TOPS
+    )
 
     in_stock     = models.BooleanField(default=True)
     discounted  = models.BooleanField(default=False)
@@ -287,18 +279,6 @@ class Product(models.Model):
             return self.discounted_price
         else:
             return self.price_pre_tax
-
-
-class LookBook(models.Model):
-    """
-    Lookbook for the store
-    """
-    name    = models.CharField(max_length=70)
-    products = models.ManyToManyField(Product)
-    create_on = models.DateField(default=utils.timezone.now)
-
-    def __str__(self):
-        return self.name
 
 
 class Like(models.Model):

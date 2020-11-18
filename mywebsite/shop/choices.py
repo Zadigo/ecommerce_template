@@ -17,3 +17,18 @@ class SecondConditionsChoices(models.Choices):
     DOES_NOT_CONTAIN = 'does not contain'
     YES = 'yes'
     NO = 'no'
+
+
+class GenderChoices(models.Choices):
+    FEMME = 'femme'
+    HOMME = 'homme'
+
+
+class GoogleProductCategory(models.Choices):
+    SKIRTS = '5424'
+    TOPS = '212'
+    SHORTS = '207'
+    DRESSES = '2271'
+    BRAS = '214'
+    ACCESSORIES = '178'
+    FLYINGTOYACCESSORIES = '7366'

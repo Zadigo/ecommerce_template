@@ -62,7 +62,7 @@
     
                 <div class="col-sm-6 col-md-5 mb-4">
                     <div class="p-sm-2 p-lg-4">
-                        {# {% include "components/product/badges.html" %} #}
+                        {# {% include "includes/product/badges.html" %} #}
                         
                         <!-- TITLE -->
                         <h1 class="product-title">{{ product.name }}</h1>
@@ -82,31 +82,31 @@
                         
                         {% if reviews %}
                             <!-- STARS -->
-                            {% include "components/product/review_stars.html" %}
+                            {% include "includes/product/review_stars.html" %}
                         {% endif %}
     
                         <!-- DELIVERY -->
                         <div class="delivery mt-3 mb-3">
                             <a href data-toggle="modal" data-target="#delivery">{% trans "Livraison standard" %}**</a>
-                            {% include "components/modals/delivery.html" with modal_title=True %}
+                            {% include "includes/modals/delivery.html" with modal_title=True %}
                         </div>
                         
                         {% if product.description %}
-                            <!-- DESCRIPTION -->
+                            <!-- Description -->
                             <p class="lead font-weight-bold">{% trans "Description" %}</p>
                             <p>{{ product.description }}</p>                        
                         {% endif %}
                         
-                        <!-- ADD TO CART + SIZES + COLORS -->
-                        {% include "components/product/actions.html" %}
+                        <!-- Add to cart + Sizes + Colors -->
+                        {% include "includes/product/actions.html" %}
                     </div>
                     
-                    <!-- POLICIES -->
+                    <!-- Policies -->
                     <div class="p-sm-2 p-lg-4">
-                        {% include "components/product/policies.html" %}
+                        {% include "includes/product/policies.html" %}
                     </div>
     
-                    <!-- SHARE -->
+                    <!-- Share -->
                     <div class="col-md-6">
                         <div class="p-sm-1 p-0 pl-lg-4 pr-lg-4">
                             <a href="{% facebook request.build_absolute_uri %}" class="mr-3" target="_blank"><i class="fab fa-facebook-f"></i></a>
@@ -118,13 +118,13 @@
             </div>
         </div>
     
-        <!-- MORE -->
-        {% include "components/product/more.html" %}
+        <!-- More -->
+        {% include "includes/product/more.html" %}
         
         {% comment %}
-        <!-- REVIEWS -->
+        <!-- Reviews -->
         <div class="row wow fadeIn mt-3">
-            {% include "components/product/reviews.html" %}
+            {% include "includes/product/reviews.html" %}
         </div>        
         {% endcomment %}
     </div>
@@ -164,6 +164,6 @@
         var product = JSON.parse($("#vue_product").text())
     </script>
     
-    <!-- VUEJS -->
+    <!-- App -->
     {% include "vue/product.html" %}
 {% endblock %}

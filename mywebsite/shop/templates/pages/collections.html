@@ -15,14 +15,14 @@
 {% endblock %}
 
 {% block structured_data %}
-    {% include "components/products/seo.html" %}
+    {% include "includes/products/seo.html" %}
 {% endblock %}
 
 {% block container %}
     <div id="vue_products_app">
         <section class="text-center mb-4" id="collection">
             {% if collection.show_presentation %}
-                <!-- PRESENTATION -->
+                <!-- Presentation -->
                 <div class="card blue lighten-1">
                     <div class="card-body">
                         <h1 class="center collection-presentation-text">{{ collection.name }}</h1>
@@ -33,23 +33,16 @@
                 </div>
             {% endif %}
 
-            <!-- FILTER BAR -->
-            {% include "components/products/filterbar.html" %}
+            <!-- Filter Bar -->
+            {% include "includes/products/filterbar.html" %}
 
-            <!-- CARDS -->
-            {% include "components/products/cards.html" %}
-
-            {% comment "Vue cards" %}
-                <transition-group name="product-cards" :class="'row wow fadeIn'">
-                    <card-component v-for="product in products" :key="product.pk" v-bind:product="product">
-                    </card-component>
-                </transition-group>
-            {% endcomment %}
+            <!-- Cards -->
+            {% include "includes/products/cards.html" %}
         </section>
     </div>
 
-    <!-- PAGINATION -->
-    {% include "components/products/pagination.html" %}
+    <!-- Pagination -->
+    {% include "includes/products/pagination.html" %}
 {% endblock %}
 
 {% block extra_scripts %}
@@ -78,7 +71,7 @@
 
     <script>
         $(document).ready(function () {
-            // FILTERBAR
+            // Filterbar
             var links = $("#filter-bar").find("li")
 
             links.first().addClass("active")
@@ -104,6 +97,6 @@
 {% endblock %}
 
 {% block vuejs_scripts %}
-    <!-- PRODUCTS -->
+    <!-- Products -->
     {# {% include "vue/products.html" %} #}
 {% endblock %}

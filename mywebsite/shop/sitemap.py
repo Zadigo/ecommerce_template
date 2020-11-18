@@ -2,6 +2,7 @@ from django.contrib.sitemaps import Sitemap
 from django.shortcuts import reverse
 from shop import models
 
+
 class ShopSitemap(Sitemap):
     """Returns all the products from the shop"""
     changefreq = 'monthly'
