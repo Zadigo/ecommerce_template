@@ -102,6 +102,8 @@
             new WOW().init()
         </script>
 
+        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
+
         <!-- LARGE NAVBAR -->
         <script>
             $(document).ready(function () {
@@ -137,16 +139,16 @@
         </script>
         {% endcomment %}
 
-        <!-- STRIPE -->
+        <!-- Stripe -->
         <script src="https://js.stripe.com/v3/"></script>
 
-        <!-- LODASH -->
+        <!-- Lodash -->
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
 
-        <!-- VELOCITY -->
+        <!-- Velocity -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
         
-        <!-- VUEJS -->
+        <!-- Vue JS -->
         {% if debug %}
             <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         {% else %}
@@ -157,7 +159,7 @@
 
         {% block vuejs_scripts %}{% endblock %}
 
-        <!-- CHAT -->
+        <!-- Chat -->
         {% block chat %}{% endblock %}
     </body>
 </html>

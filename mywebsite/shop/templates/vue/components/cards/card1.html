@@ -1,0 +1,37 @@
+{% load i18n %}
+
+<card-component :products="list" inline-template>
+    <div class="col-12">
+        <transition-group name="product-cards" tag="div" class="row">
+            <div v-for="product in products" :key="product.id" class="col-md-4 col-sm-6">
+                <div class="product-grid6">
+                    <div class="product-image6">
+                        <a :href="product.url" :alt="product.slug">
+                            <img :src="product.main_image" class="pic-1">
+                        </a>
+                    </div>
+            
+                    <div class="product-content">
+                        <h3 class="title">
+                            <a :href="product.url" :alt="product.slug">
+                                [[ product.name ]]
+                            </a>
+                        </h3>
+                        <div class="price">
+                            [[ product.price|euro ]]
+                            <span v-show="product.is_discounted">
+                                [[ product.price_pre_tax|euro ]]
+                            </span>
+                        </div>
+                    </div>
+
+                    <ul class="social">
+                        <li><a href="" id="quick-view"><i class="fa fa-search"></i></a></li>
+                        <li><a href="" id="add-bookmark"><i class="fa fa-shopping-bag"></i></a></li>
+                        <li><a href=""id="add-to-cart" ><i class="fa fa-shopping-cart"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </transition-group>
+    </div>
+</card-component>

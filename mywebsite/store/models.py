@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from store.choices import StoreCurrencies, IndustryChoices
+
+from store.choices import IndustryChoices, StoreCurrencies
 
 MYUSER = get_user_model()
 

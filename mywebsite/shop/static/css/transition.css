@@ -1,3 +1,17 @@
+.general-transition-enter-active,
+.general-transition-leave-active {
+    transition: all .3s ease;
+}
+.general-transition-enter,
+.general-transition-leave-to {
+    opacity: 0;
+}
+.general-transition-enter-to,
+.general-transition-leave-active {
+    opacity: 1;
+}
+
+
 .image_canvas-leave {
     animation: slide 1s;
 }

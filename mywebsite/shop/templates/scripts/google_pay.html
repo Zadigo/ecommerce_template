@@ -1,0 +1,121 @@
+<!-- Google Pay -->
+<script async   src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+
+<script>
+    const baseRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0
+    }
+
+    const allowedCardNetworks = ["MASTERCARD", "VISA"]
+
+    const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"]
+
+    const tokenizationSpecification = {
+        type: "PAYMENT_GATEWAY",
+        parameters: {
+            // "gateway": "stripe",
+            // "stripe:version": "2018-10-31",
+            // "stripe:publishableKey": "{{ publishable_key }}"
+
+            "gateway": "example",
+            "gatewayMerchantId": "exampleGatewayMerchantId"
+        }
+    }
+
+
+    const baseCardPaymentMethod = {
+        type: "CARD",
+        parameters: {
+            allowedAuthMethods: allowedCardAuthMethods,
+            allowedCardNetworks: allowedCardNetworks
+        }
+    }
+
+    const cardPaymentMethod = Object.assign(
+        {}, { tokenizationSpecification: tokenizationSpecification }, baseCardPaymentMethod
+    )
+
+    let paymentsClient = null
+
+    function getGoogleIsReadyToPayRequest() {
+        return Object.assign(
+            {}, baseRequest, { allowedPaymentMethods: [baseCardPaymentMethod] }
+        )
+    }
+
+    function getGooglePaymentDataRequest() {
+        const paymentDataRequest = Object.assign({}, baseRequest);
+        paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
+        paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
+        paymentDataRequest.merchantInfo = {
+            merchantName: 'Example Merchant'
+        }
+        return paymentDataRequest;
+    }
+
+    function getGooglePaymentsClient() {
+        if (paymentsClient === null) {
+            paymentsClient = new google.payments.api.PaymentsClient({ environment: 'TEST' })
+        }
+        return paymentsClient;
+    }
+
+    function onGooglePayLoaded() {
+        const paymentsClient = getGooglePaymentsClient()
+        paymentsClient.isReadyToPay(getGoogleIsReadyToPayRequest())
+            .then(function (response) {
+                if (response.result) {
+                    addGooglePayButton()
+                }
+            })
+            .catch(function (err) {
+                console.error(err)
+            })
+    }
+
+    function addGooglePayButton() {
+        const paymentsClient = getGooglePaymentsClient();
+        const button =
+            paymentsClient.createButton({ onClick: onGooglePaymentButtonClicked })
+        document.getElementById("google-pay-button").appendChild(button)
+    }
+
+    function getGoogleTransactionInfo() {
+        return {
+            countryCode: "FR",
+            currencyCode: "EUR",
+            totalPriceStatus: "FINAL",
+            totalPrice: "{{ product.get_price }}"
+        }
+    }
+
+    function prefetchGooglePaymentData() {
+        const paymentDataRequest = getGooglePaymentDataRequest()
+        paymentDataRequest.transactionInfo = {
+            totalPriceStatus: "NOT_CURRENTLY_KNOWN",
+            currencyCode: "EUR"
+        };
+        const paymentsClient = getGooglePaymentsClient()
+        paymentsClient.prefetchPaymentData(paymentDataRequest)
+    }
+
+    function onGooglePaymentButtonClicked() {
+        const paymentDataRequest = getGooglePaymentDataRequest()
+        paymentDataRequest.transactionInfo = getGoogleTransactionInfo()
+
+        const paymentsClient = getGooglePaymentsClient();
+        paymentsClient.loadPaymentData(paymentDataRequest)
+            .then(function (paymentData) {
+                processPayment(paymentData)
+            })
+            .catch(function (err) {
+                console.error(err)
+            })
+    }
+
+    function processPayment(paymentData) {
+        console.log(paymentData)
+        paymentToken = paymentData.paymentMethodData.tokenizationData.token
+    }
+</script>

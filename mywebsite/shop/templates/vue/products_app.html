@@ -1,0 +1,138 @@
+{% load i18n nodes_plus %}
+
+{% comment %}
+{{ vue_products|json_script:"vue_products" }}
+{% endcomment %}
+
+<script>
+    const PRODUCTS = {{ vue_products|safe }}
+</script>
+
+<script>
+    Vue.component("sorting-component", {
+        props: {
+            products: {
+                type: Array,
+                required: true
+            }
+        },
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                items: [
+                    {id: 1, name: "{% trans 'Nom' %}", value: 0},
+                    {id: 2, name: "{% trans 'Prix croissant' %}", value: 1},
+                    {id: 3, name: "{% trans 'Prix décroissant' %}", value: 2},
+                    // {id: 4, name: "{% trans 'Les mieux notés' %}", value: 3},
+                ],
+                selected: 0
+            }
+        },
+        computed: {
+            byprice() {
+                if (this.selected === 1) {
+                    return this.bypricelow
+                } else if (this.selected === 2) {
+                    return this.bypricehigh
+                }  else {
+                    return this.byname
+                }
+            },
+            bypricehigh() {
+                return this.byname.sort((a, b) => {
+                    return a.price_pre_tax - b.price_pre_tax
+                })
+            },
+            bypricelow() {
+                return this.byname.sort((a, b) => {
+                    return b.price_pre_tax - a.price_pre_tax
+                })
+            },
+            byname() {
+                if (this.selected === 0) {
+                    return _.sortBy(this.list, ["name"])
+                } else {
+                    return this.list
+                }
+            },
+            list() {
+                return this.$props.products
+            }
+        },
+        methods: {
+            dosort: function (el) {
+                this.selected = parseInt(el.value)
+                this.$emit("dosort", this.byname)
+            }
+        }
+    })
+
+    Vue.component("card-component", {
+        props: ["products"],
+        delimiters: ["[[", "]]"],
+        methods: {
+            senddatalayer: function () {
+
+            },
+            gotopage: function () {
+                this.senddatalayer()
+            }
+        },
+        computed: {
+            mainimage() {
+                var product = _.filter(this.$props.product.images, (product) => {
+                    return product.main_image === true
+                })
+                if (!product) {
+                    product = this.$props.product.images[0]
+                }
+                return product[0]
+            }
+        },
+        filters: {
+            euro: function (value) {
+                return `${value}€`
+            }
+        }
+    })
+
+    var productsinterface = new Vue({
+        el: "#vue_products_app",
+        name: "ProductsInterface",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                products: [],
+                sortedproducts: [],
+                // selected: "Nom",
+                // selectedcolor: "Black",
+                colors: []
+            }
+        },
+        beforeMount() {
+            this.products = PRODUCTS
+
+            var colors = []
+            _.forEach(this.products, (product) => {
+                product["price"] = product["price"] * 1
+                product["price_pre_tax"] = product["price_pre_tax"] * 1
+                product["discounted_price"] = product["discounted_price"] * 1
+
+                _.forEach(product.images, (image) => {
+                    colors.push(image.variant)
+                })
+            })
+            this.$data.colors = _.uniq(colors)
+        },
+        computed: {
+            list() {
+                return this.sortedproducts.length > 0 ? this.sortedproducts : this.products
+            }
+        },
+        methods: {
+            applysort: function (products) {
+                this.sortedproducts = products
+            }
+        }
+    })
+</script>

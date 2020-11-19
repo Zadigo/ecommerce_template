@@ -1,11 +1,13 @@
 import json
 import re
+
+from django.db.models import QuerySet
 from django.template import Library, Node
 from django.template.base import token_kwargs
 from django.template.defaultfilters import stringfilter
 from django.template.exceptions import TemplateSyntaxError
-from django.utils.html import format_html, format_html_join, urlize
-from django.utils.safestring import SafeData, SafeString, mark_safe
+from django.utils.html import format_html, urlize
+from django.utils.safestring import mark_safe
 
 register = Library()
 
@@ -31,7 +33,7 @@ class NavbarNode(Node):
         self.base_views = links
 
     def render(self, context):
-        from django.urls import reverse, NoReverseMatch
+        from django.urls import NoReverseMatch, reverse
         user = context['user']
 
         output = ''
@@ -148,7 +150,6 @@ def non_authenticated_navbar_links(parser, token):
 
 @register.simple_tag(takes_context=True)
 def impressions(context, *fields):
-    from django.db.models import QuerySet
     if not fields:
         raise TemplateSyntaxError(
             f"'impression' requires a queryset"

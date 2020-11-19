@@ -16,7 +16,7 @@
             <div id="card-element"></div>
         
             <button @click.prevent="dopayment()" type="submit" class="btn btn-lg btn-primary btn-block mt-4">
-                <span v-if="!submitted">Paiement</span>
+                <span v-if="!submitted">{% trans "Paiement" %}</span>
                 
                 <div v-else class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>

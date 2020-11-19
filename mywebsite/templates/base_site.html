@@ -4,40 +4,18 @@
 {% block theme_color %}#484848{% endblock %}
 
 {% block extra_css %}
+    {{ block.super }}
     <link href="{% static 'style.css' %}" rel="stylesheet">
     <link href="{% static 'nav.css' %}" rel="stylesheet">
-    <link href="{% static 'dropdowns.css' %}" rel="stylesheet">
-    <link href="{% static 'ecommerce.css' %}" rel="stylesheet">
-    <link href="{% static 'banners.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dropdowns.css' %}">
 {% endblock %}
 
 {% block analytics %}
-    <!-- ANALYTICS -->
-    {# This is a specific technique to use Google Optimize with GTM #}
-    {# {% include "analytics/google_analytics.html" with ga_tag="" optimize_tag="" %} #}
     
-    {# {% include "analytics/tag_manager.html" with gtm_id="G" %} #}
-    {# {% include "analytics/facebook.html" with id="" %} #}
-    {% block facebook_events %}{% endblock %}
-    
-    <!-- OPTIMIZE -->
-    {# {% include "analytics/optimize_anti_flicker.html" with optimize_tag="" %} #}
-    
-    <!-- MAILCHIMP -->
-    {# {% include "analytics/mailchimp.html" %} #}
-    
-    <!-- ADWORDS REMARKETING  -->
-    {# {% include "analytics/remarketing.html" with remarketing_tag="" %} #}
-    {% block remarketing %}{% endblock %}
-
-    <!-- PINTEREST -->
-    {% include "analytics/pinterest.html" with verification_code="" %}
 {% endblock %}
 
 {% block extra_analytics %}
-    {# {% include "analytics/google_no_script.html" with gtm_id="" %} #}
-        
-    <!-- FACEBOOK PIXELS -->
+    <!-- Facebook Pixels -->
     {% block facebook_event %}{% endblock %}
 {% endblock %}
 

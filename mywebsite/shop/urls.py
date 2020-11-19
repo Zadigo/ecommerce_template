@@ -7,6 +7,7 @@ app_name='shop'
 
 urlpatterns = [
     url(r'^(?P<pk>\d+)/add-like$', views.add_like, name='like'),
+    url(r'^(?P<pk>\d+)/add-review$', views.add_review, name='new_review'),
 
     url(r'^size-guide/calculate$', views.size_calculator, name='calculator'),
     url(r'^size-guide$', views.SizeGuideView.as_view(), name='size_guide'),

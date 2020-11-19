@@ -1,5 +1,5 @@
 {% extends "pages/base_shop.html" %}
-{% load i18n static share nodes_plus shop_impressions dropdowns %}
+{% load i18n static cache share nodes_plus shop_impressions dropdowns %}
 
 {% block title %}{{ product.name }} - Nawoka{% endblock %}
 
@@ -21,7 +21,7 @@
     
             <div class="row wow fadeIn">
                 {% if not is_mobile %}
-                    <!-- SIDE IMAGES -->
+                    <!-- Side images -->
                     <div class="col-md-1">
                         <side-images @showimage="display" :images="images" inline-template>
                             <div class="side-images">
@@ -32,7 +32,7 @@
                         </side-images>
                     </div>                
                     
-                    <!-- MAIN IMAGE -->
+                    <!-- Main image -->
                     <div class="col-md-6 mb-4">
                         <main-image :image="selectedimage" inline-template>
                             <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
@@ -58,16 +58,16 @@
                             </div>
                         </mobile-slider>
                     </div>
-                {% endif %}
+                {% endif %}                    
     
                 <div class="col-sm-6 col-md-5 mb-4">
                     <div class="p-sm-2 p-lg-4">
                         {# {% include "includes/product/badges.html" %} #}
                         
-                        <!-- TITLE -->
+                        <!-- Title -->
                         <h1 class="product-title">{{ product.name }}</h1>
     
-                        <!-- PRICE -->
+                        <!-- Price -->
                         <p class="lead">
                             {% if product.discounted %}
                                 <span class="mr-1">
@@ -81,11 +81,11 @@
                         </p>
                         
                         {% if reviews %}
-                            <!-- STARS -->
+                            <!-- Stars -->
                             {% include "includes/product/review_stars.html" %}
                         {% endif %}
     
-                        <!-- DELIVERY -->
+                        <!-- Delivery -->
                         <div class="delivery mt-3 mb-3">
                             <a href data-toggle="modal" data-target="#delivery">{% trans "Livraison standard" %}**</a>
                             {% include "includes/modals/delivery.html" with modal_title=True %}
@@ -96,7 +96,7 @@
                             <p class="lead font-weight-bold">{% trans "Description" %}</p>
                             <p>{{ product.description }}</p>                        
                         {% endif %}
-                        
+
                         <!-- Add to cart + Sizes + Colors -->
                         {% include "includes/product/actions.html" %}
                     </div>
@@ -121,12 +121,10 @@
         <!-- More -->
         {% include "includes/product/more.html" %}
         
-        {% comment %}
         <!-- Reviews -->
         <div class="row wow fadeIn mt-3">
             {% include "includes/product/reviews.html" %}
         </div>        
-        {% endcomment %}
     </div>
 {% endblock %}
 
@@ -157,13 +155,13 @@
 
 {% block vuejs_scripts %}
     {{ block.super }}
-
     {{ vue_product|json_script:"vue_product" }}
-
     <script>
         var product = JSON.parse($("#vue_product").text())
     </script>
-    
     <!-- App -->
     {% include "vue/product.html" %}
+
+    <!-- Google Pay -->
+    {% include "scripts/google_pay.html" %}
 {% endblock %}

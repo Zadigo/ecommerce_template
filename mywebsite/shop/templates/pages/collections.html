@@ -37,7 +37,15 @@
             {% include "includes/products/filterbar.html" %}
 
             <!-- Cards -->
-            {% include "includes/products/cards.html" %}
+            <div class="row wow fadeIn">
+                {% comment "Vue JS type cards" %}
+                    {% for product in products %}
+                        {% include "includes/products/cards/card1.html" %}
+                    {% endfor %}                    
+                {% endcomment %}
+
+                {% include "vue/components/cards/card1.html" %}
+            </div>
         </section>
     </div>
 
@@ -97,6 +105,6 @@
 {% endblock %}
 
 {% block vuejs_scripts %}
-    <!-- Products -->
-    {# {% include "vue/products.html" %} #}
+    <!-- App -->
+    {% include "vue/products_app.html" %}
 {% endblock %}

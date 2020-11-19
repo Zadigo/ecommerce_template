@@ -37,8 +37,7 @@ from django.views import generic
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from reviews.models import Review
-
+from django.utils.html import smart_urlquote
 from shop import models, serializers, sizes, tasks, utilities
 
 
@@ -83,6 +82,9 @@ class ProductsView(generic.ListView):
         except:
             raise http.Http404("La collection n'existe pas")
         else:
+            # queryset = cache.cache.get('products')
+            # if queryset is None:
+            #     cache.cache.set('products', queryset)
             queryset = collection.product_set.filter(active=True, private=False)
             
             authorized_categories = ['all', 'promos', 'favorites']
@@ -107,15 +109,45 @@ class ProductsView(generic.ListView):
 
         # Set a specific pagination number to
         # active depending on which page we are
-        # current_active_page = self.request.GET.get('page')
-        # if not current_active_page:
-        #     current_active_page = 1
-        # context['current_active_page'] = current_active_page
+        context['current_active_page'] = self.request.GET.get('page', 1)
 
-        # klass = super().get_paginator(products, self.paginate_by)
+        klass = super().get_paginator(products, self.paginate_by)
         
-        # serialized_products = serializers.ProductSerializer(instance=klass.object_list, many=True)
+        # serialized_products = serializers.ProductSerializer(
+        #     instance=klass.object_list, 
+        #     many=True
+        # )
         # context['vue_products'] = serialized_products.data
+
+        # Specific technique in order to include the
+        # product url, main_image url and images
+        vue_products = cache.cache.get('vue_products', [])
+        if not vue_products:
+            for product in klass.object_list:
+                images = product.images
+                variant = product.variant
+                base = {
+                    'id': product.id,
+                    'reference': product.reference,
+                    'url': product.get_absolute_url(),
+                    'collection': {
+                        'name': product.collection.name
+                    },
+                    'name': product.name,
+                    'price': str(product.get_price()),
+                    'main_image': product.get_main_image_url,
+                    'images': list(images.values('id', 'name', 'url', 'variant', 'main_image')),
+                    'variant': list(variant.values('id', 'name', 'verbose_name', 'in_stock', 'active')),
+                    'in_stock': product.in_stock,
+                    'our_favorite': product.our_favorite,
+                    'is_discounted': product.is_discounted,
+                    'price_pre_tax': str(product.price_pre_tax),
+                    'discounted_price': str(product.discounted_price),
+                    'slug': product.slug
+                }
+                vue_products.append(base)
+            cache.cache.set('vue_products', vue_products, timeout=60)
+        context['vue_products'] = json.dumps(vue_products)
 
         collection = self.model.objects.get(
             view_name__exact=self.kwargs['collection'], 
@@ -171,7 +203,7 @@ class ProductView(generic.DetailView):
             if likes.exists():
                 context.update({'has_liked': True})
 
-        reviews = Review.objects.reviews(product.id)
+        reviews = product.review_set.all()
         context['reviews'] = reviews
         context['reviews_avg'] = reviews.aggregate(Avg('rating'))
         return context
@@ -310,5 +342,23 @@ def size_calculator(request):
         'result': calculator.get_full_bra_size,
         'size': calculator.size, 
         'cup': calculator.cup
-        }
+    }
+    return JsonResponse(data=data)
+
+
+@require_POST
+@transaction.atomic
+def add_review(request, **kwargs):
+    data = {'state': False}
+    title = request.POST.get('title')
+    text = request.POST.get('text')
+    if request.user.is_authenticated:
+        product = get_object_or_404(models.Product, id=kwargs.get('pk'))
+        ordered_products = product.order_set.filter(product__id=kwargs.get('id'))
+        if ordered_products.exists():
+            review = product.review_set.create(
+                user=request.user, 
+                text=text, 
+                title=title
+            )
     return JsonResponse(data=data)

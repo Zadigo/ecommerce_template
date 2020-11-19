@@ -1,17 +1,11 @@
+{% load score_stars %}
+
 <div class="rating">
     <div>
-        <review-stars :rating="averageproductrating" />
+        {% stars reviews_avg.rating__avg %}        
     </div>
 
-    <div class="stars">
-        <!-- <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span>
-        <span class="fa fa-star"></span> -->
-    </div>
-    
     <span class="review-no">
-        {{ reviews.count }} review{{ reviews.count|pluralize }}
+        {{ reviews.count }} {% trans "avis" %}
     </span>
 </div>

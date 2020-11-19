@@ -1,6 +1,69 @@
 {% load i18n %}
 
 <script>
+    var reviewcomponent = {
+        props: {
+            product: {
+                type: Object,
+                required: true
+            },
+            isauthenticated: {
+                type: Boolean,
+                required: true
+            }
+        },
+        name: "Review",
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                scores: [],
+                showfields: false,
+                reviewdata: {},
+                validated: false
+            }
+        },
+        beforeMount() {
+            for (i = 1; i < 5; i++) {
+                this.scores.push(i)
+            }
+        },
+        computed: {
+            validity() {
+                return {
+                    "alert-danger": !this.validated,
+                    "alert-info": this.validated
+                }
+            }
+        },
+        methods: {
+            sendreview: function () {
+                var data = new FormData()
+                _.forEach(Object.key(this.reviewdata), (key) => {
+                    data.append(key, this.reviewdata[key])
+                })
+                
+                fetch("{% url 'shop:new_review' product.id %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    credentials: "same-origin",
+                    body: data
+                })
+                .then((response) => {
+                    response.json().then((data) => {
+                        this.validated = data.valid
+                    })
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+            }
+        }
+    }
+</script>
+
+<script>
     Vue.component("custom-button", {
         props: ["id", "size", "color", "disabled"],
         name: "Button",
@@ -366,42 +429,14 @@
 </script>
 
 <script>
-    var starscomponent = {
-        props: ["rating"],
-        template: `
-        <div class="stars">
-            <span v-for="(star, index) in totalscore" :key="star" class="fa" :class="getstar(index)"></span>
-        </div>
-        `,
-        data() {
-            return {
-                score: 1,
-                totalscore: 5
-            }
-        },
-        beforeMount() {
-            this.score = this.$props.rating * 1
-        },
-        methods: {
-            getstar: function (index) {
-                if (index + 1 <= this.score) {
-                    return "fa-star"
-                } else {
-                    return "fa-star-o"
-                }
-            }
-        }
-    }
-</script>
-
-<script>
     var productapp = new Vue({
         el: "#vue_app",
         name: "Product",
+        delimiters: ["[[", "]]"],
         components: {
-            "review-stars": starscomponent,
             "mobile-slider": mobileslider,
-            "cart-actions-interface": cartactionsinterface
+            "cart-actions-interface": cartactionsinterface,
+            "review-component": reviewcomponent
         },
         data() {
             return {
@@ -417,7 +452,6 @@
             }
         },
         beforeMount() {
-            // var product = JSON.parse($("#vue_product").text())
             var images = product.images
             var colors = []
     
@@ -458,6 +492,9 @@
             },
             instock() {
                 return this.product.in_stock ? true : false
+            },
+            isauthenticated() {
+                return Boolean("{{ request.user.is_authenticated }}")
             }
         },
         methods: {

@@ -29,16 +29,16 @@
             </li>
         </ul>
 
-        {% comment "Sorting products with Vue" %}
         <div class="navbar-nav">
-            <sorting-component @startsort="dosort" inline-template>
-                <select @change="startsort(item.name)" name="sorting" class="form-control" id="sorting">
-                    <option v-for="item in items" :key="item.id" :value="item.name">
+            <sorting-component :products="products" @dosort="applysort" inline-template>
+                <select @change="dosort($el)" class="browser-default custom-select" id="sorting">
+                    <option v-for="(item, index) in items" :key="item.id" :value="item.value">
                         [[ item.name ]]
                     </option>
                 </select>
             </sorting-component>
         </div>            
+        {% comment "Sorting products with Vue" %}
         {% endcomment %}
         
         {% comment "Running a search on the website" %}

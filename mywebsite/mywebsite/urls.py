@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from mywebsite import rss, sitemaps, views
 
 urlpatterns = [
-    path('__debug__/', include(debug_toolbar.urls)),
+    # path('__debug__/', include(debug_toolbar.urls)),
 
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
     
