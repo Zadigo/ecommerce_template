@@ -1,5 +1,5 @@
 import secrets
-
+import uuid
 from django.conf import settings
 from django.core.files.base import File
 from django.core.files.storage import FileSystemStorage
@@ -28,8 +28,9 @@ class PrivateMediaStorage(S3Boto3Storage):
 
 class CustomeFileSystemStorage(FileSystemStorage):
     def _open(self, name, mode='rb'):
-        obj = File(open(self.path(name), mode))
-        new_name = secrets.token_hex(5)
+        # obj = File(open(self.path(name), mode))
+        obj = super()._open(name, mode=mode)
+        new_name = uuid.uuid4()
         _, ext = name.split('.')
         obj.name = f'{new_name}.{ext}'
         return obj

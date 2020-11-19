@@ -34,7 +34,7 @@
 
         {% block extra_metatags %}{% endblock %}
         
-        <!-- STRUCTURED -->
+        <!-- Structured -->
         {% block structured_data %}
             {% include "scripts/seo/organization.html" %}
         {% endblock %}
@@ -73,87 +73,11 @@
 
         {% block main %}{% endblock %}
 
-        <!-- FOOTER -->
+        <!-- Footer -->
         {% block footer %}{% endblock %}
 
-        <!-- JQUERY -->
-        <script src="https://code.jquery.com/jquery-3.5.1.js" 
-            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" 
-                crossorigin="anonymous">
-        </script>
-
-        <!-- Bootstrap core JavaScript -->
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" 
-            integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" 
-                crossorigin="anonymous">
-        </script>
-
-        <!-- Bootstrap tooltips -->
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" 
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" 
-                crossorigin="anonymous">
-        </script>
-        
-        <!-- MDB core JavaScript -->
-        <script type="text/javascript" src="{% static 'mdb.js' %}"></script>
-
-        <script type="text/javascript">
-            // Animations initialization
-            new WOW().init()
-        </script>
-
-        <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
-
-        <!-- LARGE NAVBAR -->
-        <script>
-            $(document).ready(function () {
-                $(document).find(".dropdown")
-                    .on("mouseenter", function (e) {
-                        $(this).addClass("show")}
-                    )
-                    .on("mouseleave", function (e) {
-                        $(this).removeClass("show")}
-                    )
-
-                $(document).on("click", ".dropdown-menu", function (e) {
-                    e.stopPropagation();
-                });
-            });
-        </script>
-
-        {% comment %}
-        <!-- OFFCANVAS -->
-        <script>
-            $(document).ready(function () {
-                $("[data-trigger]").on("click", function () {
-                    var trigger_id = $(this).attr("data-trigger");
-                    $(trigger_id).toggleClass("show");
-                    $("body").toggleClass("offcanvas-active");
-                });
-
-                $(".btn-close").click(function (e) {
-                    $(".navbar-collapse").removeClass("show");
-                    $("body").removeClass("offcanvas-active");
-                }); 
-            });
-        </script>
-        {% endcomment %}
-
-        <!-- Stripe -->
-        <script src="https://js.stripe.com/v3/"></script>
-
-        <!-- Lodash -->
-        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
-
-        <!-- Velocity -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
-        
-        <!-- Vue JS -->
-        {% if debug %}
-            <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        {% else %}
-            <script src="https://cdn.jsdelivr.net/npm/vue"></script>            
-        {% endif %}
+        <!-- Scripts -->
+        {% include "scripts/base.html" %}
 
         {% block extra_scripts %}{% endblock %}
 

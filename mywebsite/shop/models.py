@@ -1,14 +1,15 @@
 import datetime
+import os
 
-from django import utils
 from django.contrib.auth import get_user_model
-from django.core import exceptions
-from django.db import models, transaction
-from django.db.models.signals import post_save
+from django.db import models
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 from shop import choices, managers, utilities, validators
 
@@ -20,11 +21,13 @@ class Image(models.Model):
     """
     name    = models.CharField(max_length=50)
     variant = models.CharField(max_length=30, default='Noir')
-    aws_key   = models.CharField(max_length=50, null=True, blank=True, verbose_name='AWS folder key')
-    aws_slug_name   = models.CharField(max_length=100, blank=True, null=True, help_text='File name on AWS')    
-    aws_image =    models.BooleanField(default=False)
+    # aws_key   = models.CharField(max_length=50, null=True, blank=True, verbose_name='AWS folder key')
+    # aws_slug_name   = models.CharField(max_length=100, blank=True, null=True, help_text='File name on AWS')    
+    # aws_image =    models.BooleanField(default=False)
     main_image  = models.BooleanField(default=False, help_text='Indicates if this is the main image for the product')
-    url     = models.URLField(blank=True, null=True)
+    url      = models.ImageField(verbose_name='Product image', upload_to='products', blank=True, null=True)
+    web_url     = models.URLField(blank=True, null=True)
+    image_thumbnail = ImageSpecField(source='url', processors=ResizeToFill(800), format='JPEG', options={'quality': 50})
 
     objects = models.Manager()
  
@@ -40,17 +43,17 @@ class Image(models.Model):
     def get_absolute_url(self):
         return reverse('manage_image', args=[self.pk])
 
-    def clean(self):
-        if self.name and self.aws_image:
-            # Create a slug version of the image such as
-            # product_name and add .jpg to it
-            self.aws_slug_name = f"{self.name.replace(' ', '_').lower()}.jpg"
+    # def clean(self):
+    #     if self.name and self.aws_image:
+    #         # Create a slug version of the image such as
+    #         # product_name and add .jpg to it
+    #         self.aws_slug_name = f"{self.name.replace(' ', '_').lower()}.jpg"
 
-            if not self.aws_key:
-                raise exceptions.ValidationError('You must provide an AWS key when trying to create an AWS image')
+    #         if not self.aws_key:
+    #             raise exceptions.ValidationError('You must provide an AWS key when trying to create an AWS image')
 
-            object_path = f'mywebsite/products/{self.aws_key}/{self.aws_slug_name}'
-            self.url = aws_manager.aws_url_for(object_path)
+    #         object_path = f'mywebsite/products/{self.aws_key}/{self.aws_slug_name}'
+    #         self.url = aws_manager.aws_url_for(object_path)
 
 
 class AutomaticCollectionCriteria(models.Model):
@@ -154,7 +157,6 @@ class Product(models.Model):
     collection. So before creating a product, a collection should already
     exist.
     """
-    # store       = models.ForeignKey(Store, on_delete=models.SET_NULL, blank=True, null=True)
     name          = models.CharField(max_length=50, blank=True, null=True)
     reference   = models.CharField(max_length=30, default=utilities.create_product_reference())
     gender = models.CharField(
@@ -270,8 +272,8 @@ class Product(models.Model):
         return self.images.all()
 
     def get_price(self):
-        """Chooses between the price ht and the
-        discounted price if there is a discount
+        """Chooses between the pre tax price and the
+        discounted price if the product is discounted
         """
         if self.discounted_price is None:
             return self.price_pre_tax
@@ -300,3 +302,10 @@ def create_slug(instance, sender, created, **kwargs):
         if instance.name:
             instance.slug = utilities.create_product_slug(instance.name)
             instance.save()
+
+
+@receiver(post_delete, sender=Image)
+def delete_image(sender, instance, **kwargs):
+    if instance.image_url:
+        if os.path.isfile(instance.image_url.path):
+            os.remove(instance.image_url.path)

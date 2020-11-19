@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'subscribers',
     'customercare',
     'reviews',
+    'imagekit',
 ]
 
 MIDDLEWARE = [
@@ -238,18 +239,6 @@ else:
 
 AWS_IMAGES_FOLDER = ''
 
-# STATIC_URL = '/static/'
-
-# # STATIC_ROOT = 'static'
-
-# MEDIA_URL = 'media/'
-
-# MEDIA_ROOT = 'media'
-
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static')
-# ]
-
 
 # AUTHENTICATION BACKENDS
 
@@ -257,7 +246,7 @@ AUTH_USER_MODEL = 'accounts.MyUser'
 
 AUTHENTICATION_BACKENDS = [
     'social_core.backends.twitter.TwitterOAuth',
-#     'social_core.backends.open_id.OpenIdAuth',
+    # 'social_core.backends.open_id.OpenIdAuth',
     # 'social_core.backends.google.GoogleOpenId',
     'social_core.backends.google.GoogleOAuth2',
     'social_core.backends.facebook.FacebookOAuth2',

@@ -9,6 +9,10 @@ class ImageAdmin(admin.ModelAdmin):
     search_fields = ['name', 'variant']
     list_per_page = 10
 
+    def delete_queryset(self, request, queryset):
+        for image in queryset:
+            image.delete()
+
 
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):

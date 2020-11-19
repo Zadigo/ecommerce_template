@@ -23,6 +23,10 @@ django-celery-beat = "*"
 pandas = "*"
 flower = "*"
 python-memcached = "*"
+pillow = "*"
+django-debug-toolbar = "*"
+numpy = "==1.19.3"
+django-imagekit = "*"
 
 [requires]
 python_version = "3.8"

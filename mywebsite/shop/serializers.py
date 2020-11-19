@@ -16,6 +16,7 @@ class ImageSerializer(Serializer):
     pk      = fields.IntegerField()
     name    = fields.CharField()
     url = fields.URLField()
+    image_url = fields.ImageField()
     variant = fields.CharField()
     main_image = fields.BooleanField()
 

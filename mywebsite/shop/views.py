@@ -136,7 +136,7 @@ class ProductsView(generic.ListView):
                     'name': product.name,
                     'price': str(product.get_price()),
                     'main_image': product.get_main_image_url,
-                    'images': list(images.values('id', 'name', 'url', 'variant', 'main_image')),
+                    'images': list(images.values('id', 'name', 'url', 'image_url', 'variant', 'main_image')),
                     'variant': list(variant.values('id', 'name', 'verbose_name', 'in_stock', 'active')),
                     'in_stock': product.in_stock,
                     'our_favorite': product.our_favorite,
