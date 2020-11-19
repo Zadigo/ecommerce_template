@@ -12,20 +12,20 @@
             "webRoot": "${workspaceFolder}"
         },
         {
-            "name": "Python: My Website",
+            "name": "Python: Ecommerce Template",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"
         },
         {
-            "name": "Ecommerce Template Debug",
+            "name": "Djano: Ecommerce Template",
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}\\mywebsite\\manage.py",
             "args": [
                 "runserver",
-                "--noreload"
+                // "--noreload"
             ],
             "django": true,
         }
