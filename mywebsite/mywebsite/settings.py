@@ -84,7 +84,6 @@ TEMPLATES = [
 
                 'cart.payment.stripe_context_processor',
                 'mywebsite.context_processors.responsive',
-                'analytics.context_processors.analytics'
             ],
             'libraries': {
                 'aws_images': 'templatetags.aws_images',

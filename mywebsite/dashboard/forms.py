@@ -165,10 +165,10 @@ class CollectionForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['firstname', 'lastname', 'email']
 
         widgets = {
-            'first_name': custom_widgets.TextInput(attrs={'placeholder': 'Nom'}),
+            'firstname': custom_widgets.TextInput(attrs={'placeholder': 'Nom'}),
         }
 
 

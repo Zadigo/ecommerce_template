@@ -1,6 +1,7 @@
 import random
 
 from django import template
+from django.template.loader import get_template
 from django.core.cache import cache
 
 from shop import models
@@ -14,9 +15,13 @@ SAMPLE_IMAGES = [
 
 def get_collections():
     collections = cache.get('collections', None)
-    if not collections:
-        collections = models.Collection.objects.all()
-        cache.set('collections', collections, 60)
+    if collections is None:
+        try:
+            collections = models.Collection.objects.all()
+        except Exception:
+            raise
+        else:
+            cache.set('collections', collections, timeout=3600)
     return collections
 
 
@@ -46,8 +51,8 @@ def collections_dropdown_block():
                     context['sample_collection']['is_url'] = True
         else:
             context['sample_collection']['image'] = collection.image
-    return context
 
+    return context
 
 
 @register.inclusion_tag('includes/product/cart.html')

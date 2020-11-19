@@ -20,8 +20,8 @@ class SecondConditionsChoices(models.Choices):
 
 
 class GenderChoices(models.Choices):
-    FEMME = 'femme'
-    HOMME = 'homme'
+    WOMEN = 'Women'
+    MEN = 'Men'
 
 
 class GoogleProductCategory(models.Choices):

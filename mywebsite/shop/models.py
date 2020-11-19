@@ -24,10 +24,10 @@ class Image(models.Model):
     # aws_key   = models.CharField(max_length=50, null=True, blank=True, verbose_name='AWS folder key')
     # aws_slug_name   = models.CharField(max_length=100, blank=True, null=True, help_text='File name on AWS')    
     # aws_image =    models.BooleanField(default=False)
-    main_image  = models.BooleanField(default=False, help_text='Indicates if this is the main image for the product')
     url      = models.ImageField(verbose_name='Product image', upload_to='products', blank=True, null=True)
     web_url     = models.URLField(blank=True, null=True)
     image_thumbnail = ImageSpecField(source='url', processors=ResizeToFill(800), format='JPEG', options={'quality': 50})
+    main_image  = models.BooleanField(default=False, help_text='Indicates if this is the main image for the product')
 
     objects = models.Manager()
  
@@ -42,6 +42,11 @@ class Image(models.Model):
 
     def get_absolute_url(self):
         return reverse('manage_image', args=[self.pk])
+
+    def get_image(self):
+        if not self.url:
+            return self.web_url
+        return self.url
 
     # def clean(self):
     #     if self.name and self.aws_image:
@@ -91,11 +96,7 @@ class Collection(models.Model):
     Represents a collection of products
     """
     name      = models.CharField(max_length=50)
-
-    class GenderChoices(models.Choices):
-        FEMME = 'femme'
-        HOMME = 'homme'
-    gender = models.CharField(max_length=50, choices=GenderChoices.choices, default=GenderChoices.FEMME)
+    gender = models.CharField(max_length=50, choices=choices.GenderChoices.choices, default=choices.GenderChoices.WOMEN)
     
     view_name   = models.CharField(max_length=50)
     image        = models.FileField(upload_to='collections', blank=True, null=True)
@@ -162,7 +163,7 @@ class Product(models.Model):
     gender = models.CharField(
         max_length=50, 
         choices=choices.GenderChoices.choices, 
-        default=choices.GenderChoices.FEMME
+        default=choices.GenderChoices.WOMEN
     )
 
     images          = models.ManyToManyField(Image)
