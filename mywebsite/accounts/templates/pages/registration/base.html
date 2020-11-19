@@ -1,13 +1,14 @@
-{% extends "base.html" %}
+{% extends "base_site.html" %}
 
 {% block main %}
     <section class="view section-image" id="{% block section_id %}{% endblock %}">
-        <!-- SOCIAL -->
-        {% block social %}{% endblock %}
-
+        
         <div class="row mt-6">
             <div class="col-4 offset-sm-12 offset-md-4">
                 <div class="card low-opacity">
+                    <!-- Social -->
+                    {% block social %}{% endblock %}
+                    
                     <div class="card-body">
                         {% for error in form.non_field_errors %}
                             <div class="alert alert-danger">

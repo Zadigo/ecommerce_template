@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="col-12 text-right">
-                        <confirm-button @sendconfirmation="submitdata" :state="hasselecteditems">
+                        <confirm-button @sendconfirmation="submitdata" :state="hasselecteditems" :submitted="submitted">
                             <slot>
                                 {% trans "Confimer vos préférences" %}
                             </slot>

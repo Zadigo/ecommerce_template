@@ -1,26 +1,32 @@
 import datetime
+import json
 import re
 
 import stripe
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.cache import cache_page, never_cache
+from django.views.decorators.cache import (cache_control, cache_page,
+                                           never_cache)
+from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView, View
 
 from accounts import forms
 from accounts.models import MyUser, MyUserProfile
 
 
+@method_decorator(cache_page(3600 * 60), name='dispatch')
 class IndexView(TemplateView):
     template_name = 'pages/profile/index.html'
 
 
+@method_decorator(never_cache, name='dispatch')
 class InformationView(LoginRequiredMixin, View):
     forms = {
         'form1': forms.BaseProfileForm,
@@ -34,8 +40,8 @@ class InformationView(LoginRequiredMixin, View):
         context = {
             'form1': self.forms['form1'](
                 initial={
-                    'first_name': user.first_name,
-                    'last_name': user.last_name,
+                    'firstname': user.firstname,
+                    'lastname': user.lastname,
                     'email': user.email
                 }
             ),
@@ -55,54 +61,45 @@ class InformationView(LoginRequiredMixin, View):
 
         position = int(request.POST.get('position'))
 
+        form = None
+
         if position == 0:
             form = self.forms['form1'](request.POST, instance=user)
 
         if position == 1:
             form = self.forms['form2'](request.POST, instance=user_profile)
 
-        if not form:
-            messages.error(request, _("An error occured - FOR-NR"),
-                           extra_tags='alert-danger')
-            # return JsonResponse(data={'state': False})
+        if form is None:
+            messages.error(request, _("An error occured - FOR-NR"), extra_tags='alert-danger')
             return redirect(reverse('accounts:profile:home'))
         else:
             if form.is_valid():
                 form.save()
 
-        # return JsonResponse(data={'state': True})
         messages.success(request, _("Informations modifiées"), extra_tags='alert-success')
         return redirect(reverse('accounts:profile:home'))
 
 
+@method_decorator(never_cache, name='dispatch')
 class ProfileDataView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        current_user = self.request.user
-
-        try:
-            # Query the social_auth database and
-            # get a set of connected accounts
-            user = self.request.user.social_auth.get(uid=current_user.email)
-            if user:
-                context = {
-                    'provider': user.provider
-                }
-        except:
-            context = {}
-
+        current_user_email = request.user.email
+        handles = self.request.user.social_auth.get(uid=current_user_email)
+        context = {}
         return render(request, 'pages/profile/data.html', context)
 
 
+@method_decorator(never_cache, name='dispatch')
 class ProfileDeleteView(LoginRequiredMixin, View):
     """Help the user delete his account
     """
-
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(MyUser, id=request.user.id)
         user.delete()
         return redirect('/')
 
 
+@method_decorator(never_cache, name='dispatch')
 class PaymentMethodsView(LoginRequiredMixin, View):
     """Allows the customer to update his/her payment method"""
 
@@ -116,6 +113,7 @@ class PaymentMethodsView(LoginRequiredMixin, View):
         return render(request, 'pages/profile/payments.html', {'details': details})
 
 
+@method_decorator(never_cache, name='dispatch')
 class ChangePasswordView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         context = {
@@ -131,8 +129,12 @@ class ChangePasswordView(LoginRequiredMixin, View):
         return redirect('/profile/')
 
 
+@method_decorator(cache_page(3600 * 60), name='dispatch')
 class ContactPreferencesView(LoginRequiredMixin, TemplateView):
     template_name = 'pages/profile/contact.html'
 
     def post(self, request, **kwargs):
-        pass
+        data = {'state': False}
+        data = json.loads(request.body)
+        data.update({'state': True})
+        return JsonResponse(data=data)

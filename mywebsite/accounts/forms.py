@@ -1,5 +1,8 @@
 from django import forms
+from django.contrib.auth import authenticate
 from django.contrib.auth import forms as auth_forms
+from django.contrib.auth import password_validation
+from django.contrib.auth.tokens import default_token_generator
 from django.forms import fields, widgets
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -88,11 +91,11 @@ class UserSignupForm(auth_forms.UserCreationForm):
     )
 
     class Meta:
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['firstname', 'lastname', 'email']
         model = MyUser
         widgets = {
-            'first_name': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
-            'last_name': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
+            'firstname': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
+            'lastname': widgets.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
             'email': widgets.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
         }
 
@@ -161,10 +164,10 @@ class CustomChangePasswordForm(CustomSetPasswordForm):
 class BaseProfileForm(forms.ModelForm):
     class Meta:
         model   = MyUser
-        fields  = ['first_name', 'last_name', 'email']
+        fields  = ['firstname', 'lastname', 'email']
         widgets = {
-            'first_name': custom_widgets.FirstNameInput(attrs={'placeholder': 'John'}),
-            'last_name': custom_widgets.LastNameInput(attrs={'placeholder': 'Doe'}),
+            'firstname': custom_widgets.FirstNameInput(attrs={'placeholder': 'John'}),
+            'lastname': custom_widgets.LastNameInput(attrs={'placeholder': 'Doe'}),
             'email': custom_widgets.TextInput(attrs={'placeholder': 'john.doe@gmail.com'}),
         }
 

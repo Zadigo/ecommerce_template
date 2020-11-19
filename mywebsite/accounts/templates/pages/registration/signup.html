@@ -3,6 +3,10 @@
 
 {% block title %}{% trans "Créer un compte" %}{% endblock title %}
 
+{% block social %}
+    {% include "components/registration/social.html" %}
+{% endblock %}
+
 {% block section_id %}signup{% endblock %}
 
 {% block registration_form %}

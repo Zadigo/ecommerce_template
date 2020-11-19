@@ -4,6 +4,7 @@
         delimiters: ["[[", "]]"],
         data() {
             return {
+                submitted: false,
                 sections: [
                     {id: 1, name: "kendall", paragraph: "Soyez les premiers à choper vos coups de cœur pour moins cher", checkboxes: [{id: "email", label: "Email"}]},
                     {id: 2, name: "kylie", paragraph: "Dernières tendances, nouveautés et conseils de style : vous les avez vus en premier, vous serez les premiers à les porter.", checkboxes: [{id: "novelties", label: "Email"}]},
@@ -14,24 +15,42 @@
         },
         computed: {
             hasmorethanone() {
-                return this.$data.sections.length > 1
+                return this.sections.length > 1
             },
             hasselecteditems() {
-                // var selectionarray = []
-                // Object.keys(this.$data.selecteditems).forEach((key) => {
-                //     selectionarray.push(this.$data.selecteditems[key])
-                // })
-                // if (selectionarray.length === 0) {
-                //     return false
-                // } else {
-                //     return selectionarray.every((item) => {return item == true})
-                // }
-                return _.includes(this.$data.selecteditems, true)
+                return _.includes(this.selecteditems, true)
             }
         },
         methods: {
             submitdata: function () {
-                console.log("Submitting data")
+                var formdata = new FormData()
+                var keys = Object.keys(this.selecteditems).forEach((key) => {
+                    formdata.append(key, this.selecteditems[key])
+                })
+                this.submitted = true
+                fetch(window.location.href, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(formdata)
+                })
+                .then((response) => {
+                    response.json().then((data) => {
+                        setTimeout(() => {
+                            this.submitted = false
+                        }, 3000);
+                        
+                        if (data.state) {
+
+                        }
+                    })
+                })
+                .catch((error) => {
+                    this.submitted = false
+                    console.error(error)
+                })
             }
         }
     })

@@ -1,11 +1,14 @@
-<div class="row mb-4">
-    <div class="col-5 offset-md-4">
-        <div class="card z-depth-0">
-            <a href="{% url 'social:begin' backend='facebook-oauth2' %}" class="btn btn-large m-0 mb-2">
-                <i class="fab fa-facebook"></i>Facebook
-            </a>
-            <a href="{% url 'social:begin' backend='google-oauth2' %}" class="btn btn-large m-0 mb-2">
-                <i class="fab fa-google"></i>Google
+{% load i18n %}
+
+<div class="card-header">
+    <div class="row">
+        <div class="col-12 text-center">
+            <p>{% trans "Se connecter avec" %}</p>
+            <a href="{% url 'social:begin' backend='facebook-oauth2' %}" class="btn btn-sm mr-3 mb-2 bg-white">
+                <i class="fab fa-facebook mr-4"></i>Facebook
+    
+            <a href="{% url 'social:begin' backend='google-oauth2' %}" class="btn btn-sm mb-2 bg-white">
+                <i class="fab fa-google mr-4"></i>Google
             </a>
         </div>
     </div>
