@@ -89,7 +89,7 @@ class Cart(AbstractCart):
 
 class CustomerOrder(models.Model):
     """
-    Reprensents a customer's order
+    Represents a customer's order
     """
     user        = models.ForeignKey(MYUSER, blank=True, null=True, on_delete=models.SET_NULL)
     cart             = models.ManyToManyField(Cart, blank=True)
