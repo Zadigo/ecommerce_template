@@ -25,12 +25,14 @@
 			<div class="row">
 				<div class="col-6 col-sm-12 col-md-6">
 					<h2 class="text-uppercase font-weight-bold m-0">
-						<a class="text-muted" href="{% url 'shop:home' %}" id="link_payment_to_shop">Nawoka</a>
+						<a class="text-muted" href="{% url 'shop:home' %}" id="link_payment_to_shop" role="link">
+							Nawoka
+						</a>
 					</h2>
 				</div>
 				<div class="col-6 col-sm-12 col-md-6 text-sm-left text-md-right">
-					<a href="https://stripe.com" target="_blank">
-						<img src="{% static 'logos/stripe.png' %}" alt="stripe">
+					<a href="https://stripe.com" target="_blank" role="link" aria-label="Stripe website">
+						<img src="{% static 'logos/stripe.png' %}" alt="stripe" role="img" aria-label="Stripe">
 					</a>
 				</div>
 			</div>
@@ -68,8 +70,8 @@
 							{% trans "Nous acceptons" %}
 						</p>
 						<div class="payments">
-							<i class="fab fa-cc-mastercard fa-1x"></i>
-							<i class="fab fa-cc-visa fa-1x"></i>
+							<i class="fab fa-cc-mastercard fa-1x" role="img" aria-label="Mastercard"></i>
+							<i class="fab fa-cc-visa fa-1x" role="img" aria-label="Visa"></i>
 						</div>
 					</div>
 				</div>
@@ -77,7 +79,7 @@
 
 			<div class="card mt-3 text-muted">
 				<div class="card-body">
-					<p class="mb-0">
+					<p class="mb-0" role="text">
 						En passant votre commande, vous acceptez nos <a href="{% url 'legal:use' %}" target="_blank">Modalités</a>, 
 						ainsi que <a href="{% url 'legal:sale' %}" target="_blank">nos politiques de confidentialité et de retour</a>. 
 						Vous consentez à ce que certaines de vos données, qui seront utilisées 
@@ -89,7 +91,7 @@
 			<div class="card mt-1 z-depth-0 grey lighten-5">
 				<div class="card-body pl-0 text-muted">
 					<p>
-						<a href="{% url 'customer_care:home' %}" target="_blank">
+						<a href="{% url 'customer_care:home' %}" target="_blank" role="link">
 							{% trans "Assistance" %}
 						</a>
 					</p>
@@ -114,7 +116,7 @@
 {% endblock %}
 
 {% block extra_scripts %}
-	<!-- STRIPE -->
+	<!-- Stripe -->
 	{% include "scripts/stripe.html" %}
 
 	<script>
@@ -124,16 +126,16 @@
 				"ecommerce": {
 					"purchase": {
 						"actionField": {
-							"id": "98aa382e-dc25-465c-a51d-2684420d7eeb",
+							"id": "{{ uuid }}",
 							"affiliation": "Online Store",
 							"revenue": "{{ cart_total.true_price__sum }}",
-							"tax": 20,
-							"shipping": 2.99
+							"tax": "{{ tax }}",
+							"shipping": "{{ shipping }}"
 						},
-						"products": impressions
+						"products": {{ impressions|safe }}
 					}
 				}
-			});
+			})
 		}
 	</script>
 {% endblock %}

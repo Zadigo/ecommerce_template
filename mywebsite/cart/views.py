@@ -1,5 +1,6 @@
 import json
 
+from uuid import uuid4
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
@@ -114,6 +115,13 @@ class PaymentView(BaseCartView):
     def post(self, request, **kwargs):
         payment.PreprocessPayment(request, set_in_session=True, shipping='standard')
         return render(request, self.template_name, super().get_context_data(**kwargs))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tax'] = 20
+        context['shipping'] = 2.99
+        context['uuid'] = uuid4()
+        return context
 
 
 class ProcessPaymentView(generic.View):

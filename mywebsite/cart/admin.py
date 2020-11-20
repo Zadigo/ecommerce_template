@@ -9,20 +9,20 @@ class CartAdmin(admin.ModelAdmin):
 
 @admin.register(models.CustomerOrder)
 class CustomerOrderAdmin(admin.ModelAdmin):
-    list_display = ['reference', 'transaction', 'payment', 'accepted', 'completed']
+    list_display = ['reference', 'transaction', 'payment', 'accepted', 'shipped', 'refund', 'created_on']
     search_fields = ['reference', 'transaction']
     date_hierarchy = 'created_on'
-    sortable_by = ['payment']
+    sortable_by = ['payment', 'created_on']
     filter_horizontal = ['cart']
     list_per_page = 20
-    actions = ['mark_accepted', 'mark_completed']
+    actions = ['mark_accepted', 'mark_shipped']
 
     def mark_accepted(self, queryset):
         queryset.update(accepted=True)
         return queryset
     
-    def mark_completed(self, queryset):
-        queryset.update(completed=True)
+    def mark_shipped(self, queryset):
+        queryset.update(shipped=True)
         return queryset
 
 

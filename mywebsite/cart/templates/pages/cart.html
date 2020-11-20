@@ -42,7 +42,7 @@
                                             <div class="row">
                                                 <div class="col-3">
                                                     <div class="cart-image">
-                                                        <img class="img-fluid" src="{{ product.product.get_main_image_url }}" alt="{{ product.slug }}">
+                                                        <img class="img-fluid" src="{{ product.product.get_main_image_url }}" alt="{{ product.slug }}" role="img">
                                                     </div>
                                                 </div>
                                                 <div class="col-auto">
@@ -51,11 +51,11 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <a href="{% url 'cart:alter_quantity' product.id 'reduce' %}" id="btn_alter_cart_reduce">
+                                            <a href="{% url 'cart:alter_quantity' product.id 'reduce' %}" id="btn_alter_cart_reduce" role="button">
                                                 <i class="fa fa-minus"></i>
                                             </a>
                                             {{ product.quantity }}
-                                            <a href="{% url 'cart:alter_quantity' product.id 'add' %}" id="btn_alter_cart_add">
+                                            <a href="{% url 'cart:alter_quantity' product.id 'add' %}" id="btn_alter_cart_add" role="button">
                                                 <i class="fa fa-plus"></i>
                                             </a>
                                         </td>
@@ -75,24 +75,14 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <a href="{% url 'cart:delete' product.id %}" class="btn btn-sm btn-transparent z-depth-0" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.product.price_pre_tax }}', '{{ product.product.name }}', '{{ product.quantity }}')">
+                                            <a href="{% url 'cart:delete' product.id %}" class="btn btn-sm btn-transparent z-depth-0" onclick="deleteProduct('{{ forloop.counter }}', '{{ product.product.price_pre_tax }}', '{{ product.product.name }}', '{{ product.quantity }}')" role="button">
                                                 <i class="fa fa-trash fa-1x"></i>
                                             </a>
                                         </td>
                                     </tr>
                                 {% endfor %}
-                            </tbody>
-
-                            {% comment %}
-                            <tbody>
-                                <div id="vue_app">
-                                    <listcomponent @mathoperation="hideproduct" v-bind:products="products" />
-                                </div>
-                            </tbody>
-                            {% endcomment %}
-                            
+                            </tbody>                            
                         </table>
-                        <div class="csrf">{% csrf_token %}</div>
                     </div>
                 </div>
             </div>

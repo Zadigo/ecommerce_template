@@ -99,21 +99,19 @@ class CustomerOrder(models.Model):
     payment           = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     accepted        = models.BooleanField(default=False)
-    # TODO: Maybe move this field to shipment
     shipped       = models.BooleanField(default=False)
-    # TODO: change to delivered or use the completed
-    # field in the Shipment model
-    completed       = models.BooleanField(default=False)
     refund        = models.BooleanField(default=False)
 
     comment       = models.TextField(max_length=500, blank=True, null=True)
 
-    tracking_number     = models.CharField(max_length=50, blank=True, null=True)
-
     class DeliveryChoices(models.Choices):
         STANDARD = 'standard'
-        # PRIME = 'prime'
-    delivery    = models.CharField(max_length=50, choices=DeliveryChoices.choices, default=DeliveryChoices.STANDARD)
+        PRIME = 'prime'
+    delivery    = models.CharField(
+        max_length=50, 
+        choices=DeliveryChoices.choices, 
+        default=DeliveryChoices.STANDARD
+    )
 
     created_on  = models.DateField(auto_now_add=True)
 

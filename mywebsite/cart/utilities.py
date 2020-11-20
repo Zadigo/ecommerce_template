@@ -3,6 +3,7 @@ import hashlib
 import random
 import secrets
 import string
+import uuid
 
 from django.apps import apps
 from django.conf import settings

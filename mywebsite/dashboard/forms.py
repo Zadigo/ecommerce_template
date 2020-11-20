@@ -175,16 +175,12 @@ class CustomerForm(forms.ModelForm):
 class CustomerOrderForm(forms.ModelForm):
     class Meta:
         model = cart_models.CustomerOrder
-        fields = ['accepted', 'shipped',
-                  'completed', 'refund', 'tracking_number']
+        fields = ['accepted', 'shipped', 'refund']
 
         widgets = {
             'accepted': custom_widgets.CheckBoxInput(),
-            'completed': custom_widgets.CheckBoxInput(),
-            'refund': custom_widgets.CheckBoxInput(),
             'shipped': custom_widgets.CheckBoxInput(),
-            'delivery': custom_widgets.TextInput(),
-            'tracking_number': custom_widgets.TextInput(),
+            'refund': custom_widgets.CheckBoxInput()
         }
 
 

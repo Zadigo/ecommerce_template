@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <script>
     var stripepayment = new Vue({
         el: "#vue-payment",
@@ -16,7 +18,9 @@
             <div id="card-element"></div>
         
             <button @click.prevent="dopayment()" type="submit" class="btn btn-lg btn-primary btn-block mt-4">
-                <span v-if="!submitted">{% trans "Paiement" %}</span>
+                <span v-if="!submitted">
+                    {% trans "Paiement" %}
+                </span>
                 
                 <div v-else class="spinner-border" role="status">
                     <span class="sr-only">Loading...</span>
@@ -90,40 +94,40 @@
                             credentials: "same-origin",
                             body: JSON.stringify(formdata)
                         })
-                            .then((response) => {
-                                var data = response.json().then((data) => {
-                                    this.haserrors = data.state
-                                    if (data.state === false) {
-                                        this.pusherror()
-                                        if (data.code === "card_declined") {
-                                            this.errormessages.push("Le paiement a été refusé")
-                                        } else if (data.code === "expired_card") {
-                                            this.errormessages.push("Le carte n'est plus valide")
-                                        } else if (data.code === "incorrect_cvc") {
-                                            this.errormessages.push("Le cvc est incorrect")
-                                        } else {
-                                            this.errormessages.push("Le paiement n'a pas pu aboutir")
-                                        }
-
-                                        if (data.context_errors) {
-                                            this.errormessages.push(data.context_errors)
-                                        }
-
-                                        this.submitted = false
+                        .then((response) => {
+                            var data = response.json().then((data) => {
+                                this.haserrors = data.state
+                                if (data.state === false) {
+                                    this.pusherror()
+                                    if (data.code === "card_declined") {
+                                        this.errormessages.push("Le paiement a été refusé")
+                                    } else if (data.code === "expired_card") {
+                                        this.errormessages.push("Le carte n'est plus valide")
+                                    } else if (data.code === "incorrect_cvc") {
+                                        this.errormessages.push("Le cvc est incorrect")
                                     } else {
-                                        setTimeout(() => {
-                                            window.location.href = response.redirect_url
-                                        }, 3000);
+                                        this.errormessages.push("Le paiement n'a pas pu aboutir")
                                     }
-                                })
+
+                                    if (data.context_errors) {
+                                        this.errormessages.push(data.context_errors)
+                                    }
+
+                                    this.submitted = false
+                                } else {
+                                    setTimeout(() => {
+                                        window.location.href = response.redirect_url
+                                    }, 3000);
+                                }
                             })
-                            .catch((error) => {
-                                this.pusherror()
-                                this.haserrors = true
-                                this.errormessages.push(error)
-                                this.submitted = false
-                                console.log(error, "This is an error")
-                            })
+                        })
+                        .catch((error) => {
+                            this.pusherror()
+                            this.haserrors = true
+                            this.errormessages.push(error)
+                            this.submitted = false
+                            console.log(error, "This is an error")
+                        })
                     }
                 })
             }
