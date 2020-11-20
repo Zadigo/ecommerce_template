@@ -84,6 +84,7 @@ class Cart(AbstractCart):
             if self.price_pre_tax > 0:
                 self.price_post_tax = utilities\
                     .calculate_vat(self.price_pre_tax, vat=20)
+            else:
                 return 0
 
 

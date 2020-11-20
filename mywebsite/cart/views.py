@@ -133,7 +133,9 @@ class ProcessPaymentView(generic.View):
         except:
             payment_is_in_debug_mode = True
 
-        state, data = backend.create_stripe_customer_and_process_payment(payment_debug=payment_is_in_debug_mode)
+        state, data = backend.create_stripe_customer_and_process_payment(
+            payment_debug=payment_is_in_debug_mode
+        )
         return_data = {
             'state': state, 
             **data
