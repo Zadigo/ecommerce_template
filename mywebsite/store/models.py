@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.shortcuts import reverse
 
 from store.choices import IndustryChoices, StoreCurrencies
+from store.utils import get_product_model
 
 MYUSER = get_user_model()
 
@@ -47,6 +49,8 @@ class Store(models.Model):
     user = models.ForeignKey(MYUSER, on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=50)
 
+    products = models.ManyToManyField(get_product_model(), blank=True)
+
     contact_email = models.EmailField(max_length=100)
     customer_care_email = models.EmailField(max_length=100)
     
@@ -82,8 +86,8 @@ class Store(models.Model):
     def __str__(self):
         return self.name
 
-    def get_store_url(self):
-        pass
+    def get_absolute_url(self):
+        return reverse('store:products', args=[self.pk])
 
 
 class Supplier(models.Model):
