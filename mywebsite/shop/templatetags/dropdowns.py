@@ -36,7 +36,7 @@ def collections_dropdown_block():
 
     if collection:
         context['sample_collection'] = {
-            'gender': collection.gender,
+            'gender': collection.gender.lower(),
             'name': collection.name,
             'view_name': collection.view_name,
         }

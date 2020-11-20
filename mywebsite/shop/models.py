@@ -120,6 +120,9 @@ class Collection(models.Model):
         if self.name:
             self.view_name = self.name.replace(' ', '').lower()
 
+    def get_absolute_url(self):
+        return reverse('shop:collection', args=[self.gender.lower(), self.view_name])
+
 
 class Variant(models.Model):
     """
@@ -231,7 +234,7 @@ class Product(models.Model):
         main_images = images.filter(main_image=True)
         if main_images.exists():
             image = main_images.first()
-            return image.url
+            return image.url.url
         else:
             try:
                 # In case no main image was marked
@@ -240,7 +243,7 @@ class Product(models.Model):
                 # case where the product has no image
                 # and in which case, we have to protect
                 # against a NoneType error
-                return images.first().url
+                return images.first().url.url
             except AttributeError:
                 return None
 
@@ -257,8 +260,9 @@ class Product(models.Model):
         return self.discounted
 
     def get_absolute_url(self):
-        collection_name = self.collection.name.lower()
-        return reverse('shop:product', args=['femme', collection_name, self.pk, self.slug])
+        return reverse('shop:product', args=[
+            str(self.gender).lower(), self.collection.view_name, self.pk, self.slug
+        ])
 
     def get_preview_url(self):
         return reverse('shop:preview', args=[self.pk, self.slug])
@@ -267,10 +271,14 @@ class Product(models.Model):
         return reverse('shop:private', args=[self.pk, self.slug])
 
     def get_collection_url(self):
-        return reverse('shop:collection', args=[self.gender, self.collection.view_name])
+        # return reverse('shop:collection', args=[self.gender, self.collection.view_name])
+        return self.collection.get_absolute_url()
     
     def get_product_images(self):
         return self.images.all()
+
+    def get_shop_gender_url(self):
+        return reverse('shop:gender', args=[self.gender.lower()])
 
     def get_price(self):
         """Chooses between the pre tax price and the

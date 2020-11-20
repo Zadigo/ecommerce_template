@@ -9,11 +9,11 @@
                     <color-selector @selectcolor="doselection" :colors="colors" />
                 </div>
         
+                <!-- Size -->
                 <div class="form-group">
                     <size-selector @selectsize="doselection" :sizes="sizes" />
                 </div>
 
-                <!-- Size -->
                 <div class="delivery mt-3 mb-3">
                     <a href="{% url 'shop:size_guide' %}" target="_blank">
                         {% trans "Guide des tailles" %}**

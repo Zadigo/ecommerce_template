@@ -46,8 +46,8 @@
                 "@type": "ListItem",
                 "position": 2,
                 "item": {
-                    "@id": "https://mywebsite.fr{% url 'shop:gender' product.gender %}",
-                    "name": "{{ product.gender|capfirst }}"
+                    "@id": "https://mywebsite.fr{{ product.get_shop_gender_url }}",
+                    "name": "{{ product.gender }}"
                 }
             },
             {

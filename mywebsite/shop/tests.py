@@ -1,39 +1,34 @@
 # import ast
+import json
 
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 # from django.contrib.sessions.middleware import SessionMiddleware
 # from django.db.models import DecimalField
 # from django.http import JsonResponse
-# from django.shortcuts import reverse
-# from django.test import Client, RequestFactory, TestCase
+from django.shortcuts import reverse
+from django.test import Client, RequestFactory, TestCase
 
-# from shop import models, views
-# from mywebsite import views as base_views
+from shop import models, sizes, views
 
-# factory = RequestFactory()
+MYUSER = get_user_model()
 
-
-# # class PaymentPage(TestCase):
-# #     def access_payment_page(self):
-# #         response = self.client.get(reverse('paymentt'))
-# #         self.assertEqual(response.status_code, 200)
-
-
-# TEST_PRODUCTS = [
-#     {
-#         'name': 'Kendall Jenner Lipstick',
-#         'description': 'A lipstipck specifically designed for the modern girl',
-#         'price_pre_tax': 45,
-#         'slug': 'kendall-academy',
-#         'active': False
-#     },
-#     {
-#         'name': 'Hailey Baldwin Lipstick',
-#         'description': 'A lipstipck specifically designed  younger women',
-#         'price_pre_tax': 25,
-#         'slug': 'hailey-academy',
-#         'active': True
-#     }
-# ]
+TEST_PRODUCTS = [
+    {
+        'name': 'Kendall Jenner Lipstick',
+        'description': 'A lipstipck specifically designed for the modern girl',
+        'price_pre_tax': 45,
+        'slug': 'kendall-academy',
+        'active': True
+    },
+    {
+        'name': 'Hailey Baldwin Lipstick',
+        'description': 'A lipstipck specifically designed  younger women',
+        'price_pre_tax': 25,
+        'slug': 'hailey-academy',
+        'active': False
+    }
+]
 
 # class ProductModel(TestCase):
 #     def setUp(self):
@@ -82,9 +77,18 @@
 # #         self.assertEqual(self.collection.view_name, 'lipsticks')
 
 
-# def create_collection():
-#     return models.ProductCollection. \
-#         objects.create(name='Lip sticks', view_name='lipsticks')
+def create_collection():
+    return models.Collection. \
+        objects.create(name='Lip sticks', view_name='lipsticks')
+
+
+def _create_user():
+    return MYUSER.objects.create(
+        firstname='Dupont', 
+        lastname='Paul', 
+        email='dupon.paul@gmail.com',
+        password='touparet'
+    )
 
 
 # def build_product_url(product):
@@ -99,35 +103,119 @@
 #         ]
 #     )
 
+class ShopViews(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
 
-# class TestViews(TestCase):
-#     """
-#     Tests the page located at /shop/collections/femme
-#     """
-#     def test_home_page(self): 
-#         request = factory.get(reverse('home'))
-#         response = base_views.HeroView.as_view()(request)
+    def test_home_page(self): 
+        request = self.factory.get(reverse('shop:home'))
+        response = views.IndexView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
 
-#     def test_shop_page(self):
-#         response = self.client.get(reverse('shop'))
-#         self.assertEqual(response.status_code, 200)
+    def test_shop_gender(self):
+        request = self.factory.get(reverse('shop:gender', args=['women']))
+        response = views.ShopGenderView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
 
-#     def test_collections_page(self):
-#         response = self.client.get(reverse('collection', args=['femme', 'tops']))
-#         self.assertEqual(response.status_code, 200)
+    def _create_new_objects(self):
+        new_collection = create_collection()
+        new_product = new_collection.product_set.create(**TEST_PRODUCTS[0])
+        return new_collection, new_product
 
-#     def test_no_collections_page(self):
-#         url = reverse('collection', args=['femme', 'cars'])
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, 200)
+    def test_product_view(self):
+        new_collection, new_product = self._create_new_objects()
+        args = [
+            str(new_collection.gender).lower(), 
+            new_collection.view_name, 
+            new_product.id, 
+            new_product.slug
+        ]
+        request = self.factory.get(reverse('shop:product', args=args))
+        response = views.ProductView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
 
-#         request = factory.get(url)
-#         view = views.ProductsView.as_view()(request)
-#         kwargs = {
-#             'collection': 'tops'
-#         }
-#         view(kwargs)
-#         self.assertEqual(view, None)
+    def test_products_view(self):
+        new_collection, _ = self._create_new_objects()
+        args = [
+            str(new_collection.gender).lower(),
+            new_collection.view_name,
+        ]
+        request = self.factory.get(reverse('shop:collection', args=args))
+        response = views.ProductsView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_size_guide_view(self):
+        request = self.factory.get(reverse('shop:size_guide'))
+        response = views.SizeGuideView.as_view()(request)
+        self.assertEqual(response.status_code, 200)
+
+    def test_size_calculator(self):
+        request = self.factory.post('shop:calculator', data={'bust': 74, 'chest': 75})
+        response = views.size_calculator(request)
+        print(response)
+        self.assertEqual(response.status_code, 200)
+        json_data = json.loads(response.getvalue())
+        self.assertEqual(json_data['state'], True)
+
+    def test_add_like_as_authenticated(self):
+        _, new_product = self._create_new_objects()
+        path = reverse('shop:like', args=[new_product.id])
+        request = self.factory.post(path)
+
+        request.user = _create_user()
+        response = views.add_like(request, pk=new_product.id)
+        self.assertEqual(response.status_code, 200)
+
+        json_data = json.loads(response.getvalue())
+        self.assertTrue(json_data['state'])
+    
+    def test_add_like_as_non_authenticated(self):
+        _, new_product = self._create_new_objects()
+        path = reverse('shop:like', args=[new_product.id])
+        request = self.factory.post(path)
+
+        request.user = AnonymousUser()
+        response = views.add_like(request, pk=new_product.id)
+        self.assertEqual(response.status_code, 200)
+
+        json_data = json.loads(response.getvalue())
+        self.assertFalse(json_data['state'])
+        expected_redirect_url = f"{reverse('accounts:login')}?next={new_product.get_absolute_url()}"
+        self.assertEqual(json_data['redirect_url'], expected_redirect_url)
+
+    def test_add_review(self):
+        _, new_product = self._create_new_objects()
+        path = reverse('shop:new_review', args=[new_product.id])
+        post_data = {'score': 4, 'text': 'This is a test review'}
+        request = self.factory.post(path, data=post_data)
+        request.user = _create_user()
+        response = views.add_review(request, pk=new_product.id)
+        self.assertEqual(response.status_code, 200)
+        json_data = json.loads(response.getvalue())
+        self.assertTrue(json_data['state'], msg=json_data['message'])
+
+
+class OtherTests(TestCase):
+    def test_add_review(self):
+        self.client = Client()        
+
+    def test_add_review(self):
+        response = self.client.post('shop:review', data={'score': 4, 'text': 'This is a test review'})
+        self.assertEqual(response.status_code, 200)
+        # new_user = _create_user()        
+
+    # def test_no_collections_page(self):
+    #     url = reverse('collection', args=['femme', 'cars'])
+    #     response = self.client.get(url)
+    #     self.assertEqual(response.status_code, 200)
+
+    #     request = factory.get(url)
+    #     view = views.ProductsView.as_view()(request)
+    #     kwargs = {
+    #         'collection': 'tops'
+    #     }
+    #     view(kwargs)
+    #     self.assertEqual(view, None)
 
 # class TestGenderShopView(TestCase):
 #     """
@@ -289,3 +377,13 @@
 # #         current_product_viewed.id, current_product_viewed.slug]))
 
 # # response = views.ProductView().setup(request)
+
+
+class TestBraCalculator(TestCase):
+    def setUp(self):
+        bust = 73
+        chest = 74
+        self.calculator = sizes.BraCalculator(bust, chest)
+    
+    def test_resulst(self):
+        self.assertIsInstance(self.calculator, dict)

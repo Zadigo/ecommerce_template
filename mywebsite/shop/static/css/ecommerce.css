@@ -1,6 +1,9 @@
-h1.product-title,
 h1.collection-presentation-text {
-    font-size: 1.75rem;
+    font-size: 1.25rem;
+}
+
+h1.product-title {
+    font-size: 26px;
 }
 
 .cart-image {
@@ -65,4 +68,8 @@ h1.collection-presentation-text {
     background-color: #bdbdbd;
     opacity: .5;
     padding: .75rem;
+}
+
+.lead span:last-child {
+    font-size: 23px;
 }

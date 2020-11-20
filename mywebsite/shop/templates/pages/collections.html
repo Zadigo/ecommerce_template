@@ -19,36 +19,34 @@
 {% endblock %}
 
 {% block container %}
-    <div id="vue_products_app">
-        <section class="text-center mb-4" id="collection">
-            {% if collection.show_presentation %}
-                <!-- Presentation -->
-                <div class="card blue lighten-1">
-                    <div class="card-body">
-                        <h1 class="center collection-presentation-text">{{ collection.name }}</h1>
-                        <p>
-                            {{ collection.presentation_text }}
-                        </p>
-                    </div>
+    <section class="text-center mb-4" id="collection">
+        {% if collection.show_presentation %}
+            <!-- Presentation -->
+            <div class="card blue lighten-1">
+                <div class="card-body">
+                    <h1 class="center collection-presentation-text">{{ collection.name }}</h1>
+                    <p>
+                        {{ collection.presentation_text }}
+                    </p>
                 </div>
-            {% endif %}
-
-            <!-- Filter Bar -->
-            {% include "includes/products/filterbar.html" %}
-
-            <!-- Cards -->
-            <div class="row wow fadeIn">
-                {% comment "Vue JS type cards" %}
-                    {% for product in products %}
-                        {% include "includes/products/cards/card1.html" %}
-                    {% endfor %}                    
-                {% endcomment %}
-
-                {% include "vue/components/cards/card1.html" %}
             </div>
-        </section>
-    </div>
+        {% endif %}
 
+        <!-- Filter Bar -->
+        {% include "includes/products/filterbar.html" %}
+
+        <!-- Cards -->
+        <div class="row wow fadeIn">
+            {% comment "Vue JS type cards" %}
+                {% for product in products %}
+                    {% include "includes/products/cards/card1.html" %}
+                {% endfor %}                    
+            {% endcomment %}
+
+            {% include "vue/components/cards/card1.html" %}
+        </div>
+    </section>
+    
     <!-- Pagination -->
     {% include "includes/products/pagination.html" %}
 {% endblock %}

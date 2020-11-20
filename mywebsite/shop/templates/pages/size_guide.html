@@ -16,142 +16,140 @@
 
 {% block container %}
     <section id="size-guide">
-        <div id="vue_size_app">
-            {% comment %}
-            <div class="row">
-                <div class="col-12">
-                    <h1 class="mb-4">
-                        {% trans "Guide des tailles" %}
-                    </h1>
-                </div>
-            </div>                
-            {% endcomment %}
-
-            <div class="row">
-                <div class="col-12" id="clothes">
-                    <div class="card">
-                        <div class="card-body">
-                            <clothe-component inline-template>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <h3 class="m-0 font-weight-bold">
-                                                    {% trans "Vêtements" %}
-                                                </h3>
-                                            </div>
-
-                                            <div class="col-6">
-                                                <p class="text-right mb-3">
-                                                    <button @click="switchsize" class="btn btn-md btn-primary">
-                                                        {% trans "Afficher en" %}
-                                                        <span v-if="selectedsize==='cm'">in</span>
-                                                        <span v-else>cm</span>
-                                                    </button>
-                                                </p>                                                
-                                            </div>
-                                        </div>
-                                        
-                                        <table class="table text-center" id="clothes">
-                                            <thead class="black white-text">
-                                                <th scope="col">EUROPE</th>
-                                                <th scope="col">Poitrine</th>
-                                                <th scope="col">Taille</th>
-                                                <th scope="col">Hanches</th>
-                                            </thead>
-                                                
-                                            <tbody>
-                                                <tr v-for="size in currentsizes" :key="size[0]">
-                                                    <th scope="row">[[ size[0] ]]</th>
-                                                    <td>[[ size[1] ]]</td>
-                                                    <td>[[ size[2] ]]</td>
-                                                    <td>[[ size[3] ]]</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </clothe-component>
-                        </div>
-                    </div>
-                </div>
+        {% comment %}
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">
+                    {% trans "Guide des tailles" %}
+                </h1>
             </div>
-    
-            <div class="row">
-                <div class="col-sm-12 col-md-6" id="shoes">
-                    <div class="card mt-3">
-                        <div class="card-body">
-                            <h3 class="font-weight-bold">
-                                {% trans "Chaussures" %}
-                            </h3>
+        </div>                
+        {% endcomment %}
 
-                            <shoe-component inline-template>
-                                <table class="table text-center" id="shoes">
-                                    <thead class="black white-text">
-                                        <th scope="col">UK</th>
-                                        <th scope="col">Europe</th>
-                                        <th scope="col">USA/CAN</th>
-                                        <th scope="col">AUS/NZL</th>
-                                    </thead>
-                                
-                                    <tbody>
-                                        <tr v-for="size in sizes" :key="size[0]">
-                                            <th scope="row">[[ size[0] ]]</th>
-                                            <td>[[ size[1] ]]</td>
-                                            <td>[[ size[2] ]]</td>
-                                            <td>[[ size[3] ]]</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </shoe-component>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-12 col-md-6" id="lingerie">
-                    <div class="card mt-3">
-                        <div class="card-body">
+        <div class="row">
+            <div class="col-12" id="clothes">
+                <div class="card">
+                    <div class="card-body">
+                        <clothe-component inline-template>
                             <div class="row">
-                                <div class="col-6">
-                                    <h3 class="m-0 font-weight-bold">
-                                        {% trans "Lingerie" %}
-                                    </h3>
-                                </div>
-                            
-                                <div class="col-6">
-                                    <p class="text-right mb-3">
-                                        <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#size-calculator">
-                                            {% trans "Calculer en" %}
-                                        </button>
-                                    </p>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <h3 class="m-0 font-weight-bold">
+                                                {% trans "Vêtements" %}
+                                            </h3>
+                                        </div>
+
+                                        <div class="col-6">
+                                            <p class="text-right mb-3">
+                                                <button @click="switchsize" class="btn btn-md btn-primary">
+                                                    {% trans "Afficher en" %}
+                                                    <span v-if="selectedsize==='cm'">in</span>
+                                                    <span v-else>cm</span>
+                                                </button>
+                                            </p>                                                
+                                        </div>
+                                    </div>
+                                    
+                                    <table class="table text-center" id="clothes">
+                                        <thead class="black white-text">
+                                            <th scope="col">EUROPE</th>
+                                            <th scope="col">Poitrine</th>
+                                            <th scope="col">Taille</th>
+                                            <th scope="col">Hanches</th>
+                                        </thead>
+                                            
+                                        <tbody>
+                                            <tr v-for="size in currentsizes" :key="size[0]">
+                                                <th scope="row">[[ size[0] ]]</th>
+                                                <td>[[ size[1] ]]</td>
+                                                <td>[[ size[2] ]]</td>
+                                                <td>[[ size[3] ]]</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
+                        </clothe-component>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                            <lingerie-component inline-template>
-                                <table class="table text-center" id="shoes">
-                                    <thead class="black white-text">
-                                        <th scope="col">France</th>
-                                        <th scope="col">Europe</th>
-                                        <th scope="col">Anglais</th>
-                                    </thead>
-                                
-                                    <tbody>
-                                        <tr v-for="size in sizes" :key="size[0]">
-                                            <th scope="row">[[ size[0] ]]</th>
-                                            <td>[[ size[1] ]]</td>
-                                            <td>[[ size[2] ]]</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </lingerie-component>
-                        </div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6" id="shoes">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h3 class="font-weight-bold">
+                            {% trans "Chaussures" %}
+                        </h3>
+
+                        <shoe-component inline-template>
+                            <table class="table text-center" id="shoes">
+                                <thead class="black white-text">
+                                    <th scope="col">UK</th>
+                                    <th scope="col">Europe</th>
+                                    <th scope="col">USA/CAN</th>
+                                    <th scope="col">AUS/NZL</th>
+                                </thead>
+                            
+                                <tbody>
+                                    <tr v-for="size in sizes" :key="size[0]">
+                                        <th scope="row">[[ size[0] ]]</th>
+                                        <td>[[ size[1] ]]</td>
+                                        <td>[[ size[2] ]]</td>
+                                        <td>[[ size[3] ]]</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </shoe-component>
                     </div>
                 </div>
             </div>
 
-            <!-- Modals -->
-            {% include "includes/modals/size_calculator.html" %}
+            <div class="col-sm-12 col-md-6" id="lingerie">
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <h3 class="m-0 font-weight-bold">
+                                    {% trans "Lingerie" %}
+                                </h3>
+                            </div>
+                        
+                            <div class="col-6">
+                                <p class="text-right mb-3">
+                                    <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#size-calculator">
+                                        {% trans "Calculer en" %}
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+
+                        <lingerie-component inline-template>
+                            <table class="table text-center" id="shoes">
+                                <thead class="black white-text">
+                                    <th scope="col">France</th>
+                                    <th scope="col">Europe</th>
+                                    <th scope="col">Anglais</th>
+                                </thead>
+                            
+                                <tbody>
+                                    <tr v-for="size in sizes" :key="size[0]">
+                                        <th scope="row">[[ size[0] ]]</th>
+                                        <td>[[ size[1] ]]</td>
+                                        <td>[[ size[2] ]]</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </lingerie-component>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Modals -->
+        {% include "includes/modals/size_calculator.html" %}
     </section>
 {% endblock %}
 
@@ -162,5 +160,5 @@
 
 {% block vuejs_scripts %}
     <!-- App -->
-    {% include "vue/size_guides.html" %}
+    {% include "vue/size_guides_app.html" %}
 {% endblock %}

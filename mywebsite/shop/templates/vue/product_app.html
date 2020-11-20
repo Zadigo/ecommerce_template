@@ -18,8 +18,9 @@
             return {
                 scores: [],
                 showfields: false,
-                reviewdata: {},
-                validated: false
+                reviewdata: {score: 1},
+                validated: false,
+                alertmessage: null
             }
         },
         beforeMount() {
@@ -38,7 +39,7 @@
         methods: {
             sendreview: function () {
                 var data = new FormData()
-                _.forEach(Object.key(this.reviewdata), (key) => {
+                _.forEach(Object.keys(this.reviewdata), (key) => {
                     data.append(key, this.reviewdata[key])
                 })
                 
@@ -52,7 +53,19 @@
                 })
                 .then((response) => {
                     response.json().then((data) => {
-                        this.validated = data.valid
+                        this.validated = data.state
+                        this.alertmessage = data.message
+                        this.showfields = false
+                        dataLayer.push(
+                            {
+                                "event": "Review",
+                                "product": {
+                                    "reference": "{{ product.reference }}",
+                                    "name": "{{ product.name }}",
+                                    "score": this.reviewdata.score
+                                }
+                            }
+                        )
                     })
                 })
                 .catch((error) => {
@@ -69,11 +82,14 @@
         name: "Button",
         template: `
         <transition name="cart_button">
-            <button @click="startaction" v-if="!disabled" class="btn btn-primary my-0" :class="size, color" :id="id">
+            <button @click="startaction" v-if="!disabled" 
+                    class="btn btn-primary my-0" :class="size, color" :id="id"
+                        role="button">
                 <slot></slot>
             </button>
 
-            <button v-else class="btn btn-primary my-0 disabled" :class="size, color" :id="id">
+            <button v-else :class="size, color" :id="id" 
+                    class="btn btn-primary my-0 disabled" role="button">
                 <slot></slot>
             </button>
         </transition>
@@ -95,7 +111,9 @@
         props: ["colors"],
         mixins: [selectormixins],
         template: `
-        <select @change="selectcolor()" v-model="selectedcolor" class='custom-select custom-select-md mb-3'>
+        <select @change="selectcolor()" v-model="selectedcolor" 
+                class="custom-select custom-select-md mb-3" 
+                    role="listbox" aria-label="{% trans 'Select color' %}">
             <option v-for="color in colors" :key="color.name" :value="color.value">
                 [[ color.name ]]
             </option>
@@ -132,7 +150,9 @@
         props: ["sizes"],
         mixins: [selectormixins],
         template: `
-        <select @change="selectsize()" v-model="selectedsize" v-show="hassizes" class='custom-select custom-select-md mb-3'>
+        <select @change="selectsize()" v-model="selectedsize" 
+                v-show="hassizes" class="custom-select custom-select-md mb-3"
+                    role="listbox" aria-label="{% trans 'Select size' %}">
             <option v-for="size in sizes" :key="size.id" :value="size.name">
                 [[ size.name ]]
             </option>
@@ -259,7 +279,7 @@
         delimiters: ["[[", "]]"],
         template: `
         <custom-button @startaction="addproduct" :method="'like'" 
-                :id="'btn_add_to_likes'" :size="'btn-sm red lighten-1'" 
+                id="'btn_add_to_likes'" :size="'btn-sm red lighten-1'" 
                         :disabled="disabled">
             <i class="fas fa-heart ml-1 text-white"></i>
         </custom-button>        
@@ -278,7 +298,6 @@
         },
         methods: {
             addproduct: function () {
-                var self = this
                 fetch("{% url 'shop:like' product.id %}", {
                     method: "POST",
                     headers: {
@@ -286,25 +305,28 @@
                         "X-CSRFToken": "{{ csrf_token }}"
                     },
                     credentials: "same-origin"
-
                 })
                 .then((response) => {
                     response.json().then((data) => {
-                        dataLayer.push({
-                            "event": "ProductLike",
-                            "product": {
-                                "id": "{{ product.reference }}",
-                                "name": "{{ product.name }}",
-                                "price": "{{ product.get_price }}"
-                            }
-                        })
-
+                        if (data.state) {
+                            dataLayer.push({
+                                "event": "ProductLike",
+                                "product": {
+                                    "reference": "{{ product.reference }}",
+                                    "name": "{{ product.name }}",
+                                    "price": "{{ product.get_price }}"
+                                }
+                            })
+                            this.disabled = true
+                        } else {
+                            window.location.href = data.redirect_url
+                        }
                     })
                 })
                 .catch((error) => {
                     console.error(error)
                 })
-            },
+            }
         }
     }
 
@@ -318,9 +340,10 @@
         template: `
         <form onsubmit="return false;" class="d-flex">
             <input v-model.number="quantity" type="number" min="1" max="99"
-                    aria-label="Search" class="form-control" style="width: 100px">
+                    aria-label="choose quantity" class="form-control" style="width: 100px">
 
-            <custom-button @startaction="addtocart" :method="'cart'" :id="'btn_add_to_cart'" :size="'btn-md'" v-bind:disabled="disabled">
+            <custom-button @startaction="addtocart" :method="'cart'" 
+                    :id="'btn_add_to_cart'" :size="'btn-md'" :disabled="disabled">
                 {% trans "Ajouter au panier" %}
             </custom-button>
 
@@ -459,11 +482,12 @@
             this.selectedimage = images[0]
             if (images.length > 0) {
                 _.forEach(images, (image) => {
+                    image["url"] = `/media/${image.url}`
                     colors.push(
                         {
                             name: image.variant,
                             value: image.variant,
-                            url: image.url
+                            url: `/media/${image.url}`
                         }
                     )
                 })

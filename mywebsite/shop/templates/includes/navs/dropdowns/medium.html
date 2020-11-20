@@ -16,8 +16,7 @@
                         <ul class="list-unstyled">
                             {% for collection in collections %}
                                 <li>
-                                    <a href="{% url 'shop:collection' collection.gender collection.view_name %}" class="p-0 pb-1"
-                                        id="link_collection_item">
+                                    <a href="{{ collection.get_absolute_url }}" class="p-0 pb-1" id="link_collection_item">
                                         {{ collection.name }}
                                     </a>
                                 </li>

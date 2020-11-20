@@ -11,7 +11,7 @@
                         "name:": "{{ product.name }}",
                         "id:": "{{ product.reference }}",
                         "price:": "{{ product.get_price }}",
-                        "brand:": "Nawoka",
+                        "brand:": "{{ brand }}",
                         "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
                         "variant:": "{{ product.sku }}",
                     }
@@ -22,7 +22,7 @@
             "name:": "{{ product.name }}",
             "id:": "{{ product.reference }}",
             "price:": "{{ product.get_price }}",
-            "brand:": "Nawoka",
+            "brand:": "{{ brand }}",
             "category:": "{{ product.collection.gender }}/{{ product.collection.name }}",
             "variant:": "{{ product.sku }}",
         }

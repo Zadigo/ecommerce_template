@@ -79,7 +79,7 @@ class BraCalculator:
                     i = i + 1 
                 else:
                     letter = letters[i]
-                return letter
+                    return letter
     
     @staticmethod
     def _compare(value, upper, lower):

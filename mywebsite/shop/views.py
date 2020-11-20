@@ -22,50 +22,69 @@ import json
 import random
 
 from cart import models as cart_models
-from django import http, shortcuts
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import cache, paginator
 from django.db import transaction
 from django.db.models.aggregates import Avg
 from django.http.response import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from django.views import generic
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.utils.html import smart_urlquote
+from django.views.generic import DetailView, ListView, TemplateView, View
+
 from shop import models, serializers, sizes, tasks, utilities
 
 
+def create_vue_products(queryset, using:list=[]):
+    for product in queryset:
+        images = product.images
+        variant = product.variant
+        base = {
+            'id': product.id,
+            'reference': product.reference,
+            'url': product.get_absolute_url(),
+            'collection': {
+                'name': product.collection.name
+            },
+            'name': product.name,
+            'price': str(product.get_price()),
+            'main_image': product.get_main_image_url,
+            'images': list(images.values('id', 'name', 'url', 'web_url', 'variant', 'main_image')),
+            'variant': list(variant.values('id', 'name', 'verbose_name', 'in_stock', 'active')),
+            'in_stock': product.in_stock,
+            'our_favorite': product.our_favorite,
+            'is_discounted': product.is_discounted,
+            'price_pre_tax': str(product.price_pre_tax),
+            'discounted_price': str(product.discounted_price),
+            'slug': product.slug
+        }
+        using.append(base)
+    return using
+
+
 @method_decorator(cache_page(60 * 30), name='dispatch')
-class IndexView(generic.View):
+class IndexView(View):
     """Base view for the website's shop"""
     def get(self, request, *args, **kwargs):
         return render(request, 'pages/shop.html')
 
 
-class LookBookView(generic.TemplateView):
-    """Base view for the website's lookbook"""
-    template_name = 'pages/lookbook.html'
-
-
-class ShopGenderView(generic.View):
+class ShopGenderView(View):
     """Base view for discovering the website's shop
     by category e.g. gender
     """
     def get(self, request, *args, **kwargs):
         collections = models.Collection.objects.filter(gender=kwargs['gender'])
-        context = {
-            'collections': collections[:3]
-        }
+        context = {'collections': collections[:3]}
         return render(request, 'pages/shop_gender.html', context)
 
 
-class ProductsView(generic.ListView):
+class ProductsView(ListView):
     """Main product's page"""
     model = models.Collection
     template_name = 'pages/collections.html'
@@ -74,19 +93,24 @@ class ProductsView(generic.ListView):
     ordering = '-created_on'
 
     def get_queryset(self, **kwargs):
-        collection_name = self.kwargs['collection']
+        view_name = self.kwargs['collection']
         gender = self.kwargs['gender']
 
         try:
-            collection = models.Collection.objects.get(view_name__exact=collection_name, gender=gender)
+            collection = self.model.objects.get(
+                view_name__exact=view_name, 
+                gender=gender.title()
+            )
         except:
             raise http.Http404("La collection n'existe pas")
         else:
-            # queryset = cache.cache.get('products')
-            # if queryset is None:
-            #     cache.cache.set('products', queryset)
-            queryset = collection.product_set.filter(active=True, private=False)
-            
+            queryset = cache.cache.get('products')
+            if queryset is None:
+                queryset = collection.product_set.filter(
+                    active=True, private=False
+                )
+                cache.cache.set('products', queryset, timeout=3600)
+
             authorized_categories = ['all', 'promos', 'favorites']
             category = self.request.GET.get('category')
 
@@ -119,46 +143,31 @@ class ProductsView(generic.ListView):
         # )
         # context['vue_products'] = serialized_products.data
 
+        # When passing to another category, the previous
+        # products are still in the cache which creates
+        # an issue
+        category = self.request.GET.get('category')
+        if category is not None:
+            cache.cache.delete('vue_products')
+
         # Specific technique in order to include the
         # product url, main_image url and images
         vue_products = cache.cache.get('vue_products', [])
         if not vue_products:
-            for product in klass.object_list:
-                images = product.images
-                variant = product.variant
-                base = {
-                    'id': product.id,
-                    'reference': product.reference,
-                    'url': product.get_absolute_url(),
-                    'collection': {
-                        'name': product.collection.name
-                    },
-                    'name': product.name,
-                    'price': str(product.get_price()),
-                    'main_image': product.get_main_image_url,
-                    'images': list(images.values('id', 'name', 'url', 'image_url', 'variant', 'main_image')),
-                    'variant': list(variant.values('id', 'name', 'verbose_name', 'in_stock', 'active')),
-                    'in_stock': product.in_stock,
-                    'our_favorite': product.our_favorite,
-                    'is_discounted': product.is_discounted,
-                    'price_pre_tax': str(product.price_pre_tax),
-                    'discounted_price': str(product.discounted_price),
-                    'slug': product.slug
-                }
-                vue_products.append(base)
-            cache.cache.set('vue_products', vue_products, timeout=60)
+            vue_products = create_vue_products(klass.object_list)
+            cache.cache.set('vue_products', vue_products, timeout=1200)
         context['vue_products'] = json.dumps(vue_products)
 
         collection = self.model.objects.get(
             view_name__exact=self.kwargs['collection'], 
-            gender=self.kwargs['gender']
+            gender=self.kwargs['gender'].title()
         )
         context['collection'] = collection
         return context
 
 
 @method_decorator(cache_page(60 * 15), name='dispatch')
-class ProductView(generic.DetailView):
+class ProductView(DetailView):
     """View the details of a given product"""
     model = models.Product
     template_name = 'pages/product.html'
@@ -199,7 +208,8 @@ class ProductView(generic.DetailView):
         context['has_liked'] = False
         if self.request.user.is_authenticated:
             likes = models.Like.objects.filter(
-                product=product, user=self.request.user)
+                product=product, user=self.request.user
+            )
             if likes.exists():
                 context.update({'has_liked': True})
 
@@ -209,7 +219,8 @@ class ProductView(generic.DetailView):
         return context
 
 
-class PreviewProductView(LoginRequiredMixin, generic.DetailView):
+@method_decorator(never_cache, name='dispatch')
+class PreviewProductView(LoginRequiredMixin, DetailView):
     """
     This is a custom view for previewing a product
     in the semi-original context of the main product page
@@ -237,7 +248,7 @@ class PreviewProductView(LoginRequiredMixin, generic.DetailView):
 
 @method_decorator(cache_page(60 * 30), name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
-class PrivateProductView(generic.DetailView):
+class PrivateProductView(DetailView):
     """
     This is a special custom viewing a product in a non
     classified manner and one that does not appear in the
@@ -270,7 +281,7 @@ class PrivateProductView(generic.DetailView):
         return context    
 
 
-class SearchView(generic.ListView):
+class SearchView(ListView):
     """Main page for displaying product searches"""
     model = models.Product
     template_name = 'pages/search.html'
@@ -301,8 +312,8 @@ class SearchView(generic.ListView):
         return context
 
 
-@method_decorator(cache_page(3600 * 60), name='dispatch')
-class SizeGuideView(generic.TemplateView):
+@method_decorator(cache_page(60 * 60), name='dispatch')
+class SizeGuideView(TemplateView):
     """View for providing the customer with information
     on sizes etc."""
     template_name = 'pages/size_guide.html'
@@ -311,26 +322,28 @@ class SizeGuideView(generic.TemplateView):
 @require_POST
 @transaction.atomic
 def add_like(request, **kwargs):
+    data = {'state': False}
     product = get_object_or_404(models.Product, id=kwargs['pk'])
-    data = {
-        'product': product
-    }
     if request.user.is_authenticated:
-        data['user'] = request.user
-        likes = models.Like.objects.filter(user=request.user)
-        if product in likes:
-            return JsonResponse(data={'state': False})
-    models.Like.objects.create(**data)
-    return JsonResponse(data={'state': True})
+        likes = product.like_set.filter(user=request.user)
+        if likes.exists():
+            return JsonResponse(data=data)
+        product.like_set.create(user=request.user)
+    else: 
+        redirect_url = f"{reverse('accounts:login')}?next={product.get_absolute_url()}"
+        data.update({'redirect_url': redirect_url})
+    return JsonResponse(data=data)
 
 
 @require_POST
-def size_calculator(request):
+def size_calculator(request, **kwargs):
     """Calcultes from customer's measurements
     the correct size for him/her"""
-    data = json.loads(request.body)
-    bust = data['bust']
-    chest = data['chest']
+    # data = json.loads(request.body)
+    # bust = data['bust']
+    # chest = data['chest']
+    bust = request.POST.get('bust')
+    chest = request.POST.get('chest')
     if bust is None and chest is None:
         return JsonResponse(data={'state': False})
 
@@ -349,16 +362,21 @@ def size_calculator(request):
 @require_POST
 @transaction.atomic
 def add_review(request, **kwargs):
-    data = {'state': False}
-    title = request.POST.get('title')
+    data = {
+        'state': False, 
+        'message': "L'avis n'a pas pu être créé"
+    }
+    score = request.POST.get('score')
     text = request.POST.get('text')
     if request.user.is_authenticated:
         product = get_object_or_404(models.Product, id=kwargs.get('pk'))
-        ordered_products = product.order_set.filter(product__id=kwargs.get('id'))
-        if ordered_products.exists():
-            review = product.review_set.create(
-                user=request.user, 
-                text=text, 
-                title=title
-            )
+        review = product.review_set.create(
+            user=request.user, 
+            text=text,
+            rating=score
+        )
+        data.update({
+            'state': True,
+            'message': "Votre avis a été créé"
+        })
     return JsonResponse(data=data)
