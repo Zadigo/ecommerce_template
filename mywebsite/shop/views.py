@@ -27,7 +27,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import cache, paginator
 from django.db import transaction
 from django.db.models.aggregates import Avg
-from django.http.response import JsonResponse
+from django.http.response import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
@@ -102,7 +102,7 @@ class ProductsView(ListView):
                 gender=gender.title()
             )
         except:
-            raise http.Http404("La collection n'existe pas")
+            raise Http404("La collection n'existe pas")
         else:
             queryset = cache.cache.get('products')
             if queryset is None:
@@ -111,12 +111,11 @@ class ProductsView(ListView):
                 )
                 cache.cache.set('products', queryset, timeout=3600)
 
-            authorized_categories = ['all', 'promos', 'favorites']
-            category = self.request.GET.get('category')
-
-            if not category or category == '':
+            category = self.request.GET.get('category', None)
+            if category is None:
                 return queryset
 
+            authorized_categories = ['all', 'promos', 'favorites']
             if category in authorized_categories:
                 if category == 'all':
                     return queryset
