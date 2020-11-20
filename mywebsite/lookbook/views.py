@@ -1,3 +1,6 @@
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
-# Create your views here.
+class LookBookView(TemplateView):
+    """Base view for the website's lookbook"""
+    template_name = 'pages/lookbook.html'
