@@ -27,6 +27,7 @@ pillow = "*"
 django-debug-toolbar = "*"
 numpy = "==1.19.3"
 django-imagekit = "*"
+django-redis = "*"
 
 [requires]
 python_version = "3.8"
