@@ -40,12 +40,12 @@
             },
             bypricehigh() {
                 return this.byname.sort((a, b) => {
-                    return a.price_pre_tax - b.price_pre_tax
+                    return a.price - b.price
                 })
             },
             bypricelow() {
                 return this.byname.sort((a, b) => {
-                    return b.price_pre_tax - a.price_pre_tax
+                    return b.price - a.price
                 })
             },
             byname() {

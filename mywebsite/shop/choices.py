@@ -17,7 +17,7 @@ class SecondConditionsChoices(models.Choices):
     DOES_NOT_CONTAIN = 'does not contain'
     YES = 'yes'
     NO = 'no'
-
+    
 
 class GenderChoices(models.Choices):
     WOMEN = 'Women'

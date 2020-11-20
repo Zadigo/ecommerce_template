@@ -21,9 +21,6 @@ class Image(models.Model):
     """
     name    = models.CharField(max_length=50)
     variant = models.CharField(max_length=30, default='Noir')
-    # aws_key   = models.CharField(max_length=50, null=True, blank=True, verbose_name='AWS folder key')
-    # aws_slug_name   = models.CharField(max_length=100, blank=True, null=True, help_text='File name on AWS')    
-    # aws_image =    models.BooleanField(default=False)
     url      = models.ImageField(verbose_name='Product image', upload_to='products', blank=True, null=True)
     web_url     = models.URLField(blank=True, null=True)
     image_thumbnail = ImageSpecField(source='url', processors=ResizeToFill(800), format='JPEG', options={'quality': 50})
@@ -48,18 +45,6 @@ class Image(models.Model):
             return self.web_url
         return self.url
 
-    # def clean(self):
-    #     if self.name and self.aws_image:
-    #         # Create a slug version of the image such as
-    #         # product_name and add .jpg to it
-    #         self.aws_slug_name = f"{self.name.replace(' ', '_').lower()}.jpg"
-
-    #         if not self.aws_key:
-    #             raise exceptions.ValidationError('You must provide an AWS key when trying to create an AWS image')
-
-    #         object_path = f'mywebsite/products/{self.aws_key}/{self.aws_slug_name}'
-    #         self.url = aws_manager.aws_url_for(object_path)
-
 
 class AutomaticCollectionCriteria(models.Model):
     """
@@ -68,18 +53,11 @@ class AutomaticCollectionCriteria(models.Model):
     """
     reference = models.CharField(max_length=50, default=utilities.create_reference())
 
-    class ConditionsChoices(models.Choices):
-        IS_EQUAL_TO = 'is equal to'
-        IS_NOT_EQUAL_TO = 'is not equal to'
-        IS_GREAT_THAN = 'is greater than'
-        IS_LESS_THAN = 'is less than'
-        STARTS_WITH  = 'starts with'
-        ENDS_WITH    = 'ends with'
-        CONTAINS        = 'contains'
-        DOES_NOT_CONTAIN = 'does not contain'
-        YES         = 'yes'
-        NO      = 'no'
-    condition    = models.CharField(max_length=50, choices=ConditionsChoices.choices, default=ConditionsChoices.IS_EQUAL_TO)
+    condition    = models.CharField(
+        max_length=50, 
+        choices=choices.SecondConditionsChoices.choices, 
+        default=choices.SecondConditionsChoices.IS_EQUAL_TO
+    )
     value       = models.CharField(max_length=50)
 
     modified_on = models.DateField(auto_now=True)
@@ -96,7 +74,11 @@ class Collection(models.Model):
     Represents a collection of products
     """
     name      = models.CharField(max_length=50)
-    gender = models.CharField(max_length=50, choices=choices.GenderChoices.choices, default=choices.GenderChoices.WOMEN)
+    gender = models.CharField(
+        max_length=50, 
+        choices=choices.GenderChoices.choices, 
+        default=choices.GenderChoices.WOMEN
+    )
     
     view_name   = models.CharField(max_length=50)
     image        = models.FileField(upload_to='collections', blank=True, null=True)

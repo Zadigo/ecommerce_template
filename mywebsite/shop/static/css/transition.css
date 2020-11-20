@@ -10,7 +10,9 @@
 .general-transition-leave-active {
     opacity: 1;
 }
-
+.general-transition-move {
+    transition: all .3s ease-out;
+}
 
 .image_canvas-leave {
     animation: slide 1s;
@@ -92,16 +94,22 @@
 }
 
 
-.product-cards-enter-active {
+.product-cards-enter-active,
+.product-cards-leave-active {
     transition: all .3s ease;
 }
-.product-cards-enter {
+.product-cards-enter,
+.product-cards-leave-to {
     opacity: 0;
 }
-.product-cards-enter-to {
+.product-cards-enter-to,
+.product-cards-leave {
     opacity: 1;
 }
-
+.product-cards-move {
+    transition: all .4s ease-in;
+    transform: scale(.9, .9);
+}
 
 .mobile-image-transitions-enter-active {
     transition: all .2s ease-in;

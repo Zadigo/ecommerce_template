@@ -3,7 +3,10 @@ from django.shortcuts import reverse
 from django.utils import timezone
 
 from discounts import choices, utilities
-from shop.models import Product, Collection
+
+PRODUCT_MODEL = utilities.get_product_model()
+
+COLLECTION_MODEL = utilities.get_product_collection_model()
 
 class Discount(models.Model):
     """
@@ -14,8 +17,8 @@ class Discount(models.Model):
     value       = models.IntegerField(default=5)
     value_type  = models.CharField(max_length=50, choices=choices.ValueTypes.choices, default=choices.ValueTypes.PERCENTAGE)
 
-    product     = models.ForeignKey(Product, blank=True, null=True, on_delete=models.SET_NULL, help_text='Apply on a specific product')
-    collection = models.ForeignKey(Collection, help_text='Apply on an entire collection', on_delete=models.SET_NULL, blank=True, null=True)
+    product     = models.ForeignKey(PRODUCT_MODEL, blank=True, null=True, on_delete=models.SET_NULL, help_text='Apply on a specific product')
+    collection = models.ForeignKey(COLLECTION_MODEL, help_text='Apply on an entire collection', on_delete=models.SET_NULL, blank=True, null=True)
     on_entire_order =   models.BooleanField(default=False, help_text='Apply on an entire order')
 
     minimum_purchase = models.IntegerField(default=0)

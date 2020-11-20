@@ -25,7 +25,7 @@ class WomenShopSitemap(Sitemap):
         return ['shop:gender']
 
     def location(self, viewname):
-        return reverse('shop:gender', args=['femme'])
+        return reverse('shop:gender', args=['women'])
 
 
 class MenShopSitemap(Sitemap):
@@ -37,7 +37,25 @@ class MenShopSitemap(Sitemap):
         return ['shop:gender']
 
     def location(self, viewname):
-        return reverse('shop:gender', args=['homme'])
+        return reverse('shop:gender', args=['men'])
+
+
+class SizeGuideSitemap(Sitemap):
+    changefreq = 'monthly'
+    priority = 0.5
+    protocol = 'https'
+
+    def items(self):
+        return ['shop:size_guide']
+
+
+class SearchSitemap(Sitemap):
+    changefreq = 'yearly'
+    priority = 0.8
+    protocol = 'https'
+
+    def items(self):
+        return ['shop:search']
 
 
 class BaseProductsSitemap(Sitemap):
@@ -46,50 +64,15 @@ class BaseProductsSitemap(Sitemap):
     protocol = 'https'
     category = None
     model = models.Product
-    queryset = models.Product.objects.filter(active=True, private=False)
+
+    def get_queryset(self):
+        return self.model.objects.filter(
+            active=True, private=False
+        )
+
+    def items(self):
+        queryset = self.get_queryset()
+        return queryset.filter(collection__view_name=self.category)
 
     def lastmod(self, item):
         return item.last_modified
-
-
-class Chaussures(BaseProductsSitemap):
-    category = 'chaussures'
-
-    def items(self):
-        return self.queryset.filter(collection__view_name=self.category)
-
-
-class Pantalons(Sitemap):
-    changefreq = 'daily'
-    priority = 1
-    protocol = 'https'
-
-    def items(self):
-        return models.Product.objects.filter(collection__view_name='pantalons')
-
-    def lastmod(self, product):
-        return product.last_modified
-
-
-class Robes(Sitemap):
-    changefreq = 'daily'
-    priority = 1
-    protocol = 'https'
-
-    def items(self):
-        return models.Product.objects.filter(collection__view_name='robes')
-
-    def lastmod(self, product):
-        return product.last_modified
-
-
-class Tops(Sitemap):
-    changefreq = 'daily'
-    priority = 1
-    protocol = 'https'
-
-    def items(self):
-        return models.Product.objects.filter(collection__view_name='tops')
-
-    def lastmod(self, product):
-        return product.last_modified

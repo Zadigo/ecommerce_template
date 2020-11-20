@@ -104,13 +104,10 @@ class ProductsView(ListView):
         except:
             raise Http404("La collection n'existe pas")
         else:
-            queryset = cache.cache.get('products')
-            if queryset is None:
-                queryset = collection.product_set.filter(
-                    active=True, private=False
-                )
-                cache.cache.set('products', queryset, timeout=3600)
-
+            queryset = collection.product_set.filter(
+                active=True, private=False
+            )
+            
             category = self.request.GET.get('category', None)
             if category is None:
                 return queryset

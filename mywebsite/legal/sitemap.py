@@ -4,7 +4,7 @@ from django.shortcuts import reverse
 
 class LegalSitemap(Sitemap):
     changefreq = 'yearly'
-    priority = 0.2
+    priority = 0.4
     protocol = 'https'
 
     def items(self):
