@@ -1,21 +1,46 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
+# orbs:
+#   python: circleci/python@0.2.1
 
 jobs:
-  build-and-test:
-    executor: python/default
+  # build-and-test:
+  #   executor: python/default
+  #   steps:
+  #     - checkout
+  #     - python/load-cache
+  #     - python/install-deps
+  #     - python/save-cache
+  #     - run:
+  #         command: ./mywebsite/manage.py test
+  #         name: Test
+
+  build:
+    docker:
+      - image: circleci/python:3.8
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "Pipfile" }}
       - run:
-          command: ./manage.py test
-          name: Test
+          command: |
+            pipenv install
+            pipenv shell
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "Pipfile" }}
+      - run:
+          name: Running tests
+          command: |
+            python manage.py validate_templates
+            python manage.py unreferenced_files
+            python manage.py test
+
+      - store_artifacts:
+          path: test-reports/
+          destination: python_app
 
 workflows:
   main:
     jobs:
       - build-and-test
+      - build
