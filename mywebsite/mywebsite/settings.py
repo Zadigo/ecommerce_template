@@ -93,7 +93,6 @@ TEMPLATES = [
                 'navbar': 'templatetags.navbar',
 
                 'carts': 'cart.templatetags.carts',
-                'delivery': 'shop.templatetags.delivery',
                 'dropdowns': 'shop.templatetags.dropdowns',
 
                 'dates': 'dashboard.templatetags.dates',
@@ -106,7 +105,7 @@ TEMPLATES = [
                 'shop_impressions': 'shop.templatetags.shop_impressions',
                 'cart_impressions': 'cart.templatetags.cart_impressions',
 
-                'score_stars': 'shop.templatetags.score_stars'
+                'shop': 'shop.templatetags.shop'
             },
         },
     },
