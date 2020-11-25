@@ -181,11 +181,7 @@ LANGUAGES = [
 USE_S3 = False
 
 if USE_S3:
-    # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
     STATICFILES_STORAGE = 'mywebsite.storage.StaticFilesStorage'
-
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 
@@ -199,8 +195,6 @@ if USE_S3:
 
     AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
 
-    # AWS_QUERYSTRING_AUTH = False
-
     AWS_DEFAULT_ACL = 'public-read'
 
     AWS_LOCATION = 'mywebsite/static'
@@ -211,15 +205,13 @@ if USE_S3:
 
     # MEDIA
 
-    AWS_MEDIA_LOCATION = 'mywebsite/media'
-
-    # PUBLIC MEDIA    
-
     DEFAULT_FILE_STORAGE = 'mywebsite.storage.PublicMediaStorage'
+
+    AWS_MEDIA_LOCATION = 'mywebsite/media'
 
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_MEDIA_LOCATION}/'
     
-    PUBLIC_MEDIA_LOCATION = 'nawoka/media'
+    PUBLIC_MEDIA_LOCATION = 'mywebsite/media'
 else:
     DEFAULT_FILE_STORAGE = 'mywebsite.storage.CustomeFileSystemStorage'
 
@@ -238,7 +230,7 @@ else:
 AWS_IMAGES_FOLDER = ''
 
 
-# AUTHENTICATION BACKENDS
+# Authentication backends
 
 AUTH_USER_MODEL = 'accounts.MyUser'
 
@@ -252,7 +244,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-# SOCIAL DJANGO
+# Social Django
 
 LOGIN_URL = 'accounts:login'
 
@@ -342,12 +334,10 @@ PRODUCT_COLLECTION_MODEL = 'shop.Collection'
 
 DISCOUNT_MODEL = 'discounts.Discount'
 
-# CUSTOMER_ORDERS_MODEL = 'cart.CustomerOrder'
-
-# CART_MODEL = None
+CART_MODEL = 'cart.Cart'
 
 
-# STRIPE
+# Stripe
 
 STRIPE_DEBUG = True
 
@@ -362,4 +352,14 @@ STRIPE_API_KEYS = {
     }
 }
 
+
+# Payment
+
 # PAYMENT_BACKEND = 'cart.payment.SessionPaymentBackend'
+
+
+# Mailchimp
+
+MAILCHIMP_API_KEY = None
+
+MAILCHIMP_SERVER_KEY = None
