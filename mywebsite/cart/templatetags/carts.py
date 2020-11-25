@@ -16,6 +16,7 @@ def number_of_products(request):
         cache.set('cart_count', cart_count, 60)
     return cart_count
 
+
 @register.inclusion_tag('components/product/cart.html')
 def dropdown_cart(request):
     cart_id = request.session.get('cart_id')

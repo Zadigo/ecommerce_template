@@ -17,45 +17,36 @@ def create_products_impressions(queryset, brand=None, metrics=None):
     for index, item in enumerate(queryset):
         impressions.append(
             dict(
-                id=item.reference,
-                name=item.name,
-                price=str(item.get_price()),
+                id=item.product.reference,
+                name=item.product.name,
+                price=str(item.product.get_price()),
                 brand=brand,
-                category=item.collection.name,
+                category=item.product.collection.name,
                 position=index,
-                list=f'{item.collection.gender}/{item.collection.name}'
+                list=f'{item.product.collection.gender}/{item.product.collection.name}',
+                quantity=item.quantity,
+                color=item.color
             )
         )
-    return impressions
+    return json.dumps(impressions)
 
 
 class AnalyticsNode(Node):
     def __init__(self, extra_context=None):
-        self.queryset = extra_context['queryset']
-        self.brand = None
-        self.metrics = None
-
-        try:
-            self.brand = extra_context['brand']
-        except:
-            pass
-
-        try:
-            self.metrics = extra_context['metrics']
-        except:
-            pass
+        self.queryset = extra_context.get('queryset')
+        self.brand = extra_context.get('brand')
+        self.metrics = extra_context.get('metrics')
 
     def render(self, context):
-        from django.db.models import QuerySet
-
         resolved_queryset = self.queryset.resolve(context)
 
         brand = None
         if self.brand is not None:
             brand = self.brand.resolve(context)
-        impressions = create_products_impressions(resolved_queryset, brand=brand)
-        values = str(json.dumps(impressions))
-        return mark_safe(values) if values else ''
+        impressions = create_products_impressions(
+            resolved_queryset, brand=brand
+        )
+        return mark_safe(impressions) if impressions else ''
 
 
 @register.tag

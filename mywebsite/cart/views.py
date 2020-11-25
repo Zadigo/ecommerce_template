@@ -1,6 +1,6 @@
 import json
-
 from uuid import uuid4
+
 from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
@@ -14,44 +14,8 @@ from django.views.decorators.http import require_GET, require_POST
 from django.views.generic.list import (BaseListView,
                                        MultipleObjectTemplateResponseMixin)
 
-from cart import emailing, forms
-from cart import models, payment, utilities
+from cart import emailing, forms, models, payment, utilities
 from cart.tasks import purchase_complete_email
-
-
-def create_impressions(queryset, include_position=False):
-    impressions = list(
-        queryset.values(
-            'product__reference',
-            'product__name',
-            'product__collection__name',
-            'true_price',
-            'quantity',
-            'color',
-            'total'
-        )
-    )
-    fit_transformed = []
-    fit_values = {
-        'product__reference': 'id',
-        'product__name': 'name',
-        'product__collection__name': 'category',
-        'true_price': 'price',
-        'quantity': 'quantity',
-        'brand': 'brand',
-        'position': 'position',
-        'color': 'variant',
-        'total': 'metric1'
-    }
-    for index, impression in enumerate(impressions, start=1):
-        new_values = {}
-        impression['brand'] = 'Nawoka'
-        if include_position:
-            impression['position'] = index
-        for key, value in impression.items():
-            new_values[fit_values[key]] = str(value)
-        fit_transformed.append(new_values)
-    return json.dumps(fit_transformed)
 
 
 class BaseCartView(MultipleObjectTemplateResponseMixin, BaseListView):
@@ -89,7 +53,6 @@ class BaseCartView(MultipleObjectTemplateResponseMixin, BaseListView):
         context = {
             'object_list': queryset,
             'cart_id': cart_id,
-            'impressions': create_impressions(queryset),
             'cart_total': total
         }
         context_object_name = super().get_context_object_name(queryset)

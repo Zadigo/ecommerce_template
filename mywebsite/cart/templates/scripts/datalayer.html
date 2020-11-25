@@ -1,3 +1,5 @@
+{% load cart_impressions %}
+
 <script>
     dataLayer.push({
         "event": "{{ event }}",
@@ -6,7 +8,7 @@
                 "actionField": {
                     "step": "{{ step }}"
                 },
-                "products": {{ impressions|safe }}
+                "products": JSON.parse('{% impressions_for_cart queryset=cart_products %}')
                 }
             }
         })
