@@ -1,7 +1,7 @@
 {% extends "pages/base_shop.html" %}
-{% load static aws_images %}
+{% load i18n static aws_images %}
 
-{% block title %}Collections pour {{ collection.gender|default:"femme" }} - Nawoka{% endblock %}
+{% block title %}{% trans "Collections pour" %} {{ collection.gender|default:"Femme" }} - Nawoka{% endblock %}
 
 {% block extra_css %}
     {{ block.super }}
@@ -9,22 +9,40 @@
 {% endblock %}
 
 {% block container %}
-    <section class="collections">
-        <div class="row wow fadeIn">
-            {% include "project_components/headers/picture.html" with image="hero1.jpg" alt="mywebsite-shop" %}
-        </div>
+    <section class="collections mt-6">
+        {% if collections %}
+            <div class="row wow fadeIn">
+                {% include "project_components/headers/picture.html" with image_src="collections/banner1_yMDIUVR.jpg" alt="gender-collection" %}
+            </div>
 
-        <div class="row wow fadeIn mt-4">
-            {% for collection in collections %}
-                <div class="col-md-4">
-                    <a href="{% url 'shop:collection' collection.gender collection.view_name %}" class="hoverable" id="link_collection_item">
-                        <img src="/media/{{ collection.image }}" class="img-fluid" alt="Nawoka {{ collection.view_name }}">
-                        <h5 class="text-center black-text mt-3 font-weight-bold">
-                            {{ collection.name }}
-                        </h5>
-                    </a>
+            <div class="row wow fadeIn mt-4">
+                {% for collection in collections %}
+                    <div class="col-md-4">
+                        <a href="{{ collection.get_absolute_url }}" class="hoverable" id="link_collection_item">
+                            <img src="{% build_aws_image_url collection.image %}" class="img-fluid" alt="{{ collection.view_name }}">
+                            <h5 class="text-center black-text mt-3 font-weight-bold">
+                                {{ collection.name }}
+                            </h5>
+                        </a>
+                    </div>
+                {% empty %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="text-center">{% trans "Il n'y a aucune collection sur ce site" %}</h2>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>            
+        {% else %}
+            <div class="row wow fadeIn">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="text-center">{% trans "Il n'y a aucune collection sur ce site" %}</h2>
+                        </div>
+                    </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% endif %}
     </section>
 {% endblock %}

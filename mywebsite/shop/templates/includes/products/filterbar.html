@@ -37,9 +37,13 @@
                     </option>
                 </select>
             </sorting-component>
-        </div>            
-        {% comment "Sorting products with Vue" %}
-        {% endcomment %}
+        </div>
+        
+        <div class="change-grid">
+            <button @click="togglegrid()" class="btn btn-md btn-transparent white-text z-depth-0">
+                <i class="fa fa-th fa-1x"></i>
+            </button>
+        </div>
         
         {% comment "Running a search on the website" %}
             <form action="{% url 'search_products' %}" class="form-inline">

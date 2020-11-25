@@ -64,7 +64,8 @@
 
 <!-- Vue JS -->
 {% if debug %}
-    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    <script src="{% static 'vue.js' %}"></script>
 {% else %}
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 {% endif %}

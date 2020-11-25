@@ -106,7 +106,8 @@
                 sortedproducts: [],
                 // selected: "Nom",
                 // selectedcolor: "Black",
-                colors: []
+                colors: [],
+                gridtype: 0
             }
         },
         beforeMount() {
@@ -127,11 +128,27 @@
         computed: {
             list() {
                 return this.sortedproducts.length > 0 ? this.sortedproducts : this.products
+            },
+            griddisplay() {
+                if (this.gridtype === 0) {
+                    return 3
+                }
+
+                if (this.gridtype === 1) {
+                    return 4
+                }
             }
         },
         methods: {
             applysort: function (products) {
                 this.sortedproducts = products
+            },
+            togglegrid: function () {
+                if (this.gridtype === 0) {
+                    this.gridtype = 1
+                } else {
+                    this.gridtype = 0
+                }
             }
         }
     })

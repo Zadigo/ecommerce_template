@@ -9,18 +9,18 @@
 {% endblock %}
 
 {% block container %}
-    <section class="collections">
+    <section class="collections mt-6">
         <div class="row wow fadeIn">
             <div class="row wow fadeIn">
-                <a href="{% url 'shop:gender' 'women' %}">
-                    {% include "project_components/headers/picture.html" with image="banner1.jpg" alt="mywebsite shop" %}
+                <a href="">
+                    {% include "project_components/headers/picture.html" with image="" alt="mywebsite shop" %}
                 </a>
             </div>
-
+            
             {% comment %}
             <div class="row wow fadeIn mt-3">
                 <a href="{% url 'shop:gender' 'men' %}" class="disabled">
-                    {% include "components/headers/picture.html" with image="banner1.jpg" alt="mywebsite shop" %}
+                    {% include "components/headers/picture.html" with image="" alt="mywebsite shop" %}
                 </a>
             </div>                
             {% endcomment %}

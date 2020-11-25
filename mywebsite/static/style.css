@@ -18,3 +18,12 @@
 .page-footer {
   background-color: #929FBA; 
 }
+
+
+.mt-6 {
+  margin-top: 6rem !important;
+}
+
+section {
+  height: 100%;
+}

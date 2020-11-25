@@ -1,9 +1,9 @@
 {% load i18n %}
 
-<card-component :products="list" inline-template>
+<card-component :products="list" :griddisplay="griddisplay" inline-template>
     <div class="col-12">
         <transition-group name="product-cards" tag="div" class="row">
-            <div v-for="product in products" :key="product.id" class="col-md-4 col-sm-6">
+            <div v-for="product in products" :key="product.id" :class="'col-md-' + $attrs.griddisplay" class="col-sm-6">
                 <div class="product-grid6">
                     <div class="product-image6">
                         <a :href="product.url" :alt="product.slug" role="link" :aria-label="product.name">

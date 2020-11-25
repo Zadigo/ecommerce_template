@@ -27,7 +27,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import cache, paginator
 from django.db import transaction
 from django.db.models.aggregates import Avg
-from django.http.response import Http404, JsonResponse
+from django.http.response import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext
@@ -40,7 +40,8 @@ from django.views.generic import DetailView, ListView, TemplateView, View
 from shop import models, serializers, sizes, tasks, utilities
 
 
-def create_vue_products(queryset, using:list=[]):
+def create_vue_products(queryset):
+    items = []
     for product in queryset:
         images = product.images
         variant = product.variant
@@ -63,8 +64,8 @@ def create_vue_products(queryset, using:list=[]):
             'discounted_price': str(product.discounted_price),
             'slug': product.slug
         }
-        using.append(base)
-    return using
+        items.append(base)
+    return items
 
 
 @method_decorator(cache_page(60 * 30), name='dispatch')
@@ -74,13 +75,19 @@ class IndexView(View):
         return render(request, 'pages/shop.html')
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class ShopGenderView(View):
     """Base view for discovering the website's shop
     by category e.g. gender
     """
     def get(self, request, *args, **kwargs):
-        collections = models.Collection.objects.filter(gender=kwargs['gender'])
-        context = {'collections': collections[:3]}
+        context = {}
+        gender = kwargs.get('gender')
+        collections = models.Collection.objects.filter(
+            gender=gender.title()
+        )
+        if collections.exists():
+            context = {'collections': collections[:3]}
         return render(request, 'pages/shop_gender.html', context)
 
 
@@ -148,8 +155,8 @@ class ProductsView(ListView):
 
         # Specific technique in order to include the
         # product url, main_image url and images
-        vue_products = cache.cache.get('vue_products', [])
-        if not vue_products:
+        vue_products = cache.cache.get('vue_products', None)
+        if vue_products is None:
             vue_products = create_vue_products(klass.object_list)
             cache.cache.set('vue_products', vue_products, timeout=1200)
         context['vue_products'] = json.dumps(vue_products)
@@ -230,7 +237,7 @@ class PreviewProductView(LoginRequiredMixin, DetailView):
     def get(self, request, *args, **kwargs):
         content = super().get(request, *args, **kwargs)
         if not request.user.is_admin:
-            return http.HttpResponseForbidden('You are not authorized on this page')
+            return HttpResponseForbidden('You are not authorized on this page')
         return content
 
     def get_context_data(self, **kwargs):
@@ -263,9 +270,9 @@ class PrivateProductView(DetailView):
         # any kinds of post requests
         cart = cart_models.Cart.cart_manager.add_to_cart(request, product)
         if cart:
-            return http.JsonResponse(data={'success': 'success'})
+            return JsonResponse(data={'success': 'success'})
         else:
-            return http.JsonResponse(data={'failed': 'missing parameters'}, status=400)
+            return JsonResponse(data={'failed': 'missing parameters'}, status=400)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
