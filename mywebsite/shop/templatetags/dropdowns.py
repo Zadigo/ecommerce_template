@@ -72,7 +72,7 @@ def test_dropdown(context):
     context.push({
         'has_collections': collections.exists(),
         'collections': collections,
-        'genders': collections.values_list('gender', flat=True)
+        'genders': set(collections.values_list('gender', flat=True))
     })
     if collection:
         details = {

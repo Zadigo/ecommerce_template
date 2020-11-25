@@ -7,7 +7,7 @@
     <script>
         dataLayer.push({
             "ecommerce": {
-                "impressions": '{% impressions_for_shop queryset=products %}'
+                "impressions": JSON.parse('{% impressions_for_shop queryset=products %}')
             },
             "event": "productImpressions"
         })

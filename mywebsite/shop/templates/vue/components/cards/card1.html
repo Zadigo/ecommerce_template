@@ -6,7 +6,7 @@
             <div v-for="product in products" :key="product.id" :class="'col-md-' + $attrs.griddisplay" class="col-sm-6">
                 <div class="product-grid6">
                     <div class="product-image6">
-                        <a :href="product.url" :alt="product.slug" role="link" :aria-label="product.name">
+                        <a @click="senddatalayer(product.name, product.price, product.slug)" :href="product.url" :alt="product.slug" role="link" :aria-label="product.name">
                             <img :src="product.main_image" class="pic-1" 
                                 role="img" aria-label="{% trans 'Product image' %}">
                         </a>

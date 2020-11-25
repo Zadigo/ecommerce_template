@@ -69,14 +69,24 @@
 
     Vue.component("card-component", {
         props: ["products"],
+        name: "ProductCard",
         delimiters: ["[[", "]]"],
         methods: {
-            senddatalayer: function () {
-
-            },
-            gotopage: function () {
-                this.senddatalayer()
+            senddatalayer: function (name, price, slug) {
+                dataLayer.push(
+                    {
+                        event: "LinkClick",
+                        product: {
+                            name: name,
+                            price: price,
+                            slug: slug
+                        }
+                    }
+                )
             }
+            // gotopage: function () {
+            //     this.senddatalayer()
+            // }
         },
         computed: {
             mainimage() {

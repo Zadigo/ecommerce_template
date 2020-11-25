@@ -8,7 +8,6 @@ from django.utils.safestring import mark_safe
 
 register = Library()
 
-
 def create_products_impressions(queryset, brand=None, metrics=None):
     """Create impressions for Google Analytics"""
     if queryset is None:
@@ -26,67 +25,25 @@ def create_products_impressions(queryset, brand=None, metrics=None):
                 list=f'{item.collection.gender}/{item.collection.name}'
             )
         )
-    return impressions
-
-
-def create_impressions(queryset, brand=None, include_position=False):
-    impressions = list(
-        queryset.values(
-            'reference',
-            'name',
-            'collection__name',
-        )
-    )
-    fit_transformed = []
-    fit_values = {
-        'reference': 'id',
-        'name': 'name',
-        'collection__name': 'category',
-        'true_price': 'price',
-        'quantity': 'quantity',
-        'brand': 'brand',
-        'position': 'position',
-        'color': 'variant',
-        'total': 'metric1'
-    }
-    for index, impression in enumerate(impressions, start=1):
-        new_values = {}
-        impression['brand'] = brand
-        if include_position:
-            impression['position'] = index
-        for key, value in impression.items():
-            new_values[fit_values[key]] = str(value)
-        fit_transformed.append(new_values)
-    return json.dumps(fit_transformed)
-
+    return json.dumps(impressions)
+    
 
 class AnalyticsNode(Node):
     def __init__(self, extra_context=None):
-        self.queryset = extra_context['queryset']
-        self.brand = None
-        self.metrics = None
-
-        try:
-            self.brand = extra_context['brand']
-        except:
-            pass
-
-        try:
-            self.metrics = extra_context['metrics']
-        except:
-            pass
+        self.queryset = extra_context.get('queryset')
+        self.brand = extra_context.get('brand')
+        self.metrics = extra_context.get('metrics')
 
     def render(self, context):
-        from django.db.models import QuerySet
-
         resolved_queryset = self.queryset.resolve(context)
         
         brand = None
         if self.brand is not None:
             brand = self.brand.resolve(context)
-        impressions = create_products_impressions(resolved_queryset, brand=brand)
-        values = str(json.dumps(impressions))
-        return mark_safe(values) if values else ''
+        impressions = create_products_impressions(
+            resolved_queryset, brand=brand
+        )
+        return mark_safe(impressions) if impressions else ''
 
 
 @register.tag

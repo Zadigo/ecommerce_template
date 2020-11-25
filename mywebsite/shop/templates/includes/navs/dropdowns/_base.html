@@ -1,8 +1,8 @@
 {% load i18n dropdowns aws_images %}
 
 {% if has_collections %}
-    {% for gender in genders %}
-        <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto">
+        {% for gender in genders %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
                     {{ gender|title }}
@@ -34,6 +34,6 @@
                     </div>
                 </div>
             </li>
-        </ul>        
-    {% endfor %}
+        {% endfor %}
+    </ul>        
 {% endif %}
