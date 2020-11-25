@@ -25,3 +25,10 @@ class SupplierAdmin(admin.ModelAdmin):
     list_display = ['name', 'country', 'email']
     search_fields = ['name', 'country', 'email', 'store__name', 'store__user', 'store__legal_name']
     list_per_page = 15
+    actions = ['archive', 'unarchive']
+
+    def archive(self, request, queryset):
+        queryset.update(archive=True)
+
+    def unarchive(self, request, queryset):
+        queryset.update(archive=True)

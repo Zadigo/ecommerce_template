@@ -8,10 +8,17 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = ['name', 'variant']
     search_fields = ['name', 'variant']
     list_per_page = 10
+    actions = ['mark_as_main_image', 'unmark_as_main_image']
 
     def delete_queryset(self, request, queryset):
         for image in queryset:
             image.delete()
+
+    def mark_as_main_image(self, requestn, queryset):
+        queryset.update(main_image=True)
+
+    def unmark_as_main_image(self, requestn, queryset):
+        queryset.update(main_image=False)
 
 
 @admin.register(models.Collection)
@@ -31,6 +38,46 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ['active', 'discounted', 'our_favorite']
     list_per_page = 10
     prepopulated_fields = {'slug': ['name']}
+    actions = ['duplicate', 'activate', 'deactivate',
+               'mark_as_favorite', 'mark_as_private']
+
+    def mark_as_favorite(self, requestn, queryset):
+        queryset.update(our_favorite=True)
+        
+    def mark_as_private(self, requestn, queryset):
+        queryset.update(private=True)
+
+    def activate(self, request, queryset):
+        queryset.update(active=True)
+
+    def deactivate(self, request, queryset):
+        queryset.update(active=False)
+
+    def duplicate(self, request, queryset):
+        new_products = []
+        images_queryset = []
+        for index, product in enumerate(queryset):
+            collection = models.Collection.objects.get(name=product.collection.name)
+            images_queryset.append(product.images.all())
+            new_products.append(
+                models.Product(
+                    name=f'New Product {index}',
+                    collection=collection,
+                    description=product.description,
+                    description_html=product.description_html,
+                    price_pre_tax=product.price_pre_tax,
+                    discount_pct=product.discount_pct,
+                    discounted_price=product.discounted_price,
+                    price_valid_until=product.price_valid_until,
+                    in_stock=product.in_stock,
+                    discounted=product.discounted,
+                    slug=f'new-product-{index}'
+                )
+            )
+        
+        new_products = models.Product.objects.bulk_create(new_products)
+        for index, product in enumerate(new_products):
+            product.images.set(images_queryset[index])
 
 
 @admin.register(models.Variant)

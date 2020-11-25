@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^private/(?P<pk>\d+)/(?P<slug>[a-z\-]+)$', views.PrivateProductView.as_view(), name='private'),
     url(r'^preview/(?P<pk>\d+)/(?P<slug>[a-z\-]+)$', views.PreviewProductView.as_view(), name='preview'),
     
-    url(r'^collections/(?P<gender>(women|men))/(?P<collection>[a-z]+)/(?P<pk>\d+)/(?P<slug>[a-z\-]+)$', views.ProductView.as_view(), name='product'),
+    url(r'^collections/(?P<gender>(women|men))/(?P<collection>[a-z]+)/(?P<pk>\d+)/(?P<slug>[a-z0-9\-]+)$', views.ProductView.as_view(), name='product'),
     url(r'^collections/(?P<gender>(women|men))/(?P<collection>[a-z]+)$', views.ProductsView.as_view(), name='collection'),
     url(r'^collections/(?P<gender>(women|men))$', views.ShopGenderView.as_view(), name='gender'),
 
