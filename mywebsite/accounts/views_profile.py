@@ -1,23 +1,18 @@
-import datetime
 import json
-import re
 
 import stripe
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404, HttpResponseForbidden, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from django.views.decorators.cache import (cache_control, cache_page,
-                                           never_cache)
-from django.views.decorators.http import require_POST
+from django.views.decorators.cache import cache_page, never_cache
 from django.views.generic import TemplateView, View
 
 from accounts import forms
+from accounts.mailchimp import get_mailchimp_client
 from accounts.models import MyUser, MyUserProfile
 
 
@@ -136,5 +131,6 @@ class ContactPreferencesView(LoginRequiredMixin, TemplateView):
     def post(self, request, **kwargs):
         data = {'state': False}
         data = json.loads(request.body)
+        # mailchimp = get_mailchimp_client()
         data.update({'state': True})
         return JsonResponse(data=data)

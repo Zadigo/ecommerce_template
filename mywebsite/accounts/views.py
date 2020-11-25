@@ -1,11 +1,7 @@
-import datetime
-import re
-
 from django.contrib import auth, messages
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages import add_message, error, success
-from django.core.mail import BadHeaderError, send_mail
-from django.http.response import Http404, HttpResponse, HttpResponseRedirect
+from django.core.mail import send_mail
+from django.http.response import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
@@ -145,8 +141,8 @@ class UnauthenticatedPasswordResetView(View):
         return render(request, 'pages/registration/forgot_password_confirm.html', context)
 
     def post(self, request, **kwargs):
-        # user_token = request.GET.get('user_token')
-        # user = get_object_or_404(MYUSER, id=user_token)
+        user_token = request.GET.get('user_token')
+        user = get_object_or_404(MYUSER, id=user_token)
         form = forms.CustomSetPasswordForm(user)
         if form.is_valid():
             form.save()
