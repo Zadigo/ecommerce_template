@@ -4,22 +4,11 @@ version: 2.1
 #   python: circleci/python@0.2.1
 
 jobs:
-  # build-and-test:
-  #   executor: python/default
-  #   steps:
-  #     - checkout
-  #     - python/load-cache
-  #     - python/install-deps
-  #     - python/save-cache
-  #     - run:
-  #         command: ./mywebsite/manage.py test
-  #         name: Test
-
   build:
     docker:
       - image: circleci/python:3.8
     steps:
-      - checkout
+      - "checkout"
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "Pipfile" }}
       - run:
@@ -34,7 +23,6 @@ jobs:
             python manage.py validate_templates
             python manage.py unreferenced_files
             python manage.py test
-
       - store_artifacts:
           path: test-reports/
           destination: python_app
