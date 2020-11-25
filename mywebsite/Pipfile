@@ -28,6 +28,8 @@ django-debug-toolbar = "*"
 numpy = "==1.19.3"
 django-imagekit = "*"
 django-redis = "*"
+mailchimp-transactional = "*"
+mailchimp-marketing = "*"
 
 [requires]
 python_version = "3.8"
