@@ -1,5 +1,6 @@
-from hero import views
 from django.conf.urls import url
+
+from hero import views
 
 app_name = 'hero'
 

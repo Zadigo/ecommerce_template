@@ -73,3 +73,7 @@ h1.product-title {
 .lead span:last-child {
     font-size: 23px;
 }
+
+img.selected {
+    border: 1px solid #4285f4;
+}

@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block container %}
-    <div style="margin-top: 6rem;">
+    <section class="mt-6">
         {% comment %}
             <!-- DROPDOWN CART -->
             {% cart %}            
@@ -24,10 +24,9 @@
                 <div class="col-md-1">
                     <side-images @showimage="display" :images="images" inline-template>
                         <div class="side-images">
-                            <img @click="showimage(image)" v-for="(image, index) in images"
-                                :key="image.pk" :src="image.url" class="img-fluid"
-                                    :class="{'mt-2': index !== 0}" :alt="image.name"
-                                        role="img" aria-label="{% trans 'Other product images' %}">
+                            <img @click="showimage(image, index)" v-for="(image, index) in images"
+                                :key="image.pk" :src="image.url" :class="{'mt-2': index !== 0}" :alt="image.name"
+                                    :class="{'selected': index===selectedimage}" class="img-fluid" role="img" aria-label="{% trans 'Other product images' %}">
                         </div>
                     </side-images>
                 </div>                
@@ -130,7 +129,7 @@
         <div class="row wow fadeIn mt-3">
             {% include "includes/product/reviews.html" %}
         </div>        
-    </div>
+    </section>
 {% endblock %}
 
 {% block extra_scripts %}

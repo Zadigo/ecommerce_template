@@ -1,9 +1,11 @@
-{% load aws_images %}
+{% load aws_images cache %}
 
-<div class="view full-page-intro" style="background-image: url('{% get_aws_prefix_url %}hero1.jpg'); background-repeat: no-repeat; background-size: cover;">
-    <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
-        <div class="container">
-            {% include "components/hero/with_form.html" with button_name="Start free tutorial" button_icon="fa-graduation-cap" input_height="49px" input_width="50%" %}
+{% cache 3600 hero %}
+    <div class="view full-page-intro" style="background-image: url('{% get_aws_prefix_url %}hero1.jpg'); background-repeat: no-repeat; background-size: cover;">
+        <div class="mask rgba-black-light d-flex justify-content-center align-items-center">
+            <div class="container">
+                {% include "components/hero/with_button.html" with button_name="Start free tutorial" button_icon="fa-graduation-cap" input_height="49px" input_width="50%" %}
+            </div>
         </div>
-    </div>
-</div>
+    </div>    
+{% endcache %}

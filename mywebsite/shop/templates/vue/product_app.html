@@ -184,9 +184,15 @@
     Vue.component("side-images", {
         props: ["images"],
         name: "SideImages",
+        data() {
+            return {
+                selectedimage: 0
+            }
+        },
         methods: {
-            showimage: function (index) {
-                this.$emit("showimage", index)
+            showimage: function (image, index) {
+                this.selectedimage = index
+                this.$emit("showimage", image)
             }
         }
     })
