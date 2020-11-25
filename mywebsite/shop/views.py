@@ -100,13 +100,11 @@ class ProductsView(ListView):
     ordering = '-created_on'
 
     def get_queryset(self, **kwargs):
-        view_name = self.kwargs['collection']
-        gender = self.kwargs['gender']
+        view_name = self.kwargs.get('collection')
 
         try:
             collection = self.model.objects.get(
-                view_name__exact=view_name, 
-                gender=gender.title()
+                view_name__exact=view_name
             )
         except:
             raise Http404("La collection n'existe pas")
@@ -150,20 +148,20 @@ class ProductsView(ListView):
         # products are still in the cache which creates
         # an issue
         category = self.request.GET.get('category')
-        if category is not None:
-            cache.cache.delete('vue_products')
+        # if category is not None:
+        #     cache.cache.delete('vue_products')
 
         # Specific technique in order to include the
         # product url, main_image url and images
-        vue_products = cache.cache.get('vue_products', None)
-        if vue_products is None:
-            vue_products = create_vue_products(klass.object_list)
-            cache.cache.set('vue_products', vue_products, timeout=1200)
+        # vue_products = cache.cache.get('vue_products', None)
+        vue_products = create_vue_products(klass.object_list)
+        # if vue_products is None:
+            # cache.cache.set('vue_products', vue_products, timeout=1200)
         context['vue_products'] = json.dumps(vue_products)
 
         collection = self.model.objects.get(
-            view_name__exact=self.kwargs['collection'], 
-            gender=self.kwargs['gender'].title()
+            view_name__exact=self.kwargs.get('collection'),
+            gender=self.kwargs.get('gender').title()
         )
         context['collection'] = collection
         return context

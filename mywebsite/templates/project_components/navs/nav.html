@@ -2,24 +2,26 @@
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar {% block nav_display %}{% endblock %}">
     <div class="container">
-        <!-- BRAND -->
+        <!-- Brand -->
         <a class="navbar-brand waves-effect" href="{% url 'hero:home' %}">
             <strong class="blue-text text-uppercase">Nawoka</strong>
         </a>
 
-        <!-- HAMBURGER -->
+        <!-- Hamburger -->
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- OFFCANVAS -->
+            <!-- Offcanvas -->
             {# {% include "offcanvas.html" %} #}
 
-            <!-- DROP LARGE -->
-            {% collections_dropdown_block %}
+            <!-- Drop large -->
+            {# {% collections_dropdown_block %} #}
+
+            {% test_dropdown %}
             
-            <!-- RIGHT -->
+            <!-- Right -->
             <ul class="navbar-nav">
                 {% comment %} {% include "project_components/navs/search.html" %} {% endcomment %}
 

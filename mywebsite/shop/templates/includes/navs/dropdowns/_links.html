@@ -1,0 +1,9 @@
+{% for collection in collections %}
+    <li>
+        <a onclick="dataLayer.push({event: 'LinkClick', name: '{{ collection.name }}'})" 
+                href="{{ collection.get_absolute_url }}" class="p-0 pb-1" 
+                        id="link_collection_item" role="link" aria-label="Link collection {{ collection.name }}">
+            {{ collection.name }}
+        </a>
+    </li>
+{% endfor %}

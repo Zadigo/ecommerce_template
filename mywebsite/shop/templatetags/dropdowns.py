@@ -1,9 +1,11 @@
 import random
 
 from django import template
-from django.template.loader import get_template
 from django.core.cache import cache
-
+from django.template import Node
+from django.template.context import Context
+from django.template.loader import get_template
+from django.utils.html import format_html, format_html_join
 from shop import models
 
 register = template.Library()
@@ -60,3 +62,36 @@ def cart():
     context = {}
     context['cart'] = None
     return context
+
+
+@register.simple_tag(takes_context=True)
+def test_dropdown(context):
+    collections = get_collections()
+    collection = collections.first()
+
+    context.push({
+        'has_collections': collections.exists(),
+        'collections': collections,
+        'genders': collections.values_list('gender', flat=True)
+    })
+    if collection:
+        details = {
+            'gender': collection.gender,
+            'name': collection.name,
+            'view_name': collection.view_name,
+            'url': collection.get_absolute_url()
+        }
+        if not collection.image or collection.image is None:
+            product = collection.product_set.first()
+            if product is not None:
+                product_image = product.image
+                try:
+                    details['image'] = product_image.first().url
+                except:
+                    details['image'] = 'https://via.placeholder.com/500'
+        else:
+            details['image'] = collection.image.url
+        context.push(sample_collection=details)
+
+    t = get_template('includes/navs/dropdowns/_base.html')
+    return t.render(context.flatten())

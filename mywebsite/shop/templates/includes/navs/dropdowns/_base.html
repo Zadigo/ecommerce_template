@@ -1,0 +1,39 @@
+{% load i18n dropdowns aws_images %}
+
+{% if has_collections %}
+    {% for gender in genders %}
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
+                    {{ gender|title }}
+                </a>
+
+                <div class="dropdown-menu dropdown-large fade-up">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="text-muted text-uppercase font-weight-bold">
+                                {% trans "Collection" %}
+                            </p>
+
+                            <ul class="list-unstyled">
+                                {% include "includes/navs/dropdowns/_links.html" %}
+                            </ul>
+                        </div>
+
+                        <div class="col-md-6">
+                            <a onclick="dataLayer.push({event: 'LinkClick', name: '{{ sample_collection.name }}'})" 
+                                    href="{{ sample_collection.url }}" role="link" 
+                                            aria-label="Link collection {{ sample_collection.name }}">
+                                <img src="{{ sample_collection.image }}" alt="{{ sample_collection.view_name }} - {{ sample_collection.gender }}" class="img-fluid">
+                                
+                                <p class="m-0 mt-3 text-center text-uppercase">
+                                    {{ sample_collection.name }}
+                                </p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>        
+    {% endfor %}
+{% endif %}
