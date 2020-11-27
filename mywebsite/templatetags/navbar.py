@@ -13,7 +13,8 @@ ICONS = {
     'logout': 'fa fa-sign-out',
     'signout': 'fa fa-sign-out',
     'cart': 'fa fa-shopping-cart',
-    'checkout': 'fa fa-shopping-cart'
+    'checkout': 'fa fa-shopping-cart',
+    'admin': 'fa fa-tachometer'
 }
 
 
@@ -30,11 +31,12 @@ def icon_links(*urls):
         try:
             if ':' in url:
                 items = url.split(':')
-                icon = ICONS[normalize_url(items[1:][0])]
+                icon = ICONS[normalize_url(items[-1])]
             else:
                 icon = ICONS[normalize_url(url)]
         except KeyError:
-            icon = 'fa fa-ban red'
+            icon = 'fa fa-flag text-red'
+            context['urls'].append((icon, '/'))
         else:
             context['urls'].append(
                 (icon, reverse(normalize_url(url)))
