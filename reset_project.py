@@ -37,7 +37,7 @@ def walk_project(start_from, restrict_to=[]):
 def delete_migrations(paths):
     counter = 0
     answer = input('You are about to delete all the migrations from your project. Continue? [y/n] ')
-    if answer == 't':
+    if answer == 'y':
         for path in paths:
             if path:
                 exists = os.path.exists(path)
