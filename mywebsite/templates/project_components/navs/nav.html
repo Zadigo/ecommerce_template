@@ -20,11 +20,17 @@
             {% test_dropdown %}
             
             <!-- Right -->
-            <ul class="navbar-nav">
-                {% icon_links "shop:search" "cart:checkout" %}
-                
-                {% icon_links "accounts:login" "accounts:logout" %}
-            </ul>
+            {% icon_links "shop:search" "cart:checkout" "accounts:login" "accounts:logout" %}
+
+            {% if request.user.is_admin %}
+                <ul class="navbar-nav {% if extra_class%}{{ extra_class }}{% endif %}">
+                    <li class="nav-item">
+                        <a href="{% url 'admin:index' %}" target="_blank" class="nav-link waves-effect">
+                            <i class="fa fa-flag"></i>
+                        </a>
+                    </li>
+                </ul>
+            {% endif %}
         </div>
     </div>
 </nav>
