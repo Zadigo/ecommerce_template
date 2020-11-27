@@ -1,6 +1,7 @@
 import datetime
 import os
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import post_delete, post_save, pre_save
@@ -327,9 +328,18 @@ def create_slug(instance, sender, created, **kwargs):
 
 @receiver(post_delete, sender=Image)
 def delete_image(sender, instance, **kwargs):
-    if instance.url:
-        if os.path.isfile(instance.url.path):
-            os.remove(instance.url.path)
+    is_s3_backend = False
+    try:
+        is_s3_backend = settings.USE_S3
+    except:
+        pass
+
+    if not is_s3_backend:
+        if instance.url:
+            if os.path.isfile(instance.url.path):
+                os.remove(instance.url.path)
+    else:
+        pass
 
 
 # @receiver(pre_delete, sender=Product)
@@ -343,13 +353,22 @@ def delete_images(sender, instance, **kwargs):
 
 @receiver(pre_save, sender=Image)
 def delete_image_on_update(sender, instance, **kwargs):
-    if instance.pk:
-        try: 
-            old_image = Image.objects.get(pk=instance.pk)
-        except:
-            return False
-        else:
-            new_image = instance.url
-            if old_image and old_image != new_image:
-                if os.path.isfile(old_image.url.path):
-                    os.remove(old_image.url.path)
+    is_s3_backend = False
+    try:
+        is_s3_backend = settings.USE_S3
+    except:
+        pass
+
+    if not is_s3_backend:
+        if instance.pk:
+            try: 
+                old_image = Image.objects.get(pk=instance.pk)
+            except:
+                return False
+            else:
+                new_image = instance.url
+                if old_image and old_image != new_image:
+                    if os.path.isfile(old_image.url.path):
+                        os.remove(old_image.url.path)
+    else:
+        pass
