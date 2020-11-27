@@ -36,16 +36,20 @@ def walk_project(start_from, restrict_to=[]):
 @walk_project('mywebsite', restrict_to=RESTRICTED_LIST)
 def delete_migrations(paths):
     counter = 0
-    for path in paths:
-        if path:
-            exists = os.path.exists(path)
-            if exists:
-                os.remove(path)
-                print('Deleting migration at:', path)
-                counter += 1
-                print(f'Deleted:', counter, 'files')
-    if counter == 0:
-        print('No files were deleted.')
+    answer = input('You are about to delete all the migrations from your project. Continue? [y/n] ')
+    if answer == 't':
+        for path in paths:
+            if path:
+                exists = os.path.exists(path)
+                if exists:
+                    os.remove(path)
+                    print('Deleting migration at:', path)
+                    counter += 1
+                    print(f'Deleted:', counter, 'files')
+        if counter == 0:
+            print('No files were deleted.')
+    else:
+        print('Cancelled')
             
 
 if __name__ == "__main__":
@@ -54,4 +58,3 @@ if __name__ == "__main__":
     parsed_args = parser.parse_args()
     for app in parsed_args.apps:
         RESTRICTED_LIST.append(app)
-    delete_migrations
