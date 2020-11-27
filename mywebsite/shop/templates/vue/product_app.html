@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n static %}
 
 <script>
     var reviewcomponent = {
@@ -488,12 +488,12 @@
             this.selectedimage = images[0]
             if (images.length > 0) {
                 _.forEach(images, (image) => {
-                    image["url"] = `/media/${image.url}`
+                    image["url"] = `{% get_media_prefix %}${image.url}`
                     colors.push(
                         {
                             name: image.variant,
                             value: image.variant,
-                            url: `/media/${image.url}`
+                            url: `{% get_media_prefix %}${image.url}`
                         }
                     )
                 })

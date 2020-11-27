@@ -7,12 +7,12 @@ from storages.backends.s3boto3 import S3Boto3Storage
 
 
 class StaticFilesStorage(S3Boto3Storage):
-    location = 'nawoka/static'
+    location = 'mywebsite/static'
     default_acl = 'public-read'
 
 
 class PublicMediaStorage(S3Boto3Storage):
-    location = 'nawoka/media'
+    location = 'mywebsite/media'
     default_acl = 'public-read'
     default_content_type = 'image/jpg'
     file_overwrite = False

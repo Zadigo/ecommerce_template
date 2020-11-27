@@ -45,6 +45,13 @@ fi
 sudo apt-get update
 sudo apt-get upgrade
 
+# Tools for creating credential files
+# for Nginx
+sudo apt-get install apache2-utils
+mkdir -p etc/apache2 && touch etc/apache2/.htpasswd
+echo sudo htpasswd -c /etc/apache2/.htpasswd admin1
+echo "Do not forget to change the default password for admin1 in the credentials file for restrictions"
+
 # Others
 
 snap install tree
