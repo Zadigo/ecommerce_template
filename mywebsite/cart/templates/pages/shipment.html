@@ -83,7 +83,7 @@
 								</div>
 							</div>
 	
-							<div class="col-lg-4 col-md-6 mb-4">
+							<div class="col-md-6 col-lg-4 mb-4">
 								<label for="zip">
 									{% trans "Code postale" %}
 								</label>
@@ -101,6 +101,7 @@
 	
 							<div class="custom-control custom-checkbox">
 								<input name="billing_equals_shipping" type="checkbox" class="custom-control-input" id="same-address">
+								
 								<label class="custom-control-label" for="same-address">
 									{% trans "Shipping address is the same as my billing address" %}
 								</label>
@@ -108,6 +109,7 @@
 	
 							<div class="custom-control custom-checkbox">
 								<input name="save_for_next_time" type="checkbox" class="custom-control-input" id="save-info">
+								
 								<label class="custom-control-label" for="save-info">
 									{% trans "Save this information for next time" %}
 								</label>
@@ -132,6 +134,36 @@
 				
 				<!-- Form -->
 				{% include "components/cart/promo/form.html" with form_view="cart:add_coupon" %}
+
+				{% comment "Additional information" %}
+					<!-- Additional information -->
+					<div class="card mt-3">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-12">
+									<div class="d-flex justify-content-between">
+										<i class="fas fa-shipping-fast fa-3x mr-4"></i>
+										<div>
+											<p>
+												<strong>Commande passée avant 12h00, expédition le jour même</strong>
+											</p>
+											<p>
+												Vos lèvres n’auront pas beaucoup de temps à attendre… Livraison de 48H en moyenne. De plus la livraison est offerte à
+												partir de 50€ d'achat.
+											</p>
+										</div>
+									</div>
+								</div>
+
+								<hr>
+
+								<div class="col-12">
+
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endcomment %}
 			</div>
 		</div>
 	</section>
@@ -139,7 +171,7 @@
 
 {% block extra_scripts %}
 	<script>
-		var nextStep = function() {
+		var nextStep = function () {
 			dataLayer.push({
 				"event": "checkoutOption",
 				"ecommerce": {
@@ -151,6 +183,12 @@
 					}
 				}
 			});
+		}
+
+		var clickPromoButton = function () {
+			dataLayer.push({
+				event: "promoCode"
+			})
 		}
 	</script>
 {% endblock %}

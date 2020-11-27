@@ -13,7 +13,7 @@
         {% for product in more %}
             <div class="col-lg-4 col-md-12 mb-4">
                 <div class="card z-depth-0">
-                    <a href="{{ product.get_absolute_url }}" id="link_see_more" onclick="CardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
+                    <a href="{{ product.get_absolute_url }}" id="link_see_more" onclick="cardClick('{{ forloop.counter }}', '{{ product.name }}', '{{ product.get_price }}', '{{ product.reference }}')">
                         <img src="{{ product.get_main_image_url|default:'https://via.placeholder.com/800' }}" class="img-fluid" alt="{{ product.slug }}">
                     </a>
                     <div class="card-body p-0 pt-2">

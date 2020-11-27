@@ -43,9 +43,9 @@
             {% endwith %}
             <td>
                 {% if product.active %}
-                    {% include "../badge.html" with type="success" badge_name="actif" %}								
+                    {% include "components/others/badge.html" with type="success" badge_name="actif" %}								
                 {% else %}
-                    {% include "../badge.html" with type="danger" badge_name="inactif" %}								
+                    {% include "components/others/badge.html" with type="danger" badge_name="inactif" %}								
                 {% endif %}
             </td>
             <td>

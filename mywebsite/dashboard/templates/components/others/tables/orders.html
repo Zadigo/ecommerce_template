@@ -18,13 +18,13 @@
             <td>
                 
                 {% if order.refund %}
-                    {% include "../badge.html" with type="dark" badge_name="Remboursement" %}
+                    {% include "components/others/badge.html" with type="dark" badge_name="Remboursement" %}
                 {% elif order.accepted %}
-                    {% include "../badge.html" with type="primary" badge_name="Livraison" %}
+                    {% include "components/others/badge.html" with type="primary" badge_name="Livraison" %}
                 {% elif order.completed %}
-                    {% include "../badge.html" with type="success" badge_name="Terminé" %}
+                    {% include "components/others/badge.html" with type="success" badge_name="Terminé" %}
                 {% else %}
-                    {% include "../badge.html" with type="danger" badge_name="En attente" %}										
+                    {% include "components/others/badge.html" with type="danger" badge_name="En attente" %}										
                 {% endif %}
             </td>
             <td>{{ order.created_on }}</td>

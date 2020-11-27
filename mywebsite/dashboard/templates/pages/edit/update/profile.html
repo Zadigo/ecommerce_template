@@ -1,4 +1,4 @@
-{% extends "../../index.html" %}
+{% extends "pages/index.html" %}
 
 {% block title %}Profile de {{ user.get_full_name }}{% endblock %}
 
@@ -72,10 +72,10 @@
             </div>
 
             <!-- MESSAGES -->
-            {% include "../../components/profile/message.html" %}
+            {% include "components/profile/message.html" %}
 
             <!-- ACTIONS -->
-            {% include "../../components/profile/actions.html" %}
+            {% include "components/profile/actions.html" %}
 
             <div class="card">
                 <div class="card-body">
@@ -84,11 +84,11 @@
             </div>
 
             <!-- USER STATE -->
-            {% include "../../components/profile/change_state.html" %}
+            {% include "components/profile/change_state.html" %}
         </div>
     </div>
 
-    {% include "../../components/others/modals/delete_user.html" %}
+    {% include "components/others/modals/delete_user.html" %}
 {% endblock %}
 
 {% block extra_scripts %}

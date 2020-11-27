@@ -14,7 +14,51 @@
         <span class="font-weight-bold blue-text">{% estimated_delivery_date 15 %}</span>
         avec la livraison standard.
     </p>
+
     <p>
         {% trans "Comptez aussi 2 jours de traitement (week-end inclus)." %}
     </p>
+
+    <h4 class="text-uppercase">{% trans "Livraison" %}</h4>
+
+    <p>
+        <ul>
+            <li>
+                Commandez <strong>avant 12h00</strong> et votre colis 
+                <strong>sera expédié le jour même</strong> 
+                (du lundi au vendredi - sauf jour férié)
+            </li>
+            <li>
+                France Métropolitaine : <strong>Livraison 24 à 72 heures ouvrées</strong> 
+                suivant votre adresse de livraison
+            </li>
+            <li>
+                <strong>Livraison offerte</strong> à partir de 
+                <strong>3 gloss achetés</strong> d'achat en France Métropolitaine
+            </li>
+            <li>
+                Europe : Livraison 3 à 5 jours ouvrés.
+                DOM & Hors UE : Livraison 5 à 7 jours ouvrés
+            </li>
+        </ul>
+    </p>
+
+    <h4 class="text-uppercase mt-3">{% trans "Stock" %}</h4>
+    <ul>
+        <li>Tous nos articles disponibles à la vente 
+        <strong>sont garantis en stock</strong></li>
+    </ul>
+
+    <h4 class="text-uppercase mt-3">{% trans "Retour & Echange" %}</h4>
+    <ul>
+        <li>
+            <strong>Garantie Satisfait ou Remboursé</strong> - Retour possible 14 jours après 
+            la date de réception de votre colis - sans justifications 
+            obligatoires (le gloss ne doit pas avoir été ouvert)
+        </li>
+        <li>
+            Pour procéder à votre retour : Suivez les instructions 
+            en consultant nos <a href="/legal/terms-of-sale#delivery?next={{ product.get_absolute_url }}">politiques de retours</a>
+        </li>
+    </ul>
 {% endblock %}
