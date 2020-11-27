@@ -127,7 +127,6 @@ class Collection(models.Model):
         return reverse('shop:gender', args=[self.lower_case_gender])
 
 
-
 class Variant(models.Model):
     """
     Model for variants such as the size of an item

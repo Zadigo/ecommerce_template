@@ -1,7 +1,7 @@
 {% extends "layouts/base_shop.html" %}
-{% load aws_images static %}
+{% load i18n aws_images static %}
 
-{% block title %}Boutique - Nawoka{% endblock %}
+{% block title %}{% trans "Boutique" %} - Nawoka{% endblock %}
 
 {% block extra_css %}
     {{ block.super }}
@@ -13,7 +13,7 @@
         <div class="row wow fadeIn">
             <div class="row wow fadeIn">
                 <a href="">
-                    {% include "project_components/headers/picture.html" with image="" alt="mywebsite shop" %}
+                    {% include "project_components/headers/picture.html" with image_src="collections/image_3.jpg" alt="mywebsite shop" %}
                 </a>
             </div>
             

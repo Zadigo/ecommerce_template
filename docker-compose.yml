@@ -20,7 +20,7 @@ services:
     image: memcached 
     container_name: memcaching
     ports: 
-      - "11211:11211"
+      - 11211:11211
     volumes:
       - ./mywebsite:/app
     depends_on:
@@ -116,7 +116,7 @@ services:
   redis:
     image: redis
     container_name: redis_db
-    command: redis-server /usr/local/etc/redis/redis.conf --bind redis --port 6379
+    command: redis-server /usr/local/etc/redis/redis.conf
     ports:
       - 6379:6379
     restart: always
