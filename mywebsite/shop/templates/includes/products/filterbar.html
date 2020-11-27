@@ -36,8 +36,8 @@
         </ul>
 
         <div class="navbar-nav">
-            <sorting-component :products="products" @dosort="applysort" inline-template>
-                <select @change="dosort($el)" class="browser-default custom-select" id="sorting">
+            <sorting-component @dosort="applysort" :products="products" inline-template>
+                <select @change="selectedsort=parseInt($el.value), dosort(byprice)" class="browser-default custom-select" id="sorting-selection">
                     <option v-for="(item, index) in items" :key="item.id" :value="item.value">
                         [[ item.name ]]
                     </option>

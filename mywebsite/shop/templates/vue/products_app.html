@@ -25,31 +25,31 @@
                     {id: 3, name: "{% trans 'Prix décroissant' %}", value: 2},
                     // {id: 4, name: "{% trans 'Les mieux notés' %}", value: 3},
                 ],
-                selected: 0
+                selectedsort: 0
             }
         },
         computed: {
             byprice() {
-                if (this.selected === 1) {
-                    return this.bypricelow
-                } else if (this.selected === 2) {
+                if (this.selectedsort === 1) {
                     return this.bypricehigh
+                } else if (this.selected === 2) {
+                    return this.bypricelow
                 }  else {
                     return this.byname
                 }
             },
             bypricehigh() {
                 return this.byname.sort((a, b) => {
-                    return a.price - b.price
+                    return b.price - a.price
                 })
             },
             bypricelow() {
                 return this.byname.sort((a, b) => {
-                    return b.price - a.price
+                    return a.price - b.price
                 })
             },
             byname() {
-                if (this.selected === 0) {
+                if (this.selectedsort === 0) {
                     return _.sortBy(this.list, ["name"])
                 } else {
                     return this.list
@@ -60,9 +60,8 @@
             }
         },
         methods: {
-            dosort: function (el) {
-                this.selected = parseInt(el.value)
-                this.$emit("dosort", this.byname)
+            dosort: function (sortedproducts) {
+                this.$emit("dosort", sortedproducts)
             }
         }
     })
@@ -133,7 +132,7 @@
                     colors.push(image.variant)
                 })
             })
-            this.$data.colors = _.uniq(colors)
+            this.colors = _.uniq(colors)
         },
         computed: {
             list() {
