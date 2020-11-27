@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static analytics_tags %}
 
 {% block theme_color %}#484848{% endblock %}
 
@@ -11,10 +11,21 @@
 {% endblock %}
 
 {% block analytics %}
-    
+    <!-- Clarity -->
+    {% clarity tag="342254" %}
+    <!-- Google Tag Manager -->
+    {% google_tag_manager "GTM-XXX" %}
+    <!-- Google Analytics -->
+    {% google_analytics "UA-XXX" "UA-XXX" %}
+    <!-- Facebook -->
+    {% facebook "343545345322423" %}
 {% endblock %}
 
 {% block extra_analytics %}
+    <!-- Google Optimize -->
+    {# {% google_optimize_anti_flicker "GTM-XXX" %} #}
+    <!-- Google Analytics -->
+    {% google_no_script "GTM-XXX" %}
     <!-- Facebook Pixels -->
     {% block facebook_event %}{% endblock %}
 {% endblock %}
