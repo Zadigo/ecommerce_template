@@ -18,6 +18,31 @@
             {% cart %}            
         {% endcomment %}
 
+        <!-- Breadcrumb -->
+        <div class="row">
+            <div class="col-12">
+                <div class="wow fadeIn">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'shop:home' %}">
+                                    {% trans "Accueil" %}
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a onclick="breadcrumbClick('{{ product.collection.name }}')" href="{{ product.get_collection_url }}">
+                                    {{ product.collection.name }}
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                {{ product.name }}
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
         <div class="row wow fadeIn">
             {% if not is_mobile %}
                 <!-- Side images -->
@@ -91,7 +116,7 @@
                     <div class="delivery mt-3 mb-3">
                         <a href data-toggle="modal" data-target="#delivery" 
                                 role="link" aria-label="{% trans 'Delivery information' %}">
-                            {% trans "Livraison standard" %}**
+                            {% trans "Livraisons et retours" %}**
                         </a>
                         {% include "includes/modals/delivery.html" with modal_title=True %}
                     </div>
@@ -133,28 +158,20 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script>
-    var CardClick = function(index, name, price, reference) {
-        dataLayer.push({
-            "event": "productClick",
-            "ecommerce": {
-                "click": {
-                    "actionField": {
-                        "list": "more/{{ product.collection.name }}"
-                    },
-                    "products": [{
-                        "id": reference,
-                        "name": name,
-                        "price": price,
-                        "brand": "Nawoka",
-                        "category": "{{ collection.name }}",
-                        "position": index
-                    }]
+    {{ block.super }}
+    <script>
+        var breadcrumbClick = function (collectionname) {
+            dataLayer.push({
+                event: "LinkClick",
+                collection: collectionname,
+                fromProduct: {
+                    "id": "{{ product.reference }}",
+                    "name": "{{ product.name }}",
+                    "price": "{{ product.get_price }}"
                 }
-            }
-        });
-    }
-</script>
+            })
+        }
+    </script>
 {% endblock %}
 
 {% block vuejs_scripts %}

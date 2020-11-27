@@ -58,11 +58,11 @@
                         this.showfields = false
                         dataLayer.push(
                             {
-                                "event": "Review",
-                                "product": {
-                                    "reference": "{{ product.reference }}",
-                                    "name": "{{ product.name }}",
-                                    "score": this.reviewdata.score
+                                event: "Review",
+                                product: {
+                                    reference: "{{ product.reference }}",
+                                    name: "{{ product.name }}",
+                                    score: this.reviewdata.score
                                 }
                             }
                         )

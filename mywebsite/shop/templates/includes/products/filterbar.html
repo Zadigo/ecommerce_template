@@ -27,6 +27,12 @@
                     {% trans "Favoris" %}
                 </a>
             </li>
+
+            <li class="white-text">
+                <a href class="nav-link disabled ml-4" aria-disabled="true">
+                    {{ products.count }} produit{{ products.count|pluralize }}
+                </a>
+            </li>
         </ul>
 
         <div class="navbar-nav">

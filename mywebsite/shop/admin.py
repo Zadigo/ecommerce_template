@@ -1,14 +1,20 @@
 from django.contrib import admin
+from imagekit.admin import AdminThumbnail
 
 from shop import models
 
 
 @admin.register(models.Image)
 class ImageAdmin(admin.ModelAdmin):
-    list_display = ['name', 'variant']
+    list_display = ['name', 'variant', 'main_image']
     search_fields = ['name', 'variant']
     list_per_page = 10
     actions = ['mark_as_main_image', 'unmark_as_main_image']
+    sortable_by = ['name', 'variant']
+    list_filter = ['main_image']
+    # date_hierarchy = 'created_on'
+
+    admin_thumbnail = AdminThumbnail(image_field='image_thumbnail')
 
     def delete_queryset(self, request, queryset):
         for image in queryset:
@@ -40,6 +46,9 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ['name']}
     actions = ['duplicate', 'activate', 'deactivate',
                'mark_as_favorite', 'mark_as_private']
+
+    # class Media:
+    #     js = ['js/admin_quill.js']
 
     def mark_as_favorite(self, requestn, queryset):
         queryset.update(our_favorite=True)

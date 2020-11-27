@@ -83,7 +83,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
 
                 'cart.payment.stripe_context_processor',
-                'mywebsite.context_processors.responsive',
+                'mywebsite.context_processors.responsive'
             ],
             'libraries': {
                 'aws_images': 'templatetags.aws_images',

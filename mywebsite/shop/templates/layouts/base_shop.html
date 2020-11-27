@@ -80,3 +80,29 @@
     <!-- GLOBAL-->
     {% include "vue/shop_global.html" %}
 {% endblock %}
+
+
+{% block extra_scripts %}
+    <script>
+        var cardClick = function (index, name, price, reference) {
+            dataLayer.push({
+                "event": "productClick",
+                "ecommerce": {
+                    "click": {
+                        "actionField": {
+                            "list": "More/{{ product.collection.name }}"
+                        },
+                        "products": [{
+                            "id": reference,
+                            "name": name,
+                            "price": price,
+                            "brand": "Nawoka",
+                            "category": "{{ collection.name }}",
+                            "position": index
+                        }]
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}

@@ -3,7 +3,7 @@ import os
 
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import post_delete, post_save
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -21,10 +21,21 @@ class Image(models.Model):
     """
     name    = models.CharField(max_length=50)
     variant = models.CharField(max_length=30, default='Noir')
-    url      = models.ImageField(verbose_name='Product image', upload_to='products', blank=True, null=True)
+    url = models.ImageField(
+        verbose_name='Product image', 
+        upload_to=utilities.new_directory_path,
+        blank=True, 
+        null=True
+    )
+    image_thumbnail = ImageSpecField(
+        source='url', 
+        processors=ResizeToFill(800), 
+        format='JPEG', 
+        options={'quality': 50}
+    )
     web_url     = models.URLField(blank=True, null=True)
-    image_thumbnail = ImageSpecField(source='url', processors=ResizeToFill(800), format='JPEG', options={'quality': 50})
     main_image  = models.BooleanField(default=False, help_text='Indicates if this is the main image for the product')
+    # created_on = models.DateField(auto_now=True)
 
     objects = models.Manager()
  
@@ -37,8 +48,8 @@ class Image(models.Model):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse('manage_image', args=[self.pk])
+    # def get_absolute_url(self):
+    #     return reverse('manage_image', args=[self.pk])
 
     def get_image(self):
         if not self.url:
@@ -89,6 +100,8 @@ class Collection(models.Model):
     automatic = models.BooleanField(default=False)
     criterion     = models.ManyToManyField(AutomaticCollectionCriteria, blank=True)
 
+    # show_in_menu = models.BooleanField(default=False)
+
     objects = models.Manager()
     collection_manager = managers.CollectionManager.as_manager()
 
@@ -102,8 +115,16 @@ class Collection(models.Model):
         if self.name:
             self.view_name = self.name.replace(' ', '').lower()
 
+    @property
+    def lower_case_gender(self):
+        return self.gender.lower()
+
     def get_absolute_url(self):
-        return reverse('shop:collection', args=[self.gender.lower(), self.view_name])
+        return reverse('shop:collection', args=[self.lower_case_gender, self.view_name])
+
+    def get_shop_gender_url(self):
+        return reverse('shop:gender', args=[self.lower_case_gender])
+
 
 
 class Variant(models.Model):
@@ -152,6 +173,7 @@ class Product(models.Model):
     )
 
     images          = models.ManyToManyField(Image)
+    # video           = models.FileField(upload_to='products/videos', blank=True, null=True)
     collection      = models.ForeignKey(Collection, on_delete=models.CASCADE, blank=True, null=True)
     variant        = models.ManyToManyField(Variant, blank=True)
 
@@ -241,9 +263,13 @@ class Product(models.Model):
         """Says whether the product is discounted or not"""
         return self.discounted
 
+    @property
+    def lower_case_gender(self):
+        return self.gender.lower()
+
     def get_absolute_url(self):
         return reverse('shop:product', args=[
-            str(self.gender).lower(), self.collection.view_name, self.pk, self.slug
+            self.lower_case_gender, self.collection.view_name, self.pk, self.slug
         ])
 
     def get_preview_url(self):
@@ -260,7 +286,7 @@ class Product(models.Model):
         return self.images.all()
 
     def get_shop_gender_url(self):
-        return reverse('shop:gender', args=[self.gender.lower()])
+        return reverse('shop:gender', args=[self.lower_case_gender])
 
     def get_price(self):
         """Chooses between the pre tax price and the
@@ -297,6 +323,29 @@ def create_slug(instance, sender, created, **kwargs):
 
 @receiver(post_delete, sender=Image)
 def delete_image(sender, instance, **kwargs):
-    if instance.image_url:
-        if os.path.isfile(instance.image_url.path):
-            os.remove(instance.image_url.path)
+    if instance.url:
+        if os.path.isfile(instance.url.path):
+            os.remove(instance.url.path)
+
+
+# @receiver(pre_delete, sender=Product)
+def delete_images(sender, instance, **kwargs):
+    images = instance.images.all()
+    for image in images:
+        if image.url:
+            if os.path.isfile(image.url.path):
+                os.remove(image.url.path)
+
+
+@receiver(pre_save, sender=Image)
+def delete_image_on_update(sender, instance, **kwargs):
+    if instance.pk:
+        try: 
+            old_image = Image.objects.get(pk=instance.pk)
+        except:
+            return False
+        else:
+            new_image = instance.url
+            if old_image and old_image != new_image:
+                if os.path.isfile(old_image.url.path):
+                    os.remove(old_image.url.path)

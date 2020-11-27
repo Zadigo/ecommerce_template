@@ -32,6 +32,31 @@
             </div>
         {% endif %}
 
+        <!-- Breadcrumb -->
+        <div class="row">
+            <div class="col-12">
+                <div class="wow fadeIn">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'shop:home' %}">
+                                    {% trans "Accueil" %}
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="{{ collection.get_shop_gender_url }}">
+                                    {% trans collection.gender %}
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                {{ collection.name }}
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
         <!-- Filter Bar -->
         {% include "includes/products/filterbar.html" %}
 

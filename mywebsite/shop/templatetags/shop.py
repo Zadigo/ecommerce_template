@@ -8,6 +8,9 @@ register = Library()
 
 @register.simple_tag
 def stars(score):
+    if score is None:
+        return ''
+        
     if isinstance(score, float):
         score = int(score)
 
