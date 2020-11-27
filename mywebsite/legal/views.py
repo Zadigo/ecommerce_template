@@ -17,6 +17,11 @@ class CGV(TemplateView):
     http_method_names = ['get']
     template_name = 'pages/sale.html'
 
+    def get_context_data(self):
+        context = super().get_context_data()
+        context.update({'return_link': self.request.GET.get('next')})
+        return context
+
 
 @method_decorator(cache_page(432000 * 60), name='dispatch')
 class CGU(TemplateView):
