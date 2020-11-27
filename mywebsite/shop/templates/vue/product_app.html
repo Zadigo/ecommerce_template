@@ -280,7 +280,7 @@
 
 <script>
     var addtolikes = {
-        props: ["product", "details", "likesdisabled"],
+        props: ["product", "selectiondetails", "likesdisabled"],
         name: "AddToLikes",
         delimiters: ["[[", "]]"],
         template: `
@@ -303,6 +303,18 @@
             }
         },
         methods: {
+            sendanalytics: function () {
+                const {size, color} = this.$props.selectiondetails
+                dataLayer.push({
+                    "event": "ProductLike",
+                    "product": {
+                        "reference": "{{ product.reference }}",
+                        "name": "{{ product.name }}",
+                        "price": "{{ product.get_price }}",
+                        "variant": `${size}/${color}`
+                    }
+                })
+            },
             addproduct: function () {
                 fetch("{% url 'shop:like' product.id %}", {
                     method: "POST",
@@ -315,15 +327,8 @@
                 .then((response) => {
                     response.json().then((data) => {
                         if (data.state) {
-                            dataLayer.push({
-                                "event": "ProductLike",
-                                "product": {
-                                    "reference": "{{ product.reference }}",
-                                    "name": "{{ product.name }}",
-                                    "price": "{{ product.get_price }}"
-                                }
-                            })
                             this.disabled = true
+                            this.sendanalytics()
                         } else {
                             window.location.href = data.redirect_url
                         }
@@ -337,7 +342,7 @@
     }
 
     var buttonactions = {
-        props: ["product", "details", "disabled", "likesdisabled"],
+        props: ["product", "selectiondetails", "disabled", "likesdisabled"],
         name: "ProductActions",
         components: {
             "add-to-likes": addtolikes
@@ -346,14 +351,16 @@
         template: `
         <form onsubmit="return false;" class="d-flex">
             <input v-model.number="quantity" type="number" min="1" max="99"
-                    aria-label="choose quantity" class="form-control" style="width: 100px">
+                    aria-label="Choose quantity" class="form-control" style="width: 100px">
 
             <custom-button @startaction="addtocart" :method="'cart'" 
                     :id="'btn_add_to_cart'" :size="'btn-md'" :disabled="disabled">
                 {% trans "Ajouter au panier" %}
             </custom-button>
 
-            <add-to-likes :product="product" :details="details" :likesdisabled="likesdisabled" />
+            <add-to-likes :product="product" 
+                :selectiondetails="selectiondetails" 
+                        :likesdisabled="likesdisabled" />
         </form>
         `,
         data() {
@@ -369,6 +376,7 @@
         },
         methods: {
             sendanalytics: function() {
+                const {size, color} = this.$props.selectiondetails
                 dataLayer.push({
                     "event": "AddToCart",
                     "ecommerce": {
@@ -380,7 +388,7 @@
                                 "price": "{{ product.get_price }}",
                                 "brand": "Nawoka",
                                 "category": "{{ product.collection.gender }}/{{ product.collection.name }}",
-                                "variant": "{{ product.images.first.variant }}",
+                                "variant": `${size}/${color}`,
                                 "position": 0,
                                 "quantity": this.quantity || 1
                             }]
@@ -394,8 +402,8 @@
 
                 formdata.append("quantity", this.quantity)
 
-                _.forEach(Object.keys(this.$props.details), (key) => {
-                    formdata.append(key, this.$props.details[key])
+                _.forEach(Object.keys(this.$props.selectiondetails), (key) => {
+                    formdata.append(key, this.$props.selectiondetails[key])
                 })
 
                 fetch(window.location.href, {
@@ -411,6 +419,7 @@
                         if (!data.state) {
                             window.location.reload()
                         } else {
+                            this.sendanalytics()
                             self.$emit("addtocart")
                         }
                     })
@@ -433,19 +442,20 @@
         data() {
             return {
                 cliked: false,
-                details: {
+                selectiondetails: {
                     color: null,
                     size: null
                 },
-                likesdisabled: Boolean("{{ has_liked }}")
+                likesdisabled: Boolean("{{ has_liked }}"),
             }
         },
         beforeMount() {
-            this.details.color = _.first(this.$props.colors).name
+            this.selectiondetails.color = _.first(this.$props.colors).name
+            this.selectiondetails.size = _.first(this.$props.sizes).name
         },
         methods: {
             doselection: function (method, item) {
-                this.details[method] = item
+                this.selectiondetails[method] = item
             },
             cartbuttonclicked: function () {
                 this.clicked = true
@@ -504,9 +514,11 @@
             var variants = product.variant
             if (variants.length > 0) {
                 _.forEach(variants, (variant) => {
-                    this.$data.sizes.push(
-                        { id: variant.pk, name: variant.name, value: variant.name }
-                    )
+                    if (variant.in_stock | variant.active) {
+                        this.$data.sizes.push(
+                            { id: variant.pk, name: variant.name, value: variant.name }
+                        )
+                    }
                 })
             } else {
                 this.sizes = [
