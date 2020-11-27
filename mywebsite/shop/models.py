@@ -338,7 +338,7 @@ def delete_image(sender, instance, **kwargs):
             if os.path.isfile(instance.url.path):
                 os.remove(instance.url.path)
     else:
-        pass
+        instance.url.delete(save=False)
 
 
 # @receiver(pre_delete, sender=Product)
@@ -370,4 +370,4 @@ def delete_image_on_update(sender, instance, **kwargs):
                     if os.path.isfile(old_image.url.path):
                         os.remove(old_image.url.path)
     else:
-        pass
+        instance.url.delete(save=False)

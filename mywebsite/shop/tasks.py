@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 import time
 
 from celery import Celery, beat, shared_task
@@ -26,7 +28,7 @@ def add_to_collection():
     Add a product to a collection dynamically
     after creation based on certain conditions
     """
-    pass
+    return [1, 4, 5, 2]
 
 
 @shared_task
