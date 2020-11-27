@@ -70,6 +70,7 @@ services:
       - ./var/nginx_error.log:/etc/nginx/logs/error.log
       - ./var/nginx_access.log:/etc/nginx/logs/access.log
       - ./var/certbot/conf:/etc/letsencrypt/
+      - ~/../etc/apache2/.htpasswd:/etc/apache2/.htpasswd:ro
     # - ./mywebsite/allstatic/:/static/allstatic/:ro
     networks:
       - mywebsite_network
@@ -131,7 +132,7 @@ services:
   celery:
     build: ./mywebsite
     container_name: celery
-    command: celery worker -A mywebsite.celery_tasks.app -l info -f /app/mywebsite/celery.log
+    command: celery --app mywebsite worker -l info -f /app/mywebsite/celery.log
     env_file:
       - ./docker/environment/env_prod.env
       - ./docker/environment/general.env
@@ -146,7 +147,7 @@ services:
   beat:
     build: ./mywebsite
     container_name: celerybeat
-    command: celery beat -A mywebsite.celery_tasks.app -l info -f /app/mywebsite/celery_beat.log
+    command: celery --app mywebsite.celery beat -l info -f /app/mywebsite/celery_beat.log
     env_file:
       - ./docker/environment/env_prod.env
       - ./docker/environment/general.env
@@ -161,15 +162,15 @@ services:
   flower:
     build: ./mywebsite
     container_name: flower
-    command: flower -A mywebsite --port=5555 --broker=redis://redis:6379/0 --basic_auth=mywebsite:mywebsite-password
+    command: flower -A mywebsite --port=5555 --broker=redis://redis:6379/0 --basic_auth=mywebsite:mywebsite-password --log_file_prefix=var/flower.log
     env_file:
       - ./docker/environment/env_prod.env
       - ./docker/environment/general.env
     ports:
-        - 5555:5555
+      - 5555:5555
     depends_on:
-        - celery
-        - beat
+      - celery
+      - beat
     networks:
       - mywebsite_network
 
@@ -180,5 +181,4 @@ volumes:
 
 networks:
   mywebsite_network:
-    # name: princess_ecommerce
     driver: bridge
