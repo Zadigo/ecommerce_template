@@ -24,7 +24,9 @@ Once the `Analytics` database is created, you can simply store your tags and the
 ```
 {% facebook "..." %}
 
+# Google Analytics, Google Optimize
 
+{% google_analytics "UA-XXXX" "UA-XXXX" %}
 ```
 
 # Support / Development

@@ -14,28 +14,24 @@ from django.utils.safestring import mark_safe
 
 register = Library()
 
-# def get_analytics_from_database(user):
-#     analytics_values = cache.get('analytics_values', None)
-#     if analytics_values is None:
-#         queryset = Analytic.objects.values(user=user)
-#         cache.set('analytics_values', queryset)
-#         analytics_values = queryset
-#     return analytics_values
-
-
 class SimpleAnalyticNode(Node):
-    def __init__(self, tags):
+    def __init__(self, tags, template=None):
         self.tags = tags
+        self.template = template
 
     def render(self, context):
         extra_context = {}
-        tracking_code = self.tags.get('tracking_code')
-        extra_context = {
-            'tracking_code': tracking_code.resolve(context)
-        }
-        template = loader.get_template('analytics/clarity.html')
-        content = template.render(extra_context)
-        return content
+        tracking_code = self.tags.get('tag')
+
+        if tracking_code is not None:
+            extra_context = {
+                'tracking_code': tracking_code.resolve(context)
+            }
+            template = loader.get_template(self.template)
+            content = template.render(extra_context)
+            return content
+        else:
+            return ''
 
 
 class GoogleAnalyticsNode(Node):
@@ -83,7 +79,7 @@ def clarity(parser, token):
     tags = token_kwargs(
         remaining_bits, parser, support_legacy=False
     )
-    return SimpleAnalyticNode(tags)
+    return SimpleAnalyticNode(tags, template='analytics/clarity.html')
 
 
 @register.inclusion_tag('analytics/facebook.html', takes_context=True)
@@ -111,23 +107,17 @@ def google_analytics(*args):
 
 @register.inclusion_tag('analytics/optimize_anti_flicker.html')
 def google_optimize_anti_flicker(tag):
-    return {
-        'optimize_tag': tag
-    }
+    return {'optimize_tag': tag}
 
 
 @register.inclusion_tag('analytics/remarketing.html')
 def google_remarketing(remarketing_tag):
-    return {
-        'remarketing_tag': remarketing_tag
-    }
+    return {'remarketing_tag': remarketing_tag}
 
 
 @register.inclusion_tag('analytics/tag_manager.html')
 def google_tag_manager(gtm_tag):
-    return {
-        'gtm_tag': gtm_tag
-    }
+    return {'gtm_tag': gtm_tag}
 
 
 @register.inclusion_tag('analytics/pinterest.html')
@@ -139,13 +129,9 @@ def pinterest(verification_code):
 
 @register.inclusion_tag('analytics/mailchimp.html')
 def mailchimp(mailchimp_link):
-    return {
-        'mailchimp_link': mailchimp_link
-    }
+    return {'mailchimp_link': mailchimp_link}
 
 
 @register.inclusion_tag('analytics/google_no_script.html')
 def google_no_script(gtm_tag):
-    return {
-        'gtm_tag': gtm_tag
-    }
+    return {'gtm_tag': gtm_tag}
