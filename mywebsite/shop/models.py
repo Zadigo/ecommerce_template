@@ -23,7 +23,7 @@ class Image(models.Model):
     variant = models.CharField(max_length=30, default='Noir')
     url = models.ImageField(
         verbose_name='Product image', 
-        upload_to=utilities.new_directory_path,
+        upload_to=utilities.images_directory_path,
         blank=True, 
         null=True
     )
@@ -35,7 +35,7 @@ class Image(models.Model):
     )
     web_url     = models.URLField(blank=True, null=True)
     main_image  = models.BooleanField(default=False, help_text='Indicates if this is the main image for the product')
-    # created_on = models.DateField(auto_now=True)
+    created_on = models.DateField(auto_now=True)
 
     objects = models.Manager()
  
@@ -100,7 +100,7 @@ class Collection(models.Model):
     automatic = models.BooleanField(default=False)
     criterion     = models.ManyToManyField(AutomaticCollectionCriteria, blank=True)
 
-    # show_in_menu = models.BooleanField(default=False)
+    show_in_menu = models.BooleanField(default=False)
 
     objects = models.Manager()
     collection_manager = managers.CollectionManager.as_manager()
@@ -172,8 +172,12 @@ class Product(models.Model):
         default=choices.GenderChoices.WOMEN
     )
 
-    images          = models.ManyToManyField(Image)
-    # video           = models.FileField(upload_to='products/videos', blank=True, null=True)
+    images = models.ManyToManyField(Image)
+    video = models.FileField(
+        upload_to=utilities.videos_directory_path,
+        blank=True, 
+        null=True
+    )
     collection      = models.ForeignKey(Collection, on_delete=models.CASCADE, blank=True, null=True)
     variant        = models.ManyToManyField(Variant, blank=True)
 
@@ -203,7 +207,7 @@ class Product(models.Model):
 
     slug        = models.SlugField()
     
-    # monitor_quantity = models.BooleanField(default=False)
+    monitor_quantity = models.BooleanField(default=False)
     to_be_published_on = models.DateField(default=timezone.now, blank=True)
     last_modified   = models.DateField(auto_now=True)
     created_on = models.DateField(auto_now_add=True)

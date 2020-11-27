@@ -9,10 +9,17 @@ from hashlib import md5
 from django.core import exceptions
 
 
-def new_directory_path(instance, filename):
+def images_directory_path(instance, filename):
     _, extension = filename.split('.')
     new_file_name = f'{secrets.token_hex(5)}.{extension}'
     return f'products/images/{new_file_name}'
+
+
+def videos_directory_path(instance, filename):
+    _, extension = filename.split('.')
+    new_file_name = f'{secrets.token_hex(5)}.{extension}'
+    return f'products/videos/{new_file_name}'
+
 
 
 def create_reference(n=5, append_prefix=True):
