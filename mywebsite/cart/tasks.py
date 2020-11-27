@@ -25,13 +25,13 @@ def purchase_complete_email(request, to_email, **data):
 
 
 @shared_task
-def clean_carts(fake=None):
+def clean_carts():
     """
     Delete carts that are older than x days
     """
     carts = models.Cart.cart_manager.over_thirtee_days()
-    # if carts.exists():
-    #     carts.delete()
+    if carts.exists():
+        carts.delete()
     return list(carts.all().values('id'))
 
 
