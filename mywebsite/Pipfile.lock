@@ -47,10 +47,10 @@
         },
         "botocore": {
             "hashes": [
-                "sha256:4e488351f399501a78b16e1dc466e505ccf63897c936030c56c6d3c37e57939c",
-                "sha256:ccaf3979590b72625b3699d93dabf48f350f9a3304c127fc6830e8ac842b0d96"
+                "sha256:034dadecf19293a15da40272073093049519575df2b438954e2da0ffb7b8279f",
+                "sha256:88334b0a80416d3b662bba2067cc48afe9fd1515c3b8413d592a1933e41ce55a"
             ],
-            "version": "==1.19.25"
+            "version": "==1.19.26"
         },
         "celery": {
             "hashes": [
@@ -209,11 +209,11 @@
         },
         "django-extensions": {
             "hashes": [
-                "sha256:6809c89ca952f0e08d4e0766bc0101dfaf508d7649aced1180c091d737046ea7",
-                "sha256:dc663652ac9460fd06580a973576820430c6d428720e874ae46b041fa63e0efa"
+                "sha256:7cd002495ff0a0e5eb6cdd6be759600905b4e4079232ea27618fc46bdd853651",
+                "sha256:c7f88625a53f631745d4f2bef9ec4dcb999ed59476393bdbbe99db8596778846"
             ],
             "index": "pypi",
-            "version": "==3.0.9"
+            "version": "==3.1.0"
         },
         "django-imagekit": {
             "hashes": [
@@ -248,10 +248,10 @@
         },
         "django-timezone-field": {
             "hashes": [
-                "sha256:758b7d41084e9ea2e89e59eb616e9b6326e6fbbf9d14b6ef062d624fe8cc6246",
-                "sha256:7e3620fe2211c2d372fad54db8f86ff884098d018d56fda4dca5e64929e05ffc"
+                "sha256:068dc2c9b11c2230e126f511a515609d46f8cc49278b293e7536be07997fe892",
+                "sha256:b5b587aabed8db66eb3453691522164915c1aa1b326d8ddeadc8832a8580faeb"
             ],
-            "version": "==4.0"
+            "version": "==4.1.1"
         },
         "djangorestframework": {
             "hashes": [
