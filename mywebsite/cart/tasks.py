@@ -14,13 +14,15 @@ def purchase_complete_email(request, to_email, **data):
     Send an email to a customer after
     purchase
     """
-    time.sleep(3)
-    send_mail(
-        'Testing celery',
-        'Hey we are just testing',
-        'contact.mywebsite@gmail.com',
-        ['wiyeni8357@icanav.net']
-    )
+    try:
+        send_mail(
+            'Testing celery',
+            'Hey we are just testing',
+            'contact.mywebsite@gmail.com',
+            ['hixexo6518@xhypm.com']
+        )
+    except:
+        return False
     return True
 
 
@@ -42,3 +44,8 @@ def automatic_archive():
     when they have been marked as fulfilled
     """
     pass
+
+
+@shared_task
+def test_task(request):
+    return [1, 2, 3]
