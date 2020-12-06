@@ -135,3 +135,8 @@ def mailchimp(mailchimp_link):
 @register.inclusion_tag('analytics/google_no_script.html')
 def google_no_script(gtm_tag):
     return {'gtm_tag': gtm_tag}
+
+
+@register.inclusion_tag('analytics/_google_analytics.html')
+def google_analytics_4(tag):
+    return {'tag': tag}

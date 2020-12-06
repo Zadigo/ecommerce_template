@@ -63,7 +63,8 @@ class BaseCartView(MultipleObjectTemplateResponseMixin, BaseListView):
 
 
 class CheckoutView(BaseCartView):
-    template_name = 'pages/cart.html'
+    # template_name = 'pages/cart.html'
+    template_name = 'pages/_cart.html'
 
 
 @method_decorator(cache_control(private=True), name='dispatch')

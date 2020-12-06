@@ -1,0 +1,179 @@
+{% extends "layouts/base_cart.html" %}
+{% load i18n static nodes_plus %}
+
+{% block container %}
+    <section class="section mt-6">
+        <div class="row wow fadeIn">
+            <div class="col-12">
+                <div class="card">
+                    <div class="row no-gutters">
+                        <aside class="col-md-9">
+                            {% for product in cart_products %}
+                                <article class="card-body border-bottom" id="cart-product">
+                                    <div class="row">
+                                        <div class="col-md-7">
+                                            <figure class="itemside">
+                                                <div class="aside">
+                                                    <img src="{{ product.product.get_main_image_url }}" class="border img-sm">
+                                                </div>
+    
+                                                <figcaption class="info">
+                                                    <a href="{{ product.product.get_absolute_url }}" class="title">
+                                                        {{ product.product.name }} ({{ product.size}} / {{ product.color }})
+                                                    </a>
+                                                    
+                                                    {% if product.product.discounted %}
+                                                        <strong class="font-weight-bold text-red">
+                                                            {{ product.product.discounted_price|price_to_text:"€" }}
+                                                        </strong>
+                                                    {% else %}    
+                                                        <strong class="font-weight-bold">
+                                                            {{ product.product.price_pre_tax|price_to_text:"€" }}
+                                                        </strong>
+                                                    {% endif %}
+    
+                                                    <div>
+                                                        <a href="#" class="btn-link mr-2">
+                                                            {% trans "Sauvegarder" %}
+                                                        </a>
+    
+                                                        <a href="{% url 'cart:delete' product.id %}" 
+                                                                class="btn-link text-danger" role="link" 
+                                                                    aria-label="{% trans 'Supprimer le produit du panier' %}">
+                                                            {% trans "Supprimer" %}
+                                                        </a>
+                                                    </div>
+                                                </figcaption>
+                                            </figure>
+                                        </div>
+
+                                        <actions-component @doaction="alterquantity" :key="{{ forloop.counter0 }}" :quantity.number="{{ product.quantity }}" :productid.number="{{ product.id }}" :addurl="'{% url 'cart:alter_quantity' product.id 'add' %}'" :reduceurl="'{% url 'cart:alter_quantity' product.id 'reduce' %}'" inline-template>
+                                            <div class="col-md-5 text-md-right text-right">
+                                                <div class="input-group input-spinner">
+                                                    <div class="input-group-prepend">
+                                                        <button @click="doaction('add')" class="btn btn-light" type="button" id="button-plus">
+                                                            <i class="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+        
+                                                    <input type="text" class="form-control" :value="itemquantity">
+        
+                                                    <div class="input-group-append">
+                                                        <button @click="doaction('reduce')" class="btn btn-light" type="button" id="button-minus">
+                                                            <i class="fa fa-minus"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </actions-component>
+                                    </div>
+                                </article>                            
+                            {% endfor %}
+                        </aside>
+                        
+                        <aside class="col-md-3 border-left">
+                            <div class="card-body">
+                                <dl class="dlist-align">
+                                    <dt>Total price:</dt>
+                                    <dd class="text-right">
+                                        {{ cart_total|price_to_text }}
+                                    </dd>
+                                </dl>
+                                <dl class="dlist-align">
+                                    <dt>Discount:</dt>
+                                    <dd class="text-right text-danger">- 0.00€</dd>
+                                </dl>
+                                <dl class="dlist-align">
+                                    <dt>Total:</dt>
+                                    <dd class="text-right text-dark b">
+                                        <strong>{{ cart_total|price_to_text }}</strong>
+                                    </dd>
+                                </dl>
+                                
+                                <hr>
+
+                                <a href="{% url 'cart:shipment' %}" class="btn btn-primary btn-block" id="btn-proceed-to-shipment">
+                                    {% trans "Continuer" %}
+                                </a>
+
+                                <a href="#" class="btn btn-light btn-block mt-3" id="btn-continue-shopping">
+                                    {% trans "Continuer mon shopping" %}
+                                </a>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    <script>
+        var actionscomponent = {
+            props: {
+                quantity: {
+                    type: Number,
+                    required: true
+                },
+                addurl: {
+                    type: String
+                },
+                reduceurl: {
+                    type: String
+                }
+            },
+            name: "CartAction",
+            data() {
+                return {
+                    itemquantity: 0
+                }
+            },
+            beforeMount() {
+                this.itemquantity = this.$props.quantity
+            },
+            methods: {
+                doaction: function (method) {
+                    if (method === "add") {
+                        this.itemquantity = this.itemquantity + 1
+                        this.$emit("doaction", this.itemquantity, this.$props.productid, this.$props.addurl)
+                    }
+                    if (method === "reduce") {
+                        var value = this.itemquantity - 1
+                        if (value <= 0) {
+                            this.itemquantity = 0
+                        }
+                        this.$emit("doaction", this.itemquantity, this.$props.productid, this.$props.reduceurl)
+                    }
+                }
+            }
+        }
+
+        var cart = new Vue({
+            el: "#vue_app",
+            name: "Cart",
+            components: {
+                "actions-component": actionscomponent
+            },
+            methods: {
+                alterquantity: function (method, value, url) {
+                    var data = new FormData()
+                    data.append("quantity", value)
+
+                    fetch(url, {
+                        method: "GET",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                        },
+                        credentials: "same-origin"
+                        // body: data
+                    })
+                    .then((response) => {
+                        window.location.reload()
+                        console.log(response)
+                    })
+                }
+            }
+        })
+    </script>
+{% endblock %}

@@ -27,3 +27,75 @@
 section {
   height: 100%;
 }
+
+
+
+.img-sm {
+  width: auto;
+  height: 80px;
+}
+
+.input-group-append {
+  margin-left: -1px;
+}
+
+#button-plus,
+#button-minus {
+  width: 42px;
+  text-align: center;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  margin: 0;
+  box-shadow: none;
+}
+
+.itemside {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.itemside .title {
+  display: block;
+  margin-bottom: 5px;
+  color: #212529;
+}
+
+.itemside .info {
+  padding-left: 15px;
+  padding-right: 7px;
+}
+
+.itemside a.title:hover {
+    color: #3167eb;
+}
+
+#cart-product .form-control {
+    text-align: center;
+    max-width: 46px;
+    font-weight: bold;
+    flex-basis: 46px;
+    border-color: #e4e4e4;
+    flex-grow: 0;
+}
+
+#cart-product #button-plus,
+#cart-product #button-minus {
+  border-radius: 0.37rem;
+}
+
+.dlist-align {
+    display: flex;
+}
+
+[class*=dlist-] {
+    margin-bottom: 5px;
+}
+
+.dlist-align dd {
+    flex-grow: 1;
+}
+
+[class*=dlist-] dd {
+    margin-bottom: 0;
+}

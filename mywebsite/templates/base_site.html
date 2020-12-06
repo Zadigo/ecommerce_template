@@ -8,24 +8,30 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
     <link rel="stylesheet" href="{% static 'nav.css' %}">
     <link rel="stylesheet" href="{% static 'css/dropdowns.css' %}">
+
+    <!-- Font Awesome kit -->
+    {% include "project_components/font_awesome_kit.html" with name="" %}
 {% endblock %}
 
 {% block analytics %}
     <!-- Clarity -->
-    {% clarity tag="342254" %}
+    {% clarity tag="40lq6t5uns" %}
     <!-- Google Tag Manager -->
-    {% google_tag_manager "GTM-XXX" %}
+    {# {% google_tag_manager "GTM-XXX" %} #}
     <!-- Google Analytics -->
-    {% google_analytics "UA-XXX" "UA-XXX" %}
+    {# {% google_analytics "UA-XXX" "UA-XXX" %} #}
     <!-- Facebook -->
-    {% facebook "343545345322423" %}
+    {# {% facebook "343545345322423" %} #}
+
+    <!-- NEW GOOGLE ANALYTICS -->
+    {% google_analytics_4 "G-0D9SQRKB71" %}
 {% endblock %}
 
 {% block extra_analytics %}
     <!-- Google Optimize -->
     {# {% google_optimize_anti_flicker "GTM-XXX" %} #}
     <!-- Google Analytics -->
-    {% google_no_script "GTM-XXX" %}
+    {# {% google_no_script "GTM-XXX" %} #}
     <!-- Facebook Pixels -->
     {% block facebook_event %}{% endblock %}
 {% endblock %}
