@@ -33,7 +33,7 @@
                                                     {% endif %}
     
                                                     <div>
-                                                        <a href="#" class="btn-link mr-2">
+                                                        <a href="#" class="btn-link mr-2 d-none">
                                                             {% trans "Sauvegarder" %}
                                                         </a>
     
@@ -92,11 +92,11 @@
                                 
                                 <hr>
 
-                                <a href="{% url 'cart:shipment' %}" class="btn btn-primary btn-block" id="btn-proceed-to-shipment">
+                                <a href="{% url 'cart:shipment' %}" class="btn btn-primary btn-block" id="link-proceed-to-shipment">
                                     {% trans "Continuer" %}
                                 </a>
 
-                                <a href="#" class="btn btn-light btn-block mt-3" id="btn-continue-shopping">
+                                <a href="{% url 'shop:home' %}" class="btn btn-light btn-block mt-3" id="link-continue-shopping">
                                     {% trans "Continuer mon shopping" %}
                                 </a>
                             </div>
