@@ -1,4 +1,4 @@
-{% extends "pages/lists/base_lists.html" %}
+{% extends "layouts/lists.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Produits" %}{% endblock %}
@@ -19,9 +19,9 @@
             
             <!-- MODALS -->
             {% comment "Modal for importing a CSV file" %}
-                {% include "components/others/modals/import_csv.html" %}
+                {% include "includes/modals/import_csv.html" %}
             {% endcomment %}
-            {% include "components/others/modals/export_csv.html" %}
+            {% include "includes/modals/export_csv.html" %}
         {% endif %}        
     </div>
 

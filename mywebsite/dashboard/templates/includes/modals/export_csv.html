@@ -1,13 +1,17 @@
-{% extends "./base_middle_modal.html" %}
+{% extends "layouts/modal.html" %}
 {% load i18n %}
 
-{% block id %}export_csv_modal{% endblock %}
+{% block modal_id %}export_csv_modal{% endblock %}
 
-{% block title %}
+{% block modal_title %}
     {% trans "Exporter des produits" %}
 {% endblock %}
 
-{% block body %}
+{% block modal_class %}
+    modal-md modal-notify modal-info
+{% endblock %}
+
+{% block modal_body %}
     <export-csv-component inline-template>
         <div>
             <div class="form-row">

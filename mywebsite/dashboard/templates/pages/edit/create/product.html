@@ -1,4 +1,4 @@
-{% extends "pages/edit/base_edit.html" %}
+{% extends "layouts/edit.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Création d'un nouveau produit" %}{% endblock %}
@@ -27,7 +27,7 @@
 	{% include "components/edit/product/variants.html" %}
 
 	<!-- MODALS -->
-	{% include "components/others/modals/margin.html" %}
+	{% include "includes/modals/margin.html" %}
 {% endblock %}
 
 {% block right_content %}

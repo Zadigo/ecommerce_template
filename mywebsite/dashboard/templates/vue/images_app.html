@@ -1,23 +1,15 @@
-<script>
-    var filtercomponent = {
-        template: `
-        <select class="custom-select" name="" class="d-none" id="">
-            <option value="something">
-                Something    
-            </option>
-        </select>
-        `
-    }
+{% load i18n %}
 
+<script>
     var searchcomponent = {
         template: `
         <div class='form-group'>
-            <input v-model="words" @keyup="filterimages" class="form-control" type="text" id="search">
+            <input v-model="words" @keyup="filterimages" class="form-control" type="text" id="search" placeholder="{% trans 'Recherccher les images' %}">
         </div>
         `,
         data() {
             return {
-                words: "",
+                words: undefined,
             }
         },
         methods: {
@@ -63,12 +55,11 @@
     }
 
     var imagesapp = new Vue({
-        el: "#vue_images_app",
+        el: "#vue_app",
         name: "Images",
         delimiters: ["[[", "]]"],
         components: {
             "images-component": imagescomponent,
-            "filter-input-field": filtercomponent,
             "search-input-field": searchcomponent
         },
         data() {
@@ -76,18 +67,23 @@
                 images: [],
                 search: "",
 
-                newfromlocal: true
+                newfromlocal: true,
+                loading: true
             }
+        },
+        created() {
+            this.loading = false
         },
         beforeMount() {
             try {
-                var allimages = images
-                allimages.forEach((image) => {
+                const allimages = images
+                _.forEach(allimages, (image) => {
                     image["deleted"] = false
                 })                
                 this.$data.images = allimages
             } catch (error) {
                 // PASS
+                console.error(error)
             }
         },
         computed: {

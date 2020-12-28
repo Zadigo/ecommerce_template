@@ -1,13 +1,19 @@
-{% extends "components/others/modals/base_bottom_modal.html" %}
+{% extends "layouts/modal.html" %}
 {% load i18n cache %}
 
-{% block id %}associate_new_image{% endblock %}
+{% block modal_id %}associate_new_image{% endblock %}
 
-{% block title %}
+{% block modal_title %}
     {% trans "Associer des images" %}
 {% endblock %}
 
-{% block body %}
+{% block modal_fade %}bottom{% endblock %}
+
+{% block modal_class %}
+    modal-full-height modal-bottom modal-notify modal-danger
+{% endblock %}
+
+{% block modal_body %}
     {% comment "Django image iteration" %}
         <div class="row">
             {% for image in images %}
@@ -32,6 +38,11 @@
     {% endcache %}
 {% endblock %}
 
-{% block action_button %}
-    <modal-confirm-button @associateimages="confirmassociation" :hasselection="hasselection" />
+{% block modal_footer %}
+    <div class="modal-footer">
+        <a role="button" class="btn btn-outline-danger waves-effect" data-dismiss="modal">
+            {% trans "Annuler" %}
+        </a>
+        <modal-confirm-button @associateimages="confirmassociation" :hasselection="hasselection" />
+    </div>
 {% endblock %}

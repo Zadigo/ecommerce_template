@@ -245,9 +245,8 @@ class ImagesView(GroupAuthorizationMixin, generic.ListView):
 
     @atomic_transactions.atomic
     def post(self, request, **kwargs):
-        authorized_methods = [
-            'from-url', 'from-local'
-        ]
+        authorized_methods = ['from-url', 'from-local']
+        message = {}
 
         method = request.POST.get('method')
 
@@ -284,8 +283,13 @@ class ImagesView(GroupAuthorizationMixin, generic.ListView):
         return redirect(reverse('dashboard:images:home'))
 
     def get_context_data(self, **kwargs):
+        # NOTE: Take out the pagination and
+        # rely on the front end to load more
+        # images as the user scrolls down
         queryset = super().get_queryset()
         context = super().get_context_data(**kwargs)
+
+        context['test_images'] = json.dumps(str(queryset.values('id', 'name', 'url')))
         
         paginator = Paginator(queryset, self.paginate_by)
         page = self.request.GET.get('page')

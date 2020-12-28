@@ -54,8 +54,8 @@ class AbstractCart(models.Model):
         return reverse('cart:alter_quantity', args=['reduce'])
 
     def get_total(self):
-        if self.price_incl_taxes and self.quantity:
-            return self.price_incl_taxes * self.quantity
+        if self.price_post_tax and self.quantity:
+            return self.price_post_tax * self.quantity
         return 0
 
     def has_orders(self):

@@ -1,0 +1,16 @@
+{% extends "layouts/modal.html" %}
+{% load i18n %}
+
+{% block modal_title %}{% trans "Calculer une marge commerciale" %}{% endblock %}
+
+{% block modal_id %}margin_modal{% endblock %}
+
+{% block modal_class %}
+	modal-md modal-info
+{% endblock %}
+
+{% block body %}
+	<div class="modal-body">
+		<div id="calculate_margin"></div>
+	</div>
+{% endblock %}

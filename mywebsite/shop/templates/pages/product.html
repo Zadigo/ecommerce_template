@@ -45,72 +45,78 @@
 
         <div class="row wow fadeIn">
             {% if not is_mobile %}
-                <!-- Side images -->
-                <div class="col-md-1">
-                    <side-images @showimage="display" :images="images" inline-template>
-                        <div class="side-images">
-                            <img @click="showimage(image, index)" v-for="(image, index) in images"
-                                :key="image.pk" :src="image.url" :class="{'mt-2': index !== 0}" :alt="image.name"
-                                    :class="{'selected': index===selectedimage}" class="img-fluid" role="img" aria-label="{% trans 'Other product images' %}">
-                        </div>
-                    </side-images>
-                </div>                
-                
-                <!-- Main image -->
-                <div class="col-md-6 mb-4">
-                    <main-image :image="selectedimage" inline-template>
-                        <img :src="image.url" class="img-fluid" alt="{{ product.slug }}" 
-                            role="img" aria-label="{% trans 'Product preview' %}">
-                    </main-image>
-                </div>
-            {% else %}
-                <div class="col-md-6 mb-4 p-0">
-                    <mobile-slider :images="images" inline-template>
-                        <div class="interface" style="position: relative;">
-                            <div class="navigation d-flex flex-direction-row justify-content-between" style="position: absolute;width: 90%;top: 40%;left: 4%;">
-                                <div @click="gotoprevious()" class="left">
-                                    <i class="fa fa-arrow-left" role="button" aria-label="previous image"></i>
-                                </div>
-                                
-                                <div @click="gotonext()" class="right">
-                                    <i class="fa fa-arrow-right" role="button" aria-label="next image"></i>
-                                </div>
+                {% cache 1200 "mobile_product" product.name  %}
+                    <!-- Side images -->
+                    <div class="col-md-1">
+                        <side-images @showimage="display" :images="images" inline-template>
+                            <div class="side-images">
+                                <img @click="showimage(image, index)" v-for="(image, index) in images"
+                                    :key="image.pk" :src="image.url" :class="{'mt-2': index !== 0}" :alt="image.name"
+                                        :class="{'selected': index===selectedimage}" class="img-fluid" role="img" aria-label="{% trans 'Other product images' %}">
                             </div>
+                        </side-images>
+                    </div>                
+                    
+                    <!-- Main image -->
+                    <div class="col-md-6 mb-4">
+                        <main-image :image="selectedimage" inline-template>
+                            <img :src="image.url" class="img-fluid" alt="{{ product.slug }}" 
+                                role="img" aria-label="{% trans 'Product preview' %}">
+                        </main-image>
+                    </div>                    
+                {% endcache %}
+            {% else %}
+                {% cache 1200 "desktop_product" product.name %}
+                    <div class="col-12 mb-4 p-0">
+                        <mobile-slider :images="images" inline-template>
+                            <div class="interface" style="position: relative;">
+                                <div class="navigation d-flex flex-direction-row justify-content-between" style="position: absolute;width: 90%;top: 40%;left: 4%;">
+                                    <div @click="gotoprevious()" class="left">
+                                        <i class="fa fa-arrow-left" role="button" aria-label="previous image"></i>
+                                    </div>
+                                    
+                                    <div @click="gotonext()" class="right">
+                                        <i class="fa fa-arrow-right" role="button" aria-label="next image"></i>
+                                    </div>
+                                </div>
 
-                            <transition :name="'mobile-image-transitions'" mode="out-in">
-                                <component :image="currentimage" :cursor="currentslide" :is="slides[cursor]" />
-                            </transition>
-                        </div>
-                    </mobile-slider>
-                </div>
+                                <transition :name="'mobile-image-transitions'" mode="out-in">
+                                    <component :image="currentimage" :cursor="currentslide" :is="slides[cursor]" />
+                                </transition>
+                            </div>
+                        </mobile-slider>
+                    </div>                    
+                {% endcache %}
             {% endif %}                    
 
             <div class="col-sm-6 col-md-5 mb-4">
                 <div class="p-sm-2 p-lg-4">
                     {# {% include "includes/product/badges.html" %} #}
                     
-                    <!-- Title -->
-                    <h1 class="product-title font-weight-bold" aria-label="{{ product.name }}">
-                        {{ product.name }}
-                    </h1>
+                    {% cache 600 "product_details" product.name %}
+                        <!-- Title -->
+                        <h1 class="product-title font-weight-bold" aria-label="{{ product.name }}">
+                            {{ product.name }}
+                        </h1>
 
-                    <!-- Price -->
-                    <p class="lead">
-                        {% if product.discounted %}
-                            <span class="mr-1">
-                                <del>{{ product.price_pre_tax|price_to_text }}</del>
-                            </span>                            
-                        {% endif %}
+                        <!-- Price -->
+                        <p class="lead">
+                            {% if product.discounted %}
+                                <span class="mr-1">
+                                    <del>{{ product.price_pre_tax|price_to_text }}</del>
+                                </span>                            
+                            {% endif %}
 
-                        <span {% if product.discounted %}class="red-text darken-4 font-weight-bold"{% endif %}>
-                            {{ product.get_price|price_to_text }}
-                        </span>
-                    </p>
-                    
-                    {% if reviews %}
-                        <!-- Stars -->
-                        {% include "includes/product/review_stars.html" %}
-                    {% endif %}
+                            <span {% if product.discounted %}class="red-text darken-4 font-weight-bold"{% endif %}>
+                                {{ product.get_price|price_to_text }}
+                            </span>
+                        </p>
+                        
+                        {% if reviews %}
+                            <!-- Stars -->
+                            {% include "includes/product/review_stars.html" %}
+                        {% endif %}                        
+                    {% endcache %}
 
                     <!-- Delivery -->
                     <div class="delivery mt-3 mb-3">
@@ -139,9 +145,15 @@
                 <!-- Share -->
                 <div class="col-md-6">
                     <div class="p-sm-1 p-0 pl-lg-4 pr-lg-4">
-                        <a href="{% facebook request.build_absolute_uri %}" class="mr-3" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                        <a href="{% twitter request.build_absolute_uri product.description 'https://mywebsite.fr' %}" class="mr-3" target="_blank"><i class="fab fa-twitter"></i></a>
-                        <a href="{% pinterest request.build_absolute_uri product.description product.get_main_image_url %}" target="_blank"><i class="fab fa-pinterest"></i></a>
+                        <a href="{% facebook request.build_absolute_uri %}" class="mr-3" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="{% twitter request.build_absolute_uri product.description 'https://mywebsite.fr' %}" class="mr-3" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="{% pinterest request.build_absolute_uri product.description product.get_main_image_url %}" target="_blank">
+                            <i class="fab fa-pinterest"></i>
+                        </a>
                     </div>
                 </div>
             </div>

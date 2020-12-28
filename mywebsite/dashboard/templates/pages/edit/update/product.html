@@ -1,4 +1,4 @@
-{% extends "pages/edit/base_edit.html" %}
+{% extends "layouts/edit.html" %}
 {% load i18n %}
 
 {% block title %}{% trans "Mise à jour de" %} {{ product.name }}{% endblock %}
@@ -50,39 +50,39 @@
 			</div>
 		</div>
 
-		<!-- ACTIONS -->
+		<!-- Actions -->
 		{% include "components/edit/actions/secondary.html" %}
 	</div>
 {% endblock %}
 
 {% block left_content %}
-	<!-- BASE -->
+	<!-- Base -->
 	{% include "components/edit/titles.html" %}
 
-	<!-- MEDIA -->
+	<!-- Media -->
 	{# {% include "components/edit/product/media.html" %} #}
 	{% include "components/edit/product/media2.html" %}
 
-	<!-- PRIX -->
+	<!-- Prix -->
 	{% include "components/edit/product/price.html" %}
 
-	<!-- INVENTORY -->
+	<!-- Inventory -->
 	{% include "components/edit/product/inventory.html" %}
 
-	<!-- VARIANTS -->
+	<!-- Variants -->
 	{% include "components/edit/product/variants.html" %}
 
-	<!-- MODALS -->
-	{% include "components/others/modals/margin.html" %}
+	<!-- Modals -->
+	{% include "includes/modals/margin.html" %}
 {% endblock %}
 
 {% block right_content %}
-	<!-- SIDE -->
+	<!-- Side -->
 	{% include "components/edit/product/side.html" %}
 {% endblock %}
 
 {% block bottom_form_buttons %}
-	<!-- ACTIONS -->
+	<!-- Actions -->
 	{% include "components/edit/actions/bottom.html" with delete_url="dashboard:products:delete" item_id=product.id next_url="dashboard:products:home" %}
 {% endblock %}
 
@@ -97,15 +97,15 @@
 		var otherimages = JSON.parse($("#vue_other_images").text())
 	</script>
 
-	<!-- SECTIONS -->
+	<!-- Sections -->
 	{% include "vue/create/product/base.html" %}
-	<!-- EDITOR -->
+	<!-- Editor -->
 	{# {% include "vue/create/quill.html" %} #}
-	<!-- FORM -->
+	<!-- Form -->
 	{% include "vue/create/form.html" %}
 
-	<!-- DUPLICATION -->
+	<!-- Duplication -->
 	{% include "vue/create/others/duplicate.html" %}
-	<!-- CALCULATOR -->
+	<!-- Calculator -->
 	{% include "vue/create/others/calculator.html" %}
 {% endblock %}

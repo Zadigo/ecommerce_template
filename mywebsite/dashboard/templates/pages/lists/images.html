@@ -1,5 +1,5 @@
-{% extends "pages/edit/base_edit.html" %}
-{% load i18n cache %}
+{% extends "layouts/edit.html" %}
+{% load i18n cache static %}
 
 {% block title %}{% trans "Listes des images" %}{% endblock %}
 
@@ -14,57 +14,67 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">
-                            <search-input-field @filterimages="dofilter" />
-                            <filter-input-field />
+                            <div class="row">
+                                <div class="col-5">
+                                    <search-input-field @filterimages="dofilter" />
+                                </div>
+                                <div class="col-auto">
+                                    <a href class="btn btn-md btn-primary m-0" data-toggle="modal" data-target="#import_new_image">
+                                        {% trans "Importer une image" %}
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {% cache 10 allimages %}
-                <div v-if="images.length > 0">
-                    <images-component :images="filteredimages" :noresults="noresults" inline-template>
-                        <div>
-                            <div v-show="!noresults" class="row">
-                                <div v-for="image in images" :key="image.slug" class="col-md-3 mb-3">
-                                    <div class="box15">
-                                        <img :src="image.url" class="img-fluid" :alt="image.slug">
-                                        <div class="box-content">
-                                            <h3 class="title">[[ image.name ]]</h3>
-                                            <ul class="icon">
-                                                <li>
-                                                    <a :href="constructurl(image.pk)" class="fa fa-edit"></a>
-                                                </li>
-                                                <li>
-                                                    <a @click="markasmain(image)">
-                                                        <i v-if="image.main_image" class="fa fa-star red-text"></i>
-                                                        <i v-else class="fa fa-star"></i>
-                                                    </a>
-                                                </li>
-                                                <li><a @click="deleteimage(image)"><i class="fa fa-trash"></i></a></li>
-                                            </ul>
-                                        </div>
+            <div v-if="images.length > 0">
+                <images-component :images="filteredimages" :noresults="noresults" inline-template>
+                    <div>
+                        <div v-show="!noresults" class="row">
+                            <div v-for="image in images" :key="image.slug" class="col-md-3 mb-3">
+                                <div class="box15">
+                                    <img :src="'{% get_media_prefix %}' + image.url" class="img-fluid" :alt="image.slug">
+                                    <div class="box-content">
+                                        <h3 class="title">[[ image.name ]]</h3>
+                                        <ul class="icon">
+                                            <li>
+                                                <a :href="constructurl(image.pk)" class="fa fa-edit"></a>
+                                            </li>
+                                            <li>
+                                                <a @click="markasmain(image)">
+                                                    <i v-if="image.main_image" class="fa fa-star red-text"></i>
+                                                    <i v-else class="fa fa-star"></i>
+                                                </a>
+                                            </li>
+                                            <li><a @click="deleteimage(image)"><i class="fa fa-trash"></i></a></li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div v-show="noresults" class="row">
-                                <div class="col-12">                                    
-                                    <transition name="no-results">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <p class="text-center">
-                                                    {% trans "Aucune image ne correspond à votre recherche" %}
-                                                </p>
-                                            </div>
+                        <div v-show="noresults" class="row">
+                            <div class="col-12">                                    
+                                <transition name="no-results">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <p class="text-center">
+                                                {% trans "Aucune image ne correspond à votre recherche" %}
+                                            </p>
                                         </div>
-                                    </transition>
-                                </div>
+                                    </div>
+                                </transition>
                             </div>
                         </div>
-                    </images-component>
-                </div>
-            {% endcache %}
+                    </div>
+                </images-component>
+            </div>
+            {% comment %}
+            {% cache 10 allimages %}
+            {% endcache %}                
+            {% endcomment %}
 
             <div v-else>
                 <div class="card">
@@ -85,8 +95,8 @@
                     </div>
                 </div>
 
-                <!-- MODALS -->
-                {% include "components/others/modals/new_image.html" %}
+                <!-- Modals -->
+                {% include "includes/modals/new_image.html" %}
             </div>
         </div>
     </div>
@@ -99,5 +109,5 @@
         var images = JSON.parse($("#vue_images").text())
     </script>
 
-    {% include "vue/images/base.html" %}
+    {% include "vue/images_app.html" %}
 {% endblock %}

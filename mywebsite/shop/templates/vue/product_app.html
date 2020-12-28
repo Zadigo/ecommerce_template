@@ -446,21 +446,26 @@
                     response.json().then((data) => {
                         this.validated = data.state
                         this.alertmessage = data.message
-                        this.showfields = false
-                        dataLayer.push(
-                            {
-                                event: "Review",
-                                product: {
-                                    reference: "{{ product.reference }}",
-                                    name: "{{ product.name }}",
-                                    score: this.reviewdata.score
+                        
+                        if (data.state) {
+                            this.showfields = false
+                            dataLayer.push(
+                                {
+                                    event: "Review",
+                                    product: {
+                                        reference: "{{ product.reference }}",
+                                        name: "{{ product.name }}",
+                                        score: this.reviewdata.score
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        } else {
+                            window.location.reload()
+                        }
                     })
                 })
                 .catch((error) => {
-                    console.log(error)
+                    console.error(error)
                 })
             }
         }

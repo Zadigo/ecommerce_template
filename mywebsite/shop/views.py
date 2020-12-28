@@ -167,7 +167,7 @@ class ProductsView(ListView):
         return context
 
 
-@method_decorator(cache_page(60 * 15), name='dispatch')
+# @method_decorator(cache_page(60 * 15), name='dispatch')
 class ProductView(DetailView):
     """View the details of a given product"""
     model = models.Product
@@ -365,19 +365,18 @@ def size_calculator(request, **kwargs):
 def add_review(request, **kwargs):
     data = {
         'state': False, 
-        'message': "L'avis n'a pas pu être créé"
+        'message': "REV-NC - L'avis n'a pas pu être créé"
     }
     score = request.POST.get('score')
     text = request.POST.get('text')
     if request.user.is_authenticated:
         product = get_object_or_404(models.Product, id=kwargs.get('pk'))
-        review = product.review_set.create(
+        new_review = product.review_set.create(
             user=request.user, 
             text=text,
             rating=score
         )
-        data.update({
-            'state': True,
-            'message': "Votre avis a été créé"
-        })
+        data.update({'state': True, 'message': 'Votre avis a été crée'})
+    else:
+        messages.warning(request, message=data.get('message'), extra_tags='alert-danger')
     return JsonResponse(data=data)

@@ -253,7 +253,7 @@ class OrdersStatisticsManager(BaseStatistics):
 
     def latest_orders(self):
         difference = F('created_on') - datetime.timedelta(days=7)
-        latest_and_awaiting = Q(created_on__gt=difference) & Q(accepted=False) & Q(completed=False)
+        latest_and_awaiting = Q(created_on__gt=difference) & Q(accepted=False) & Q(shipped=False)
         return self.filter(latest_and_awaiting)
 
     def average_total_order(self):

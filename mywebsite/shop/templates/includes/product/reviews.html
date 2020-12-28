@@ -8,10 +8,16 @@
                     <div class="review-stars" role="row">
                         {% stars reviews_avg.rating__avg %} <span class="ml-3">{{ reviews.count }} {% trans "avis" %}</span>
                     </div>
-    
-                    <button @click="showfields=!showfields" class="btn btn-md btn-dark m-0" aria-label="Show review fields">
-                        {% trans "Ecrire un avis" %}
-                    </button>
+                    
+                    {% if request.user.is_authenticated %}
+                        <button @click="showfields=!showfields" class="btn btn-md btn-dark m-0" aria-label="Show review fields">
+                            {% trans "Ecrire un avis" %}
+                        </button>                        
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}?next={{ product.get_absolute_url }}" class="btn btn-md btn-dark m-0" aria-label="{% trans 'Show review fields' %}">
+                            {% trans "Ecrire un avis" %}
+                        </a>
+                    {% endif %}
                 </div>
 
                 <hr class="mt-3 mb-3">

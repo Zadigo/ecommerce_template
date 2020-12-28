@@ -1,13 +1,17 @@
-{% extends "./base_middle_modal.html" %}
+{% extends "layouts/modal.html" %}
 {% load i18n %}
 
-{% block id %}import_new_image{% endblock %}
+{% block modal_id %}import_new_image{% endblock %}
 
 {% block title %}
     {% trans "Importer une nouvelle image" %}
 {% endblock %}
 
-{% block body %}
+{% block modal_class %}
+    modal-md modal-notify modal-info
+{% endblock %}
+
+{% block modal_body %}
     <form action="{% url 'dashboard:images:home' %}" method="post">
         {% csrf_token %}
         

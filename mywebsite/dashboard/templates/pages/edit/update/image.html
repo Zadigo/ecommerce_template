@@ -1,5 +1,5 @@
-{% extends "pages/edit/base_edit.html" %}
-{% load i18n %}
+{% extends "layouts/edit.html" %}
+{% load i18n static %}
 
 {% block title %}{% trans "Mise à jour de" %} {{ image.name }}{% endblock %}
 
@@ -10,7 +10,7 @@
 
 {% block left_content %}
     <div class="card">
-        <img src="{{ image.url }}" class="img-fluid" alt="{{ image.name }}">
+        <img src="{% get_media_prefix %}{{ image.url }}" class="img-fluid" alt="{{ image.name }}">
     </div>
 {% endblock %}
 

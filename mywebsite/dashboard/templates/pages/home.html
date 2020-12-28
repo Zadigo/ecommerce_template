@@ -7,7 +7,11 @@
 	<div class="row wow fadeIn">
 		<!-- CHART-1 -->
 		<div class="col-md-9 mb-4">
-			{% include "components/charts/bar.html" with chart_name="myChart" endpoint="dashboard:api:chart" %}
+			<div class="card">
+				<div class="card-body">
+
+				</div>
+			</div>
 		</div>
 
 		<!-- STATS -->
@@ -56,6 +60,6 @@
 	</div>
 {% endblock %}
 
-{% block chart_scripts %}
-	{% include "scripts/bar_chart.html" %}
+{% block charts %}
+
 {% endblock %}
