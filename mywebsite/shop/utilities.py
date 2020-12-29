@@ -11,8 +11,15 @@ from django.core import exceptions
 
 def images_directory_path(instance, filename):
     _, extension = filename.split('.')
-    new_file_name = f'{secrets.token_hex(5)}.{extension}'
-    return f'products/images/{new_file_name}'
+    new_file_name = secrets.token_hex(5)
+    return f'products/images/{new_file_name}.{extension}'
+
+
+def collection_images_path(instance, filename):
+    _, extension = filename.split('.')
+    new_file_name = secrets.token_hex(5)
+    collection_name = instance.name.replace(' ', '_')
+    return f'collections/{collection_name.lower()}/{new_file_name}.{extension}'
 
 
 def videos_directory_path(instance, filename):

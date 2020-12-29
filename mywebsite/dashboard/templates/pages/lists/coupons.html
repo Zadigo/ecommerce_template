@@ -4,7 +4,7 @@
 {% block title %}{% trans "Coupons" %}{% endblock %}
 
 {% block heading %}
-    {% include "components/navs/heading.html" with title="Coupons" %}
+    {% include "includes/navs/heading.html" with title="Coupons" %}
 {% endblock %}
 
 {% block card_header_content %}
@@ -12,9 +12,9 @@
 {% endblock %}
 
 {% block card_body %}
-    {% include "components/others/tables/carts.html" %}
+    {% include "includes/tables/carts.html" %}
 {% endblock %}
 
 {% block pagination %}
-    {% include "components/navs/pagination.html" with href="dashboard:dashboard_coupons" %}
+    {% include "includes/navs/pagination.html" with href="dashboard:dashboard_coupons" %}
 {% endblock %}

@@ -35,6 +35,7 @@ imagespatterns = [
 productpatterns = [
     url(r'^csv/upload$', views.upload_csv, name='upload_csv'),
     url(r'^csv/download$', views.download_csv, name='download_csv'),
+    url(r'^duplicate-many$', views.duplicate_multiple_view, name='duplicate_many'),
 
     url(r'^(?P<pk>\d+)/unlink-image$', views.unlink_image_on_product_page, name='unlink'),
     url(r'^(?P<pk>\d+)/duplicate$', views.duplicate_view, name='duplicate'),

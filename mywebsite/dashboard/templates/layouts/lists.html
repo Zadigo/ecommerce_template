@@ -7,7 +7,7 @@
         <div class="col-md-12 mb-4">
             <form action="{% url 'dashboard:table_actions' %}?next={{ request.path }}" method="POST" id="table-form">
                 {% csrf_token %}
-                <div class="card" id="vue_table_app">
+                <div class="card">
                     {% block card_header %}
                         <div class="card-header white">
                             {% block card_header_content %}{% endblock %}

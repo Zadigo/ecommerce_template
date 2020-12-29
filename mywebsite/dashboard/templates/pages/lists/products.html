@@ -4,7 +4,7 @@
 {% block title %}{% trans "Produits" %}{% endblock %}
 
 {% block heading %}
-    {% include "components/navs/heading.html" with title="Produits" %}
+    {% include "includes/navs/heading.html" with title="Produits" %}
 {% endblock %}
 
 {% block card_header_content %}
@@ -56,11 +56,11 @@
 {% endblock %}
 
 {% block card_body %}
-    {% include "components/others/tables/products.html" %}
+    {% include "includes/tables/products.html" %}
 {% endblock %}
 
 {% block pagination %}
-    {% include "components/navs/pagination.html" with href="dashboard:products:home" %}
+    {% include "includes/navs/pagination.html" with href="dashboard:products:home" %}
 {% endblock %}
 
 {% block vuejs_scripts %}
@@ -71,5 +71,5 @@
     <!-- EXPORT -->
     {% include "vue/list/export_csv.html" %}
     <!-- CHECKBOXES -->
-    {% include "vue/list/table.html" %}
+    {% include "vue/list/products_app.html" %}
 {% endblock %}

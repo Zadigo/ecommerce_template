@@ -4,7 +4,7 @@
 {% block title %}{% trans "Commandes" %}{% endblock %}
 
 {% block heading %}
-    {% include "components/navs/heading.html" with title="Commandes" %}
+    {% include "includes/navs/heading.html" with title="Commandes" %}
 {% endblock %}
 
 {% block card_header %}
@@ -12,9 +12,9 @@
 {% endblock %}
 
 {% block card_body %}
-    {% include "components/others/tables/orders.html" %}
+    {% include "includes/tables/orders.html" %}
 {% endblock %}
 
 {% block pagination %}
-    {% include "components/navs/pagination.html" with href="dashboard:customer_orders" %}
+    {% include "includes/navs/pagination.html" with href="dashboard:customer_orders" %}
 {% endblock %}

@@ -18,7 +18,7 @@ LINKS = [
     # ['settings:home', {'name': 'Settings', 'icon': 'fas fa-cog'}],
 ]
 
-@register.inclusion_tag('components/navs/sidenav_link.html')
+@register.inclusion_tag('includes/navs/sidenav_link.html')
 def sidebar_links(request=None, for_admin=None):
     pass
     """Creates links for the sidenav"""

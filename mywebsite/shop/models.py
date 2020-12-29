@@ -30,12 +30,12 @@ class Image(models.Model):
     )
     image_thumbnail = ImageSpecField(
         source='url', 
-        processors=ResizeToFill(800), 
+        processors=[ResizeToFill(800)], 
         format='JPEG', 
         options={'quality': 50}
     )
     web_url     = models.URLField(blank=True, null=True)
-    main_image  = models.BooleanField(default=False, help_text='Indicates if this is the main image for the product')
+    main_image  = models.BooleanField(default=False)
     created_on = models.DateField(auto_now=True)
 
     objects = models.Manager()
@@ -93,7 +93,19 @@ class Collection(models.Model):
     )
     
     view_name   = models.CharField(max_length=50)
-    image        = models.FileField(upload_to='collections', blank=True, null=True)
+    image        = models.ImageField(upload_to=utilities.collection_images_path, blank=True, null=True)
+    image_banner_big = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(1300, 600), ResizeToFill(400, 180)],
+        format='JPEG',
+        options={'quality': 70}
+    )
+    # image_banner_small = ImageSpecField(
+    #     source='image',
+    #     processors=[ResizeToFill((400, 180))],
+    #     format='JPEG',
+    #     options={'quality': 50}
+    # )
     presentation_text = models.TextField(max_length=300, blank=True, null=True)
     google_description = models.CharField(max_length=160, blank=True, null=True)
     show_presentation  = models.BooleanField(default=False)

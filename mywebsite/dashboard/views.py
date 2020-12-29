@@ -11,7 +11,8 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.paginator import Paginator
-from django.db import transaction as atomic_transactions
+from django.db import transaction
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -243,7 +244,7 @@ class ImagesView(GroupAuthorizationMixin, generic.ListView):
     context_object_name = 'images'
     paginate_by = 8
 
-    @atomic_transactions.atomic
+    @transaction.atomic
     def post(self, request, **kwargs):
         authorized_methods = ['from-url', 'from-local']
         message = {}
@@ -299,7 +300,7 @@ class ImagesView(GroupAuthorizationMixin, generic.ListView):
         context['vue_images'] = serialized_images.data
         return context
 
-@method_decorator(atomic_transactions.atomic, name='post')
+@method_decorator(transaction.atomic, name='post')
 class ImageView(GroupAuthorizationMixin, generic.UpdateView):
     authorized_except_for_groups = ['Customer']
     model = models.Image
@@ -499,7 +500,7 @@ class PurchaseOrderView(GroupAuthorizationMixin, generic.TemplateView):
 
 @csrf_exempt
 @login_required
-@atomic_transactions.atomic
+@transaction.atomic
 @views_decorators.require_GET
 def activate_coupon(request, **kwargs):
     state = False
@@ -524,7 +525,7 @@ def activate_coupon(request, **kwargs):
             'extra_tags': 'alert-danger'
         }
     messages.add_message(request, **message)
-    return http.JsonResponse(data={'state': state})
+    return JsonResponse(data={'state': state})
 
 
 @csrf_exempt
@@ -536,14 +537,14 @@ def upload_csv(request):
         data = file['newcsvfile']
     except:
         messages.error(request, "Une erreur s'est produite", extra_tags='alert-warning')
-        return http.JsonResponse({'state': False})
+        return JsonResponse({'state': False})
     
     if not data.name.endswith('.csv'):
         messages.error(request, "Le fichier doit être de type .csv", extra_tags='alert-warning')
-        return http.JsonResponse({'state': False})
+        return JsonResponse({'state': False})
 
     messages.error(request, "Les produits ont été créés", extra_tags='alert-success')
-    return http.JsonResponse(data={'state': True})
+    return JsonResponse(data={'state': True})
 
 
 @csrf_exempt
@@ -555,13 +556,13 @@ def download_csv(request):
     if method not in authorized_exports \
             or not method:
         messages.error(request, "Action non reconnue - EXP-C1", extra_tags='alert-danger')
-        return http.JsonResponse(data={'state': False, 'code': 'EXP-C1'}, code=200)
+        return JsonResponse(data={'state': False, 'code': 'EXP-C1'}, code=200)
 
     authorized_exports_for = ['general', 'facebook']
     export_for = request.GET.get('export_for')
     if export_for not in authorized_exports_for:
         messages.error(request, "Action non reconnue - EXP-C2", extra_tags='alert-danger')
-        return http.JsonResponse(data={'state': False, 'code': 'EXP-C2'}, code=200)
+        return JsonResponse(data={'state': False, 'code': 'EXP-C2'}, code=200)
 
     facebook_headers = ['id', 'title', 'description', 'condition', 'availability',
                             'link', 'brand', 'price', 'image_link', 'google_product_category', 
@@ -576,13 +577,13 @@ def download_csv(request):
             name = request.GET.get('using')
             if not name:
                 messages.error(request, "Collection non reconnue - EXP-C3", extra_tags='alert-warning')
-                return http.JsonResponse(data={'state': False, 'code': 'EXP-C3'}, code=200)
+                return JsonResponse(data={'state': False, 'code': 'EXP-C3'}, code=200)
             else:
                 try:
                     products = models.ProductCollection.collection_manager.active_products(name)
                 except:
                     messages.error(request, "Collection non reconnue - EXP-C3", extra_tags='alert-warning')
-                    return http.JsonResponse(data={'state': False, 'code': 'EXP-C3'}, code=200)
+                    return JsonResponse(data={'state': False, 'code': 'EXP-C3'}, code=200)
     
     if request.POST:
         if method == "current":
@@ -651,11 +652,11 @@ def download_csv(request):
         return response
 
     messages.error(request, "Les données n'ont pas pu être exportéù - EXP-CG", extra_tags='alert-warning')
-    return http.JsonResponse(data={'state': 'Failed'}, code=200)
+    return JsonResponse(data={'state': 'Failed'}, code=200)
 
 
 @login_required
-@atomic_transactions.atomic
+@transaction.atomic
 @views_decorators.require_POST
 def table_actions(request, **kwargs):
     method = request.POST.get('method')
@@ -723,7 +724,7 @@ def table_actions(request, **kwargs):
 
 
 @login_required
-@atomic_transactions.atomic
+@transaction.atomic
 @views_decorators.require_GET
 def delete_item_via_table(request, **kwargs):
     """
@@ -757,7 +758,7 @@ def delete_item_via_table(request, **kwargs):
 
 
 @login_required
-@atomic_transactions.atomic
+@transaction.atomic
 @views_decorators.require_GET
 def delete_product(request, **kwargs):
     """
@@ -779,7 +780,7 @@ def duplicate_view(request, **kwargs):
     except:
         messages.error(
             request, "Le produit n'a pas pu être dupliqué - DUP-NE", extra_tags='alert-danger')
-        return http.JsonResponse(data={'state': state}, code=400)
+        return JsonResponse(data={'state': state}, code=400)
 
     base = {
         'name': f'Copie de {product.name}',
@@ -795,12 +796,12 @@ def duplicate_view(request, **kwargs):
     }
 
     try:
-        with atomic_transactions.atomic():
+        with transaction.atomic():
             new_product = models.Product.objects.create(**base)
     except:
         messages.error(
             request, "Le produit n'a pas pu être dupliqué - DUP-NP", extra_tags='alert-warning')
-        return http.JsonResponse(data={'state': state}, code=400)
+        return JsonResponse(data={'state': state}, code=400)
     else:
         # Also associate all images with the preceeding
         # product with the new one
@@ -810,7 +811,43 @@ def duplicate_view(request, **kwargs):
 
     messages.success(
         request, f"{new_product.name} a été créer", extra_tags="alert-success")
-    return http.JsonResponse(data={'redirect_url': reverse('dashboard:products:update', args=[new_product.id])})
+    return JsonResponse(data={'redirect_url': reverse('dashboard:products:update', args=[new_product.id])})
+
+
+@login_required
+@views_decorators.require_POST
+def duplicate_multiple_view(request, **kwargs):
+    data = {'state': False}
+    message = {
+        'request': request,
+        'message': "Les produits n'ont pas été dupliqués",
+        'extra_tags': 'alert-danger'
+    }
+    product_ids = request.POST.get('products')
+    if product_ids:
+        products = models.Product.objects.filter(id__in=product_ids)
+        products_to_create = []
+        for product in products:
+            base = {
+                'name': f'Copie de {product.name}',
+                'gender': product.gender,
+                'description': product.description,
+                'price_pre_tax': product.price_pre_tax,
+                'quantity': product.quantity,
+                'slug': f'copie-de-{product.slug}',
+                'collection': product.collection,
+                'discount_pct': product.discount_pct,
+                'discounted': product.discounted,
+                'private': product.private
+            }
+            products_to_create.append(models.Product(**base))
+
+        with transaction.atomic():
+            new_products = models.Product.objects.bulk_create(products_to_create)
+        message.update({'message': 'Les produits ont été dupliqués', 'extra_tags': 'alert-success'})
+        data.update({'state': True})
+        messages.success(request, **message)
+    return JsonResponse(data=data)
 
 
 @login_required
@@ -837,13 +874,13 @@ def create_images(request, **kwargs):
         new_images = models.Image.objects.bulk_create(images_objects)
         request.session['images_to_associate'] = [
             image.id for image in new_images]
-        return http.JsonResponse(data={'status': 'Uploaded'})
+        return JsonResponse(data={'status': 'Uploaded'})
 
     if method == 'update':
         product_id = request.POST.get('product')
         product = get_object_or_404(models.Product, id=product_id)
 
-    return http.JsonResponse(data={'status': 'Uploaded'})
+    return JsonResponse(data={'status': 'Uploaded'})
 
 
 @login_required
@@ -861,18 +898,18 @@ def associate_images(request, **kwargs):
         if error:
             messages.error(
                 request, "Les images n'ont pas pu être associé - ASSO-ID", extra_tags='alert-warning')
-            return http.JsonResponse(data={'state': False, })
+            return JsonResponse(data={'state': False, })
 
         db_images = models.Image.objects.filter(id__in=images)
         product.images.set(db_images)
 
     messages.error(
         request, "Les images n'ont pas pu être associé - ASSO-ID", extra_tags='alert-warning')
-    return http.JsonResponse(data={'state': False, })
+    return JsonResponse(data={'state': False, })
 
 
 @csrf_exempt
-@atomic_transactions.atomic
+@transaction.atomic
 @views_decorators.require_POST
 def unlink_image_on_product_page(request, **kwargs):
     state = False
@@ -882,13 +919,13 @@ def unlink_image_on_product_page(request, **kwargs):
     
     editmodes = ['create', 'update']
     if not editmode or editmode not in editmodes:
-        return http.JsonResponse(data={'state': False})
+        return JsonResponse(data={'state': False})
     
     if not image:
         messages.error(request, _("Une erreur s'est produite - IMG-UN"))
-        return http.JsonResponse(data={'state': state})
+        return JsonResponse(data={'state': state})
 
     product = models.Product.objects.get(id=product_id)
     image = models.Image.objects.get(id=image)
     product.images.remove(image)
-    return http.JsonResponse(data={'state': state})
+    return JsonResponse(data={'state': state})

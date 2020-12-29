@@ -4,7 +4,7 @@
 {% block title %}{% trans "Collections" %}{% endblock %}
 
 {% block heading %}
-    {% include "components/navs/heading.html" with title="Collections" %}
+    {% include "includes/navs/heading.html" with title="Collections" %}
 {% endblock %}
 
 {% block card_header_content %}
@@ -23,9 +23,9 @@
 {% endcomment %}
 
 {% block card_body %}
-    {% include "components/others/tables/collections.html" %}
+    {% include "includes/tables/collections.html" %}
 {% endblock %}
     
 {% block pagination %}
-    {% include "components/navs/pagination.html" with href="dashboard:collections:home" %}
+    {% include "includes/navs/pagination.html" with href="dashboard:collections:home" %}
 {% endblock %}

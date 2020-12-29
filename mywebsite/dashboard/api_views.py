@@ -9,10 +9,10 @@ class BaseAPIView(APIView):
     authentication_classes = []
     permission_classes = []
 
+
 class ChartsView(BaseAPIView):
     def get(self, format=None, **kwargs):
-        payments_by_month = models.CustomerOrder\
-                            .statistics.payments_by_month()
+        payments_by_month = models.CustomerOrder.statistics.payments_by_month()
         data = {
             "myChart": {
                 'labels': payments_by_month[0],
