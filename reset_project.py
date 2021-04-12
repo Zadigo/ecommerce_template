@@ -1,15 +1,17 @@
+from _typeshed import NoneType
 import argparse
 import os
+from collections import deque
 from functools import lru_cache
 from itertools import chain
-from collections import deque
+from typing import Callable, List, Union
 
 RESTRICTED_LIST = []
 
-def walk_project(start_from, restrict_to=[]):
-    def wrapper(func):
+def walk_project(start_from: str, restrict_to: list=[]):
+    def wrapper(func: Callable[[List], NoneType]):
         @lru_cache(maxsize=1)
-        def inner():
+        def inner() -> deque:
             root = os.path.dirname(__file__)
             base = list(os.walk(os.path.join(root, start_from)))
             migration_folders = filter(lambda x: 'migrations' in x[0], base)
@@ -34,7 +36,7 @@ def walk_project(start_from, restrict_to=[]):
 
 
 @walk_project('mywebsite', restrict_to=RESTRICTED_LIST)
-def delete_migrations(paths):
+def delete_migrations(paths: Union[List, deque]):
     counter = 0
     answer = input('You are about to delete all the migrations from your project. Continue? [y/n] ')
     if answer == 'y':

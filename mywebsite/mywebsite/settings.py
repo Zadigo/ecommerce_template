@@ -88,28 +88,28 @@ TEMPLATES = [
                 'cart.payment.stripe_context_processor',
                 'mywebsite.context_processors.responsive'
             ],
-            'libraries': {
-                'aws_images': 'templatetags.aws_images',
-                'table': 'templatetags.table',
+            # 'libraries': {
+            #     'aws_images': 'templatetags.aws_images',
+            #     'table': 'templatetags.table',
 
-                'share': 'templatetags.share',
-                'navbar': 'templatetags.navbar',
+            #     'share': 'templatetags.share',
+            #     'navbar': 'templatetags.navbar',
 
-                'carts': 'cart.templatetags.carts',
-                'dropdowns': 'shop.templatetags.dropdowns',
+            #     'carts': 'cart.templatetags.carts',
+            #     'dropdowns': 'shop.templatetags.dropdowns',
 
-                'dates': 'dashboard.templatetags.dates',
-                'sidebar': 'dashboard.templatetags.sidebar',
+            #     'dates': 'dashboard.templatetags.dates',
+            #     'sidebar': 'dashboard.templatetags.sidebar',
 
-                'sidemenu': 'accounts.templatetags.sidemenu',
+            #     'sidemenu': 'accounts.templatetags.sidemenu',
 
-                'nodes_plus': 'nodesplus.templatetags.nodes_plus',
+            #     'nodes_plus': 'nodesplus.templatetags.nodes_plus',
 
-                'shop_impressions': 'shop.templatetags.shop_impressions',
-                'cart_impressions': 'cart.templatetags.cart_impressions',
+            #     'shop_impressions': 'shop.templatetags.shop_impressions',
+            #     'cart_impressions': 'cart.templatetags.cart_impressions',
 
-                'shop': 'shop.templatetags.shop'
-            },
+            #     'shop': 'shop.templatetags.shop'
+            # },
         },
     },
 ]

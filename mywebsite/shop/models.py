@@ -208,7 +208,7 @@ class Product(models.Model):
 
     google_category = models.CharField(
         max_length=5, 
-        choices=choices.GoogleProductCategory.choices, 
+        choices=choices.GoogleProductCategory.choices,
         default=choices.GoogleProductCategory.TOPS
     )
 
