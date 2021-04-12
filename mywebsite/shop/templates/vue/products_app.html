@@ -1,13 +1,5 @@
 {% load i18n nodes_plus %}
 
-{% comment %}
-{{ vue_products|json_script:"vue_products" }}
-{% endcomment %}
-
-<script>
-    const PRODUCTS = {{ vue_products|safe }}
-</script>
-
 <script>
     Vue.component("sorting-component", {
         props: {
@@ -20,10 +12,10 @@
         data() {
             return {
                 items: [
-                    {id: 1, name: "{% trans 'Nom' %}", value: 0},
-                    {id: 2, name: "{% trans 'Prix croissant' %}", value: 1},
-                    {id: 3, name: "{% trans 'Prix décroissant' %}", value: 2},
-                    // {id: 4, name: "{% trans 'Les mieux notés' %}", value: 3},
+                    "{% trans 'Nom' %}",
+                    "{% trans 'Prix croissant' %}",
+                    "{% trans 'Prix décroissant' %}",
+                    "{% trans 'Les mieux notés' %}",
                 ],
                 selectedsort: 0
             }
@@ -87,27 +79,18 @@
             //     this.senddatalayer()
             // }
         },
-        computed: {
-            mainimage() {
-                var product = _.filter(this.$props.product.images, (product) => {
-                    return product.main_image === true
-                })
-                if (!product) {
-                    product = this.$props.product.images[0]
-                }
-                return product[0]
-            }
-        },
         filters: {
             euro: function (value) {
                 return `${value}€`
             }
         }
     })
+</script>
 
-    var productsinterface = new Vue({
-        el: "#vue_app",
-        name: "ProductsInterface",
+<script>
+    var products = new Vue({
+        el: "#app",
+        name: "Products",
         delimiters: ["[[", "]]"],
         data() {
             return {
@@ -120,7 +103,7 @@
             }
         },
         beforeMount() {
-            this.products = PRODUCTS
+            this.products = JSON.parse('{{ vue_products|safe }}')
 
             var colors = []
             _.forEach(this.products, (product) => {
@@ -161,4 +144,5 @@
             }
         }
     })
+
 </script>

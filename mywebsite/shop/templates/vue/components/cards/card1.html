@@ -20,9 +20,9 @@
                             </a>
                         </h3>
                         <div class="price">
-                            [[ product.price|euro ]]
-                            <span v-show="product.is_discounted">
-                                [[ product.price_pre_tax|euro ]]
+                            [[ product.price_pre_tax|euro ]]
+                            <span v-show="product.discounted">
+                                [[ product.discounted_price|euro ]]
                             </span>
                         </div>
                     </div>

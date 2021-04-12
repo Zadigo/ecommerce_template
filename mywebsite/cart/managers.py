@@ -163,10 +163,8 @@ class CartManager(QuerySet):
                 item.save()
                 return item
             else:
-                new_item = self.create(**new_item_details)
-                return new_item
+                return self.create(**new_item_details)
             
-
     def over_thirtee_days(self):
         current_date = datetime.datetime.now().date()
         queryset = self.filter(

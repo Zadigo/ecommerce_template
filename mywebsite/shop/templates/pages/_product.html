@@ -1,0 +1,122 @@
+{% extends "layouts/_product_page.html" %}
+
+{% block product_breadcrumb %}
+    <div class="row">
+        <div class="col-12">
+            <div class="wow fadeIn">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'shop:home' %}">
+                                {% trans "Accueil" %}
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a onclick="breadcrumbClick('{{ product.collection.name }}')"
+                                href="{{ product.get_collection_url }}">
+                                {{ product.collection.name }}
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            {{ product.name }}
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block product_images %}
+    {% if not is_mobile %}
+        {% cache 1200 "mobile_product" product.name %}
+            <!-- Side images -->
+            <div class="col-md-1">
+                <side-images @showimage="display" :images="images" inline-template>
+                    <div class="side-images">
+                        <img @click="showimage(image, index)" v-for="(image, index) in images" :key="image.pk" :src="image.url"
+                            :class="{'mt-2': index !== 0}" :alt="image.name" :class="{'selected': index===selectedimage}"
+                            class="img-fluid" role="img" aria-label="{% trans 'Other product images' %}">
+                    </div>
+                </side-images>
+            </div>
+            
+            <!-- Main image -->
+            <div class="col-md-6 mb-4">
+                <main-image :image="selectedimage" inline-template>
+                    <img :src="image.url" class="img-fluid" alt="{{ product.slug }}" role="img"
+                        aria-label="{% trans 'Product preview' %}">
+                </main-image>
+            </div>
+        {% endcache %}
+    {% else %}
+        {% cache 1200 "desktop_product" product.name %}
+            <div class="col-12 mb-4 p-0">
+                <!-- Slider -->
+                <mobile-slider :images="images" inline-template>
+                    <div class="interface" style="position: relative;">
+                        <div class="navigation d-flex flex-direction-row justify-content-between" style="position: absolute;width: 90%;top: 40%;left: 4%;">
+                            <div @click="gotoprevious()" class="left">
+                                <i class="fa fa-arrow-left" role="button" aria-label="previous image"></i>
+                            </div>
+            
+                            <div @click="gotonext()" class="right">
+                                <i class="fa fa-arrow-right" role="button" aria-label="next image"></i>
+                            </div>
+                        </div>
+            
+                        <transition :name="'mobile-image-transitions'" mode="out-in">
+                            <component :image="currentimage" :cursor="currentslide" :is="slides[cursor]" />
+                        </transition>
+                    </div>
+                </mobile-slider>
+            </div>
+        {% endcache %}
+    {% endif %}
+{% endblock %}
+
+{% block product_side_information %}
+    {# {% include "includes/product/badges.html" %} #}
+    
+    {% cache 600 "product_details" product.name %}
+        <!-- Title -->
+        <h1 class="product-title font-weight-bold" aria-label="{{ product.name }}">
+            {{ product.name }}
+        </h1>
+        
+        <!-- Price -->
+        <p class="lead">
+            {% if product.discounted %}
+            <span class="mr-1">
+                <del>{{ product.price_pre_tax|price_to_text }}</del>
+            </span>
+            {% endif %}
+        
+            <span {% if product.discounted %}class="red-text darken-4 font-weight-bold" {% endif %}>
+                {{ product.get_price|price_to_text }}
+            </span>
+        </p>
+        
+        {% if reviews %}
+            <!-- Stars -->
+            {% include "includes/product/review_stars.html" %}
+        {% endif %}
+    {% endcache %}
+    
+    <!-- Delivery -->
+    <div class="delivery mt-3 mb-3">
+        <a href data-toggle="modal" data-target="#delivery" role="link" aria-label="{% trans 'Delivery information' %}">
+            {% trans "Livraisons et retours" %}**
+        </a>
+        {% include "includes/modals/delivery.html" with modal_title=True %}
+    </div>
+    
+    {% if product.description %}
+        <!-- Description -->
+        <p class="lead font-weight-bold">{% trans "Description" %}</p>
+        <p role="text" aria-label="Product description">{{ product.description }}</p>
+    {% endif %}
+    
+    <!-- Add to cart + Sizes + Colors -->
+    {% include "includes/product/actions.html" %}
+{% endblock %}

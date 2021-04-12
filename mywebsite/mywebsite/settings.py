@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_celery_beat',
     'rest_framework',
-    # 'debug_toolbar',
+    'debug_toolbar',
 
     'analytics',
     'lookbook',
@@ -63,7 +63,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'mywebsite.urls'

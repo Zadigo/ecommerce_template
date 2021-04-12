@@ -1,0 +1,93 @@
+{% extends "layouts/base_shop.html" %}
+{% load i18n static cache share nodes_plus shop_impressions dropdowns %}
+
+{% block title %}{{ product.name }} - Nawoka{% endblock %}
+
+{% block datalayer_push %}
+    {% include "scripts/product_impression.html" with list_name="Collections List" brand="MyBrand" %}
+{% endblock %}
+
+{% block structured_data %}
+    {% include "scripts/structured_data.html" %}
+{% endblock %}
+
+{% block container %}
+    <section class="mt-6" id="product">
+        <!-- Breadcrumb -->
+        <div class="row">
+            {% block product_breadcrumb %}{% endblock %}
+        </div>
+
+        <div class="row wow fadeIn">
+            <!-- Images -->
+            {% block product_images %}{% endblock %}
+            
+            <!-- Information -->
+            <div class="col-sm-6 col-md-5 bm-4">
+                <div class="p-sm-2 p-lg-4">
+                    {% block product_side_information %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+        <!-- More -->
+        {% include "includes/product/more.html" %}
+
+        <!-- Reviews -->
+        <div class="row wow fadeIn mt-3">
+            {% include "includes/product/reviews.html" %}
+        </div>
+
+        <!-- Policies -->
+        <div class="p-sm-2 p-lg-4">
+            {% include "includes/product/policies.html" %}
+        </div>
+
+        <!-- Share -->
+        <div class="col-md-6">
+            <div class="p-sm-1 p-0 pl-lg-4 pr-lg-4">
+                <a href="{% facebook request.build_absolute_uri %}" class="mr-3" target="_blank">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="{% twitter request.build_absolute_uri product.description 'https://mywebsite.fr' %}" class="mr-3"
+                    target="_blank">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="{% pinterest request.build_absolute_uri product.description product.get_main_image_url %}"
+                    target="_blank">
+                    <i class="fab fa-pinterest"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block extra_scripts %}
+    {{ block.super }}
+    <script>
+        var breadcrumbClick = function (collectionname) {
+            dataLayer.push({
+                event: "LinkClick",
+                collection: collectionname,
+                fromProduct: {
+                    "id": "{{ product.reference }}",
+                    "name": "{{ product.name }}",
+                    "price": "{{ product.get_price }}"
+                }
+            })
+        }
+    </script>
+{% endblock %}
+
+{% block vuejs_scripts %}
+    {{ block.super }}
+    {{ vue_product|json_script:"vue_product" }}
+    <script>
+        var product = JSON.parse($("#vue_product").text())
+    </script>
+    <!-- App -->
+    {% include "vue/product_app.html" %}
+    
+    <!-- Google Pay -->
+    {% include "scripts/google_pay.html" %}
+{% endblock %}

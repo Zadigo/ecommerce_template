@@ -17,7 +17,7 @@
 
     <div class="row wow fadeIn">
         {% if not is_mobile %}
-            <!-- SIDE IMAGES -->
+            <!-- Side images -->
             <div class="col-md-1">
                 <side-images @showimage="display" v-bind:images="images" inline-template>
                     <div class="side-images">
@@ -27,7 +27,7 @@
                 </side-images>
             </div>
 
-            <!-- MAIN IMAGE -->
+            <!-- Main image -->
             <div class="col-md-6 mb-4">
                 <main-image v-bind:image="currentimage" inline-template>
                     <img :src="image.url" class="img-fluid" alt="{{ product.slug }}">
@@ -56,12 +56,12 @@
 
         <div class="col-sm-6 col-md-5 mb-4">
             <div class="p-sm-2 p-lg-4">
-                {# {% include "components/product/badges.html" %} #}
+                {# {% include "includes/product/badges.html" %} #}
 
-                <!-- TITLE -->
+                <!-- Title -->
                 <h1 class="product-title">{{ product.name }}</h1>
 
-                <!-- PRICE -->
+                <!-- Price -->
                 <p class="lead">
                     {% if product.discounted %}
                         <span class="mr-1">
@@ -75,29 +75,29 @@
 
                 {% if product.reviews %}
                     <!-- STARS -->
-                    {% include "components/product/review_stars.html" %}
+                    {% include "includes/product/review_stars.html" %}
                 {% endif %}
 
-                <!-- DELIVERY -->
+                <!-- Delivery -->
                 <div class="delivery mt-3 mb-3">
                     <a href data-toggle="modal" data-target="#delivery">{% trans "Livraison standard" %}**</a>
-                    {% include "components/modals/delivery.html" with modal_title=True %}
+                    {% include "includes/modals/delivery.html" with modal_title=True %}
                 </div>
 
                 {% if product.description %}
-                    <!-- DESCRIPTION -->
+                    <!-- Description -->
                     <p class="lead font-weight-bold">{% trans "Description" %}</p>
                     <p>{{ product.description }}</p>
                 {% endif %}
 
-                <!-- ADD TO CART -->
-                {# {% include "components/product/actions.html" %} #}
+                <!-- Add to cart -->
+                {# {% include "includes/product/actions.html" %} #}
             </div>
 
             {% comment %}
-            <!-- POLICIES -->
+            <!-- Policies -->
             <div class="p-sm-2 p-lg-4">
-                {% include "components/product/policies.html" %}
+                {% include "includes/product/policies.html" %}
             </div>                    
             {% endcomment %}
         </div>
@@ -112,7 +112,7 @@
     </script>
     
     <!-- VUEJS -->
-    {% include "vue/product.html" %}
+    {% include "vue/product_app.html" %}
 {% endblock %}
 
 {% block extra_scripts %}

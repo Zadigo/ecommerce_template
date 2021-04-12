@@ -37,9 +37,9 @@
 
         <div class="navbar-nav">
             <sorting-component @dosort="applysort" :products="products" inline-template>
-                <select @change="selectedsort=parseInt($el.value), dosort(byprice)" class="browser-default custom-select" id="sorting-selection">
-                    <option v-for="(item, index) in items" :key="item.id" :value="item.value">
-                        [[ item.name ]]
+                <select v-model="selectedsort" class="custom-select" id="sorting-selection" role="combobox">
+                    <option v-for="(item, index) in items" :key="index" :value="index">
+                        [[ item ]]
                     </option>
                 </select>
             </sorting-component>

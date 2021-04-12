@@ -68,15 +68,16 @@
     <body class="{% block body_color %}{% endblock %}">
         {% block extra_analytics %}{% endblock %}
         
-        <div id="vue_app">
+        <div id="app">
             <!-- NAVBAR -->
             {% block navbar %}{% endblock %}
     
             {% block main %}{% endblock %}
+
+            <!-- Footer -->
+            {% block footer %}{% endblock %}
         </div>
 
-        <!-- Footer -->
-        {% block footer %}{% endblock %}
 
         <!-- Scripts -->
         {% include "scripts/base.html" %}

@@ -40,6 +40,10 @@ class AbstractCart(models.Model):
     def __str__(self):
         return self.cart_id
 
+    def clean(self):
+        if self.price_pre_tax or self.price_pre_tax > 0:
+            self.price_post_tax = utilities.calculate_vat(self.price_pre_tax)
+
     @cached_property
     def get_product_total(self):
         try:

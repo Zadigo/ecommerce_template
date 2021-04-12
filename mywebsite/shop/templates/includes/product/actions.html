@@ -22,7 +22,7 @@
             </div>
             
             <div class="actions">
-                <button-actions @addtocart="cartbuttonclicked"
+                <button-actions @addtocart="cartbuttonclicked" @selectquantity="doselection"
                     :product="product" :selectiondetails="selectiondetails" 
                         :disabled="isdisabled" :likesdisabled="'{{ has_liked }}'" />
             </div>

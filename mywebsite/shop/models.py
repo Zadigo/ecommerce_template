@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from pilkit.processors.resize import ResizeToCover, ResizeToFit
 
 from shop import choices, managers, utilities, validators
 
@@ -30,7 +31,7 @@ class Image(models.Model):
     )
     image_thumbnail = ImageSpecField(
         source='url', 
-        processors=[ResizeToFill(800)], 
+        processors=[ResizeToFit(width=800, height=800)], 
         format='JPEG', 
         options={'quality': 50}
     )
@@ -257,13 +258,25 @@ class Product(models.Model):
             return image.url.url
         else:
             try:
-                # In case no main image was marked
+                # In case no main image was not marked
                 # then try to return the first image -;
                 # However, there can be an exceptional
                 # case where the product has no image
                 # and in which case, we have to protect
                 # against a NoneType error
                 return images.first().url.url
+            except AttributeError:
+                return None
+
+    def get_main_image_thumbnail_url(self):
+        images = self.images.all()
+        main_images = images.filter(main_image=True)
+        if main_images.exists():
+            image = main_images.first()
+            return image.image_thumbnail.url
+        else:
+            try:
+                return images.first().image_thumbnail.url
             except AttributeError:
                 return None
 

@@ -68,6 +68,40 @@ def create_vue_products(queryset):
     return items
 
 
+def transform_to_vue(queryset):
+    product_items = (
+        'id', 'reference', 'name', 'price_pre_tax', 'images', 
+        'in_stock', 'our_favorite', 'discounted', 'discounted_price', 'slug'
+    )
+
+    images_attrs = (
+        'id', 'name', 'variant', 'url', 'main_image'
+    )
+
+    variants_attrs = (
+        'id', 'name', 'verbose_name', 'in_stock', 'active'
+    )
+
+    products = []
+    for product in queryset:
+        values = dict()
+        for item in product_items:
+            values.update({item: getattr(product, item)})
+            values['url'] = product.get_absolute_url()
+            values['main_image'] = product.get_main_image_url
+            values['collection'] = product.collection.name
+            values['images'] = list(product.images.values(*images_attrs))
+            values['variants'] = list(product.variant.values(*variants_attrs))
+        products.append(values)
+
+    def clean_prices(product):
+        product['price_pre_tax'] = str(product['price_pre_tax'])
+        product['discounted_price'] = str(product['discounted_price'])
+        return product
+    values = list(map(clean_prices, products))
+
+    return json.dumps(values)
+
 @method_decorator(cache_page(60 * 30), name='dispatch')
 class IndexView(View):
     """Base view for the website's shop"""
@@ -154,10 +188,9 @@ class ProductsView(ListView):
         # Specific technique in order to include the
         # product url, main_image url and images
         # vue_products = cache.cache.get('vue_products', None)
-        vue_products = create_vue_products(klass.object_list)
-        # if vue_products is None:
-            # cache.cache.set('vue_products', vue_products, timeout=1200)
-        context['vue_products'] = json.dumps(vue_products)
+        vue_products = transform_to_vue(klass.object_list)
+        cache.cache.set('vue_products', vue_products, timeout=1200)
+        context['vue_products'] = vue_products
 
         collection = self.model.objects.get(
             view_name__exact=self.kwargs.get('collection'),

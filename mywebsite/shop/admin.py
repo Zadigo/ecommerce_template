@@ -1,3 +1,6 @@
+import os
+
+from django.conf import settings
 from django.contrib import admin
 from imagekit.admin import AdminThumbnail
 
@@ -7,12 +10,13 @@ from shop import models
 @admin.register(models.Image)
 class ImageAdmin(admin.ModelAdmin):
     list_display = ['name', 'variant', 'main_image']
+    # admin_thumbnail = AdminThumbnail(image_field='image_thumbnail')
     search_fields = ['name', 'variant']
     list_per_page = 10
     actions = ['mark_as_main_image', 'unmark_as_main_image']
     sortable_by = ['name', 'variant']
     list_filter = ['main_image']
-    # date_hierarchy = 'created_on'
+    date_hierarchy = 'created_on'
 
     admin_thumbnail = AdminThumbnail(image_field='image_thumbnail')
 
@@ -20,11 +24,31 @@ class ImageAdmin(admin.ModelAdmin):
         for image in queryset:
             image.delete()
 
-    def mark_as_main_image(self, requestn, queryset):
+    def mark_as_main_image(self, request, queryset):
         queryset.update(main_image=True)
 
-    def unmark_as_main_image(self, requestn, queryset):
+    def unmark_as_main_image(self, request, queryset):
         queryset.update(main_image=False)
+
+    def clear_unlinked_images(self, request, queryset):
+        """
+        Delete images that are not used by at least
+        one product. This function should be used mainly
+        to purge the media directory for useless images
+        """
+        try:
+            is_s3_backend = settings.USE_S3
+        except:
+            pass
+        else:
+            unlinked_images = queryset.filter(product__id=None)
+            if unlinked_images.exists():
+                for unlinked_image in unlinked_images:
+                    if is_s3_backend:
+                        unlinked_image.url.delete(commit=False)
+                    else:
+                        if os.path.isfile(unlinked_image.url.path):
+                            os.remove(unlinked_image.url.path)
 
 
 @admin.register(models.Collection)
@@ -46,6 +70,17 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ['name']}
     actions = ['duplicate', 'activate', 'deactivate',
                'mark_as_favorite', 'mark_as_private']
+    fieldsets = [
+        ['General', {'fields': ['name', 'reference', 'description', 'description_html', 'description_objects']}],
+        ['Media', {'fields': ['images', 'video']}],
+        ['Classification', {'fields': ['gender', 'collection', 'google_category', 'sku']}],
+        ['Variants', {'fields': ['variant']}],
+        ['Pricing', {'fields': ['price_pre_tax', 'price_valid_until']}],
+        ['Discounts', {'fields': ['discount_pct', 'discounted_price', 'discounted']}],
+        ['Quantity', {'fields': ['quantity', 'monitor_quantity', 'in_stock']}],
+        ['Other', {'fields': ['slug', 'our_favorite', 'to_be_published_on', 'private', 'active']}]
+    ]
+    # read_only_fields = ['description_html', 'description_objects']
 
     # class Media:
     #     js = ['js/admin_quill.js']

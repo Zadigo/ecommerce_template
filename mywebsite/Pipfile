@@ -17,7 +17,6 @@ django-rest-framework = "*"
 django-cors-headers = "*"
 djangorestframework-jwt = "*"
 django-extensions = "*"
-celery = "*"
 redis = "*"
 django-celery-beat = "*"
 pandas = "*"
@@ -32,4 +31,4 @@ mailchimp-transactional = "*"
 mailchimp-marketing = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"

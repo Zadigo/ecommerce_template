@@ -203,12 +203,17 @@
 </script>
 
 <script>
+    var buttonmixins = {
+        props: ["product", "selectiondetails"],
+        delimiters: ["[[", "]]"]
+    }
+
     var addtolikes = {
-        props: ["product", "selectiondetails", "likesdisabled"],
+        props: ["likesdisabled"],
         name: "AddToLikes",
-        delimiters: ["[[", "]]"],
+        mixins: [buttonmixins],
         template: `
-        <custom-button @startaction="addproduct" :method="'like'" 
+        <custom-button @startaction="addproduct()" key="add_to_likes" :method="'like'" 
                 id="'btn_add_to_likes'" :size="'btn-sm red lighten-1'" 
                         :disabled="disabled">
             <i class="fas fa-heart ml-1 text-white"></i>
@@ -265,42 +270,19 @@
         }
     }
 
-    var buttonactions = {
-        props: ["product", "selectiondetails", "disabled", "likesdisabled"],
-        name: "ProductActions",
-        components: {
-            "add-to-likes": addtolikes
-        },
-        delimiters: ["[[", "]]"],
+    var addtocart = {
+        props: ["disabled"],
+        name: "AddToCart",
+        mixins: [buttonmixins],
         template: `
-        <form onsubmit="return false;" class="d-flex">
-            <input v-model.number="quantity" type="number" min="1" max="99"
-                    aria-label="Choose quantity" class="form-control" style="width: 100px">
-
-            <custom-button @startaction="addtocart" :method="'cart'" 
-                    :id="'btn_add_to_cart'" :size="'btn-md'" :disabled="disabled">
-                {% trans "Ajouter au panier" %}
-            </custom-button>
-
-            <add-to-likes :product="product" 
-                :selectiondetails="selectiondetails" 
-                        :likesdisabled="likesdisabled" />
-        </form>
+        <custom-button @startaction="addtocart()" key="add_to_cart" :method="'cart'"
+                :id="'btn_add_to_cart'" :size="'btn-md'" :disabled="disabled">
+            {% trans "Ajouter au panier" %}
+        </custom-button>
         `,
-        data() {
-            return {
-                quantity: 1
-            }
-        },
-        computed: {
-            disablebutton() {
-                var isinstock = "{{ product.in_stock }}"
-                return isinstock === "True" ? false : true
-            }
-        },
         methods: {
             sendanalytics: function() {
-                const {size, color} = this.$props.selectiondetails
+                const {size, color, quantity} = this.$props.selectiondetails
                 dataLayer.push({
                     "event": "AddToCart",
                     "ecommerce": {
@@ -314,7 +296,7 @@
                                 "category": "{{ product.collection.gender }}/{{ product.collection.name }}",
                                 "variant": `${size}/${color}`,
                                 "position": 0,
-                                "quantity": this.quantity || 1
+                                "quantity": quantity || 1
                             }]
                         }
                     }
@@ -323,8 +305,6 @@
             addtocart: function() {
                 var self = this
                 var formdata = new FormData()
-
-                formdata.append("quantity", this.quantity)
 
                 _.forEach(Object.keys(this.$props.selectiondetails), (key) => {
                     formdata.append(key, this.$props.selectiondetails[key])
@@ -355,6 +335,38 @@
         }
     }
 
+    var buttonactions = {
+        props: ["product", "selectiondetails", "disabled", "likesdisabled"],
+        name: "ProductActions",
+        components: {
+            "add-to-cart": addtocart,
+            "add-to-likes": addtolikes
+        },
+        delimiters: ["[[", "]]"],
+        template: `
+        <form onsubmit="return false;" class="d-flex">
+            <input @change="$emit('selectquantity', 'quantity', quantity)" v-model.number="quantity" type="number" 
+                min="1" max="99" role="input" aria-label="Choose quantity" class="form-control" 
+                    style="width: 100px">
+            
+            <add-to-cart :product="product" :selectiondetails="selectiondetails" :disabled="disabled" />
+
+            <add-to-likes :product="product" :selectiondetails="selectiondetails" :likesdisabled="likesdisabled" />
+        </form>
+        `,
+        data() {
+            return {
+                quantity: 1
+            }
+        },
+        computed: {
+            disablebutton() {
+                var isinstock = "{{ product.in_stock }}"
+                return isinstock === "True" ? false : true
+            }
+        }
+    }
+
     var cartactionsinterface = {
         props: ["product", "colors", "sizes", "isdisabled"],
         name: "ActionsInterface",
@@ -365,10 +377,11 @@
         },
         data() {
             return {
-                cliked: false,
+                addedtocart: false,
                 selectiondetails: {
                     color: null,
-                    size: null
+                    size: null,
+                    quantity: 1
                 },
                 likesdisabled: Boolean("{{ has_liked }}"),
             }
@@ -382,9 +395,9 @@
                 this.selectiondetails[method] = item
             },
             cartbuttonclicked: function () {
-                this.clicked = true
+                this.addedtocart = true
                 setTimeout(() => {
-                    this.clicked = false
+                    this.addedtocart = false
                 }, 3000);
             }
         }
@@ -475,7 +488,7 @@
 
 <script>
     var productapp = new Vue({
-        el: "#vue_app",
+        el: "#app",
         name: "Product",
         delimiters: ["[[", "]]"],
         components: {
@@ -535,11 +548,14 @@
             this.product = product
         },
         computed: {
+            isdiscounted() {
+                return this.product.is_discounted
+            },
             isdisabled() {
                 return this.instock ? false : true
             },
             instock() {
-                return this.product.in_stock ? true : false
+                return this.product.in_stock
             },
             isauthenticated() {
                 return Boolean("{{ request.user.is_authenticated }}")
